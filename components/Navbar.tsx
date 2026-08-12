@@ -1,64 +1,84 @@
 'use client';
 
 import Link from 'next/link';
-import { Search, Sparkles, Layers, BookOpen } from 'lucide-react';
-import { useState } from 'react';
+import { BookOpen, Search, Sparkles } from 'lucide-react';
 import OmniSearch from './OmniSearch';
+import { useState } from 'react';
 
 export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
     <>
-      <nav className="bg-white font-sans text-sm w-full sticky top-0 z-50 border-b border-hairline shadow-sm transition-all duration-200">
-        <div className="flex justify-between items-center px-6 sm:px-12 py-3.5 max-w-7xl mx-auto">
-          
-          {/* Brand Logo */}
-          <Link href="/" className="flex items-center space-x-2 group">
-            <div className="font-extrabold text-2xl text-primary tracking-tight">
-              Qubaric <span className="text-xs px-2 py-0.5 rounded-full bg-primary-subdued text-primary-deep font-semibold">Indo</span>
+      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-hairline transition-all">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            
+            {/* Logo Branding */}
+            <div className="flex items-center space-x-3">
+              <Link href="/" className="flex items-center space-x-2.5 group">
+                <div className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-lg shadow-soft group-hover:scale-105 transition-transform">
+                  Q
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-sans font-semibold text-lg text-ink-primary tracking-tight leading-none group-hover:text-primary transition-colors">
+                    Qubaric <span className="text-primary font-normal">(Indo)</span>
+                  </span>
+                  <span className="text-[10px] text-slate-500 font-mono tracking-wider uppercase mt-0.5">
+                    Quranic Arabic Corpus
+                  </span>
+                </div>
+              </Link>
             </div>
-          </Link>
 
-          {/* Navigation Links */}
-          <div className="hidden md:flex items-center space-x-8 font-medium">
-            <Link href="/" className="text-primary border-b-2 border-primary pb-1 font-semibold">
-              Roots
-            </Link>
-            <Link href="/morfologi" className="text-ink-secondary hover:text-primary transition-colors flex items-center space-x-1">
-              <Layers className="w-4 h-4 text-primary" />
-              <span>Katalog Morfologi</span>
-            </Link>
-            <Link href="/akar/s-b-r" className="text-ink-secondary hover:text-primary transition-colors flex items-center space-x-1">
-              <Sparkles className="w-4 h-4 text-amber-500" />
-              <span>Akar &quot;Sabar&quot;</span>
-            </Link>
-          </div>
+            {/* Navigation Links */}
+            <nav className="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600">
+              <Link
+                href="/"
+                className="hover:text-primary transition-colors flex items-center space-x-1.5"
+              >
+                <span>Beranda Roots</span>
+              </Link>
+              <Link
+                href="/morfologi"
+                className="hover:text-primary transition-colors flex items-center space-x-1.5"
+              >
+                <BookOpen className="w-4 h-4 text-primary" />
+                <span>Katalog Morfologi Lengkap</span>
+              </Link>
+            </nav>
 
-          {/* Actions & Search Trigger */}
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={() => setIsSearchOpen(true)}
-              className="flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-canvas-soft border border-hairline-input text-ink-mute hover:text-ink-primary transition-all text-xs"
-            >
-              <Search className="w-4 h-4 text-primary" />
-              <span className="hidden sm:inline">Cari akar kata...</span>
-              <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] bg-white border border-hairline rounded font-mono">
-                ⌘K
-              </kbd>
-            </button>
+            {/* Right Action Buttons */}
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setIsSearchOpen(true)}
+                className="hidden sm:flex items-center space-x-2 bg-canvas-soft hover:bg-slate-100 border border-hairline text-slate-500 px-3.5 py-2 rounded-full text-xs transition-all shadow-soft"
+              >
+                <Search className="w-3.5 h-3.5 text-primary" />
+                <span>Cari akar kata (e.g. sabar, ص-ل-و)...</span>
+                <kbd className="hidden lg:inline-block bg-white text-slate-400 text-[10px] px-1.5 py-0.5 rounded border border-hairline font-mono ml-2">
+                  ⌘K
+                </kbd>
+              </button>
 
-            <button 
-              onClick={() => setIsSearchOpen(true)}
-              className="bg-primary text-white hover:bg-primary-deep font-semibold text-xs px-5 py-2 rounded-full transition-colors shadow-sm"
-            >
-              Cari Sekarang
-            </button>
+              <button
+                onClick={() => setIsSearchOpen(true)}
+                className="sm:hidden p-2 rounded-full text-slate-600 hover:bg-canvas-soft border border-hairline"
+                aria-label="Cari"
+              >
+                <Search className="w-4 h-4 text-primary" />
+              </button>
+
+              <button className="bg-primary hover:bg-primary-deep text-white text-xs font-semibold px-4 py-2 rounded-full shadow-soft hover:shadow-hover transition-all">
+                Masuk
+              </button>
+            </div>
+
           </div>
         </div>
-      </nav>
+      </header>
 
-      {/* OmniSearch Modal */}
+      {/* OmniSearch Modal Overlay */}
       <OmniSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
   );
