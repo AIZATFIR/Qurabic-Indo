@@ -1,76 +1,100 @@
+'use client';
+
+import React, { useState } from 'react';
 import { VerseOccurrence } from '@/lib/types/morphology';
-import { BookOpen, MapPin } from 'lucide-react';
+import { BookOpen, Layers } from 'lucide-react';
+import WordByWordViewer from './WordByWordViewer';
 
 interface AyahConcordanceProps {
   occurrences: VerseOccurrence[];
-  rootArabicJoined: string;
+  rootArabic: string;
+  rootLatin: string;
 }
 
-export default function AyahConcordance({ occurrences, rootArabicJoined }: AyahConcordanceProps) {
-  return (
-    <div className="space-y-4 pt-4">
-      <div className="flex items-center justify-between pb-2 border-b border-hairline">
-        <div>
-          <h3 className="text-xl font-light text-ink-primary flex items-center space-x-2">
-            <BookOpen className="w-5 h-5 text-primary" />
-            <span>Kemunculan Ayat Al-Qur&apos;an (Concordance)</span>
-          </h3>
-          <p className="text-xs text-ink-mute mt-0.5">Daftar surah dan ayat yang memuat kata turunan ini</p>
-        </div>
+export default function AyahConcordance({
+  occurrences,
+  rootArabic,
+  rootLatin
+}: AyahConcordanceProps) {
+  const [showInterlinear, setShowInterlinear] = useState<Record<number, boolean>>({});
 
-        <span className="text-xs px-3 py-1 rounded-full bg-primary-subdued text-primary-deep font-semibold">
-          {occurrences.length} Ayat Contoh
-        </span>
+  const toggleInterlinear = (index: number) => {
+    setShowInterlinear((prev) => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
+  };
+
+  if (!occurrences || occurrences.length === 0) {
+    return (
+      <div className="p-8 text-center text-slate-500 bg-white border border-hairline rounded-2xl">
+        Belum ada data sampel ayat untuk akar ini.
       </div>
+    );
+  }
 
-      <div className="space-y-4">
-        {occurrences.map((verse, idx) => (
+  return (
+    <div className="space-y-4">
+      {occurrences.map((occ, idx) => {
+        const isExpanded = showInterlinear[idx] ?? true;
+
+        return (
           <div
-            key={idx}
-            className="p-6 rounded-xl bg-white border border-hairline shadow-soft space-y-4 hover:shadow-hover transition-all"
+            key={`${occ.surahNumber}-${occ.ayahNumber}-${idx}`}
+            className="p-6 bg-white border border-hairline rounded-2xl shadow-soft hover:shadow-hover transition-all duration-200"
           >
-            {/* Verse Badge Location */}
-            <div className="flex items-center justify-between text-xs">
+            {/* Header Badge */}
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-hairline">
               <div className="flex items-center space-x-2">
-                <span className="px-3 py-1 rounded-full bg-canvas-soft text-primary font-semibold border border-hairline flex items-center space-x-1">
-                  <MapPin className="w-3.5 h-3.5" />
-                  <span>Surah {verse.surahNameIndo} ({verse.surahNumber}:{verse.ayahNumber})</span>
+                <span className="px-3 py-1 bg-primary-subdued text-primary-deep text-xs font-mono font-bold rounded-full">
+                  QS. {occ.surahNameIndo} ({occ.surahNumber}) : {occ.ayahNumber}
                 </span>
-                <span className="font-arabic text-sm text-ink-secondary">
-                  سورة {verse.surahNameArabic}
+                <span className="text-xs text-slate-400 font-mono">
+                  {occ.surahNameArabic}
                 </span>
               </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-xs font-mono text-slate-400">
+                  Lokasi: {occ.wordLocation}
+                </span>
+                {occ.wordSegments && (
+                  <button
+                    onClick={() => toggleInterlinear(idx)}
+                    className="inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-medium border border-hairline hover:bg-canvas-soft text-slate-700 transition-colors"
+                  >
+                    <Layers className="w-3.5 h-3.5 text-primary" />
+                    <span>{isExpanded ? 'Sembunyikan Per Kata' : 'Tampilkan Per Kata'}</span>
+                  </button>
+                )}
+              </div>
+            </div>
 
-              <span className="text-[11px] font-mono text-ink-mute">
-                Posisi: {verse.wordLocation}
+            {/* Arabic Verse */}
+            <div className="text-right font-arabic text-2xl sm:text-3xl leading-loose text-ink-primary mb-4 dir-rtl">
+              {occ.verseArabic}
+            </div>
+
+            {/* Highlighted matched word */}
+            <div className="mb-3 p-3 bg-amber-50/70 border border-amber-200/60 rounded-xl text-xs text-amber-900 flex items-center justify-between">
+              <span className="font-semibold">Kata Terkait Akar [{rootArabic} / {rootLatin}]:</span>
+              <span className="font-arabic text-base font-bold text-amber-950">
+                {occ.matchedWordArabic} ({occ.matchedWordIndo})
               </span>
             </div>
 
-            {/* Arabic Verse Display */}
-            <div className="p-4 rounded-lg bg-canvas-soft border border-hairline text-right">
-              <p className="font-arabic text-2xl sm:text-3xl text-ink-primary leading-loose">
-                {verse.verseArabic}
-              </p>
-            </div>
+            {/* Kemenag Indonesian Translation */}
+            <p className="text-sm text-slate-700 leading-relaxed font-sans mb-2">
+              <span className="font-semibold text-ink-primary">Terjemahan: </span>
+              "{occ.verseIndo}"
+            </p>
 
-            {/* Highlighted Word & Indonesian Translation */}
-            <div className="space-y-2 pt-1">
-              <div className="flex items-center space-x-2 text-xs">
-                <span className="text-ink-mute">Kata Terkait:</span>
-                <span className="px-2 py-0.5 rounded bg-primary-subdued text-primary-deep font-arabic font-bold text-base border border-primary-subdued">
-                  {verse.matchedWordArabic}
-                </span>
-                <span className="text-ink-secondary font-medium">({verse.matchedWordIndo})</span>
-              </div>
-
-              <div className="p-3.5 rounded-lg bg-canvas-soft text-xs text-ink-secondary leading-relaxed border border-hairline">
-                <span className="text-[10px] text-primary font-bold block mb-0.5 uppercase tracking-wide">Terjemahan Kemenag RI:</span>
-                <p>&quot;{verse.verseIndo}&quot;</p>
-              </div>
-            </div>
+            {/* Interlinear Breakdown */}
+            {occ.wordSegments && isExpanded && (
+              <WordByWordViewer segments={occ.wordSegments} />
+            )}
           </div>
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
 }

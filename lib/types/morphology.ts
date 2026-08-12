@@ -1,3 +1,13 @@
+export interface WordSegment {
+  wordIndex: number;
+  arabic: string;
+  transliteration: string;
+  posTag: string;           // e.g. "N - Isim", "V - Fi'il", "P - Haraf", "PRON - Dhamir"
+  posTagCode: 'N' | 'V' | 'P' | 'PRON';
+  rootArabic?: string;       // e.g. "ص ل و"
+  meaningIndo: string;
+}
+
 export interface DerivativeWord {
   id: string;
   arabic: string;            // e.g. "صَبَرَ"
@@ -19,6 +29,7 @@ export interface VerseOccurrence {
   matchedWordArabic: string;
   matchedWordIndo: string;
   wordLocation: string;       // e.g. "2:153:4" (Surah:Ayah:Word)
+  wordSegments?: WordSegment[]; // Word-by-Word Interlinear Analysis ala Quranic Corpus
 }
 
 export interface RootWord {
@@ -27,9 +38,9 @@ export interface RootWord {
   rootArabicJoined: string;   // e.g. "صبر"
   rootLatin: string;          // e.g. "sabar"
   titleIndo: string;          // e.g. "Sabar / Ketabahan / Menahan Diri"
-  titleEnglish: string;       // e.g. "Patience / Endure / Steadfastness"
+  titleEnglish: string;       // e.g. "Patience / Steadfastness / Endure"
   meaningsIndonesian: string[];
-  etymologyNote: string;      // E.g. Classical etymology "Kata sobaro secara etimologi merujuk pada batu yang sangat keras atau tanaman pahit..."
+  etymologyNote: string;      // E.g. Classical etymology "Kata sobaro secara etimologi merujuk pada batu yang sangat keras..."
   totalOccurrences: number;
   verbsCount: number;
   nounsCount: number;
