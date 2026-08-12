@@ -20,55 +20,12 @@ export const ROOT_DATABASE: RootWord[] = [
     nounsCount: 83,
     tags: ['salat', 'sholat', 'solat', 'shalat', 'shalaat', 'sholah', 's-l-w', 'salawat', 'selawat', 'doa', 'prayer', 'worship', 'صلوة', 'ص-ل-و'],
     verbs: [
-      {
-        id: 'slw-v1',
-        arabic: 'صَلَّىٰ',
-        transliteration: 'sallaa',
-        type: 'verb',
-        form: 'Form II',
-        posTag: 'Fi\'il Madhi (Form II - Mendoakan / Bersalat)',
-        meaningIndo: 'Ia telah melaksanakan salat / mendoakan',
-        frequency: 12
-      },
-      {
-        id: 'slw-v2',
-        arabic: 'يُصَلُّونَ',
-        transliteration: 'yusalluuna',
-        type: 'verb',
-        form: 'Form II',
-        posTag: 'Fi\'il Mudhari\' Jamak',
-        meaningIndo: 'Mereka melesaksanakan salat / berselawat',
-        frequency: 4
-      }
+      { id: 'slw-v1', arabic: 'صَلَّىٰ', transliteration: 'sallaa', type: 'verb', form: 'Form II', posTag: 'Fi\'il Madhi', meaningIndo: 'Ia telah melaksanakan salat / mendoakan', frequency: 12 },
+      { id: 'slw-v2', arabic: 'يُصَلُّونَ', transliteration: 'yusalluuna', type: 'verb', form: 'Form II', posTag: 'Fi\'il Mudhari\' Jamak', meaningIndo: 'Mereka melaksanakan salat / berselawat', frequency: 4 }
     ],
     nouns: [
-      {
-        id: 'slw-n1',
-        arabic: 'الصَّلَاةَ',
-        transliteration: 'as-salaah',
-        type: 'noun',
-        posTag: 'Isim (Ibadah Salat)',
-        meaningIndo: 'Ibadah Salat / Doa suci',
-        frequency: 67
-      },
-      {
-        id: 'slw-n2',
-        arabic: 'صَلَوَاتٌ',
-        transliteration: 'salawaatun',
-        type: 'noun',
-        posTag: 'Isim Jamak (Salawat / Keberkahan)',
-        meaningIndo: 'Salawat / Keberkahan doa',
-        frequency: 5
-      },
-      {
-        id: 'slw-n3',
-        arabic: 'الْمُصَلِّينَ',
-        transliteration: 'al-musalliin',
-        type: 'noun',
-        posTag: 'Isim Fa\'il Jamak (Orang-orang yang Salat)',
-        meaningIndo: 'Orang-orang yang melaksanakan salat',
-        frequency: 5
-      }
+      { id: 'slw-n1', arabic: 'الصَّلَاةَ', transliteration: 'as-salaah', type: 'noun', posTag: 'Isim (Ibadah Salat)', meaningIndo: 'Ibadah Salat / Doa suci', frequency: 67 },
+      { id: 'slw-n2', arabic: 'صَلَوَاتٌ', transliteration: 'salawaatun', type: 'noun', posTag: 'Isim Jamak', meaningIndo: 'Salawat / Keberkahan doa', frequency: 5 }
     ],
     occurrences: [
       {
@@ -85,22 +42,6 @@ export const ROOT_DATABASE: RootWord[] = [
           { wordIndex: 1, arabic: 'وَاسْتَعِينُوا', transliteration: 'wasta\'iinuu', posTag: 'V - Fi\'il Amr', posTagCode: 'V', meaningIndo: 'Dan mohonlah pertolongan' },
           { wordIndex: 2, arabic: 'بِالصَّبْرِ', transliteration: 'bis-sabri', posTag: 'N - Isim (Majrur)', posTagCode: 'N', rootArabic: 'ص ب ر', meaningIndo: 'dengan sabar' },
           { wordIndex: 3, arabic: 'وَالصَّلَاةِ', transliteration: 'was-salaah', posTag: 'N - Isim (Salat)', posTagCode: 'N', rootArabic: 'ص ل و', meaningIndo: 'dan salat' }
-        ]
-      },
-      {
-        surahNumber: 2,
-        ayahNumber: 238,
-        surahNameIndo: 'Al-Baqarah',
-        surahNameArabic: 'البقرة',
-        verseArabic: 'حَافِظُوا عَلَى الصَّلَوَاتِ وَالصَّلَاةِ الْوُسْطَىٰ وَقُومُوا لِلَّهِ قَانِتِينَ',
-        verseIndo: 'Peliharalah semua salat dan salat wustha (salat Asar). Dan berdirilah karena Allah (dalam salatmu) dengan khusyuk.',
-        matchedWordArabic: 'الصَّلَوَاتِ وَالصَّلَاةِ',
-        matchedWordIndo: 'semua salat dan salat wustha',
-        wordLocation: '2:238:3',
-        wordSegments: [
-          { wordIndex: 1, arabic: 'حَافِظُوا', transliteration: 'haafizuu', posTag: 'V - Fi\'il Amr', posTagCode: 'V', meaningIndo: 'Peliharalah' },
-          { wordIndex: 2, arabic: 'عَلَى', transliteration: '\'alaa', posTag: 'P - Haraf Jar', posTagCode: 'P', meaningIndo: 'atas' },
-          { wordIndex: 3, arabic: 'الصَّلَوَاتِ', transliteration: 'as-salawaat', posTag: 'N - Isim Jamak', posTagCode: 'N', rootArabic: 'ص ل و', meaningIndo: 'semua salat' }
         ]
       }
     ]
@@ -123,36 +64,10 @@ export const ROOT_DATABASE: RootWord[] = [
     nounsCount: 32,
     tags: ['zakat', 'zakah', 'jakat', 'z-k-w', 'suci', 'tumbuh', 'pembayaran', 'purity', 'charity', 'زكاة', 'ز-ك-و'],
     verbs: [
-      {
-        id: 'zkw-v1',
-        arabic: 'زَكَّىٰ',
-        transliteration: 'zakkaa',
-        type: 'verb',
-        form: 'Form II',
-        posTag: 'Fi\'il Madhi (Form II - Menyucikan)',
-        meaningIndo: 'Ia telah menyucikan',
-        frequency: 9
-      }
+      { id: 'zkw-v1', arabic: 'زَكَّىٰ', transliteration: 'zakkaa', type: 'verb', form: 'Form II', posTag: 'Fi\'il Madhi', meaningIndo: 'Ia telah menyucikan', frequency: 9 }
     ],
     nouns: [
-      {
-        id: 'zkw-n1',
-        arabic: 'الزَّكَاةَ',
-        transliteration: 'az-zakaah',
-        type: 'noun',
-        posTag: 'Isim (Zakat Wajib)',
-        meaningIndo: 'Zakat wajib penyuci harta',
-        frequency: 32
-      },
-      {
-        id: 'zkw-n2',
-        arabic: 'زَكِيَّةً',
-        transliteration: 'zakiyyatan',
-        type: 'noun',
-        posTag: 'Isim Sifat (Suci/Bersih)',
-        meaningIndo: 'Jiwa yang suci / bersih',
-        frequency: 2
-      }
+      { id: 'zkw-n1', arabic: 'الزَّكَاةَ', transliteration: 'az-zakaah', type: 'noun', posTag: 'Isim (Zakat Wajib)', meaningIndo: 'Zakat wajib penyuci harta', frequency: 32 }
     ],
     occurrences: [
       {
@@ -180,52 +95,16 @@ export const ROOT_DATABASE: RootWord[] = [
       'Perlindungan dan perisai dari bahaya keburukan',
       'Ketaatan yang bersumber dari rasa takut dan hormat'
     ],
-    etymologyNote: 'Secara etimologi, "W-Q-Y" bermakna dasar "membuat benteng/perisai pelindung antara dua hal" (الوقاية والحرص). Takwa adalah perisai pelindung amal yang menjaga hamba dari api neraka.',
+    etymologyNote: 'Secara etimologi, "W-Q-Y" bermakna dasar "membuat benteng/perisai pelindung antara dua hal" (الوقاية والحرص). Takwa adalah perisai pelindung amal.',
     totalOccurrences: 258,
     verbsCount: 177,
     nounsCount: 81,
     tags: ['taqwa', 'takwa', 'taqwaa', 'w-q-y', 'pelihara', 'perisai', 'piety', 'guard', 'تقوى', 'و-ق-ي'],
     verbs: [
-      {
-        id: 'wqy-v1',
-        arabic: 'اتَّقَىٰ',
-        transliteration: 'ittaqaa',
-        type: 'verb',
-        form: 'Form VIII',
-        posTag: 'Fi\'il Madhi (Form VIII - Bertakwa)',
-        meaningIndo: 'Ia telah bertakwa / memelihara diri',
-        frequency: 82
-      },
-      {
-        id: 'wqy-v2',
-        arabic: 'اتَّقُوا',
-        transliteration: 'ittaquu',
-        type: 'verb',
-        form: 'Form VIII',
-        posTag: 'Fi\'il Amr Jamak',
-        meaningIndo: 'Bertakwalah kamu sekalian!',
-        frequency: 79
-      }
+      { id: 'wqy-v1', arabic: 'اتَّقَىٰ', transliteration: 'ittaqaa', type: 'verb', form: 'Form VIII', posTag: 'Fi\'il Madhi', meaningIndo: 'Ia telah bertakwa / memelihara diri', frequency: 82 }
     ],
     nouns: [
-      {
-        id: 'wqy-n1',
-        arabic: 'تَقْوَىٰ',
-        transliteration: 'taqwaa',
-        type: 'noun',
-        posTag: 'Masdar (Ketaqwaan)',
-        meaningIndo: 'Ketakwaan / Perisai jiwa',
-        frequency: 17
-      },
-      {
-        id: 'wqy-n2',
-        arabic: 'الْمُتَّقِينَ',
-        transliteration: 'al-muttaqiin',
-        type: 'noun',
-        posTag: 'Isim Fa\'il Jamak',
-        meaningIndo: 'Orang-orang yang bertakwa',
-        frequency: 49
-      }
+      { id: 'wqy-n1', arabic: 'تَقْوَىٰ', transliteration: 'taqwaa', type: 'noun', posTag: 'Masdar (Ketaqwaan)', meaningIndo: 'Ketakwaan / Perisai jiwa', frequency: 17 }
     ],
     occurrences: [
       {
@@ -234,7 +113,7 @@ export const ROOT_DATABASE: RootWord[] = [
         surahNameIndo: 'Al-Baqarah',
         surahNameArabic: 'البقرة',
         verseArabic: 'وَتَزَوَّدُوا فَإِنَّ خَيْرَ الزَّادِ التَّقْوَىٰ ۚ وَاتَّقُونِ يَا أُولِي الْأَلْبَابِ',
-        verseIndo: 'Bawalah bekal, karena sesungguhnya sebaik-baik bekal adalah takwa. Dan bertakwalah kepada-Ku wahai orang-orang yang berakal!',
+        verseIndo: 'Bawalah bekal, karena sesungguhnya sebaik-baik bekal adalah takwa.',
         matchedWordArabic: 'التَّقْوَىٰ',
         matchedWordIndo: 'takwa',
         wordLocation: '2:197:6'
@@ -253,42 +132,16 @@ export const ROOT_DATABASE: RootWord[] = [
       'Persekutuan atau kepemilikan bersama',
       'Dosa besar menyekutukan Allah'
     ],
-    etymologyNote: 'Secara etimologi, "S-R-K" bermakna dasar "pembagian saham/persekutuan dua pihak atau lebih" (المشاركة). Syirik dalam aqidah berarti membagi ketuhanan Allah dengan makhluk.',
+    etymologyNote: 'Secara etimologi, "S-R-K" bermakna dasar "pembagian saham/persekutuan dua pihak atau lebih" (المشاركة).',
     totalOccurrences: 168,
     verbsCount: 38,
     nounsCount: 130,
     tags: ['syirik', 'shirk', 'sirk', 's-r-k', 'sekutu', 'mensekutukan', 'polytheism', 'شرك', 'ش-ر-ك'],
     verbs: [
-      {
-        id: 'srk-v1',
-        arabic: 'أَشْرَكَ',
-        transliteration: 'ashraka',
-        type: 'verb',
-        form: 'Form IV',
-        posTag: 'Fi\'il Madhi (Menyertakan Sekutu)',
-        meaningIndo: 'Ia telah menyekutukan Allah',
-        frequency: 25
-      }
+      { id: 'srk-v1', arabic: 'أَشْرَكَ', transliteration: 'ashraka', type: 'verb', form: 'Form IV', posTag: 'Fi\'il Madhi', meaningIndo: 'Ia telah menyekutukan Allah', frequency: 25 }
     ],
     nouns: [
-      {
-        id: 'srk-n1',
-        arabic: 'شِرْكٌ',
-        transliteration: 'shirkun',
-        type: 'noun',
-        posTag: 'Masdar (Syirik)',
-        meaningIndo: 'Perbuatan Syirik / Menyertakan sekutu',
-        frequency: 5
-      },
-      {
-        id: 'srk-n2',
-        arabic: 'الْمُشْرِكِينَ',
-        transliteration: 'al-mushrikiin',
-        type: 'noun',
-        posTag: 'Isim Fa\'il Jamak',
-        meaningIndo: 'Orang-orang musyrik',
-        frequency: 45
-      }
+      { id: 'srk-n1', arabic: 'شِرْكٌ', transliteration: 'shirkun', type: 'noun', posTag: 'Masdar (Syirik)', meaningIndo: 'Perbuatan Syirik / Menyertakan sekutu', frequency: 5 }
     ],
     occurrences: [
       {
@@ -297,10 +150,124 @@ export const ROOT_DATABASE: RootWord[] = [
         surahNameIndo: 'An-Nisa\'',
         surahNameArabic: 'النساء',
         verseArabic: 'إِنَّ اللَّهَ لَا يَغْفِرُ أَن يُشْرَكَ بِهِ وَيَغْفِرُ مَا دُونَ ذَٰلِكَ لِمَن يَشَاءُ',
-        verseIndo: 'Sesungguhnya Allah tidak akan mengampuni dosa syirik, dan Dia mengampuni segala dosa yang selain dari (syirik) itu bagi siapa yang Dia kehendaki.',
+        verseIndo: 'Sesungguhnya Allah tidak akan mengampuni dosa syirik, dan Dia mengampuni segala dosa selain syirik.',
         matchedWordArabic: 'أَن يُشْرَكَ',
         matchedWordIndo: 'dosa syirik',
         wordLocation: '4:48:5'
+      }
+    ]
+  },
+  {
+    id: 'h-m-d',
+    rootArabic: 'ح م د',
+    rootArabicJoined: 'حمد',
+    rootLatin: 'hamd',
+    titleIndo: 'Hamd / Pujian / Syukur Sanjungan',
+    titleEnglish: 'Praise / Thanks / Commendation',
+    meaningsIndonesian: [
+      'Memuji dan mengagungkan kebaikan Allah dengan rasa cinta',
+      'Pujian sempurna yang menjadi hak khusus Allah (Alhamdulillah)',
+      'Nama terpuji (Muhammad / Ahmad)'
+    ],
+    etymologyNote: 'Secara etimologi, "H-M-D" merujuk pada "pujian tulus yang disampaikan dengan penuh penghormatan dan kecintaan atas kebaikan kurnia" (الثناء بالجميل الاختياري على جهة التعظيم).',
+    totalOccurrences: 63,
+    verbsCount: 15,
+    nounsCount: 48,
+    tags: ['hamd', 'puji', 'pujian', 'alhamdulillah', 'muhammad', 'ahmad', 'h-m-d', 'praise', 'thanks', 'حمد', 'ح-م-د'],
+    verbs: [
+      { id: 'hmd-v1', arabic: 'حَمِدَ', transliteration: 'hamida', type: 'verb', form: 'Form I', posTag: 'Fi\'il Madhi', meaningIndo: 'Ia telah memuji', frequency: 4 }
+    ],
+    nouns: [
+      { id: 'hmd-n1', arabic: 'الْحَمْدُ', transliteration: 'al-hamdu', type: 'noun', posTag: 'Masdar (Pujian Sempurna)', meaningIndo: 'Segala Pujian', frequency: 38 },
+      { id: 'hmd-n2', arabic: 'مُحَمَّدٌ', transliteration: 'muhammadun', type: 'noun', posTag: 'Isim Alam (Nabi Muhammad)', meaningIndo: 'Nabi Muhammad (Yang Terpuji)', frequency: 4 }
+    ],
+    occurrences: [
+      {
+        surahNumber: 1,
+        ayahNumber: 2,
+        surahNameIndo: 'Al-Fatihah',
+        surahNameArabic: 'الفاتحة',
+        verseArabic: 'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ',
+        verseIndo: 'Segala puji bagi Allah, Tuhan seluruh alam.',
+        matchedWordArabic: 'الْحَمْدُ',
+        matchedWordIndo: 'Segala puji',
+        wordLocation: '1:2:1'
+      }
+    ]
+  },
+  {
+    id: 's-l-h',
+    rootArabic: 'ص ل ح',
+    rootArabicJoined: 'صلح',
+    rootLatin: 'saleh',
+    titleIndo: 'Saleh / Kesalehan / Kebaikan / Perdamaian',
+    titleEnglish: 'Righteous / Good / Peace / Virtue',
+    meaningsIndonesian: [
+      'Keadaan yang baik, lurus, dan terbebas dari kerusakan',
+      'Amal kebajikan yang membawa kemaslahatan (Amal Saleh)',
+      'Perdamaian dan perbaikan hubungan antarmanusia'
+    ],
+    etymologyNote: 'Secara etimologi, "S-L-H" bermakna "kebaikan, kelayakan, dan ketiadaan kerusakan" (ضد الفساد). Amal saleh adalah amal yang layak dan bermanfaat.',
+    totalOccurrences: 180,
+    verbsCount: 42,
+    nounsCount: 138,
+    tags: ['saleh', 'sholeh', 'shaleh', 'salih', 's-l-h', 'baik', 'kebajikan', 'damai', 'maslahat', 'righteous', 'good', 'صلح', 'ص-ل-ح'],
+    verbs: [
+      { id: 'slh-v1', arabic: 'أَصْلَحَ', transliteration: 'aslaha', type: 'verb', form: 'Form IV', posTag: 'Fi\'il Madhi (Memperbaiki)', meaningIndo: 'Ia telah memperbaiki / berbuat baik', frequency: 28 }
+    ],
+    nouns: [
+      { id: 'slh-n1', arabic: 'صَالِحًا', transliteration: 'saalihan', type: 'noun', posTag: 'Isim Fa\'il (Amal Saleh)', meaningIndo: 'Kebajikan / Perbuatan saleh', frequency: 72 },
+      { id: 'slh-n2', arabic: 'الصَّالِحَاتِ', transliteration: 'as-saalihaat', type: 'noun', posTag: 'Isim Jamak', meaningIndo: 'Kebajikan-kebajikan (Amal saleh)', frequency: 62 }
+    ],
+    occurrences: [
+      {
+        surahNumber: 103,
+        ayahNumber: 3,
+        surahNameIndo: 'Al-\'Asr',
+        surahNameArabic: 'العصر',
+        verseArabic: 'إِلَّا الَّذِينَ آمَنُوا وَعَمِلُوا الصَّالِحَاتِ وَتَوَاصَوْا بِالْحَقِّ وَتَوَاصَوْا بِالصَّبْرِ',
+        verseIndo: 'Kecuali orang-orang yang beriman dan mengerjakan kebajikan...',
+        matchedWordArabic: 'الصَّالِحَاتِ',
+        matchedWordIndo: 'kebajikan',
+        wordLocation: '103:3:4'
+      }
+    ]
+  },
+  {
+    id: 's-h-d',
+    rootArabic: 'ش ه د',
+    rootArabicJoined: 'شهد',
+    rootLatin: 'syahadat',
+    titleIndo: 'Syahadat / Kesaksian / Persaksian / Hadir',
+    titleEnglish: 'Witness / Testimony / Martyrdom / Presence',
+    meaningsIndonesian: [
+      'Pernyataan kesaksian keimanan (Syahadatayn)',
+      'Kehadiran secara langsung menyaksikan peristiwa',
+      'Mati syahid membela kebenaran di jalan Allah'
+    ],
+    etymologyNote: 'Secara etimologi, "S-H-D" bermakna "kehadiran dengan mata kepala atau ilmu yakin yang jelas" (الحضور مع المشاهدة العلمية). Syahadat adalah pengakuan yakin.',
+    totalOccurrences: 160,
+    verbsCount: 62,
+    nounsCount: 98,
+    tags: ['syahadat', 'saksi', 'persaksian', 'syahid', 's-h-d', 'witness', 'testimony', 'شهد', 'ش-ه-د'],
+    verbs: [
+      { id: 'shd-v1', arabic: 'شَهِدَ', transliteration: 'shahida', type: 'verb', form: 'Form I', posTag: 'Fi\'il Madhi', meaningIndo: 'Ia telah bersaksi / menyaksikan', frequency: 32 }
+    ],
+    nouns: [
+      { id: 'shd-n1', arabic: 'شَهَادَةً', transliteration: 'shahaadatan', type: 'noun', posTag: 'Masdar (Kesaksian)', meaningIndo: 'Kesaksian / Syahadat', frequency: 28 },
+      { id: 'shd-n2', arabic: 'شَهِيدٌ', transliteration: 'shahiidun', type: 'noun', posTag: 'Isim (Saksi/Mati Syahid)', meaningIndo: 'Saksi / Maha Menyaksikan', frequency: 35 }
+    ],
+    occurrences: [
+      {
+        surahNumber: 3,
+        ayahNumber: 18,
+        surahNameIndo: 'Ali \'Imran',
+        surahNameArabic: 'آل عمران',
+        verseArabic: 'شَهِدَ اللَّهُ أَنَّهُ لَا إِلَٰهَ إِلَّا هُوَ وَالْمَلَائِكَةُ وَأُولُو الْعِلْمِ قَائِمًا بِالْقِسْطِ',
+        verseIndo: 'Allah menyatakan bahwa tidak ada tuhan selain Dia; (demikian pula) para malaikat dan orang berilmu...',
+        matchedWordArabic: 'شَهِدَ',
+        matchedWordIndo: 'menyatakan/bersaksi',
+        wordLocation: '3:18:1'
       }
     ]
   },
@@ -314,65 +281,18 @@ export const ROOT_DATABASE: RootWord[] = [
     meaningsIndonesian: [
       'Menahan jiwa dari kegelisahan dan rasa murka',
       'Ketabahan dan keteguhan dalam menghadapi ujian dan cobaan',
-      'Pengangkatan beban dengan ketahanan moral yang kuat',
-      'Ketaatan yang konsisten dalam menjalankan perintah Allah'
+      'Pengangkatan beban dengan ketahanan moral yang kuat'
     ],
-    etymologyNote: 'Secara linguistik dan etimologi klasik (sebagaimana dicatat oleh Ibnu Manzhur dalam Lisan al-Arab & Al-Khalil ibn Ahmad), kata asal "صَبَر" (sobaro) merujuk pada "batu yang sangat keras dan padat" (الصَّبْرَةُ - batu licin yang kokoh tak tergerus), serta jenis tanaman herbal yang rasanya sangat pahit namun kaya obat (lidah buaya/aloe). Dari akar ini melahirkan makna "menahan diri dengan kekokohan layaknya batu keras" di tengah pahitnya ujian hidup.',
+    etymologyNote: 'Secara etimologi klasik, kata asal "صَبَر" (sobaro) merujuk pada "batu yang sangat keras dan padat" (الصَّبْرَةُ), serta tanaman herbal lidah buaya yang sangat pahit namun kaya obat.',
     totalOccurrences: 103,
     verbsCount: 46,
     nounsCount: 57,
-    tags: ['sabar', 'sabara', 'sobar', 'sobaro', 'batu', 'batu keras', 'tanaman pahit', 'tabah', 'menahan', 'patience', 'endure', 'steadfast', 'صبر', 'ص-ب-ر'],
+    tags: ['sabar', 'sabara', 'sobar', 'sobaro', 'batu', 'batu keras', 'tanaman pahit', 'tabah', 'menahan', 'patience', 'endure', 'صبر', 'ص-ب-r'],
     verbs: [
-      {
-        id: 'sbr-v1',
-        arabic: 'صَبَرَ',
-        transliteration: 'sabara',
-        type: 'verb',
-        form: 'Form I',
-        posTag: 'Fi\'il Madhi (Bentuk Lampau)',
-        meaningIndo: 'Ia telah bersabar / menahan diri',
-        frequency: 24
-      },
-      {
-        id: 'sbr-v2',
-        arabic: 'يَصْبِرُ',
-        transliteration: 'yasbiru',
-        type: 'verb',
-        form: 'Form I',
-        posTag: 'Fi\'il Mudhari\' (Bentuk Sekarang/Akan Datang)',
-        meaningIndo: 'Ia sedang/akan bersabar',
-        frequency: 12
-      },
-      {
-        id: 'sbr-v3',
-        arabic: 'اصْبِرْ',
-        transliteration: 'isbir',
-        type: 'verb',
-        form: 'Form I',
-        posTag: 'Fi\'il Amr (Kata Kerja Perintah)',
-        meaningIndo: 'Bersabarlah kamu!',
-        frequency: 19
-      }
+      { id: 'sbr-v1', arabic: 'صَبَرَ', transliteration: 'sabara', type: 'verb', form: 'Form I', posTag: 'Fi\'il Madhi', meaningIndo: 'Ia telah bersabar', frequency: 24 }
     ],
     nouns: [
-      {
-        id: 'sbr-n1',
-        arabic: 'صَبْرٌ',
-        transliteration: 'sabrun',
-        type: 'noun',
-        posTag: 'Masdar (Kata Benda Abstrak)',
-        meaningIndo: 'Kesabaran / Ketabahan jiwa',
-        frequency: 15
-      },
-      {
-        id: 'sbr-n2',
-        arabic: 'الصَّابِرِينَ',
-        transliteration: 'as-saabiriin',
-        type: 'noun',
-        posTag: 'Isim Fa\'il Jamak (Orang-orang yang Sabar)',
-        meaningIndo: 'Orang-orang yang senantiasa bersabar',
-        frequency: 32
-      }
+      { id: 'sbr-n1', arabic: 'صَبْرٌ', transliteration: 'sabrun', type: 'noun', posTag: 'Masdar', meaningIndo: 'Kesabaran / Ketabahan jiwa', frequency: 15 }
     ],
     occurrences: [
       {
@@ -381,7 +301,7 @@ export const ROOT_DATABASE: RootWord[] = [
         surahNameIndo: 'Al-Baqarah',
         surahNameArabic: 'البقرة',
         verseArabic: 'يَا أَيُّهَا الَّذِينَ آمَنُوا اسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ ۚ إِنَّ اللَّهَ مَعَ الصَّابِرِينَ',
-        verseIndo: 'Wahai orang-orang yang beriman! Mohonlah pertolongan (kepada Allah) dengan sabar dan salat. Sungguh, Allah beserta orang-orang yang sabar.',
+        verseIndo: 'Wahai orang-orang yang beriman! Mohonlah pertolongan (kepada Allah) dengan sabar dan salat.',
         matchedWordArabic: 'بِالصَّبْرِ',
         matchedWordIndo: 'dengan sabar',
         wordLocation: '2:153:4'
@@ -398,36 +318,18 @@ export const ROOT_DATABASE: RootWord[] = [
     meaningsIndonesian: [
       'Mengumpulkan huruf dan makna menjadi satu tulisan',
       'Mewajibkan atau menetapkan suatu hukum (Taklif)',
-      'Kitab suci petunjuk wahyu',
-      'Catatan takdir dan amal manusia'
+      'Kitab suci petunjuk wahyu'
     ],
-    etymologyNote: 'Secara etimologi, asal kata "K-T-B" berarti "mengumpulkan sesuatu dengan jahitan atau ikatan" (الجمع والكتابة). Dari sini tulisan disebut kitab karena mengumpulkan huruf-huruf menjadi frasa dan makna yang terikat.',
+    etymologyNote: 'Secara etimologi, asal kata "K-T-B" berarti "mengumpulkan sesuatu dengan jahitan atau ikatan" (الجمع والكتابة).',
     totalOccurrences: 319,
     verbsCount: 58,
     nounsCount: 261,
-    tags: ['kataba', 'k-t-b', 'kitab', 'tulis', 'menulis', 'catat', 'hukum', 'takdir', 'write', 'book', 'decree', 'كتب', 'ك-ت-ب'],
+    tags: ['kataba', 'k-t-b', 'kitab', 'tulis', 'menulis', 'catat', 'hukum', 'write', 'book', 'decree', 'كتب', 'ك-ت-ب'],
     verbs: [
-      {
-        id: 'ktb-v1',
-        arabic: 'كَتَبَ',
-        transliteration: 'kataba',
-        type: 'verb',
-        form: 'Form I',
-        posTag: 'Fi\'il Madhi',
-        meaningIndo: 'Ia telah menulis / menetapkan',
-        frequency: 56
-      }
+      { id: 'ktb-v1', arabic: 'كَتَبَ', transliteration: 'kataba', type: 'verb', form: 'Form I', posTag: 'Fi\'il Madhi', meaningIndo: 'Ia telah menulis / menetapkan', frequency: 56 }
     ],
     nouns: [
-      {
-        id: 'ktb-n1',
-        arabic: 'كِتَابٌ',
-        transliteration: 'kitaabun',
-        type: 'noun',
-        posTag: 'Isim (Buku / Wahyu)',
-        meaningIndo: 'Kitab / Buku / Ketetapan',
-        frequency: 230
-      }
+      { id: 'ktb-n1', arabic: 'كِتَابٌ', transliteration: 'kitaabun', type: 'noun', posTag: 'Isim (Buku/Wahyu)', meaningIndo: 'Kitab / Buku / Ketetapan', frequency: 230 }
     ],
     occurrences: [
       {
@@ -455,33 +357,16 @@ export const ROOT_DATABASE: RootWord[] = [
       'Ilmu pengetahuan dan wawasan kebenaran',
       'Tanda atau kejelasan penunjuk jalan'
     ],
-    etymologyNote: 'Akar kata "ع-ل-م" mencakup dua cabang utama: Ilmu (pengetahuan jelas tanpa keraguan) dan Alam/Alamat (tanda jejak yang membimbing).',
+    etymologyNote: 'Akar kata "ع-ل-م" mencakup ilmu (pengetahuan) dan Alam/Alamat (tanda penunjuk).',
     totalOccurrences: 854,
     verbsCount: 382,
     nounsCount: 472,
-    tags: ['alima', 'a-l-m', 'ilm', 'ilmu', 'tahu', 'mengetahui', 'pengetahuan', 'alam', 'knowledge', 'learn', 'علم', 'ع-ل-م'],
+    tags: ['alima', 'a-l-m', 'ilm', 'ilmu', 'tahu', 'mengetahui', 'pengetahuan', 'knowledge', 'learn', 'علم', 'ع-ل-م'],
     verbs: [
-      {
-        id: 'alm-v1',
-        arabic: 'عَلِمَ',
-        transliteration: 'alima',
-        type: 'verb',
-        form: 'Form I',
-        posTag: 'Fi\'il Madhi',
-        meaningIndo: 'Ia telah mengetahui',
-        frequency: 140
-      }
+      { id: 'alm-v1', arabic: 'عَلِمَ', transliteration: 'alima', type: 'verb', form: 'Form I', posTag: 'Fi\'il Madhi', meaningIndo: 'Ia telah mengetahui', frequency: 140 }
     ],
     nouns: [
-      {
-        id: 'alm-n1',
-        arabic: 'عِلْمٌ',
-        transliteration: 'ilmun',
-        type: 'noun',
-        posTag: 'Masdar (Ilmu/Pengetahuan)',
-        meaningIndo: 'Ilmu pengetahuan',
-        frequency: 105
-      }
+      { id: 'alm-n1', arabic: 'عِلْمٌ', transliteration: 'ilmun', type: 'noun', posTag: 'Masdar', meaningIndo: 'Ilmu pengetahuan', frequency: 105 }
     ],
     occurrences: [
       {
@@ -509,22 +394,14 @@ export const ROOT_DATABASE: RootWord[] = [
       'Kelembutan hati yang mendorong kebaikan',
       'Rahim ibu (hubungan kekerabatan/silaturahmi)'
     ],
-    etymologyNote: 'Akar "ر-ح-م" bermakna dasar kelembutan dan kasih yang mengayomi, bersumber dari nama Allah Ar-Rahman & Ar-Rahim.',
+    etymologyNote: 'Akar "ر-ح-m" bermakna dasar kelembutan dan kasih yang mengayomi.',
     totalOccurrences: 339,
     verbsCount: 65,
     nounsCount: 274,
-    tags: ['rahima', 'r-h-m', 'rahmah', 'rahmat', 'kasih', 'sayang', 'rahim', 'mercy', 'compassion', 'رحم', 'ر-ح-م'],
+    tags: ['rahima', 'r-h-m', 'rahmah', 'rahmat', 'kasih', 'sayang', 'mercy', 'compassion', 'رحم', 'ر-ح-م'],
     verbs: [],
     nouns: [
-      {
-        id: 'rhm-n1',
-        arabic: 'رَحْمَةٌ',
-        transliteration: 'rahmatun',
-        type: 'noun',
-        posTag: 'Masdar (Rahmat / Karunia)',
-        meaningIndo: 'Rahmat / Kasih sayang',
-        frequency: 114
-      }
+      { id: 'rhm-n1', arabic: 'رَحْمَةٌ', transliteration: 'rahmatun', type: 'noun', posTag: 'Masdar', meaningIndo: 'Rahmat / Kasih sayang', frequency: 114 }
     ],
     occurrences: [
       {
