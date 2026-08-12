@@ -6,6 +6,7 @@ export interface WordSegment {
   posTagCode: 'N' | 'V' | 'P' | 'PRON';
   rootArabic?: string;       // e.g. "ص ل و"
   meaningIndo: string;
+  wordLocation?: string;    // e.g. "2:153:4"
 }
 
 export interface DerivativeWord {

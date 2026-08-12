@@ -1,27 +1,39 @@
 'use client';
 
 import { useState } from 'react';
-import { Layers, Search, Compass } from 'lucide-react';
+import { Layers, Search, Compass, X } from 'lucide-react';
 import { ROOT_DATABASE } from '@/lib/data/roots';
-import { searchRoots } from '@/lib/search/root-search';
+import { searchRoots, stripArabicHarakat } from '@/lib/search/root-search';
 import RootCard from '@/components/RootCard';
+
+const HIJAIYYAH_LETTERS = [
+  'أ', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'هـ', 'و', 'ي'
+];
 
 export default function MorfologiPage() {
   const [filterQuery, setFilterQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'high_verbs' | 'high_nouns'>('all');
+  const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
 
   let filteredRoots = searchRoots(filterQuery);
 
+  if (selectedLetter) {
+    filteredRoots = filteredRoots.filter((r) => {
+      const firstChar = stripArabicHarakat(r.rootArabicJoined.trim())[0];
+      return firstChar === selectedLetter || r.rootArabic.startsWith(selectedLetter);
+    });
+  }
+
   if (selectedCategory === 'high_verbs') {
-    filteredRoots = filteredRoots.filter(r => r.verbsCount >= r.nounsCount);
+    filteredRoots = filteredRoots.filter((r) => r.verbsCount >= r.nounsCount);
   } else if (selectedCategory === 'high_nouns') {
-    filteredRoots = filteredRoots.filter(r => r.nounsCount > r.verbsCount);
+    filteredRoots = filteredRoots.filter((r) => r.nounsCount > r.verbsCount);
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 sm:px-12 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header Banner */}
-      <div className="p-8 sm:p-10 rounded-2xl bg-white border border-hairline shadow-soft gradient-mesh space-y-4">
+      <div className="p-8 sm:p-10 rounded-3xl bg-white border border-hairline shadow-soft gradient-mesh space-y-4">
         <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-primary-subdued text-primary-deep text-xs font-semibold uppercase tracking-wider">
           <Layers className="w-3.5 h-3.5" />
           <span>Katalog Index Morfologi</span>
@@ -81,6 +93,43 @@ export default function MorfologiPage() {
             </button>
           </div>
         </div>
+
+        {/* Arabic Hijaiyyah Index Filter Bar */}
+        <div className="pt-3 border-t border-hairline">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-mono font-semibold text-slate-500 uppercase tracking-wider">
+              Filter Berdasarkan Huruf Abjad Arab (أ - ي):
+            </span>
+            {selectedLetter && (
+              <button
+                onClick={() => setSelectedLetter(null)}
+                className="inline-flex items-center space-x-1 text-xs text-rose-500 hover:text-rose-600 font-mono font-semibold"
+              >
+                <X className="w-3 h-3" />
+                <span>Reset Huruf ({selectedLetter})</span>
+              </button>
+            )}
+          </div>
+
+          <div className="flex flex-wrap gap-1.5 dir-rtl">
+            {HIJAIYYAH_LETTERS.map((letter) => {
+              const isSelected = selectedLetter === letter;
+              return (
+                <button
+                  key={letter}
+                  onClick={() => setSelectedLetter(isSelected ? null : letter)}
+                  className={`w-8 h-8 rounded-xl font-arabic text-lg font-bold transition-all flex items-center justify-center ${
+                    isSelected
+                      ? 'bg-primary text-white shadow-md scale-110'
+                      : 'bg-canvas-soft hover:bg-slate-100 border border-hairline text-ink-primary'
+                  }`}
+                >
+                  {letter}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Root Grid */}
@@ -90,11 +139,17 @@ export default function MorfologiPage() {
           <span>Diurutkan berdasarkan relevansi</span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredRoots.map((root) => (
-            <RootCard key={root.id} root={root} />
-          ))}
-        </div>
+        {filteredRoots.length === 0 ? (
+          <div className="p-12 text-center bg-canvas-soft border border-hairline rounded-3xl text-slate-500 font-sans">
+            Tidak ada akar kata yang cocok dengan filter. Cobalah reset huruf abjad atau kata kunci pencarian.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredRoots.map((root) => (
+              <RootCard key={root.id} root={root} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

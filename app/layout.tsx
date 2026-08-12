@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Navbar from '@/components/Navbar';
+import MobileBottomNav from '@/components/MobileBottomNav';
 
 export const metadata: Metadata = {
   title: 'Qubaric (Indo) - Quranic Arabic Corpus & Root Word Explorer',
@@ -15,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" className="scroll-smooth">
-      <body className="min-h-screen flex flex-col bg-canvas-soft text-ink-primary selection:bg-primary-subdued selection:text-primary-deep font-sans">
+      <body className="min-h-screen flex flex-col bg-canvas-soft text-ink-primary selection:bg-primary-subdued selection:text-primary-deep font-sans pb-16 md:pb-0">
         <Navbar />
         <main className="flex-1 w-full">
           {children}
@@ -27,7 +28,7 @@ export default function RootLayout({
             </div>
             <div className="flex flex-wrap justify-center gap-6 text-sm text-ink-mute">
               <a className="hover:text-primary transition-colors" href="/morfologi">Katalog Morfologi</a>
-              <a className="hover:text-primary transition-colors" href="/akar/s-b-r">Akar Sabar</a>
+              <a className="hover:text-primary transition-colors" href="/favorit">Akar Tersimpan</a>
               <a className="hover:text-primary transition-colors" href="https://github.com/AIZATFIR/Qurabic-Indo" target="_blank" rel="noreferrer">GitHub Repo</a>
             </div>
             <div className="text-xs text-ink-mute">
@@ -35,6 +36,9 @@ export default function RootLayout({
             </div>
           </div>
         </footer>
+
+        {/* Mobile Bottom Navigation */}
+        <MobileBottomNav />
       </body>
     </html>
   );

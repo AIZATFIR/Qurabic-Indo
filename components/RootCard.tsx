@@ -1,57 +1,84 @@
+'use client';
+
+import React from 'react';
 import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
 import { RootWord } from '@/lib/types/morphology';
+import { useBookmarks } from '@/lib/hooks/useBookmarks';
+import { Heart, BookOpen, Layers } from 'lucide-react';
 
 interface RootCardProps {
   root: RootWord;
 }
 
 export default function RootCard({ root }: RootCardProps) {
+  const { isBookmarked, toggleBookmark } = useBookmarks();
+  const bookmarked = isBookmarked(root.id);
+
   return (
-    <Link
-      href={`/akar/${root.id}`}
-      className="bg-white p-7 rounded-xl border border-hairline shadow-soft hover:shadow-hover transition-all cursor-pointer group flex flex-col justify-between"
-    >
+    <div className="group bg-white border border-hairline rounded-3xl p-6 shadow-soft hover:shadow-hover hover:border-primary/40 transition-all duration-300 flex flex-col justify-between relative">
+      {/* Bookmark Button */}
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleBookmark(root.id);
+        }}
+        title={bookmarked ? 'Hapus dari Favorit' : 'Simpan ke Favorit'}
+        className={`absolute top-5 right-5 p-2 rounded-full border transition-all z-10 ${
+          bookmarked
+            ? 'bg-rose-50 border-rose-200 text-rose-500 scale-110 shadow-sm'
+            : 'bg-canvas-soft border-hairline text-slate-400 hover:text-rose-500 hover:bg-rose-50'
+        }`}
+      >
+        <Heart className={`w-4 h-4 ${bookmarked ? 'fill-current' : ''}`} />
+      </button>
+
       <div>
-        {/* Top Badges */}
-        <div className="flex justify-between items-start mb-4">
-          <span className="bg-primary-subdued text-primary-deep px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider">
-            AKAR: {root.rootLatin.toUpperCase()}
-          </span>
-          <span className="font-mono text-xs text-ink-mute">
-            Occurrences: {root.totalOccurrences.toLocaleString()}
-          </span>
+        {/* Occurrences Tag */}
+        <div className="inline-flex items-center space-x-1.5 px-3 py-1 bg-primary-subdued text-primary-deep text-xs font-mono font-bold rounded-full mb-4">
+          <span>{root.totalOccurrences} KEMUNCULAN</span>
         </div>
 
-        {/* Arabic Root Display */}
-        <h3 className="text-3xl font-bold font-arabic text-ink-primary mb-2 group-hover:text-primary transition-colors text-right" dir="rtl">
-          {root.rootArabic}
-        </h3>
-
-        {/* Title & Meaning in Indonesian */}
-        <h4 className="font-semibold text-base text-ink-primary group-hover:text-primary transition-colors mb-1">
-          {root.titleIndo}
-        </h4>
-        <p className="text-xs text-ink-secondary mb-4 line-clamp-2 leading-relaxed">
-          {root.meaningsIndonesian[0]}
-        </p>
-
-        {/* Etymology Note if available */}
-        {root.etymologyNote && (
-          <div className="mb-4 p-2.5 rounded-lg bg-amber-50 border border-amber-200/60 text-[11px] text-amber-900 leading-relaxed italic">
-            <span className="font-semibold not-italic">💡 Etimologi Klasik: </span>
-            {root.etymologyNote.length > 85 ? `${root.etymologyNote.slice(0, 85)}...` : root.etymologyNote}
+        {/* Arabic Root & Title */}
+        <Link href={`/akar/${root.id}`} className="block group-hover:text-primary transition-colors">
+          <div className="flex items-baseline space-x-3 mb-2">
+            <h3 className="font-arabic text-3xl font-bold text-ink-primary group-hover:text-primary transition-colors">
+              {root.rootArabic}
+            </h3>
+            <span className="text-lg font-medium text-slate-500 font-sans">
+              ({root.rootLatin})
+            </span>
           </div>
-        )}
+
+          <p className="text-sm font-semibold text-slate-800 line-clamp-1 mb-3">
+            {root.titleIndo}
+          </p>
+
+          <p className="text-xs text-slate-500 leading-relaxed line-clamp-2 mb-4 font-sans">
+            {root.etymologyNote}
+          </p>
+        </Link>
       </div>
 
-      {/* Footer Info & Arrow */}
-      <div className="pt-4 border-t border-hairline flex justify-between items-center text-xs text-ink-secondary">
-        <span className="font-mono">
-          Bentuk Kata: {root.verbsCount + root.nounsCount} ({root.verbsCount} Fi&apos;il, {root.nounsCount} Isim)
-        </span>
-        <ChevronRight className="w-4 h-4 text-ink-mute group-hover:text-primary group-hover:translate-x-1 transition-all" />
+      {/* Derivatives Counter & Action Link */}
+      <div className="pt-4 border-t border-hairline flex items-center justify-between">
+        <div className="flex items-center space-x-3 text-xs font-mono text-slate-500">
+          <span className="flex items-center space-x-1">
+            <Layers className="w-3.5 h-3.5 text-primary" />
+            <span>{root.verbsCount} Fi&apos;il</span>
+          </span>
+          <span>•</span>
+          <span>{root.nounsCount} Isim</span>
+        </div>
+
+        <Link
+          href={`/akar/${root.id}`}
+          className="inline-flex items-center space-x-1 text-xs font-semibold text-primary hover:text-primary-deep transition-colors"
+        >
+          <span>Jelajahi</span>
+          <BookOpen className="w-3.5 h-3.5" />
+        </Link>
       </div>
-    </Link>
+    </div>
   );
 }

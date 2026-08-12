@@ -1,12 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { BookOpen, Search, Sparkles } from 'lucide-react';
+import { BookOpen, Search, Heart } from 'lucide-react';
 import OmniSearch from './OmniSearch';
 import { useState } from 'react';
+import { useBookmarks } from '@/lib/hooks/useBookmarks';
 
 export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { bookmarkedIds } = useBookmarks();
 
   return (
     <>
@@ -44,7 +46,19 @@ export default function Navbar() {
                 className="hover:text-primary transition-colors flex items-center space-x-1.5"
               >
                 <BookOpen className="w-4 h-4 text-primary" />
-                <span>Katalog Morfologi Lengkap</span>
+                <span>Katalog Morfologi</span>
+              </Link>
+              <Link
+                href="/favorit"
+                className="hover:text-primary transition-colors flex items-center space-x-1.5 relative"
+              >
+                <Heart className="w-4 h-4 text-rose-500 fill-rose-500/20" />
+                <span>Akar Tersimpan</span>
+                {bookmarkedIds.length > 0 && (
+                  <span className="w-4 h-4 rounded-full bg-rose-500 text-white text-[10px] font-mono font-bold flex items-center justify-center">
+                    {bookmarkedIds.length}
+                  </span>
+                )}
               </Link>
             </nav>
 
