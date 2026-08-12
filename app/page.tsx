@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Search, Sparkles, BookOpen, Layers, Compass, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Search, ArrowRight, Sparkles, BookOpen, Layers } from 'lucide-react';
 import { ROOT_DATABASE } from '@/lib/data/roots';
 import RootCard from '@/components/RootCard';
 import OmniSearch from '@/components/OmniSearch';
@@ -11,156 +11,145 @@ export default function HomePage() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
-    <div className="space-y-12 py-4">
+    <div className="space-y-16 pb-16">
       
-      {/* HERO SECTION */}
-      <section className="relative rounded-3xl p-8 sm:p-12 glass-panel border border-slate-800 overflow-hidden text-center sm:text-left flex flex-col lg:flex-row items-center justify-between gap-8">
-        
-        {/* Background Glow */}
-        <div className="absolute -top-24 -left-24 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-2xl space-y-5 relative z-10">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+      {/* HERO SECTION WITH ATMOSPHERIC GRADIENT MESH */}
+      <header className="relative pt-20 pb-20 overflow-hidden bg-white gradient-mesh border-b border-hairline">
+        <div className="max-w-4xl mx-auto px-6 text-center relative z-10 space-y-6">
+          
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-primary-subdued text-primary-deep text-xs font-semibold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Versi Bahasa Indonesia • Quranic Arabic Corpus</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
-            Eksplorasi Morfologi &amp; Akar Kata <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-amber-300">Al-Qur&apos;an</span>
+          <h1 className="text-5xl sm:text-7xl font-light text-ink-primary tracking-tight font-sans">
+            Qurabic
           </h1>
 
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Temukan makna mendalam setiap kata Al-Qur&apos;an lewat database akar kata ber-transliterasi Latin, penjelasan etimologi klasik, klasifikasi Fi&apos;il &amp; Isim, serta kemunculan ayat secara presisi.
+          <p className="text-lg sm:text-xl text-ink-mute font-light max-w-2xl mx-auto leading-relaxed">
+            Quranic Arabic Corpus &amp; Root Word Explorer (Bahasa Indonesia)
           </p>
 
-          {/* Large Hero Search Input Button */}
-          <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
+          {/* Search Pill Input */}
+          <div className="max-w-2xl mx-auto relative group pt-2">
+            <Search className="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-ink-mute" />
+            <input
+              onClick={() => setIsSearchOpen(true)}
+              readOnly
+              type="text"
+              placeholder="Cari akar kata (Arab / Latin 'sabar' / Indonesia 'batu')..."
+              className="w-full pl-14 pr-36 py-4 rounded-full border border-hairline-input bg-white shadow-soft hover:shadow-hover focus:outline-none focus:ring-2 focus:ring-primary font-sans text-base text-ink-primary cursor-pointer transition-all placeholder:text-ink-mute"
+            />
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="w-full sm:w-auto flex-1 flex items-center justify-between px-5 py-3.5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 hover:border-emerald-400 text-slate-300 hover:text-white transition-all shadow-glow-emerald group"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-white hover:bg-primary-deep font-semibold text-sm px-6 py-2.5 rounded-full transition-colors shadow-sm flex items-center space-x-1"
             >
-              <div className="flex items-center space-x-3">
-                <Search className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" />
-                <span className="text-sm font-medium">Cari akar kata (Arab / Latin &quot;sabar&quot; / Indo)...</span>
-              </div>
-              <kbd className="hidden sm:inline-block px-2 py-1 text-xs bg-slate-800 border border-slate-700 rounded-lg text-slate-400 font-mono">
-                ⌘K
-              </kbd>
-            </button>
-
-            <Link
-              href="/akar/s-b-r"
-              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-obsidian-950 font-bold text-sm flex items-center justify-center space-x-2 shadow-lg transition-all"
-            >
-              <span>Lihat Akar Sabar</span>
+              <span>Cari</span>
               <ArrowRight className="w-4 h-4" />
-            </Link>
+            </button>
           </div>
 
-          {/* Quick Tag suggestions */}
-          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-xs text-slate-400 pt-2">
-            <span className="text-slate-500 font-medium">Pencarian Populer:</span>
-            <button onClick={() => setIsSearchOpen(true)} className="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-emerald-400 border border-slate-700/60">
-              ص-ب-ر (Sabar)
+          {/* Quick suggestions */}
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-ink-mute pt-2">
+            <span className="font-medium">Populer:</span>
+            <button onClick={() => setIsSearchOpen(true)} className="px-3 py-1 rounded-full bg-canvas-soft border border-hairline hover:border-primary text-primary font-medium">
+              ص-ب-ر (Sabar / Batu)
             </button>
-            <button onClick={() => setIsSearchOpen(true)} className="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-amber-400 border border-slate-700/60">
-              batu (sobaro)
-            </button>
-            <button onClick={() => setIsSearchOpen(true)} className="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-slate-300 border border-slate-700/60">
+            <button onClick={() => setIsSearchOpen(true)} className="px-3 py-1 rounded-full bg-canvas-soft border border-hairline hover:border-primary text-ink-secondary">
               ك-ت-ب (Kitab/Tulis)
             </button>
-            <button onClick={() => setIsSearchOpen(true)} className="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-slate-300 border border-slate-700/60">
+            <button onClick={() => setIsSearchOpen(true)} className="px-3 py-1 rounded-full bg-canvas-soft border border-hairline hover:border-primary text-ink-secondary">
+              ع-ل-م (Ilmu/Alam)
+            </button>
+            <button onClick={() => setIsSearchOpen(true)} className="px-3 py-1 rounded-full bg-canvas-soft border border-hairline hover:border-primary text-ink-secondary">
               ر-ح-م (Rahmah)
             </button>
           </div>
-        </div>
 
-        {/* Feature Hero Card Graphic */}
-        <div className="relative z-10 w-full lg:w-80 p-6 rounded-2xl glass-panel border border-emerald-500/30 bg-slate-900/80 shadow-2xl text-center space-y-4">
-          <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-emerald-500 to-amber-400 flex items-center justify-center text-obsidian-950 font-bold font-arabic text-3xl shadow-glow-emerald">
-            صبر
-          </div>
-          <div>
-            <span className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest">Akar Utama</span>
-            <h2 className="text-xl font-bold text-white mt-1">S-B-R (Sabar)</h2>
-            <p className="text-xs text-amber-300/90 mt-1 italic">
-              &quot;Batu yang sangat keras &amp; kekokohan jiwa di tengah pahitnya ujian&quot;
-            </p>
-          </div>
-          <div className="pt-3 border-t border-slate-800 grid grid-cols-2 gap-2 text-center text-xs">
-            <div className="p-2 rounded-lg bg-slate-800/60">
-              <span className="block text-emerald-400 font-bold text-sm">46x</span>
-              <span className="text-[10px] text-slate-400">Kata Kerja (Fi&apos;il)</span>
-            </div>
-            <div className="p-2 rounded-lg bg-slate-800/60">
-              <span className="block text-amber-400 font-bold text-sm">57x</span>
-              <span className="text-[10px] text-slate-400">Kata Benda (Isim)</span>
-            </div>
-          </div>
         </div>
-      </section>
+      </header>
 
-      {/* FEATURED ROOTS BENTO GRID */}
-      <section className="space-y-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      {/* CATALOG SECTION: EXPLORE ROOT WORDS */}
+      <main className="max-w-7xl mx-auto px-6 sm:px-12 space-y-12">
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
           <div>
-            <div className="flex items-center space-x-2 text-emerald-400 text-xs font-bold uppercase tracking-wider">
-              <Compass className="w-4 h-4" />
-              <span>Database Akar Kata Utama</span>
-            </div>
-            <h2 className="text-2xl font-extrabold text-white mt-1">Katalog Morfologi Pilihan</h2>
+            <h2 className="text-3xl font-light text-ink-primary tracking-tight">Explore Root Words</h2>
+            <p className="text-sm text-ink-mute mt-1">Browse the fundamental building blocks of the Quranic text dalam Bahasa Indonesia.</p>
           </div>
           <Link
             href="/morfologi"
-            className="text-xs text-slate-300 hover:text-emerald-400 flex items-center space-x-1 font-semibold transition-colors"
+            className="text-sm font-semibold text-primary hover:text-primary-deep flex items-center space-x-1 transition-colors"
           >
-            <span>Lihat Semua Akar Kata</span>
+            <span>View All Roots</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {/* 3-Column Root Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {ROOT_DATABASE.map((root) => (
             <RootCard key={root.id} root={root} />
           ))}
         </div>
-      </section>
 
-      {/* FEATURE HIGHLIGHTS */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-        <div className="p-6 rounded-2xl glass-panel border border-slate-800 space-y-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
-            <Search className="w-5 h-5" />
+        {/* FEATURED LEMMAS SECTION */}
+        <div className="pt-12 border-t border-hairline space-y-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
+            <div>
+              <h2 className="text-3xl font-light text-ink-primary tracking-tight">Featured Lemmas</h2>
+              <p className="text-sm text-ink-mute mt-1">Specific word forms and their contextual definitions in the Quran.</p>
+            </div>
+            <Link
+              href="/akar/s-b-r"
+              className="text-sm font-semibold text-primary hover:text-primary-deep flex items-center space-x-1 transition-colors"
+            >
+              <span>View All Lemmas</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
-          <h3 className="text-base font-bold text-white">Pencarian Multi-Bahasa</h3>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Cari menggunakan huruf Hijaiyah, transliterasi Latin (&quot;sabar&quot;, &quot;kataba&quot;), Bahasa Indonesia (&quot;batu&quot;, &quot;tulis&quot;), maupun Bahasa Inggris.
-          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {/* Lemma 1 */}
+            <Link href="/akar/k-t-b" className="bg-white p-5 rounded-lg border border-hairline hover:border-primary-subdued hover:shadow-soft transition-all group">
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-2xl font-bold font-arabic text-ink-primary group-hover:text-primary transition-colors" dir="rtl">كِتَاب</span>
+                <span className="font-mono text-xs text-ink-mute bg-canvas-soft px-2.5 py-1 rounded">261</span>
+              </div>
+              <p className="text-xs text-ink-secondary">Kitab, buku, ketetapan hukum.</p>
+            </Link>
+
+            {/* Lemma 2 */}
+            <Link href="/akar/s-b-r" className="bg-white p-5 rounded-lg border border-hairline hover:border-primary-subdued hover:shadow-soft transition-all group">
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-2xl font-bold font-arabic text-ink-primary group-hover:text-primary transition-colors" dir="rtl">صَبْر</span>
+                <span className="font-mono text-xs text-ink-mute bg-canvas-soft px-2.5 py-1 rounded">103</span>
+              </div>
+              <p className="text-xs text-ink-secondary">Kesabaran, ketabahan (etimologi sobaro batu).</p>
+            </Link>
+
+            {/* Lemma 3 */}
+            <Link href="/akar/a-l-m" className="bg-white p-5 rounded-lg border border-hairline hover:border-primary-subdued hover:shadow-soft transition-all group">
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-2xl font-bold font-arabic text-ink-primary group-hover:text-primary transition-colors" dir="rtl">عِلْم</span>
+                <span className="font-mono text-xs text-ink-mute bg-canvas-soft px-2.5 py-1 rounded">854</span>
+              </div>
+              <p className="text-xs text-ink-secondary">Ilmu, pengetahuan, tanda.</p>
+            </Link>
+
+            {/* Lemma 4 */}
+            <Link href="/akar/r-h-m" className="bg-white p-5 rounded-lg border border-hairline hover:border-primary-subdued hover:shadow-soft transition-all group">
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-2xl font-bold font-arabic text-ink-primary group-hover:text-primary transition-colors" dir="rtl">رَحْمَة</span>
+                <span className="font-mono text-xs text-ink-mute bg-canvas-soft px-2.5 py-1 rounded">339</span>
+              </div>
+              <p className="text-xs text-ink-secondary">Kasih sayang, rahmat, rahim.</p>
+            </Link>
+          </div>
         </div>
 
-        <div className="p-6 rounded-2xl glass-panel border border-slate-800 space-y-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold">
-            <BookOpen className="w-5 h-5" />
-          </div>
-          <h3 className="text-base font-bold text-white">Wawasan Etimologi Klasik</h3>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Memahami asal-usul kosa kata klasik Arab (misal akar kata *sobaro* sebagai batu keras atau tanaman pahit) yang memperkaya wawasan tadabbur Al-Qur&apos;an.
-          </p>
-        </div>
+      </main>
 
-        <div className="p-6 rounded-2xl glass-panel border border-slate-800 space-y-3">
-          <div className="w-10 h-10 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center font-bold">
-            <Layers className="w-5 h-5" />
-          </div>
-          <h3 className="text-base font-bold text-white">Pemisahan Fi&apos;il &amp; Isim</h3>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Klasifikasi kata kerja (Fi&apos;il Madhi, Mudhari&apos;, Amr, Form I-X) dan kata benda (Masdar, Isim Fa&apos;il, Mubalaghah) secara terstruktur.
-          </p>
-        </div>
-      </section>
-
-      {/* OmniSearch Modal Trigger */}
+      {/* OmniSearch Modal */}
       <OmniSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </div>
   );

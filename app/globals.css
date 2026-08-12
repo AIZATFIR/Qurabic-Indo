@@ -1,37 +1,45 @@
-@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-arabic: 'Amiri', serif;
 }
 
 body {
-  background-color: #070A10;
-  color: #F3F4F6;
+  font-feature-settings: "ss01" 1, "tnum" 1;
+  background-color: #f6f9fc;
+  color: #0d253d;
   font-family: var(--font-sans);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Glassmorphism Cards */
-.glass-panel {
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+/* Stripi Gradient Mesh Header Backdrop */
+.gradient-mesh {
+  background: radial-gradient(circle at 15% 50%, rgba(83, 58, 253, 0.08), transparent 30%),
+              radial-gradient(circle at 85% 30%, rgba(234, 34, 97, 0.06), transparent 30%),
+              radial-gradient(circle at 50% 20%, rgba(245, 233, 212, 0.4), transparent 40%);
 }
 
-.glass-panel-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Soft Elevation Shadow */
+.shadow-soft {
+  box-shadow: 0 4px 24px -6px rgba(0, 55, 112, 0.08);
 }
 
-.glass-panel-hover:hover {
-  background: rgba(15, 23, 42, 0.85);
-  border-color: rgba(16, 185, 129, 0.3);
-  box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.15);
+.shadow-hover {
+  box-shadow: 0 12px 32px -8px rgba(0, 55, 112, 0.12);
+  transform: translateY(-2px);
+}
+
+/* Glassmorphism panel for cards */
+.glass-panel-light {
+  background: #ffffff;
+  border: 1px solid #e3e8ee;
+  box-shadow: 0 4px 24px -6px rgba(0, 55, 112, 0.08);
 }
 
 /* Custom Scrollbar */
@@ -41,16 +49,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #070A10;
+  background: #f6f9fc;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1F2937;
+  background: #cbd5e1;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #10B981;
+  background: #3904e7;
 }
 
 /* Arabic Text Styling */

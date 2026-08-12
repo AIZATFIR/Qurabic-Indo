@@ -3,9 +3,9 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 
 export const metadata: Metadata = {
-  title: 'Qurabic-Indo | Corpus & Morfologi Akar Kata Al-Qur\'an Bahasa Indonesia',
-  description: 'Aplikasi pencarian & eksplorasi akar kata Al-Qur\'an (Quranic Arabic Corpus) berbahasa Indonesia. Cari kata kerja, kata benda, dan etimologi klasik secara cepat.',
-  keywords: ['quranic corpus', 'akar kata quran', 'morfologi arab', 'bahasa indonesia', 'sabar', 'kamus al quran', 'sharaf nahwu'],
+  title: 'Qubaric (Indo) - Quranic Arabic Corpus & Root Word Explorer',
+  description: 'Quranic Arabic Corpus & Root Word Explorer berbahasa Indonesia. Cari akar kata, lemma, morfologi, dan ayat Al-Qur\'an secara mendalam.',
+  keywords: ['qurabic', 'quranic corpus', 'akar kata quran', 'morfologi arab', 'bahasa indonesia', 'sabar', 'kamus al quran', 'sharaf nahwu'],
 };
 
 export default function RootLayout({
@@ -14,19 +14,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" className="dark">
-      <body className="min-h-screen flex flex-col bg-obsidian-950 text-slate-100 selection:bg-emerald-500 selection:text-obsidian-950">
+    <html lang="id" className="scroll-smooth">
+      <body className="min-h-screen flex flex-col bg-canvas-soft text-ink-primary selection:bg-primary-subdued selection:text-primary-deep font-sans">
         <Navbar />
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <main className="flex-1 w-full">
           {children}
         </main>
-        <footer className="border-t border-slate-800/60 py-8 text-center text-xs text-slate-500 glass-panel mt-12">
-          <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center space-x-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <p className="font-medium text-slate-300">Qurabic-Indo Corpus &copy; {new Date().getFullYear()}</p>
+        <footer className="bg-canvas-soft border-t border-hairline text-caption opacity-90 hover:opacity-100 transition-all duration-200 py-12 mt-16">
+          <div className="max-w-7xl mx-auto px-6 sm:px-12 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="font-bold text-lg text-ink-primary">
+              Qubaric (Indo)
             </div>
-            <p>Database Akar Kata Al-Qur&apos;an &amp; Etimologi Bahasa Indonesia</p>
+            <div className="flex flex-wrap justify-center gap-6 text-sm text-ink-mute">
+              <a className="hover:text-primary transition-colors" href="/morfologi">Katalog Morfologi</a>
+              <a className="hover:text-primary transition-colors" href="/akar/s-b-r">Akar Sabar</a>
+              <a className="hover:text-primary transition-colors" href="https://github.com/AIZATFIR/Qurabic-Indo" target="_blank" rel="noreferrer">GitHub Repo</a>
+            </div>
+            <div className="text-xs text-ink-mute">
+              &copy; {new Date().getFullYear()} Qubaric (Indo). Quranic Arabic Corpus &amp; Root Word Explorer.
+            </div>
           </div>
         </footer>
       </body>

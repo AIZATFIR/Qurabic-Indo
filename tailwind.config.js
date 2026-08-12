@@ -10,33 +10,54 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        obsidian: {
-          950: '#070A10',
-          900: '#0B0F17',
-          800: '#111827',
-          700: '#1F2937',
-          600: '#374151',
+        primary: {
+          DEFAULT: '#3904e7',
+          deep: '#4434d4',
+          press: '#2e2b8c',
+          soft: '#665efd',
+          subdued: '#b9b9f9',
+          fixed: '#e3dfff',
+          'fixed-dim': '#c5c0ff',
         },
-        emerald: {
-          400: '#34D399',
-          500: '#10B981',
-          600: '#059669',
-          700: '#047857',
-          900: '#064E3B',
+        ink: {
+          primary: '#0d253d',
+          secondary: '#273951',
+          mute: '#64748d',
         },
-        amber: {
-          400: '#FBBF24',
-          500: '#F59E0B',
-          600: '#D97706',
-        }
+        canvas: {
+          DEFAULT: '#ffffff',
+          soft: '#f6f9fc',
+          cream: '#f5e9d4',
+        },
+        hairline: {
+          DEFAULT: '#e3e8ee',
+          input: '#a8c3de',
+        },
+        ruby: '#ea2261',
+        magenta: '#f96bee',
+        lemon: '#9b6829',
+        'shadow-blue': '#003770',
       },
-      fontFamily: {
-        sans: ['var(--font-sans)', 'Inter', 'sans-serif'],
-        arabic: ['var(--font-arabic)', 'Amiri', 'Traditional Arabic', 'serif'],
+      borderRadius: {
+        pill: '9999px',
       },
       boxShadow: {
-        'glow-emerald': '0 0 25px -5px rgba(16, 185, 129, 0.25)',
-        'glow-amber': '0 0 25px -5px rgba(245, 158, 11, 0.25)',
+        soft: '0 4px 24px -6px rgba(0, 55, 112, 0.08)',
+        hover: '0 12px 32px -8px rgba(0, 55, 112, 0.12)',
+      },
+      fontFamily: {
+        sans: ['Inter', 'var(--font-sans)', 'system-ui', 'sans-serif'],
+        arabic: ['var(--font-arabic)', 'Amiri', 'Traditional Arabic', 'serif'],
+      },
+      spacing: {
+        xxs: '2px',
+        xs: '4px',
+        sm: '8px',
+        md: '12px',
+        lg: '16px',
+        xl: '24px',
+        xxl: '32px',
+        huge: '64px',
       }
     },
   },
