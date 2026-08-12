@@ -1,11 +1,12 @@
 import { ROOT_DATABASE } from '@/lib/data/roots';
 import { getRootBySlug } from '@/lib/search/root-search';
+import { fetchLiveRoot } from '@/lib/api/quran-corpus-api';
 import { notFound } from 'next/navigation';
 import EtymologyCard from '@/components/EtymologyCard';
 import DerivativesGrid from '@/components/DerivativesGrid';
 import AyahConcordance from '@/components/AyahConcordance';
 import Link from 'next/link';
-import { ArrowLeft, BookOpen, Layers } from 'lucide-react';
+import { ArrowLeft, BookOpen, Layers, Radio } from 'lucide-react';
 
 export function generateStaticParams() {
   return ROOT_DATABASE.map((root) => ({
@@ -13,14 +14,24 @@ export function generateStaticParams() {
   }));
 }
 
+// Allow dynamic params so queries beyond pre-seeded roots fetch live from API
+export const dynamicParams = true;
+
 interface PageProps {
   params: {
     slug: string;
   };
 }
 
-export default function RootDetailPage({ params }: PageProps) {
-  const root = getRootBySlug(params.slug);
+export default async function RootDetailPage({ params }: PageProps) {
+  let root = getRootBySlug(params.slug);
+  let isLiveFetched = false;
+
+  // Real-time Live API Fallback if root is not pre-seeded in static database
+  if (!root) {
+    root = (await fetchLiveRoot(params.slug)) || undefined;
+    isLiveFetched = true;
+  }
 
   if (!root) {
     notFound();
@@ -41,10 +52,19 @@ export default function RootDetailPage({ params }: PageProps) {
       <div className="gradient-mesh bg-white border border-hairline rounded-3xl p-8 sm:p-12 mb-8 shadow-soft">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <div className="inline-flex items-center space-x-2 px-3 py-1 bg-primary-subdued text-primary-deep text-xs font-mono font-bold rounded-full mb-3">
-              <span>AKAR KATA AL-QUR'AN</span>
-              <span>•</span>
-              <span>{root.totalOccurrences} KEMUNCULAN</span>
+            <div className="flex items-center space-x-2 mb-3">
+              <span className="inline-flex items-center space-x-2 px-3 py-1 bg-primary-subdued text-primary-deep text-xs font-mono font-bold rounded-full">
+                <span>AKAR KATA AL-QUR'AN</span>
+                <span>•</span>
+                <span>{root.totalOccurrences} KEMUNCULAN</span>
+              </span>
+
+              {isLiveFetched && (
+                <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 text-xs font-mono font-semibold rounded-full animate-pulse">
+                  <Radio className="w-3 h-3 text-amber-600" />
+                  <span>REAL-TIME LIVE API FETCH</span>
+                </span>
+              )}
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-light text-ink-primary tracking-tight mb-2">
