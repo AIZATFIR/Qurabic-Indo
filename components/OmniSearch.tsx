@@ -200,7 +200,7 @@ export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
             <CornerDownLeft className="w-3.5 h-3.5 text-primary" />
             <span>Tekan <strong className="text-ink-primary">Enter</strong> untuk lihat semua hasil pencarian</span>
           </button>
-          <span className="font-semibold text-primary font-mono">Qubaric (Indo)</span>
+          <span className="font-semibold text-primary font-mono">Qurabic (Indo)</span>
         </div>
 
       </div>
