@@ -1896,11 +1896,11 @@ export const ROOT_DATABASE: RootWord[] = [
     titleIndo: "Sabar / Ketabahan / Menahan Diri",
     titleEnglish: "Patience / Steadfastness",
     meaningsIndonesian: ["Sabar / Ketabahan / Menahan Diri"],
-    etymologyNote: "Penyusunan etimologi dan morfologi Al-Qur'an untuk akar ص ب ر (sabar).",
+    etymologyNote: "Kata sobaro secara etimologi merujuk pada batu yang sangat keras dan padat (الصَّبْرَةُ - batu licin yang kokoh tak tergerus), serta jenis tanaman herbal yang rasanya sangat pahit namun kaya obat (lidah buaya/aloe).",
     totalOccurrences: 103,
     verbsCount: 41,
     nounsCount: 62,
-    tags: ["sabar","s-b-r","صبر","ص ب ر","sabar","ketabahan","menahan","diri"],
+    tags: ["sabar","s-b-r","batu","sobaro","صبر","ص ب ر","ketabahan","menahan","diri"],
     verbs: [{ id: "s-b-r-v1", arabic: "صبر", transliteration: "sabar", type: "verb", form: "Form I", posTag: "Fi'il", meaningIndo: "Sabar / Ketabahan / Menahan Diri", frequency: 103 }],
     nouns: [{ id: "s-b-r-n1", arabic: "صبر", transliteration: "sabar", type: "noun", posTag: "Isim", meaningIndo: "Sabar / Ketabahan / Menahan Diri", frequency: 103 }],
     occurrences: [{ surahNumber: 1, ayahNumber: 1, surahNameIndo: "Al-Qur'an", surahNameArabic: "القرآن", verseArabic: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ", verseIndo: "Sampel ayat untuk akar sabar", matchedWordArabic: "صبر", matchedWordIndo: "sabar", wordLocation: "1:1:1" }]

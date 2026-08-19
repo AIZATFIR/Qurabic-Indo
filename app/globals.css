@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Scheherazade+New:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,63 +6,106 @@
 
 :root {
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-arabic: 'Amiri', serif;
+  --font-arabic: 'Scheherazade New', 'Amiri', 'Traditional Arabic', serif;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   font-feature-settings: "ss01" 1, "tnum" 1;
-  background-color: #f6f9fc;
-  color: #0d253d;
+  background-color: #f8fafc;
+  color: #0f172a;
   font-family: var(--font-sans);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Stripi Gradient Mesh Header Backdrop */
+/* Stripi Subtle Mesh Header Backdrop */
 .gradient-mesh {
-  background: radial-gradient(circle at 15% 50%, rgba(83, 58, 253, 0.08), transparent 30%),
-              radial-gradient(circle at 85% 30%, rgba(234, 34, 97, 0.06), transparent 30%),
-              radial-gradient(circle at 50% 20%, rgba(245, 233, 212, 0.4), transparent 40%);
+  background: radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.05), transparent 30%),
+              radial-gradient(circle at 85% 30%, rgba(225, 29, 72, 0.04), transparent 30%),
+              radial-gradient(circle at 50% 20%, rgba(245, 243, 255, 0.6), transparent 40%);
 }
 
-/* Soft Elevation Shadow */
+/* Soft Elevation Shadows */
 .shadow-soft {
-  box-shadow: 0 4px 24px -6px rgba(0, 55, 112, 0.08);
+  box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.05);
 }
 
 .shadow-hover {
-  box-shadow: 0 12px 32px -8px rgba(0, 55, 112, 0.12);
+  box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.08);
   transform: translateY(-2px);
 }
 
-/* Glassmorphism panel for cards */
+/* Glassmorphism Panel */
 .glass-panel-light {
-  background: #ffffff;
-  border: 1px solid #e3e8ee;
-  box-shadow: 0 4px 24px -6px rgba(0, 55, 112, 0.08);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid #e2e8f0;
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f6f9fc;
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 4px;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3904e7;
+  background: #4f46e5;
 }
 
-/* Arabic Text Styling */
+/* Quranic Arabic Text Styling with Anti-Clipping Line-Height & Harakat Padding */
 .font-arabic {
   font-family: var(--font-arabic);
-  line-height: 1.8;
+  line-height: 2.3;
+  padding-top: 0.15em;
+  padding-bottom: 0.15em;
+  word-spacing: 0.12em;
+  direction: rtl;
+  unicode-bidi: isolate;
+}
+
+/* Large Display Arabic Text */
+.font-arabic-lg {
+  font-family: var(--font-arabic);
+  line-height: 2.5;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  word-spacing: 0.15em;
+  direction: rtl;
+  unicode-bidi: isolate;
+}
+
+/* Kemenag RI Translation Typography */
+.translation-kemenag {
+  font-family: var(--font-sans);
+  line-height: 1.7;
+  color: #334155;
+}
+
+.translation-kemenag::before {
+  content: "“";
+  font-family: serif;
+  font-size: 1.25em;
+  color: #94a3b8;
+  margin-right: 0.15em;
+}
+
+.translation-kemenag::after {
+  content: "”";
+  font-family: serif;
+  font-size: 1.25em;
+  color: #94a3b8;
+  margin-left: 0.15em;
 }

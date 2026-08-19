@@ -6,7 +6,7 @@ import EtymologyCard from '@/components/EtymologyCard';
 import DerivativesGrid from '@/components/DerivativesGrid';
 import AyahConcordance from '@/components/AyahConcordance';
 import Link from 'next/link';
-import { ArrowLeft, BookOpen, Layers, Radio } from 'lucide-react';
+import { ArrowLeft, BookOpen, Layers, Radio, Compass, Sparkles } from 'lucide-react';
 
 export function generateStaticParams() {
   return ROOT_DATABASE.map((root) => ({
@@ -38,18 +38,42 @@ export default async function RootDetailPage({ params }: PageProps) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      {/* Back Button */}
-      <Link
-        href="/"
-        className="inline-flex items-center space-x-2 text-sm text-slate-500 hover:text-primary transition-colors mb-6 font-medium"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        <span>Kembali ke Beranda</span>
-      </Link>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      {/* Top Header Bar */}
+      <div className="flex items-center justify-between">
+        <Link
+          href="/"
+          className="inline-flex items-center space-x-2 text-sm text-slate-500 hover:text-primary transition-colors font-medium"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Kembali ke Beranda</span>
+        </Link>
+
+        {/* Anchor Quick Links */}
+        <div className="hidden sm:flex items-center space-x-2 text-xs font-mono">
+          <a
+            href="#etimologi"
+            className="px-3 py-1.5 rounded-full bg-white border border-hairline hover:border-primary text-slate-600 hover:text-primary transition-all shadow-sm"
+          >
+            #Etimologi
+          </a>
+          <a
+            href="#turunan"
+            className="px-3 py-1.5 rounded-full bg-white border border-hairline hover:border-primary text-slate-600 hover:text-primary transition-all shadow-sm"
+          >
+            #Turunan Kata
+          </a>
+          <a
+            href="#concordance"
+            className="px-3 py-1.5 rounded-full bg-white border border-hairline hover:border-primary text-slate-600 hover:text-primary transition-all shadow-sm"
+          >
+            #Ayah Concordance
+          </a>
+        </div>
+      </div>
 
       {/* Root Banner */}
-      <div className="gradient-mesh bg-white border border-hairline rounded-3xl p-8 sm:p-12 mb-8 shadow-soft">
+      <div className="gradient-mesh bg-white border border-hairline rounded-3xl p-8 sm:p-12 shadow-soft">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
             <div className="flex items-center space-x-2 mb-3">
@@ -68,7 +92,7 @@ export default async function RootDetailPage({ params }: PageProps) {
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-light text-ink-primary tracking-tight mb-2">
-              Akar Kata <span className="font-semibold text-primary">{root.rootArabic}</span> ({root.rootLatin})
+              Akar Kata <span className="font-arabic font-bold text-primary">{root.rootArabic}</span> ({root.rootLatin})
             </h1>
 
             <p className="text-lg text-slate-600 font-sans">
@@ -90,34 +114,36 @@ export default async function RootDetailPage({ params }: PageProps) {
       </div>
 
       {/* Etymology Section */}
-      <div className="mb-8">
+      <section id="etimologi" className="scroll-mt-24">
         <EtymologyCard
           rootArabic={root.rootArabic}
           rootLatin={root.rootLatin}
           etymologyNote={root.etymologyNote}
           meaningsIndonesian={root.meaningsIndonesian}
         />
-      </div>
+      </section>
 
       {/* Derivatives Section */}
-      <div className="mb-10">
-        <h2 className="text-2xl font-light text-ink-primary tracking-tight mb-4 flex items-center space-x-2">
+      <section id="turunan" className="scroll-mt-24">
+        <h2 className="text-2xl font-light text-ink-primary tracking-tight mb-4 flex items-center space-x-2 font-sans">
           <Layers className="w-6 h-6 text-primary" />
           <span>Katalog Turunan Kata (Derivatives)</span>
         </h2>
         <DerivativesGrid verbs={root.verbs} nouns={root.nouns} />
-      </div>
+      </section>
 
       {/* Ayah Concordance Section */}
-      <h2 className="text-2xl font-light text-ink-primary tracking-tight mb-4 flex items-center space-x-2">
-        <BookOpen className="w-6 h-6 text-primary" />
-        <span>Ayah Concordance & Analysis Per Kata</span>
-      </h2>
-      <AyahConcordance
-        occurrences={root.occurrences}
-        rootArabic={root.rootArabic}
-        rootLatin={root.rootLatin}
-      />
+      <section id="concordance" className="scroll-mt-24">
+        <h2 className="text-2xl font-light text-ink-primary tracking-tight mb-4 flex items-center space-x-2 font-sans">
+          <BookOpen className="w-6 h-6 text-primary" />
+          <span>Ayah Concordance & Analysis Per Kata</span>
+        </h2>
+        <AyahConcordance
+          occurrences={root.occurrences}
+          rootArabic={root.rootArabic}
+          rootLatin={root.rootLatin}
+        />
+      </section>
     </div>
   );
 }
