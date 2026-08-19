@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Layers, Search, Compass, X } from 'lucide-react';
+import { Layers, Search, Compass, X, ArrowUpDown, Flame, SortAsc } from 'lucide-react';
 import { ROOT_DATABASE } from '@/lib/data/roots';
 import { searchRoots, stripArabicHarakat } from '@/lib/search/root-search';
 import RootCard from '@/components/RootCard';
@@ -10,10 +10,13 @@ const HIJAIYYAH_LETTERS = [
   'أ', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'هـ', 'و', 'ي'
 ];
 
+type SortOption = 'frequency_desc' | 'alphabet_ar' | 'alphabet_latin' | 'verbs_desc' | 'nouns_desc';
+
 export default function MorfologiPage() {
   const [filterQuery, setFilterQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'high_verbs' | 'high_nouns'>('all');
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<SortOption>('frequency_desc');
 
   let filteredRoots = searchRoots(filterQuery);
 
@@ -29,6 +32,24 @@ export default function MorfologiPage() {
   } else if (selectedCategory === 'high_nouns') {
     filteredRoots = filteredRoots.filter((r) => r.nounsCount > r.verbsCount);
   }
+
+  // Apply Sorting
+  filteredRoots = [...filteredRoots].sort((a, b) => {
+    switch (sortBy) {
+      case 'frequency_desc':
+        return b.totalOccurrences - a.totalOccurrences;
+      case 'alphabet_ar':
+        return a.rootArabicJoined.localeCompare(b.rootArabicJoined, 'ar');
+      case 'alphabet_latin':
+        return a.rootLatin.localeCompare(b.rootLatin, 'en');
+      case 'verbs_desc':
+        return b.verbsCount - a.verbsCount;
+      case 'nouns_desc':
+        return b.nounsCount - a.nounsCount;
+      default:
+        return 0;
+    }
+  });
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -132,11 +153,29 @@ export default function MorfologiPage() {
         </div>
       </div>
 
-      {/* Root Grid */}
+      {/* Root Grid Header with Sort Controls */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between text-xs text-ink-mute font-mono">
-          <span>Menampilkan <strong>{filteredRoots.length}</strong> akar kata</span>
-          <span>Diurutkan berdasarkan relevansi</span>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs font-mono border-b border-hairline pb-3">
+          <span className="text-slate-600">
+            Menampilkan <strong>{filteredRoots.length}</strong> akar kata
+          </span>
+
+          {/* Sort Dropdown / Filter Bar */}
+          <div className="flex items-center space-x-2">
+            <ArrowUpDown className="w-3.5 h-3.5 text-primary" />
+            <span className="text-slate-500 font-medium">Urutkan:</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortOption)}
+              className="bg-white border border-hairline rounded-lg px-3 py-1.5 text-xs text-ink-primary font-sans font-medium focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
+            >
+              <option value="frequency_desc">🔥 Paling Sering Muncul (Kemunculan Terbanyak)</option>
+              <option value="alphabet_ar">🔤 Abjad Arab (أ - ي)</option>
+              <option value="alphabet_latin">🔤 Abjad Latin (A - Z)</option>
+              <option value="verbs_desc">⚡ Fi&apos;il (Kata Kerja) Terbanyak</option>
+              <option value="nouns_desc">💎 Isim (Kata Benda) Terbanyak</option>
+            </select>
+          </div>
         </div>
 
         {filteredRoots.length === 0 ? (
