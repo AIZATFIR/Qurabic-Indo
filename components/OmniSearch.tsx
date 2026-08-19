@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, X, BookOpen, ArrowRight, CornerDownLeft } from 'lucide-react';
+import { Search, X, BookOpen, ArrowRight, CornerDownLeft, Info } from 'lucide-react';
 import { searchRoots } from '@/lib/search/root-search';
 import { RootWord } from '@/lib/types/morphology';
 
@@ -168,8 +168,9 @@ export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
                       {root.meaningsIndonesian[0]}
                     </p>
                     {root.etymologyNote && (
-                      <p className="text-[11px] text-amber-800 mt-1 line-clamp-1 italic">
-                        💡 {root.etymologyNote.slice(0, 85)}...
+                      <p className="text-[11px] text-amber-800 mt-1 line-clamp-1 italic flex items-center space-x-1">
+                        <Info className="w-3 h-3 text-amber-600 inline mr-1" />
+                        <span>{root.etymologyNote.slice(0, 85)}...</span>
                       </p>
                     )}
                   </div>
@@ -194,12 +195,12 @@ export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
           <button
             type="button"
             onClick={handleFormSubmit}
-            className="flex items-center space-x-1.5 hover:text-primary transition-colors"
+            className="flex items-center space-x-1.5 hover:text-primary transition-colors font-mono"
           >
             <CornerDownLeft className="w-3.5 h-3.5 text-primary" />
             <span>Tekan <strong className="text-ink-primary">Enter</strong> untuk lihat semua hasil pencarian</span>
           </button>
-          <span className="font-semibold text-primary">Qubaric (Indo)</span>
+          <span className="font-semibold text-primary font-mono">Qubaric (Indo)</span>
         </div>
 
       </div>

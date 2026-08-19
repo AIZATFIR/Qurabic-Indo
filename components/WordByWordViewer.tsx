@@ -52,7 +52,7 @@ export default function WordByWordViewer({ segments }: WordByWordViewerProps) {
             <span>Analisis Morfologi Per Kata (Word-by-Word Interlinear)</span>
           </span>
           <span className="text-[11px] font-mono text-primary bg-primary-subdued px-2.5 py-0.5 rounded-full font-medium">
-            💡 Klik kata untuk Bedah Akar Kata
+            Klik kata untuk Bedah Akar Kata
           </span>
         </div>
 

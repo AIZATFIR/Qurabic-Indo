@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { X, Sparkles, BookOpen, Layers, ArrowRight, Compass } from 'lucide-react';
+import { X, Sparkles, BookOpen, Layers, ArrowRight, Compass, Info } from 'lucide-react';
 import { searchRoots } from '@/lib/search/root-search';
 import { RootWord } from '@/lib/types/morphology';
 
@@ -62,7 +62,7 @@ export default function WordEtymologyModal({
                 Bedah Akar Kata Al-Qur&apos;an
               </h3>
               <p className="text-xs text-slate-500 font-mono">
-                Etimologi & Morphological Breakdown
+                Etimologi &amp; Morphological Breakdown
               </p>
             </div>
           </div>
@@ -117,7 +117,10 @@ export default function WordEtymologyModal({
 
             {/* Etymology Note */}
             <div className="space-y-1.5 text-xs text-slate-700 font-sans leading-relaxed">
-              <span className="font-semibold text-ink-primary block text-sm">💡 Terbedah Makna Filosofis & Etimologi:</span>
+              <span className="font-semibold text-ink-primary flex items-center space-x-1.5 text-sm">
+                <Info className="w-4 h-4 text-primary" />
+                <span>Terbedah Makna Filosofis &amp; Etimologi:</span>
+              </span>
               <p className="bg-white p-3 rounded-xl border border-hairline italic text-slate-600">
                 {root.etymologyNote}
               </p>

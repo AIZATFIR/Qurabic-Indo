@@ -9,8 +9,11 @@
   --font-arabic: 'Scheherazade New', 'Amiri', 'Traditional Arabic', serif;
 }
 
+/* Premium Heavy & Smooth Scroll Physics */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+  -webkit-overflow-scrolling: touch;
 }
 
 body {
@@ -22,34 +25,20 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Stripi Subtle Mesh Header Backdrop */
-.gradient-mesh {
-  background: radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.05), transparent 30%),
-              radial-gradient(circle at 85% 30%, rgba(225, 29, 72, 0.04), transparent 30%),
-              radial-gradient(circle at 50% 20%, rgba(245, 243, 255, 0.6), transparent 40%);
-}
-
 /* Soft Elevation Shadows */
 .shadow-soft {
-  box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.04);
 }
 
 .shadow-hover {
-  box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.07);
   transform: translateY(-2px);
 }
 
-/* Glassmorphism Panel */
-.glass-panel-light {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  border: 1px solid #e2e8f0;
-}
-
-/* Custom Scrollbar */
+/* Custom Scrollbar - Subdued & Premium */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -62,7 +51,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #4f46e5;
+  background: #64748b;
 }
 
 /* Quranic Arabic Text Styling with Anti-Clipping Line-Height & Harakat Padding */
@@ -79,7 +68,7 @@ body {
 /* Large Display Arabic Text */
 .font-arabic-lg {
   font-family: var(--font-arabic);
-  line-height: 2.5;
+  line-height: 2.6;
   padding-top: 0.2em;
   padding-bottom: 0.2em;
   word-spacing: 0.15em;
@@ -97,7 +86,7 @@ body {
 .translation-kemenag::before {
   content: "“";
   font-family: serif;
-  font-size: 1.25em;
+  font-size: 1.2em;
   color: #94a3b8;
   margin-right: 0.15em;
 }
@@ -105,7 +94,7 @@ body {
 .translation-kemenag::after {
   content: "”";
   font-family: serif;
-  font-size: 1.25em;
+  font-size: 1.2em;
   color: #94a3b8;
   margin-left: 0.15em;
 }

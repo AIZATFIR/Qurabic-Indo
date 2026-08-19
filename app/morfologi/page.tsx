@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Layers, Search, Compass, X, ArrowUpDown, Flame, SortAsc } from 'lucide-react';
+import { Layers, Search, Compass, X, ArrowUpDown } from 'lucide-react';
 import { ROOT_DATABASE } from '@/lib/data/roots';
 import { searchRoots, stripArabicHarakat } from '@/lib/search/root-search';
 import RootCard from '@/components/RootCard';
@@ -54,7 +54,7 @@ export default function MorfologiPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header Banner */}
-      <div className="p-8 sm:p-10 rounded-3xl bg-white border border-hairline shadow-soft gradient-mesh space-y-4">
+      <div className="p-8 sm:p-10 rounded-3xl bg-white border border-hairline shadow-soft space-y-4">
         <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-primary-subdued text-primary-deep text-xs font-semibold uppercase tracking-wider">
           <Layers className="w-3.5 h-3.5" />
           <span>Katalog Index Morfologi</span>
@@ -160,7 +160,7 @@ export default function MorfologiPage() {
             Menampilkan <strong>{filteredRoots.length}</strong> akar kata
           </span>
 
-          {/* Sort Dropdown / Filter Bar */}
+          {/* Sort Dropdown without Emojis */}
           <div className="flex items-center space-x-2">
             <ArrowUpDown className="w-3.5 h-3.5 text-primary" />
             <span className="text-slate-500 font-medium">Urutkan:</span>
@@ -169,11 +169,11 @@ export default function MorfologiPage() {
               onChange={(e) => setSortBy(e.target.value as SortOption)}
               className="bg-white border border-hairline rounded-lg px-3 py-1.5 text-xs text-ink-primary font-sans font-medium focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
             >
-              <option value="frequency_desc">🔥 Paling Sering Muncul (Kemunculan Terbanyak)</option>
-              <option value="alphabet_ar">🔤 Abjad Arab (أ - ي)</option>
-              <option value="alphabet_latin">🔤 Abjad Latin (A - Z)</option>
-              <option value="verbs_desc">⚡ Fi&apos;il (Kata Kerja) Terbanyak</option>
-              <option value="nouns_desc">💎 Isim (Kata Benda) Terbanyak</option>
+              <option value="frequency_desc">Kemunculan Terbanyak</option>
+              <option value="alphabet_ar">Abjad Arab (أ - ي)</option>
+              <option value="alphabet_latin">Abjad Latin (A - Z)</option>
+              <option value="verbs_desc">Fi&apos;il (Kata Kerja) Terbanyak</option>
+              <option value="nouns_desc">Isim (Kata Benda) Terbanyak</option>
             </select>
           </div>
         </div>

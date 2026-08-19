@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { BookOpen, Sparkles, Moon, Sun, Type, ChevronLeft, ChevronRight, Layers, Volume2, Info } from 'lucide-react';
+import { BookOpen, Sparkles, Moon, Sun, Type, ChevronLeft, ChevronRight, Layers, Volume2, Info, BookMarked } from 'lucide-react';
 import QuranWordInteractive from '@/components/QuranWordInteractive';
 import WordEtymologyModal from '@/components/WordEtymologyModal';
 
@@ -39,7 +39,6 @@ export default function BacaQuranPage() {
   const [theme, setTheme] = useState<'bookpaper' | 'white' | 'dark'>('bookpaper');
   const [fontSize, setFontSize] = useState<'sm' | 'md' | 'lg' | 'xl'>('lg');
   const [showTranslation, setShowTranslation] = useState(true);
-  const [showInterlinear, setShowInterlinear] = useState(false);
   const [ayahs, setAyahs] = useState<AyahData[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -65,7 +64,6 @@ export default function BacaQuranPage() {
             const wordsRaw = verseText.split(' ');
 
             const wordsParsed = wordsRaw.map((w: string, wIdx: number) => {
-              // Basic root mappings for key words like sholat (s-l-w), sabar (s-b-r), etc.
               let matchedRootSlug: string | undefined;
               const cleanW = w.replace(/[ًٌٍَُِّْٰٓ]/g, '');
 
@@ -149,7 +147,7 @@ export default function BacaQuranPage() {
           
           {/* Surah Selector */}
           <div className="flex items-center space-x-3">
-            <BookOpen className="w-5 h-5 text-primary" />
+            <BookMarked className="w-5 h-5 text-primary" />
             <select
               value={selectedSurah}
               onChange={(e) => setSelectedSurah(Number(e.target.value))}
@@ -165,7 +163,7 @@ export default function BacaQuranPage() {
             </select>
           </div>
 
-          {/* Controls: Theme & Display Options */}
+          {/* Controls: Theme & Display Options WITHOUT EMOJIS */}
           <div className="flex items-center space-x-3 text-xs">
             {/* Theme Toggle */}
             <div className="flex items-center p-1 rounded-full border border-hairline bg-canvas-soft">
@@ -175,7 +173,7 @@ export default function BacaQuranPage() {
                   theme === 'bookpaper' ? 'bg-[#f5ebd7] text-[#4a3b2c] font-bold shadow-sm' : 'text-slate-500'
                 }`}
               >
-                📜 Bookpaper
+                Bookpaper
               </button>
               <button
                 onClick={() => setTheme('white')}
@@ -183,7 +181,7 @@ export default function BacaQuranPage() {
                   theme === 'white' ? 'bg-white text-slate-900 font-bold shadow-sm' : 'text-slate-500'
                 }`}
               >
-                ☀️ Terang
+                Terang
               </button>
               <button
                 onClick={() => setTheme('dark')}
@@ -191,7 +189,7 @@ export default function BacaQuranPage() {
                   theme === 'dark' ? 'bg-slate-800 text-white font-bold shadow-sm' : 'text-slate-500'
                 }`}
               >
-                🌙 Malam
+                Malam
               </button>
             </div>
 
@@ -210,7 +208,7 @@ export default function BacaQuranPage() {
               ))}
             </div>
 
-            {/* Translation & Interlinear Toggles */}
+            {/* Translation Toggle */}
             <button
               onClick={() => setShowTranslation(!showTranslation)}
               className={`px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${
@@ -245,8 +243,8 @@ export default function BacaQuranPage() {
           </h2>
 
           <div className="pt-2 flex items-center justify-center space-x-2 text-xs font-mono text-slate-500">
-            <Info className="w-4 h-4 text-amber-600" />
-            <span>💡 <strong>Fitur Bedah Akar Kata:</strong> Klik pada kata manapun untuk membedah akar kata & etimologinya!</span>
+            <Info className="w-4 h-4 text-primary" />
+            <span>Fitur Bedah Akar Kata: Klik pada kata manapun untuk membedah etimologi &amp; asal-usul kata.</span>
           </div>
         </div>
 
