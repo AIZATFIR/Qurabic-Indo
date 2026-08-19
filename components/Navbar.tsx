@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { BookOpen, Search, Heart } from 'lucide-react';
+import { BookOpen, Search, Heart, BookMarked } from 'lucide-react';
 import OmniSearch from './OmniSearch';
 import { useState } from 'react';
 import { useBookmarks } from '@/lib/hooks/useBookmarks';
@@ -36,10 +36,11 @@ export default function Navbar() {
             {/* Navigation Links */}
             <nav className="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600">
               <Link
-                href="/"
-                className="hover:text-primary transition-colors flex items-center space-x-1.5"
+                href="/baca"
+                className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 font-semibold"
               >
-                <span>Beranda Roots</span>
+                <BookMarked className="w-4 h-4 text-amber-700" />
+                <span>Baca Qur&apos;an</span>
               </Link>
               <Link
                 href="/morfologi"
