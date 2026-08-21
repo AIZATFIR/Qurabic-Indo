@@ -85,41 +85,41 @@ export default function BacaQuranPage() {
 
   const currentSurahMeta = surahList.find((s) => s.number === selectedSurah) || surahList[0];
 
-  // Theme styles
+  // Theme-aware styles for seamless visual harmony
   const themeBg =
     theme === 'bookpaper'
-      ? 'bg-[#fcfaf2] text-[#2c2825]'
+      ? 'bg-[#fbf8ee] text-[#2c2825]'
       : theme === 'white'
-      ? 'bg-white text-slate-900'
+      ? 'bg-[#f8fafc] text-slate-900'
       : 'bg-[#090d16] text-[#f8fafc]';
 
   const containerBorder =
     theme === 'bookpaper'
-      ? 'border-[#e8e0cf]'
+      ? 'border-[#e2d5bc]'
       : theme === 'white'
       ? 'border-slate-200'
       : 'border-slate-800';
 
   const cardBg =
     theme === 'bookpaper'
-      ? 'bg-[#f5ebd7]/70 hover:bg-[#f5ebd7]'
+      ? 'bg-[#f5ebd7]/85 hover:bg-[#f5ebd7] border-[#e2d5bc]'
       : theme === 'white'
-      ? 'bg-white shadow-soft'
-      : 'bg-[#131b2e] shadow-lg';
+      ? 'bg-white shadow-soft border-slate-200'
+      : 'bg-[#131b2e] shadow-lg border-slate-800';
 
   const headbarBg =
     theme === 'bookpaper'
-      ? 'bg-[#fcfaf2]/95 text-[#2c2825] border-[#e8e0cf]'
+      ? 'bg-[#f5ebd7]/95 text-[#2c2825] border-[#e2d5bc]'
       : theme === 'dark'
       ? 'bg-[#090d16]/95 text-white border-slate-800'
       : 'bg-white/95 text-slate-900 border-slate-200';
 
   const selectBg =
     theme === 'bookpaper'
-      ? 'bg-[#f5ebd7] border-[#e8e0cf] text-[#2c2825]'
+      ? 'bg-[#ede1c7] border-[#d8c7a5] text-[#2c2825]'
       : theme === 'dark'
       ? 'bg-[#131b2e] border-slate-700 text-white'
-      : 'bg-white border-hairline text-ink-primary';
+      : 'bg-white border-slate-300 text-slate-900';
 
   const textArabicColor =
     theme === 'dark' ? 'text-[#f8fafc]' : 'text-[#1e293b]';
@@ -140,86 +140,120 @@ export default function BacaQuranPage() {
   return (
     <div className={`min-h-screen transition-colors duration-300 ${themeBg}`}>
       
-      {/* Sticky Reader Headbar */}
-      <div className={`sticky top-14 z-30 border-b backdrop-blur-md px-4 py-2.5 transition-colors duration-300 ${headbarBg}`}>
-        <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      {/* Sticky Reader Headbar - Seamless Theme Integration */}
+      <div className={`sticky top-14 z-30 border-b backdrop-blur-md px-4 py-3 transition-colors duration-300 shadow-sm ${headbarBg}`}>
+        <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3.5">
           
-          {/* 114 Surahs Dropdown Selector */}
+          {/* LEFT SIDE: Surah Selector & Random Ayah Button */}
           <div className="flex items-center space-x-2.5">
-            <BookMarked className="w-4 h-4 text-primary" />
-            <select
-              value={selectedSurah}
-              onChange={(e) => setSelectedSurah(Number(e.target.value))}
-              className={`font-semibold rounded-xl px-3 py-1.5 text-xs border focus:outline-none focus:ring-2 focus:ring-primary ${selectBg}`}
+            <div className="flex items-center space-x-2">
+              <BookMarked className="w-4 h-4 text-primary shrink-0" />
+              <select
+                value={selectedSurah}
+                onChange={(e) => setSelectedSurah(Number(e.target.value))}
+                className={`font-semibold rounded-2xl px-3 py-2 text-xs border focus:outline-none focus:ring-2 focus:ring-primary shadow-sm transition-all cursor-pointer ${selectBg}`}
+              >
+                {surahList.map((s) => (
+                  <option key={s.number} value={s.number}>
+                    {s.number}. Surah {s.nameIndo} ({s.nameArabic}) - {s.ayahsCount} Ayat
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <Link
+              href="/ayat-random"
+              className={`hidden sm:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all shadow-sm ${
+                theme === 'bookpaper'
+                  ? 'bg-[#ede1c7] text-[#3a2c1d] border-[#d8c7a5] hover:bg-[#e4d6ba]'
+                  : theme === 'dark'
+                  ? 'bg-indigo-950/60 text-indigo-300 border-indigo-800/80 hover:bg-indigo-900/60'
+                  : 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100'
+              }`}
+              title="Buka Ayat Acak"
             >
-              {surahList.map((s) => (
-                <option key={s.number} value={s.number}>
-                  {s.number}. Surah {s.nameIndo} ({s.nameArabic}) - {s.ayahsCount} Ayat
-                </option>
-              ))}
-            </select>
+              <Shuffle className="w-3.5 h-3.5" />
+              <span>Ayat Acak</span>
+            </Link>
           </div>
 
-          {/* Quick Random Ayah Button */}
-          <Link
-            href="/ayat-random"
-            className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-semibold hover:scale-105 transition-all shadow-sm"
-            title="Buka Ayat Acak"
-          >
-            <Shuffle className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-            <span>Ayat Acak</span>
-          </Link>
-
-          {/* Controls: Theme & Display Options */}
-          <div className="flex items-center space-x-2 text-xs">
-            {/* Theme Toggle */}
-            <div className={`flex items-center p-1 rounded-full border ${containerBorder} ${theme === 'bookpaper' ? 'bg-[#f5ebd7]' : theme === 'dark' ? 'bg-[#131b2e]' : 'bg-canvas-soft'}`}>
+          {/* RIGHT SIDE: Theme Selector, Font Size Controls & Translation Toggle */}
+          <div className="flex flex-wrap items-center space-x-2.5 text-xs ml-auto">
+            
+            {/* 1. Theme Toggle (Bookpaper, Terang, Malam) */}
+            <div className={`flex items-center p-1 rounded-full border shadow-sm ${containerBorder} ${
+              theme === 'bookpaper' ? 'bg-[#ede1c7]' : theme === 'dark' ? 'bg-[#131b2e]' : 'bg-slate-100'
+            }`}>
               <button
                 onClick={() => setTheme('bookpaper')}
-                className={`px-2.5 py-1 rounded-full font-medium text-[11px] transition-all ${
-                  theme === 'bookpaper' ? 'bg-[#e6d8bc] text-[#3a2c1d] font-bold shadow-sm' : 'text-slate-500'
+                className={`px-3 py-1 rounded-full font-semibold text-[11px] transition-all ${
+                  theme === 'bookpaper'
+                    ? 'bg-[#d8c7a5] text-[#2c2014] font-bold shadow-sm'
+                    : 'text-slate-500 hover:text-slate-900'
                 }`}
+                title="Tema Kertas Bookpaper"
               >
                 Bookpaper
               </button>
               <button
                 onClick={() => setTheme('white')}
-                className={`px-2.5 py-1 rounded-full font-medium text-[11px] transition-all ${
-                  theme === 'white' ? 'bg-white text-slate-900 font-bold shadow-sm' : 'text-slate-500'
+                className={`px-3 py-1 rounded-full font-semibold text-[11px] transition-all ${
+                  theme === 'white'
+                    ? 'bg-white text-slate-900 font-bold shadow-sm'
+                    : 'text-slate-500 hover:text-slate-900'
                 }`}
+                title="Tema Terang"
               >
                 Terang
               </button>
               <button
                 onClick={() => setTheme('dark')}
-                className={`px-2.5 py-1 rounded-full font-medium text-[11px] transition-all ${
-                  theme === 'dark' ? 'bg-primary text-white font-bold shadow-sm' : 'text-slate-500'
+                className={`px-3 py-1 rounded-full font-semibold text-[11px] transition-all ${
+                  theme === 'dark'
+                    ? 'bg-primary text-white font-bold shadow-sm'
+                    : 'text-slate-500 hover:text-white'
                 }`}
+                title="Tema Malam"
               >
                 Malam
               </button>
             </div>
 
-            {/* Font Size Toggle */}
-            <div className={`flex items-center space-x-1 p-1 rounded-full border ${containerBorder} ${theme === 'bookpaper' ? 'bg-[#f5ebd7]' : theme === 'dark' ? 'bg-[#131b2e]' : 'bg-canvas-soft'}`}>
+            {/* 2. Font Size Scaling (SM, MD, LG, XL) */}
+            <div className={`flex items-center space-x-0.5 p-1 rounded-full border shadow-sm ${containerBorder} ${
+              theme === 'bookpaper' ? 'bg-[#ede1c7]' : theme === 'dark' ? 'bg-[#131b2e]' : 'bg-slate-100'
+            }`}>
               {(['sm', 'md', 'lg', 'xl'] as const).map((sz) => (
                 <button
                   key={sz}
                   onClick={() => setFontSize(sz)}
-                  className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold transition-all ${
-                    fontSize === sz ? 'bg-primary text-white shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
+                  className={`px-2.5 py-1 rounded-full text-[10px] font-mono font-bold transition-all ${
+                    fontSize === sz
+                      ? 'bg-primary text-white shadow-sm scale-105'
+                      : theme === 'bookpaper'
+                      ? 'text-[#615243] hover:text-[#2c2014]'
+                      : theme === 'dark'
+                      ? 'text-slate-400 hover:text-white'
+                      : 'text-slate-500 hover:text-slate-900'
                   }`}
+                  title={`Ukuran Huruf ${sz.toUpperCase()}`}
                 >
                   {sz.toUpperCase()}
                 </button>
               ))}
             </div>
 
-            {/* Translation Toggle */}
+            {/* 3. Translation Toggle Button */}
             <button
               onClick={() => setShowTranslation(!showTranslation)}
-              className={`px-3 py-1 rounded-full border text-[11px] font-medium transition-all ${
-                showTranslation ? 'bg-primary text-white border-primary' : 'border-hairline text-slate-500'
+              className={`px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all shadow-sm ${
+                showTranslation
+                  ? 'bg-primary text-white border-primary shadow-sm'
+                  : theme === 'bookpaper'
+                  ? 'bg-[#ede1c7] border-[#d8c7a5] text-[#615243]'
+                  : theme === 'dark'
+                  ? 'bg-[#131b2e] border-slate-700 text-slate-400'
+                  : 'bg-white border-slate-300 text-slate-600'
               }`}
             >
               Terjemahan
@@ -232,7 +266,7 @@ export default function BacaQuranPage() {
       {/* Main Quran Reader Container */}
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-8">
         
-        {/* Surah Header Card & Official Live API Proof Badge */}
+        {/* Surah Header Card */}
         <div className={`p-6 sm:p-8 rounded-3xl border text-center space-y-3 ${containerBorder} ${cardBg}`}>
           
           <div className="flex flex-wrap items-center justify-center gap-2">
@@ -241,7 +275,6 @@ export default function BacaQuranPage() {
               <span>SURAH KE-{currentSurahMeta.number} • {currentSurahMeta.revelationType.toUpperCase()}</span>
             </span>
 
-            {/* Official API Live Proof Badge */}
             <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 text-[11px] font-mono font-bold">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
               <span>Word-by-Word Live Data (Kemenag RI)</span>
