@@ -1,9 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { BookOpen, Sparkles, Moon, Sun, Type, ChevronLeft, ChevronRight, Layers, Volume2, Info, BookMarked, CheckCircle2, Globe, ShieldCheck } from 'lucide-react';
+import Link from 'next/link';
+import {
+  BookOpen,
+  Sparkles,
+  ChevronLeft,
+  ChevronRight,
+  Layers,
+  Volume2,
+  Info,
+  BookMarked,
+  CheckCircle2,
+  Globe,
+  Shuffle,
+  ArrowLeft
+} from 'lucide-react';
 import QuranWordInteractive from '@/components/QuranWordInteractive';
-import WordEtymologyModal from '@/components/WordEtymologyModal';
+import { fetchSurahWithWBW, FullAyahWBW } from '@/lib/api/quran-corpus-api';
 
 // Seed list fallback while fetching all 114 Surahs
 const SURAH_SEED_DEFAULT = [
@@ -20,27 +34,13 @@ const SURAH_SEED_DEFAULT = [
   { number: 114, nameIndo: 'An-Nas', nameArabic: 'الناس', ayahsCount: 6, revelationType: 'Meccan' },
 ];
 
-interface AyahData {
-  numberInSurah: number;
-  textArabic: string;
-  textIndo: string;
-  words: {
-    wordIndex: number;
-    arabic: string;
-    transliteration: string;
-    meaningIndo: string;
-    posTag: string;
-    rootSlug?: string;
-  }[];
-}
-
 export default function BacaQuranPage() {
   const [surahList, setSurahList] = useState(SURAH_SEED_DEFAULT);
   const [selectedSurah, setSelectedSurah] = useState<number>(1);
   const [theme, setTheme] = useState<'bookpaper' | 'white' | 'dark'>('bookpaper');
   const [fontSize, setFontSize] = useState<'sm' | 'md' | 'lg' | 'xl'>('lg');
   const [showTranslation, setShowTranslation] = useState(true);
-  const [ayahs, setAyahs] = useState<AyahData[]>([]);
+  const [ayahs, setAyahs] = useState<FullAyahWBW[]>([]);
   const [loading, setLoading] = useState(true);
 
   // 1. Fetch FULL 114 Surahs list dynamically from Official AlQuran Cloud API
@@ -66,67 +66,13 @@ export default function BacaQuranPage() {
     loadAll114Surahs();
   }, []);
 
-  // 2. Fetch selected Surah ayahs live from official APIs (Quran.com v4 & AlQuran Cloud)
+  // 2. Fetch selected Surah with real Word-by-Word (WBW) data from Quran.com API v4
   useEffect(() => {
     async function loadSurahData() {
       setLoading(true);
       try {
-        const [arRes, idRes] = await Promise.all([
-          fetch(`https://api.alquran.cloud/v1/surah/${selectedSurah}`),
-          fetch(`https://api.alquran.cloud/v1/surah/${selectedSurah}/id.indonesian`)
-        ]);
-
-        if (arRes.ok && idRes.ok) {
-          const arJson = await arRes.json();
-          const idJson = await idRes.json();
-
-          const arAyahs = arJson.data.ayahs;
-          const idAyahs = idJson.data.ayahs;
-
-          const combined: AyahData[] = arAyahs.map((ar: any, idx: number) => {
-            const verseText = ar.text;
-            const wordsRaw = verseText.split(' ');
-
-            const wordsParsed = wordsRaw.map((w: string, wIdx: number) => {
-              let matchedRootSlug: string | undefined;
-              const cleanW = w.replace(/[ًٌٍَُِّْٰٓ]/g, '');
-
-              if (cleanW.includes('صلو') || cleanW.includes('صلا') || cleanW.includes('مصلى')) {
-                matchedRootSlug = 's-l-w';
-              } else if (cleanW.includes('صبر') || cleanW.includes('اصبر')) {
-                matchedRootSlug = 's-b-r';
-              } else if (cleanW.includes('رحم') || cleanW.includes('رحمن')) {
-                matchedRootSlug = 'r-h-m';
-              } else if (cleanW.includes('علم') || cleanW.includes('يعلم')) {
-                matchedRootSlug = 'c-l-m';
-              } else if (cleanW.includes('كتب') || cleanW.includes('كتاب')) {
-                matchedRootSlug = 'k-t-b';
-              } else if (cleanW.includes('الله') || cleanW.includes('إله')) {
-                matchedRootSlug = 'a-l-h';
-              } else if (cleanW.includes('هدى') || cleanW.includes('اهدم')) {
-                matchedRootSlug = 'h-d-y';
-              }
-
-              return {
-                wordIndex: wIdx + 1,
-                arabic: w,
-                transliteration: `Kata ${wIdx + 1}`,
-                meaningIndo: `Potongan kata ${wIdx + 1}`,
-                posTag: wIdx % 2 === 0 ? 'Isim' : "Fi'il",
-                rootSlug: matchedRootSlug
-              };
-            });
-
-            return {
-              numberInSurah: ar.numberInSurah,
-              textArabic: ar.text,
-              textIndo: idAyahs[idx]?.text || '',
-              words: wordsParsed
-            };
-          });
-
-          setAyahs(combined);
-        }
+        const data = await fetchSurahWithWBW(selectedSurah);
+        setAyahs(data);
       } catch (err) {
         console.error('Error fetching surah data:', err);
       } finally {
@@ -139,7 +85,7 @@ export default function BacaQuranPage() {
 
   const currentSurahMeta = surahList.find((s) => s.number === selectedSurah) || surahList[0];
 
-  // Bookpaper, Terang, & Dark Theme headbar & page styling mapping
+  // Theme styles
   const themeBg =
     theme === 'bookpaper'
       ? 'bg-[#fcfaf2] text-[#2c2825]'
@@ -181,21 +127,22 @@ export default function BacaQuranPage() {
   const textTranslationColor =
     theme === 'dark' ? 'text-[#cbd5e1]' : 'text-[#334155]';
 
+  // High-impact font size scaling
   const fontArabicClass =
     fontSize === 'sm'
-      ? 'text-2xl leading-[2.2]'
+      ? 'text-2xl sm:text-3xl leading-[2.2]'
       : fontSize === 'md'
-      ? 'text-3xl leading-[2.4]'
+      ? 'text-3xl sm:text-4xl leading-[2.4]'
       : fontSize === 'lg'
-      ? 'text-4xl leading-[2.6]'
-      : 'text-5xl leading-[2.8]';
+      ? 'text-5xl sm:text-6xl leading-[2.6]'
+      : 'text-6xl sm:text-7xl leading-[2.8]';
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${themeBg}`}>
       
-      {/* Dynamic Theme Headbar - Bookpaper Mode transforms UI headbar */}
+      {/* Sticky Reader Headbar */}
       <div className={`sticky top-14 z-30 border-b backdrop-blur-md px-4 py-2.5 transition-colors duration-300 ${headbarBg}`}>
-        <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3">
+        <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
           
           {/* 114 Surahs Dropdown Selector */}
           <div className="flex items-center space-x-2.5">
@@ -212,6 +159,16 @@ export default function BacaQuranPage() {
               ))}
             </select>
           </div>
+
+          {/* Quick Random Ayah Button */}
+          <Link
+            href="/ayat-random"
+            className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-semibold hover:scale-105 transition-all shadow-sm"
+            title="Buka Ayat Acak"
+          >
+            <Shuffle className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+            <span>Ayat Acak</span>
+          </Link>
 
           {/* Controls: Theme & Display Options */}
           <div className="flex items-center space-x-2 text-xs">
@@ -244,13 +201,13 @@ export default function BacaQuranPage() {
             </div>
 
             {/* Font Size Toggle */}
-            <div className={`hidden sm:flex items-center space-x-1 p-1 rounded-full border ${containerBorder} ${theme === 'bookpaper' ? 'bg-[#f5ebd7]' : theme === 'dark' ? 'bg-[#131b2e]' : 'bg-canvas-soft'}`}>
+            <div className={`flex items-center space-x-1 p-1 rounded-full border ${containerBorder} ${theme === 'bookpaper' ? 'bg-[#f5ebd7]' : theme === 'dark' ? 'bg-[#131b2e]' : 'bg-canvas-soft'}`}>
               {(['sm', 'md', 'lg', 'xl'] as const).map((sz) => (
                 <button
                   key={sz}
                   onClick={() => setFontSize(sz)}
-                  className={`w-6 h-6 rounded-full text-[10px] font-mono font-bold transition-all ${
-                    fontSize === sz ? 'bg-primary text-white shadow-sm' : 'text-slate-500'
+                  className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold transition-all ${
+                    fontSize === sz ? 'bg-primary text-white shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
                   }`}
                 >
                   {sz.toUpperCase()}
@@ -273,7 +230,7 @@ export default function BacaQuranPage() {
       </div>
 
       {/* Main Quran Reader Container */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-8">
         
         {/* Surah Header Card & Official Live API Proof Badge */}
         <div className={`p-6 sm:p-8 rounded-3xl border text-center space-y-3 ${containerBorder} ${cardBg}`}>
@@ -287,11 +244,11 @@ export default function BacaQuranPage() {
             {/* Official API Live Proof Badge */}
             <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 text-[11px] font-mono font-bold">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Terhubung Live: Quran.com API v4 &amp; AlQuran Cloud</span>
+              <span>Word-by-Word Live Data (Kemenag RI)</span>
             </span>
           </div>
 
-          <h1 className="font-arabic-lg text-4xl sm:text-5xl font-bold text-primary">
+          <h1 className="font-arabic-lg text-5xl sm:text-6xl font-bold text-primary">
             {currentSurahMeta.nameArabic}
           </h1>
 
@@ -301,7 +258,7 @@ export default function BacaQuranPage() {
 
           <div className="pt-1 flex items-center justify-center space-x-1.5 text-xs font-mono text-slate-500">
             <Info className="w-3.5 h-3.5 text-primary" />
-            <span>Klik pada kata manapun untuk membedah akar kata &amp; etimologinya. Transliterasi Latin berada di bawah kata.</span>
+            <span>Klik pada kata manapun untuk membuka kartu bedah akar kata, definisi, audio, dan morfologinya.</span>
           </div>
         </div>
 
@@ -309,45 +266,63 @@ export default function BacaQuranPage() {
         {loading ? (
           <div className="py-16 text-center space-y-3">
             <div className="w-9 h-9 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-xs font-mono text-slate-500">Menghubungkan ke API Al-Qur&apos;an Resmi (6.236 Ayat)...</p>
+            <p className="text-xs font-mono text-slate-500">Memuat teks Al-Qur&apos;an &amp; Analisis Per Kata...</p>
           </div>
         ) : (
           /* Ayah Reader List */
           <div className="space-y-6">
             {ayahs.map((ayah) => (
               <div
-                key={ayah.numberInSurah}
+                key={ayah.ayahNumber}
                 className={`p-6 sm:p-8 rounded-3xl border transition-all ${containerBorder} ${cardBg}`}
               >
                 {/* Ayah Header Number */}
                 <div className="flex items-center justify-between mb-5 pb-2.5 border-b border-hairline/60">
                   <span className="w-7 h-7 rounded-full bg-primary-subdued text-primary-deep text-xs font-mono font-bold flex items-center justify-center border border-primary/20">
-                    {ayah.numberInSurah}
+                    {ayah.ayahNumber}
                   </span>
 
                   <span className="text-xs text-slate-400 font-mono">
-                    Surah {currentSurahMeta.nameIndo} : {ayah.numberInSurah}
+                    Surah {currentSurahMeta.nameIndo} : {ayah.ayahNumber}
                   </span>
                 </div>
 
                 {/* Arabic Text with Interactive Clickable Words & Interlinear Transliteration */}
-                <div className={`font-arabic ${fontArabicClass} ${textArabicColor} text-right space-x-2 space-x-reverse`}>
-                  {ayah.words.map((word, wIdx) => (
-                    <QuranWordInteractive
-                      key={wIdx}
-                      wordArabic={word.arabic}
-                      transliteration={word.transliteration}
-                      meaningIndo={word.meaningIndo}
-                      posTag={word.posTag}
-                      matchedRootSlug={word.rootSlug}
-                    />
-                  ))}
+                <div className={`font-arabic ${fontArabicClass} ${textArabicColor} text-right space-x-2 space-x-reverse flex flex-wrap flex-row-reverse items-center justify-start`}>
+                  {ayah.words.map((word, wIdx) => {
+                    if (word.charType === 'end') {
+                      return (
+                        <span key={wIdx} className="text-primary font-bold text-xl sm:text-2xl px-2">
+                          {word.arabic || `﴿${ayah.ayahNumber}﴾`}
+                        </span>
+                      );
+                    }
+
+                    return (
+                      <QuranWordInteractive
+                        key={wIdx}
+                        wordArabic={word.arabic}
+                        transliteration={word.transliteration}
+                        meaningIndo={word.meaningIndo}
+                        posTag={word.posTag}
+                        posDetail={word.posDetail}
+                        matchedRootSlug={word.rootSlug}
+                        rootLetters={word.rootLetters}
+                        audioUrl={word.audioUrl}
+                        ayahArabic={ayah.textArabic}
+                        ayahIndo={ayah.textIndo}
+                        surahNumber={currentSurahMeta.number}
+                        ayahNumber={ayah.ayahNumber}
+                        surahNameIndo={currentSurahMeta.nameIndo}
+                      />
+                    );
+                  })}
                 </div>
 
                 {/* Indonesian Translation Kemenag RI */}
-                {showTranslation && (
-                  <div className="mt-5 pt-3.5 border-t border-hairline/60">
-                    <p className={`text-xs sm:text-sm leading-relaxed ${textTranslationColor}`}>
+                {showTranslation && ayah.textIndo && (
+                  <div className="mt-6 pt-4 border-t border-hairline/60">
+                    <p className={`text-xs sm:text-sm md:text-base leading-relaxed ${textTranslationColor}`}>
                       &ldquo;{ayah.textIndo}&rdquo;
                     </p>
                   </div>

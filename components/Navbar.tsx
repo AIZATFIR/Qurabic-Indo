@@ -39,36 +39,40 @@ export default function Navbar() {
             </div>
 
             {/* Navigation Links */}
-            <nav className="hidden md:flex items-center space-x-5 text-sm font-medium text-slate-600 dark:text-slate-300">
+            <nav className="hidden md:flex items-center space-x-3 text-sm font-medium text-slate-600 dark:text-slate-300">
               <Link
                 href="/baca"
-                className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 font-semibold dark:bg-amber-950/40 dark:text-amber-200 dark:border-amber-900/50"
+                className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 font-semibold text-xs dark:bg-amber-950/40 dark:text-amber-200 dark:border-amber-900/50 hover:shadow-sm"
               >
                 <BookMarked className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
                 <span>Baca Qur&apos;an</span>
               </Link>
-              <Link
-                href="/morfologi"
-                className="hover:text-primary transition-colors flex items-center space-x-1.5 text-xs font-semibold"
-              >
-                <BookOpen className="w-3.5 h-3.5 text-primary" />
-                <span>Katalog Morfologi</span>
-              </Link>
+              
+              {/* Prominent Ayat Acak Tab */}
               <Link
                 href="/ayat-random"
-                className="hover:text-primary transition-colors flex items-center space-x-1.5 text-xs font-semibold"
+                className="hover:text-primary transition-all flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-900 border border-indigo-200/80 font-semibold text-xs dark:bg-indigo-950/40 dark:text-indigo-200 dark:border-indigo-800/60 shadow-sm hover:scale-105"
               >
                 <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                 <span>Ayat Acak</span>
               </Link>
+
+              <Link
+                href="/morfologi"
+                className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold hover:bg-canvas-soft dark:hover:bg-slate-800"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-primary" />
+                <span>Katalog Morfologi</span>
+              </Link>
+
               <Link
                 href="/favorit"
-                className="hover:text-primary transition-colors flex items-center space-x-1.5 relative text-xs font-semibold"
+                className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold hover:bg-canvas-soft dark:hover:bg-slate-800 relative"
               >
                 <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500/20" />
                 <span>Akar Tersimpan</span>
                 {bookmarkedIds.length > 0 && (
-                  <span className="w-3.5 h-3.5 rounded-full bg-rose-500 text-white text-[9px] font-mono font-bold flex items-center justify-center">
+                  <span className="w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-mono font-bold flex items-center justify-center ml-0.5">
                     {bookmarkedIds.length}
                   </span>
                 )}

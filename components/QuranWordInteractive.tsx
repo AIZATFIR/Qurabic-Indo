@@ -8,7 +8,15 @@ interface QuranWordInteractiveProps {
   transliteration?: string;
   meaningIndo?: string;
   posTag?: string;
+  posDetail?: string;
   matchedRootSlug?: string;
+  rootLetters?: string;
+  audioUrl?: string;
+  ayahArabic?: string;
+  ayahIndo?: string;
+  surahNumber?: number;
+  ayahNumber?: number;
+  surahNameIndo?: string;
 }
 
 export function getArabicWordTransliteration(arabic: string): string {
@@ -69,7 +77,15 @@ export default function QuranWordInteractive({
   transliteration,
   meaningIndo,
   posTag,
+  posDetail,
   matchedRootSlug,
+  rootLetters,
+  audioUrl,
+  ayahArabic,
+  ayahIndo,
+  surahNumber,
+  ayahNumber,
+  surahNameIndo,
 }: QuranWordInteractiveProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -81,14 +97,14 @@ export default function QuranWordInteractive({
     <>
       <span
         onClick={() => setIsModalOpen(true)}
-        className="inline-flex flex-col items-center justify-center px-1.5 py-1 rounded-xl hover:bg-primary-subdued/60 transition-all cursor-pointer select-none active:scale-95 text-center group my-1 mx-0.5"
-        title="Klik untuk Bedah Akar Kata"
+        className="inline-flex flex-col items-center justify-center px-1.5 py-1 rounded-2xl hover:bg-primary-subdued/80 hover:ring-2 hover:ring-primary/40 dark:hover:bg-slate-800 transition-all cursor-pointer select-none active:scale-95 text-center group my-1.5 mx-1"
+        title="Klik untuk Bedah Akar Kata & Definisi"
       >
-        <span className="font-arabic text-2xl sm:text-4xl text-current group-hover:text-primary transition-colors leading-normal" dir="rtl">
+        <span className="font-arabic text-inherit group-hover:text-primary transition-colors leading-normal" dir="rtl">
           {wordArabic}
         </span>
         {displayTransliteration && (
-          <span className="text-[10px] sm:text-[11px] font-mono text-slate-500 group-hover:text-primary transition-colors -mt-0.5 font-medium italic opacity-85">
+          <span className="text-[11px] sm:text-xs font-mono text-slate-500 dark:text-slate-400 group-hover:text-primary transition-colors -mt-0.5 font-medium italic opacity-85">
             {displayTransliteration}
           </span>
         )}
@@ -101,7 +117,15 @@ export default function QuranWordInteractive({
         transliteration={displayTransliteration}
         meaningIndo={meaningIndo}
         posTag={posTag}
+        posDetail={posDetail}
         matchedRootSlug={matchedRootSlug}
+        rootLetters={rootLetters}
+        audioUrl={audioUrl}
+        ayahArabic={ayahArabic}
+        ayahIndo={ayahIndo}
+        surahNumber={surahNumber}
+        ayahNumber={ayahNumber}
+        surahNameIndo={surahNameIndo}
       />
     </>
   );

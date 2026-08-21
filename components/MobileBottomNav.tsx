@@ -15,14 +15,14 @@ export default function MobileBottomNav() {
   const navItems = [
     { label: 'Beranda', href: '/', icon: Home },
     { label: 'Baca', href: '/baca', icon: BookMarked },
-    { label: 'Ayat Acak', href: '/ayat-random', icon: Sparkles },
+    { label: 'Ayat Acak', href: '/ayat-random', icon: Sparkles, highlight: true },
     { label: 'Katalog', href: '/morfologi', icon: BookOpen },
     { label: 'Favorit', href: '/favorit', icon: Heart, badge: bookmarkedIds.length },
   ];
 
   return (
     <>
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-hairline px-2 py-2 shadow-2xl">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#090d16]/95 backdrop-blur-lg border-t border-hairline dark:border-slate-800 px-2 py-2 shadow-2xl">
         <div className="flex items-center justify-around max-w-md mx-auto">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
@@ -32,11 +32,15 @@ export default function MobileBottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center justify-center space-y-0.5 py-1 px-2 rounded-2xl transition-all relative ${
-                  isActive ? 'text-primary font-semibold' : 'text-slate-500 hover:text-slate-800'
+                className={`flex flex-col items-center justify-center space-y-0.5 py-1 px-2.5 rounded-2xl transition-all relative ${
+                  isActive
+                    ? 'text-primary font-bold'
+                    : item.highlight
+                    ? 'text-indigo-600 dark:text-indigo-400 font-semibold'
+                    : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'
                 }`}
               >
-                <div className="relative">
+                <div className={`relative ${item.highlight ? 'p-1 rounded-xl bg-indigo-50 dark:bg-indigo-950/60' : ''}`}>
                   <Icon className={`w-4 h-4 ${isActive && item.href === '/favorit' ? 'fill-current' : ''}`} />
                   {item.badge !== undefined && item.badge > 0 && (
                     <span className="absolute -top-1.5 -right-2 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-mono font-bold flex items-center justify-center">

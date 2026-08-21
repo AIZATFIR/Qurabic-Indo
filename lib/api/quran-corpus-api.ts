@@ -1,4 +1,5 @@
 import { RootWord, VerseOccurrence, WordSegment } from '../types/morphology';
+import { extractArabicRootLetters, findBestMatchingRoot, inferGrammarRole } from '../search/root-search';
 
 // AlQuran Cloud Search API response types
 export interface ApiSearchMatch {
@@ -10,6 +11,154 @@ export interface ApiSearchMatch {
     englishName: string;
   };
   numberInSurah: number;
+}
+
+export interface WBWWord {
+  id: number;
+  position: number;
+  arabic: string;
+  transliteration: string;
+  meaningIndo: string;
+  audioUrl?: string;
+  charType: 'word' | 'end';
+  location: string;
+  rootLetters?: string;
+  rootSlug?: string;
+  posTag?: string;
+  posDetail?: string;
+}
+
+export interface FullAyahWBW {
+  ayahNumber: number;
+  verseKey: string;
+  textArabic: string;
+  textIndo: string;
+  words: WBWWord[];
+}
+
+/**
+ * Fetches full surah with exact word-by-word (WBW) data from Quran.com API v4
+ */
+export async function fetchSurahWithWBW(surahNumber: number): Promise<FullAyahWBW[]> {
+  try {
+    const page1Res = await fetch(
+      `https://api.quran.com/api/v4/verses/by_chapter/${surahNumber}?language=id&words=true&word_fields=text_uthmani,transliteration,translation,location&translations=33&per_page=50&page=1`,
+      { next: { revalidate: 86400 } }
+    );
+
+    if (!page1Res.ok) throw new Error('Quran.com API error');
+    const page1Json = await page1Res.json();
+    const totalPages = page1Json.pagination?.total_pages || 1;
+    let allVerses = [...(page1Json.verses || [])];
+
+    if (totalPages > 1) {
+      const pagePromises = [];
+      for (let p = 2; p <= totalPages; p++) {
+        pagePromises.push(
+          fetch(
+            `https://api.quran.com/api/v4/verses/by_chapter/${surahNumber}?language=id&words=true&word_fields=text_uthmani,transliteration,translation,location&translations=33&per_page=50&page=${p}`,
+            { next: { revalidate: 86400 } }
+          ).then(r => r.ok ? r.json() : { verses: [] })
+        );
+      }
+      const otherPages = await Promise.all(pagePromises);
+      otherPages.forEach(p => {
+        if (p.verses) allVerses.push(...p.verses);
+      });
+    }
+
+    // Format all verses and enrich each word with roots and grammar
+    return allVerses.map((v: any) => {
+      const translationIndo = v.translations?.[0]?.text?.replace(/<sup.*?<\/sup>/g, '') || '';
+      const rawWords = v.words || [];
+
+      const parsedWords: WBWWord[] = rawWords.map((w: any) => {
+        const arabic = w.text_uthmani || w.text || '';
+        const transliteration = w.transliteration?.text || '';
+        const meaningIndo = w.translation?.text || '';
+        const charType = (w.char_type_name === 'end' ? 'end' : 'word') as 'word' | 'end';
+        const location = w.location || `${surahNumber}:${v.verse_number}:${w.position}`;
+
+        // Root & Grammar enrichment
+        const matchedRoot = findBestMatchingRoot(arabic, meaningIndo);
+        const rootLetters = matchedRoot ? matchedRoot.rootArabic : extractArabicRootLetters(arabic);
+        const grammar = inferGrammarRole(arabic, meaningIndo);
+
+        let audioUrl: string | undefined;
+        if (w.audio_url) {
+          audioUrl = w.audio_url.startsWith('http')
+            ? w.audio_url
+            : `https://audio.qurancdn.com/${w.audio_url}`;
+        }
+
+        return {
+          id: w.id || w.position,
+          position: w.position,
+          arabic,
+          transliteration,
+          meaningIndo,
+          audioUrl,
+          charType,
+          location,
+          rootLetters: rootLetters || undefined,
+          rootSlug: matchedRoot?.id,
+          posTag: grammar.posCategory,
+          posDetail: grammar.posDetail
+        };
+      });
+
+      return {
+        ayahNumber: v.verse_number,
+        verseKey: v.verse_key || `${surahNumber}:${v.verse_number}`,
+        textArabic: v.text_uthmani || parsedWords.filter(w => w.charType === 'word').map(w => w.arabic).join(' '),
+        textIndo: translationIndo,
+        words: parsedWords
+      };
+    });
+  } catch (err) {
+    console.warn('Fallback to AlQuran Cloud API:', err);
+    // Fallback using AlQuran Cloud
+    const [arRes, idRes] = await Promise.all([
+      fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`),
+      fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/id.indonesian`)
+    ]);
+
+    if (!arRes.ok || !idRes.ok) return [];
+    const arJson = await arRes.json();
+    const idJson = await idRes.json();
+
+    const arAyahs = arJson.data.ayahs || [];
+    const idAyahs = idJson.data.ayahs || [];
+
+    return arAyahs.map((ar: any, idx: number) => {
+      const wordsRaw = ar.text.split(' ');
+      const parsedWords: WBWWord[] = wordsRaw.map((w: string, wIdx: number) => {
+        const matchedRoot = findBestMatchingRoot(w);
+        const grammar = inferGrammarRole(w);
+        return {
+          id: wIdx + 1,
+          position: wIdx + 1,
+          arabic: w,
+          transliteration: '',
+          meaningIndo: '',
+          charType: 'word',
+          location: `${surahNumber}:${ar.numberInSurah}:${wIdx + 1}`,
+          rootLetters: matchedRoot ? matchedRoot.rootArabic : extractArabicRootLetters(w),
+          rootSlug: matchedRoot?.id,
+          posTag: grammar.posCategory,
+          posDetail: grammar.posDetail
+        };
+      });
+
+      return {
+        ayahNumber: ar.numberInSurah,
+        verseKey: `${surahNumber}:${ar.numberInSurah}`,
+        textArabic: ar.text,
+        textIndo: idAyahs[idx]?.text || '',
+        words: parsedWords
+      };
+    });
+  }
 }
 
 /**
