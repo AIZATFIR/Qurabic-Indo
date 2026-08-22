@@ -220,7 +220,7 @@ export default function RandomAyahPage() {
 
           {/* Arabic Text with Interactive Clickable Words */}
           <div className="py-4 text-right dir-rtl">
-            <div className="font-arabic-lg text-4xl sm:text-5xl text-ink-primary dark:text-white leading-loose tracking-wide space-x-2 space-x-reverse flex flex-wrap flex-row-reverse items-center justify-start">
+            <div className="font-arabic-lg text-4xl sm:text-5xl text-ink-primary dark:text-white leading-loose tracking-wide dir-rtl">
               {ayah.words.map((w, idx) => {
                 if (w.charType === 'end') {
                   return (

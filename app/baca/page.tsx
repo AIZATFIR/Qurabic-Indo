@@ -321,7 +321,7 @@ export default function BacaQuranPage() {
                 </div>
 
                 {/* Arabic Text with Interactive Clickable Words & Interlinear Transliteration */}
-                <div className={`font-arabic ${fontArabicClass} ${textArabicColor} text-right space-x-2 space-x-reverse flex flex-wrap flex-row-reverse items-center justify-start`}>
+                <div className={`font-arabic ${fontArabicClass} ${textArabicColor} text-right dir-rtl leading-loose`}>
                   {ayah.words.map((word, wIdx) => {
                     if (word.charType === 'end') {
                       return (

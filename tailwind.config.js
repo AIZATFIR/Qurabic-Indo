@@ -11,13 +11,13 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#3904e7',
-          deep: '#4434d4',
-          press: '#2e2b8c',
-          soft: '#665efd',
-          subdued: '#b9b9f9',
-          fixed: '#e3dfff',
-          'fixed-dim': '#c5c0ff',
+          DEFAULT: '#059669', // Emerald Green Primary
+          deep: '#047857',
+          press: '#065f46',
+          soft: '#10b981',
+          subdued: '#d1fae5',
+          fixed: '#ecfdf5',
+          'fixed-dim': '#a7f3d0',
         },
         ink: {
           primary: '#0d253d',
@@ -42,8 +42,8 @@ module.exports = {
         pill: '9999px',
       },
       boxShadow: {
-        soft: '0 4px 24px -6px rgba(0, 55, 112, 0.08)',
-        hover: '0 12px 32px -8px rgba(0, 55, 112, 0.12)',
+        soft: '0 4px 24px -6px rgba(5, 150, 105, 0.08)',
+        hover: '0 12px 32px -8px rgba(5, 150, 105, 0.14)',
       },
       fontFamily: {
         sans: ['Inter', 'var(--font-sans)', 'system-ui', 'sans-serif'],
