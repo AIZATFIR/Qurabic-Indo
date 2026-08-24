@@ -3,7 +3,7 @@ import { fetchLiveRoot } from '@/lib/api/quran-corpus-api';
 import RootCard from '@/components/RootCard';
 import AyahConcordance from '@/components/AyahConcordance';
 import Link from 'next/link';
-import { Search, ArrowLeft, Radio, Sparkles, BookOpen, Layers } from 'lucide-react';
+import { Search, ArrowLeft, Radio, BookOpen, Layers } from 'lucide-react';
 
 interface PageProps {
   searchParams: {

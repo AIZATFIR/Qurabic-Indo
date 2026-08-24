@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { BookOpen, Search, Heart, BookMarked, Sparkles, LogOut, User } from 'lucide-react';
+import { BookOpen, Search, Heart, BookMarked, Shuffle, LogOut, User } from 'lucide-react';
 import OmniSearch from './OmniSearch';
 import GoogleAuthModal from './GoogleAuthModal';
 import { useState } from 'react';
@@ -30,9 +30,8 @@ export default function Navbar() {
                   <span className="font-sans font-semibold text-base text-ink-primary dark:text-white tracking-tight leading-none group-hover:text-primary transition-colors">
                     Qurabic <span className="text-primary font-normal">(Indo)</span>
                   </span>
-                  <span className="text-[9px] text-slate-500 dark:text-slate-400 font-mono tracking-wider uppercase mt-0.5 flex items-center space-x-1">
-                    <span>Quranic Corpus</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block ml-1" title="API Live Connected" />
+                  <span className="text-[9px] text-slate-500 dark:text-slate-400 font-mono tracking-wider uppercase mt-0.5">
+                    Corpus &amp; Morfologi
                   </span>
                 </div>
               </Link>
@@ -48,12 +47,12 @@ export default function Navbar() {
                 <span>Baca Qur&apos;an</span>
               </Link>
               
-              {/* Prominent Ayat Acak Tab */}
+              {/* Ayat Acak Tab */}
               <Link
                 href="/ayat-random"
                 className="hover:text-primary transition-all flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-900 border border-indigo-200/80 font-semibold text-xs dark:bg-indigo-950/40 dark:text-indigo-200 dark:border-indigo-800/60 shadow-sm hover:scale-105"
               >
-                <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                <Shuffle className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                 <span>Ayat Acak</span>
               </Link>
 

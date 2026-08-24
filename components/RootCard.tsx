@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { RootWord } from '@/lib/types/morphology';
 import { useBookmarks } from '@/lib/hooks/useBookmarks';
-import { Heart, BookOpen, Layers, BookMarked, Sparkles } from 'lucide-react';
+import { Heart, BookOpen, Layers, BookMarked } from 'lucide-react';
 
 interface RootCardProps {
   root: RootWord;
@@ -52,7 +52,7 @@ export default function RootCard({ root }: RootCardProps) {
       <div>
         {/* Occurrences Badge */}
         <div className="inline-flex items-center space-x-1.5 px-3 py-1 bg-primary-subdued dark:bg-primary-deep/30 text-primary-deep dark:text-primary-light text-xs font-mono font-bold rounded-full mb-4">
-          <Sparkles className="w-3.5 h-3.5 text-primary" />
+          <BookOpen className="w-3.5 h-3.5 text-primary" />
           <span>{root.totalOccurrences} KEMUNCULAN</span>
         </div>
 

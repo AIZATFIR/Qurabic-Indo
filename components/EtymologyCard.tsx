@@ -1,4 +1,4 @@
-import { Sparkles, BookMarked } from 'lucide-react';
+import { Compass, BookMarked } from 'lucide-react';
 
 interface EtymologyCardProps {
   rootArabic: string;
@@ -19,7 +19,7 @@ export default function EtymologyCard({
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2.5">
           <div className="w-8 h-8 rounded-full bg-primary-subdued text-primary-deep flex items-center justify-center font-bold">
-            <Sparkles className="w-4 h-4" />
+            <Compass className="w-4 h-4" />
           </div>
           <div>
             <h3 className="font-semibold text-base text-ink-primary">Etimologi &amp; Makna Klasik</h3>

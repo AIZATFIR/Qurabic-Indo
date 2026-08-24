@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, ShieldCheck, User, Sparkles, CheckCircle2 } from 'lucide-react';
+import { X, ShieldCheck, User, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { isFirebaseConfigured } from '@/lib/firebase';
 

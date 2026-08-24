@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BookOpen, Heart, Search, BookMarked, Sparkles } from 'lucide-react';
+import { Home, BookOpen, Heart, Search, BookMarked, Shuffle } from 'lucide-react';
 import OmniSearch from './OmniSearch';
 import { useBookmarks } from '@/lib/hooks/useBookmarks';
 
@@ -15,7 +15,7 @@ export default function MobileBottomNav() {
   const navItems = [
     { label: 'Beranda', href: '/', icon: Home },
     { label: 'Baca', href: '/baca', icon: BookMarked },
-    { label: 'Ayat Acak', href: '/ayat-random', icon: Sparkles, highlight: true },
+    { label: 'Ayat Acak', href: '/ayat-random', icon: Shuffle, highlight: true },
     { label: 'Katalog', href: '/morfologi', icon: BookOpen },
     { label: 'Favorit', href: '/favorit', icon: Heart, badge: bookmarkedIds.length },
   ];

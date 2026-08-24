@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { WordSegment } from '@/lib/types/morphology';
 import GrammarBadge from './GrammarBadge';
-import { Volume2, Sparkles, BookOpen } from 'lucide-react';
+import { Volume2, BookOpen } from 'lucide-react';
 import WordEtymologyModal from './WordEtymologyModal';
 
 interface WordByWordViewerProps {

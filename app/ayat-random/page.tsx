@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Sparkles, RefreshCw, BookOpen, Volume2, Copy, Check, ArrowLeft, Layers, Compass } from 'lucide-react';
+import { Shuffle, RefreshCw, BookOpen, Volume2, Copy, Check, ArrowLeft, Layers, Compass } from 'lucide-react';
 import Link from 'next/link';
 import QuranWordInteractive from '@/components/QuranWordInteractive';
 import { findBestMatchingRoot, extractArabicRootLetters, inferGrammarRole } from '@/lib/search/root-search';
@@ -144,29 +144,25 @@ export default function RandomAyahPage() {
       </Link>
 
       {/* Header Banner */}
-      <div className="p-8 sm:p-10 rounded-3xl bg-white dark:bg-slate-900 border border-hairline dark:border-slate-800 shadow-soft gradient-mesh text-center space-y-4">
-        <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-mono font-semibold uppercase tracking-wider">
-          <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-          <span>Ayat Acak &amp; Tadabbur Harian</span>
+      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-hairline dark:border-slate-800 shadow-soft gradient-mesh text-center space-y-3">
+        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-mono font-semibold uppercase tracking-wider">
+          <Shuffle className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+          <span>Ayat Acak &amp; Tadabbur</span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-light text-ink-primary dark:text-white tracking-tight font-sans">
+        <h1 className="text-2xl sm:text-4xl font-light text-ink-primary dark:text-white tracking-tight font-sans">
           Inspirasi Ayat Al-Qur&apos;an
         </h1>
 
-        <p className="text-sm text-slate-600 dark:text-slate-400 max-w-xl mx-auto leading-relaxed">
-          Temukan pesan dan hikmah dari 6.236 Ayat Al-Qur&apos;an secara acak. Klik pada kata manapun untuk membedah akar kata, audio pelafalan, dan definisinya.
-        </p>
-
         {/* Acak Button */}
-        <div className="pt-2">
+        <div className="pt-1">
           <button
             onClick={fetchRandomAyah}
             disabled={loading}
-            className="inline-flex items-center space-x-2 bg-primary hover:bg-primary-deep text-white px-6 py-3 rounded-full font-semibold text-sm shadow-soft hover:shadow-hover transition-all disabled:opacity-50"
+            className="inline-flex items-center space-x-2 bg-primary hover:bg-primary-deep text-white px-6 py-2.5 rounded-full font-semibold text-sm shadow-soft hover:shadow-hover transition-all disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            <span>{loading ? 'Mengacak Ayat...' : 'Acak Ayat Lain'}</span>
+            <span>{loading ? 'Memilih Ayat...' : 'Pilih Ayat Lain'}</span>
           </button>
         </div>
       </div>

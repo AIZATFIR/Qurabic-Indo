@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { X, BookOpen, Sparkles } from 'lucide-react';
+import { X, BookOpen, Layers } from 'lucide-react';
 
 interface GrammarLegendModalProps {
   isOpen: boolean;
@@ -113,7 +113,7 @@ export default function GrammarLegendModal({ isOpen, onClose, selectedTagCode }:
         {/* Footer */}
         <div className="pt-2 border-t border-hairline flex items-center justify-between text-xs text-slate-500">
           <span className="flex items-center space-x-1">
-            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+            <BookOpen className="w-3.5 h-3.5 text-primary" />
             <span>Format Standar Quranic Corpus Project (Uni of Leeds)</span>
           </span>
 

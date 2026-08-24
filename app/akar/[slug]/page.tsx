@@ -6,7 +6,7 @@ import EtymologyCard from '@/components/EtymologyCard';
 import DerivativesGrid from '@/components/DerivativesGrid';
 import AyahConcordance from '@/components/AyahConcordance';
 import Link from 'next/link';
-import { ArrowLeft, BookOpen, Layers, Radio, Compass, Sparkles } from 'lucide-react';
+import { ArrowLeft, BookOpen, Layers, Radio, Compass } from 'lucide-react';
 
 export function generateStaticParams() {
   return ROOT_DATABASE.map((root) => ({

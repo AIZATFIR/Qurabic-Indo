@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   BookOpen,
-  Sparkles,
   ChevronLeft,
   ChevronRight,
   Layers,
@@ -267,17 +266,10 @@ export default function BacaQuranPage() {
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-8">
         
         {/* Surah Header Card */}
-        <div className={`p-6 sm:p-8 rounded-3xl border text-center space-y-3 ${containerBorder} ${cardBg}`}>
-          
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            <span className="inline-flex items-center space-x-1.5 px-3 py-0.5 rounded-full bg-primary-subdued text-primary-deep text-[11px] font-mono font-semibold uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>SURAH KE-{currentSurahMeta.number} • {currentSurahMeta.revelationType.toUpperCase()}</span>
-            </span>
-
-            <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 text-[11px] font-mono font-bold">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Word-by-Word Live Data (Kemenag RI)</span>
+        <div className={`p-6 sm:p-8 rounded-3xl border text-center space-y-2.5 ${containerBorder} ${cardBg}`}>
+          <div>
+            <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary dark:text-primary-light text-xs font-mono font-bold uppercase tracking-wider">
+              Surah Ke-{currentSurahMeta.number} • {currentSurahMeta.revelationType}
             </span>
           </div>
 
@@ -288,11 +280,6 @@ export default function BacaQuranPage() {
           <h2 className="text-xl sm:text-2xl font-light font-sans tracking-tight">
             Surah {currentSurahMeta.nameIndo} ({currentSurahMeta.ayahsCount} Ayat)
           </h2>
-
-          <div className="pt-1 flex items-center justify-center space-x-1.5 text-xs font-mono text-slate-500">
-            <Info className="w-3.5 h-3.5 text-primary" />
-            <span>Klik pada kata manapun untuk membuka kartu bedah akar kata, definisi, audio, dan morfologinya.</span>
-          </div>
         </div>
 
         {/* Loading Indicator */}
