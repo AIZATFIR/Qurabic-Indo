@@ -10,46 +10,43 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // 3-Tone Seamless Terra Palette
-        // Tone 1: Terra Deep Forest (Primary Accent)
+        // Vibrant, Fresh, & Elegant Quranic Emerald Palette
         primary: {
-          DEFAULT: '#1B3B2B', // Deep Forest Terra
-          deep: '#143022',
-          press: '#0E2419',
-          soft: '#2D5540',
-          subdued: '#E8F0EB', // Soft Mineral Sage Tint
-          fixed: '#F2F7F4',
-          'fixed-dim': '#C8DCD0',
-          light: '#A7F3D0',
+          DEFAULT: '#059669', // Vibrant Emerald Green
+          deep: '#047857',
+          press: '#065F46',
+          soft: '#10B981',
+          subdued: '#E6F7F0', // Fresh Mint Emerald Tint
+          fixed: '#ECFDF5',
+          'fixed-dim': '#A7F3D0',
+          light: '#34D399',
         },
-        // Tone 2: Terra Mineral Charcoal (Ink & Typography)
         ink: {
-          primary: '#1C1917', // Warm Deep Charcoal
-          secondary: '#44403C', // Warm Stone
-          mute: '#78716C', // Soft Stone
+          primary: '#0F172A', // Crisp Dark Slate
+          secondary: '#334155',
+          mute: '#64748B',
         },
-        // Tone 3: Terra Neutral Canvas & Sand (Surface & Background)
         canvas: {
-          DEFAULT: '#FAF8F5', // Warm Terra Paper
-          soft: '#F4F0EA', // Soft Sand
-          surface: '#FFFFFF', // Clean Surface
-          cream: '#F5EBE1', // Warm Bookpaper
-          dark: '#11171D', // Deep Obsidian
-          'dark-surface': '#182129',
+          DEFAULT: '#FAFCFA', // Clean fresh white with subtle vitality
+          soft: '#F0F7F3',
+          surface: '#FFFFFF',
+          cream: '#FAF4EC', // Classic Mushaf Bookpaper
+          dark: '#0B1410',
+          'dark-surface': '#12221B',
         },
         hairline: {
-          DEFAULT: '#E7E2D8', // Seamless Warm Sand Hairline
-          input: '#D3CCC0',
-          dark: '#222D37',
+          DEFAULT: '#E2ECE6', // Soft fresh hairline
+          input: '#CBDCD2',
+          dark: '#1E362B',
         },
       },
       borderRadius: {
         pill: '9999px',
       },
       boxShadow: {
-        soft: '0 2px 12px -2px rgba(28, 25, 23, 0.04)',
-        hover: '0 8px 24px -4px rgba(28, 25, 23, 0.08)',
-        subtle: '0 1px 4px 0 rgba(28, 25, 23, 0.03)',
+        soft: '0 4px 20px -4px rgba(5, 150, 105, 0.08)',
+        hover: '0 12px 30px -6px rgba(5, 150, 105, 0.15)',
+        subtle: '0 1px 4px 0 rgba(15, 23, 42, 0.04)',
       },
       fontFamily: {
         sans: ['Inter', 'var(--font-sans)', 'system-ui', '-apple-system', 'sans-serif'],

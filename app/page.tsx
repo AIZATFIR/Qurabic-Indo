@@ -23,15 +23,16 @@ export default function HomePage() {
   return (
     <div className="space-y-14 pb-16">
       
-      {/* HERO SECTION - Seamless Terra Surface */}
-      <header className="relative pt-16 pb-16 bg-[#FAF8F5] dark:bg-[#11171D] border-b border-hairline dark:border-hairline-dark">
+      {/* HERO SECTION - Fresh & Radiant Quranic Emerald */}
+      <header className="relative pt-16 pb-16 bg-white dark:bg-[#0B1410] border-b border-hairline dark:border-hairline-dark">
         <AmbientHeroCanvas />
 
         <div className="max-w-3xl mx-auto px-6 text-center relative z-10 space-y-5">
           
-          <p className="text-xs uppercase tracking-widest text-primary dark:text-primary-light font-semibold font-sans">
-            Quranic Corpus &amp; Morfologi Bahasa Indonesia
-          </p>
+          <div className="inline-flex items-center space-x-1.5 px-3.5 py-1 rounded-full bg-primary-fixed dark:bg-primary/20 text-primary-deep dark:text-primary-light border border-primary/20 text-xs font-semibold font-sans">
+            <BookOpen className="w-3.5 h-3.5 text-primary" />
+            <span>Quranic Corpus &amp; Morfologi Bahasa Indonesia</span>
+          </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light text-ink-primary dark:text-white tracking-tight font-sans leading-tight">
             Membedah Kedalaman <br />
@@ -42,7 +43,7 @@ export default function HomePage() {
             Eksplorasi etimologi klasik, akar kata, dan analisis per kata Al-Qur&apos;an dengan jernih dan mendalam.
           </p>
 
-          {/* Search Input - Clean Seamless Border */}
+          {/* Search Input */}
           <div className="max-w-xl mx-auto relative group pt-2">
             <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-ink-mute dark:text-stone-400 group-hover:text-primary transition-colors" />
             <input
@@ -50,11 +51,11 @@ export default function HomePage() {
               readOnly
               type="text"
               placeholder="Cari kata atau akar kata (sabar, كتب, batu)..."
-              className="w-full pl-11 pr-28 py-3.5 rounded-full border border-hairline dark:border-hairline-dark bg-white dark:bg-stone-900 shadow-subtle hover:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary font-sans text-sm text-ink-primary dark:text-white cursor-pointer transition-all placeholder:text-stone-400"
+              className="w-full pl-11 pr-28 py-3.5 rounded-full border border-hairline dark:border-hairline-dark bg-canvas-soft dark:bg-canvas-dark-surface shadow-subtle hover:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 font-sans text-sm text-ink-primary dark:text-white cursor-pointer transition-all placeholder:text-stone-400"
             />
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-primary text-white hover:bg-primary-deep font-medium text-xs px-5 py-2 rounded-full transition-colors flex items-center space-x-1.5 shadow-subtle"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary-deep text-white font-medium text-xs px-5 py-2 rounded-full transition-all flex items-center space-x-1.5 shadow-soft hover:shadow-hover"
             >
               <span>Cari</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -68,7 +69,7 @@ export default function HomePage() {
               <button
                 key={idx}
                 onClick={() => setIsSearchOpen(true)}
-                className="px-2.5 py-1 rounded-md text-ink-secondary dark:text-stone-300 hover:text-primary dark:hover:text-primary-light hover:bg-stone-200/50 dark:hover:bg-stone-800/50 transition-colors"
+                className="px-2.5 py-1 rounded-md text-ink-secondary dark:text-stone-300 hover:text-primary dark:hover:text-primary-light hover:bg-primary-fixed dark:hover:bg-primary/20 transition-colors font-sans"
               >
                 {tag}
               </button>
@@ -78,16 +79,16 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* FEATURED FEATURES HIGHLIGHT (LAMPIRAN 2 - SEAMLESS TERRA CARDS) */}
+      {/* FEATURED FEATURES HIGHLIGHT (SEAMLESS CARDS WITH FRESH EMERALD ACCENTS) */}
       <section className="max-w-7xl mx-auto px-6 sm:px-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           
           {/* Card 1: Mode Baca */}
           <Link
             href="/baca"
-            className="p-6 rounded-2xl bg-white dark:bg-stone-900 border border-hairline dark:border-hairline-dark shadow-subtle hover:shadow-soft hover:border-primary/40 transition-all group space-y-3"
+            className="p-6 rounded-2xl bg-white dark:bg-canvas-dark-surface border border-hairline dark:border-hairline-dark shadow-subtle hover:shadow-soft hover:border-primary/40 transition-all group space-y-3"
           >
-            <div className="w-10 h-10 rounded-xl bg-primary-subdued dark:bg-primary/20 text-primary dark:text-primary-light flex items-center justify-center group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-primary-subdued dark:bg-primary/20 text-primary dark:text-primary-light flex items-center justify-center group-hover:scale-105 transition-transform shadow-subtle">
               <BookMarked className="w-5 h-5" />
             </div>
             <h3 className="text-base font-bold text-ink-primary dark:text-white group-hover:text-primary transition-colors font-sans">
@@ -101,9 +102,9 @@ export default function HomePage() {
           {/* Card 2: Ayat Acak */}
           <Link
             href="/ayat-random"
-            className="p-6 rounded-2xl bg-white dark:bg-stone-900 border border-hairline dark:border-hairline-dark shadow-subtle hover:shadow-soft hover:border-primary/40 transition-all group space-y-3"
+            className="p-6 rounded-2xl bg-white dark:bg-canvas-dark-surface border border-hairline dark:border-hairline-dark shadow-subtle hover:shadow-soft hover:border-primary/40 transition-all group space-y-3"
           >
-            <div className="w-10 h-10 rounded-xl bg-primary-subdued dark:bg-primary/20 text-primary dark:text-primary-light flex items-center justify-center group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-primary-subdued dark:bg-primary/20 text-primary dark:text-primary-light flex items-center justify-center group-hover:scale-105 transition-transform shadow-subtle">
               <Shuffle className="w-5 h-5" />
             </div>
             <h3 className="text-base font-bold text-ink-primary dark:text-white group-hover:text-primary transition-colors font-sans">
@@ -117,9 +118,9 @@ export default function HomePage() {
           {/* Card 3: Katalog Morfologi */}
           <Link
             href="/morfologi"
-            className="p-6 rounded-2xl bg-white dark:bg-stone-900 border border-hairline dark:border-hairline-dark shadow-subtle hover:shadow-soft hover:border-primary/40 transition-all group space-y-3"
+            className="p-6 rounded-2xl bg-white dark:bg-canvas-dark-surface border border-hairline dark:border-hairline-dark shadow-subtle hover:shadow-soft hover:border-primary/40 transition-all group space-y-3"
           >
-            <div className="w-10 h-10 rounded-xl bg-primary-subdued dark:bg-primary/20 text-primary dark:text-primary-light flex items-center justify-center group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-primary-subdued dark:bg-primary/20 text-primary dark:text-primary-light flex items-center justify-center group-hover:scale-105 transition-transform shadow-subtle">
               <Layers className="w-5 h-5" />
             </div>
             <h3 className="text-base font-bold text-ink-primary dark:text-white group-hover:text-primary transition-colors font-sans">
@@ -133,28 +134,28 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* QUICK AYAT ACAK CALLOUT - Unified Deep Terra Tone */}
+      {/* QUICK AYAT ACAK CALLOUT - Rich Vibrant Quranic Emerald Gradient */}
       <section className="max-w-7xl mx-auto px-6 sm:px-12">
-        <div className="p-6 sm:p-8 rounded-2xl bg-primary text-white shadow-soft flex flex-col md:flex-row items-center justify-between gap-5">
+        <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-[#065F46] via-[#047857] to-[#059669] text-white shadow-soft flex flex-col md:flex-row items-center justify-between gap-5">
           <div className="space-y-1 text-center md:text-left">
-            <span className="text-xs uppercase tracking-widest text-primary-light font-semibold font-sans">
+            <span className="text-xs uppercase tracking-widest text-emerald-200 font-semibold font-sans">
               Inspirasi Harian
             </span>
             <h3 className="text-xl sm:text-2xl font-light font-sans tracking-tight">
               Tadabbur Ayat Acak Al-Qur&apos;an
             </h3>
-            <p className="text-xs text-stone-200 max-w-xl font-sans">
+            <p className="text-xs text-emerald-100 max-w-xl font-sans">
               Buka ayat secara acak untuk refleksi harian, audio murottal, dan bedah makna kata perkata.
             </p>
           </div>
 
           <Link
             href="/ayat-random"
-            className="inline-flex items-center space-x-2 bg-[#FAF8F5] text-primary hover:bg-white font-semibold px-5 py-2.5 rounded-full text-xs shadow-subtle hover:shadow-soft transition-all whitespace-nowrap group"
+            className="inline-flex items-center space-x-2 bg-white text-primary-deep hover:bg-emerald-50 font-bold px-5 py-2.5 rounded-full text-xs shadow-soft hover:shadow-hover transition-all whitespace-nowrap group"
           >
-            <Shuffle className="w-3.5 h-3.5" />
+            <Shuffle className="w-3.5 h-3.5 text-primary" />
             <span>Buka Ayat Acak</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform text-primary" />
           </Link>
         </div>
       </section>
@@ -210,11 +211,11 @@ export default function HomePage() {
             {/* Lemma 1 */}
             <Link
               href="/akar/s-l-w"
-              className="bg-white dark:bg-stone-900 p-5 rounded-2xl border border-hairline dark:border-hairline-dark hover:border-primary/40 shadow-subtle hover:shadow-soft transition-all group space-y-1.5"
+              className="bg-white dark:bg-canvas-dark-surface p-5 rounded-2xl border border-hairline dark:border-hairline-dark hover:border-primary/40 shadow-subtle hover:shadow-soft transition-all group space-y-1.5"
             >
               <div className="flex justify-between items-center">
                 <span className="text-2xl font-bold font-arabic text-ink-primary dark:text-white group-hover:text-primary transition-colors" dir="rtl">صَلَاة</span>
-                <span className="text-[11px] text-primary dark:text-primary-light bg-primary-subdued dark:bg-primary/20 px-2 py-0.5 rounded font-medium font-sans">99x</span>
+                <span className="text-[11px] text-primary dark:text-primary-light bg-primary-fixed dark:bg-primary/20 px-2 py-0.5 rounded font-medium font-sans">99x</span>
               </div>
               <h4 className="text-xs font-bold text-ink-primary dark:text-white font-sans">Sholat (ص-ل-و)</h4>
               <p className="text-xs text-ink-mute dark:text-stone-400 line-clamp-2 font-sans">Shalawain (urat punggung yang terhubung). Hubungan spiritual hamba dengan Allah.</p>
@@ -223,24 +224,24 @@ export default function HomePage() {
             {/* Lemma 2 */}
             <Link
               href="/akar/s-b-r"
-              className="bg-white dark:bg-stone-900 p-5 rounded-2xl border border-hairline dark:border-hairline-dark hover:border-primary/40 shadow-subtle hover:shadow-soft transition-all group space-y-1.5"
+              className="bg-white dark:bg-canvas-dark-surface p-5 rounded-2xl border border-hairline dark:border-hairline-dark hover:border-primary/40 shadow-subtle hover:shadow-soft transition-all group space-y-1.5"
             >
               <div className="flex justify-between items-center">
                 <span className="text-2xl font-bold font-arabic text-ink-primary dark:text-white group-hover:text-primary transition-colors" dir="rtl">صَبْر</span>
-                <span className="text-[11px] text-primary dark:text-primary-light bg-primary-subdued dark:bg-primary/20 px-2 py-0.5 rounded font-medium font-sans">103x</span>
+                <span className="text-[11px] text-primary dark:text-primary-light bg-primary-fixed dark:bg-primary/20 px-2 py-0.5 rounded font-medium font-sans">103x</span>
               </div>
-              <h4 className="text-xs font-bold text-ink-primary dark:text-white font-sans">Sabar (ص-ب-ر)</h4>
+              <h4 className="text-xs font-bold text-ink-primary dark:text-white font-sans">Sabar (ص-ب-r)</h4>
               <p className="text-xs text-ink-mute dark:text-stone-400 line-clamp-2 font-sans">Sobaro (batu licin yang sangat padat) &amp; obat pahit yang menyembuhkan.</p>
             </Link>
 
             {/* Lemma 3 */}
             <Link
               href="/akar/a-l-m"
-              className="bg-white dark:bg-stone-900 p-5 rounded-2xl border border-hairline dark:border-hairline-dark hover:border-primary/40 shadow-subtle hover:shadow-soft transition-all group space-y-1.5"
+              className="bg-white dark:bg-canvas-dark-surface p-5 rounded-2xl border border-hairline dark:border-hairline-dark hover:border-primary/40 shadow-subtle hover:shadow-soft transition-all group space-y-1.5"
             >
               <div className="flex justify-between items-center">
                 <span className="text-2xl font-bold font-arabic text-ink-primary dark:text-white group-hover:text-primary transition-colors" dir="rtl">عِلْم</span>
-                <span className="text-[11px] text-primary dark:text-primary-light bg-primary-subdued dark:bg-primary/20 px-2 py-0.5 rounded font-medium font-sans">854x</span>
+                <span className="text-[11px] text-primary dark:text-primary-light bg-primary-fixed dark:bg-primary/20 px-2 py-0.5 rounded font-medium font-sans">854x</span>
               </div>
               <h4 className="text-xs font-bold text-ink-primary dark:text-white font-sans">Ilmu (ع-ل-م)</h4>
               <p className="text-xs text-ink-mute dark:text-stone-400 line-clamp-2 font-sans">Alam (tanda penunjuk jalan). Pengetahuan mendalam yang memberi arah.</p>
@@ -249,11 +250,11 @@ export default function HomePage() {
             {/* Lemma 4 */}
             <Link
               href="/akar/r-h-m"
-              className="bg-white dark:bg-stone-900 p-5 rounded-2xl border border-hairline dark:border-hairline-dark hover:border-primary/40 shadow-subtle hover:shadow-soft transition-all group space-y-1.5"
+              className="bg-white dark:bg-canvas-dark-surface p-5 rounded-2xl border border-hairline dark:border-hairline-dark hover:border-primary/40 shadow-subtle hover:shadow-soft transition-all group space-y-1.5"
             >
               <div className="flex justify-between items-center">
                 <span className="text-2xl font-bold font-arabic text-ink-primary dark:text-white group-hover:text-primary transition-colors" dir="rtl">رَحْمَة</span>
-                <span className="text-[11px] text-primary dark:text-primary-light bg-primary-subdued dark:bg-primary/20 px-2 py-0.5 rounded font-medium font-sans">339x</span>
+                <span className="text-[11px] text-primary dark:text-primary-light bg-primary-fixed dark:bg-primary/20 px-2 py-0.5 rounded font-medium font-sans">339x</span>
               </div>
               <h4 className="text-xs font-bold text-ink-primary dark:text-white font-sans">Rahmat (ر-ح-م)</h4>
               <p className="text-xs text-ink-mute dark:text-stone-400 line-clamp-2 font-sans">Rahim (kandungan ibu). Kasih sayang yang memberi kehidupan dan perlindungan.</p>

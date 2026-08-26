@@ -158,8 +158,8 @@ export default function WordEtymologyModal({
           </div>
         </div>
 
-        {/* Word Main Card - Clean Terra Surface */}
-        <div className="p-5 rounded-xl bg-[#F7F5F0] dark:bg-stone-800/80 border border-[#EBE6DC] dark:border-stone-700/60 space-y-3">
+        {/* Word Main Card - Fresh Emerald Surface */}
+        <div className="p-5 rounded-xl bg-primary-fixed/50 dark:bg-canvas-dark-surface border border-primary/15 dark:border-hairline-dark space-y-3">
           <div className="flex items-start justify-between gap-3">
             <div className="space-y-0.5">
               {displayRootLetters && (
