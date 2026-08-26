@@ -9,52 +9,51 @@
   --font-arabic: 'Noto Naskh Arabic', 'Amiri', serif;
 }
 
-/* Premium Heavy & Smooth Scroll Physics */
+/* Premium Smooth Scroll Physics */
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 6rem;
+  scroll-padding-top: 5rem;
   -webkit-overflow-scrolling: touch;
 }
 
 body {
   font-feature-settings: "ss01" 1, "tnum" 1;
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: #FAF8F5;
+  color: #1C1917;
   font-family: var(--font-sans);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Soft Elevation Shadows */
+/* Seamless Elevation Shadows */
 .shadow-soft {
-  box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 2px 14px -2px rgba(28, 25, 23, 0.04);
 }
 
 .shadow-hover {
-  box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.07);
-  transform: translateY(-2px);
+  box-shadow: 0 10px 28px -6px rgba(28, 25, 23, 0.07);
 }
 
-/* Custom Scrollbar - Subdued & Premium */
+/* Custom Scrollbar - Subdued & Terra-aligned */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #F4F0EA;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #D7D0C5;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  background: #B5ACA0;
 }
 
-/* Crystal Clear Quranic Arabic Typography (Noto Naskh Arabic) */
+/* Crystal Clear Quranic Arabic Typography */
 .font-arabic {
   font-family: var(--font-arabic);
   line-height: 2.2;
@@ -80,14 +79,14 @@ body {
 .translation-kemenag {
   font-family: var(--font-sans);
   line-height: 1.7;
-  color: #334155;
+  color: #44403C;
 }
 
 .translation-kemenag::before {
   content: "“";
   font-family: serif;
   font-size: 1.2em;
-  color: #94a3b8;
+  color: #A8A29E;
   margin-right: 0.15em;
 }
 
@@ -95,6 +94,6 @@ body {
   content: "”";
   font-family: serif;
   font-size: 1.2em;
-  color: #94a3b8;
+  color: #A8A29E;
   margin-left: 0.15em;
 }

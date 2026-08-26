@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { X, BookOpen, Volume2, ArrowRight, Compass, Layers } from 'lucide-react';
+import { X, BookOpen, Volume2, ArrowRight, Compass } from 'lucide-react';
 import { searchRoots, findBestMatchingRoot } from '@/lib/search/root-search';
 import { getWordDetailedExplanation } from '@/lib/search/word-dictionary';
 import { RootWord } from '@/lib/types/morphology';
@@ -95,7 +95,7 @@ export default function WordEtymologyModal({
     const cleanTarget = wordArabic.replace(/[ًٌٍَُِّْٰٓ]/g, '');
 
     return (
-      <div className="font-arabic text-xl sm:text-2xl leading-loose text-right dir-rtl text-slate-800 dark:text-slate-200">
+      <div className="font-arabic text-xl sm:text-2xl leading-loose text-right dir-rtl text-ink-primary dark:text-stone-200">
         {words.map((w, idx) => {
           const cleanW = w.replace(/[ًٌٍَُِّْٰٓ]/g, '');
           const isMatch = cleanW === cleanTarget || cleanW.includes(cleanTarget) || cleanTarget.includes(cleanW);
@@ -104,7 +104,7 @@ export default function WordEtymologyModal({
             return (
               <span
                 key={idx}
-                className="inline-block px-1.5 py-0.5 mx-1 rounded-lg bg-primary text-white font-bold shadow-sm"
+                className="inline-block px-1.5 py-0.5 mx-1 rounded-md bg-primary text-white font-bold"
               >
                 {w}
               </span>
@@ -117,32 +117,32 @@ export default function WordEtymologyModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 animate-in fade-in duration-150">
       <div className="fixed inset-0" onClick={onClose} />
 
-      <div className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl z-10 p-6 sm:p-8 space-y-5 animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white dark:bg-stone-900 border border-hairline dark:border-hairline-dark rounded-2xl shadow-hover z-10 p-5 sm:p-6 space-y-4 animate-in zoom-in-95 duration-150">
         
         {/* Header Bar */}
-        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3.5">
+        <div className="flex items-center justify-between border-b border-hairline dark:border-hairline-dark pb-3">
           <div className="flex items-center space-x-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary dark:text-primary-light text-xs font-mono font-bold uppercase">
+            <span className="px-2 py-0.5 rounded bg-primary-subdued dark:bg-primary/20 text-primary dark:text-primary-light text-xs font-semibold font-sans uppercase">
               {displayPosTag}
             </span>
             {surahNameIndo && (
-              <span className="text-xs text-slate-500 font-mono">
+              <span className="text-xs text-ink-mute dark:text-stone-400 font-sans">
                 Q.S. {surahNameIndo} [{surahNumber}]:{ayahNumber}
               </span>
             )}
           </div>
 
-          <div className="flex items-center space-x-1.5">
+          <div className="flex items-center space-x-1">
             <button
               onClick={handlePlayAudio}
               disabled={isPlayingAudio}
-              className={`p-2 rounded-full transition-all ${
+              className={`p-1.5 rounded-full transition-all ${
                 isPlayingAudio
-                  ? 'bg-primary text-white scale-110 shadow-md animate-pulse'
-                  : 'bg-slate-100 dark:bg-slate-800 hover:bg-primary/10 text-slate-700 dark:text-slate-300 hover:text-primary'
+                  ? 'bg-primary text-white scale-105'
+                  : 'bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 text-stone-600 dark:text-stone-300'
               }`}
               title="Dengarkan pelafalan kata"
             >
@@ -151,58 +151,58 @@ export default function WordEtymologyModal({
 
             <button
               onClick={onClose}
-              className="p-2 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="p-1.5 rounded-full text-stone-400 hover:text-stone-700 dark:hover:text-white hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* Word Main Card */}
-        <div className="p-6 rounded-3xl bg-gradient-to-br from-amber-50/80 via-amber-50/30 to-white dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 border border-amber-200/70 dark:border-slate-800 shadow-sm space-y-4">
-          <div className="flex items-start justify-between gap-4">
-            <div className="space-y-1">
+        {/* Word Main Card - Clean Terra Surface */}
+        <div className="p-5 rounded-xl bg-[#F7F5F0] dark:bg-stone-800/80 border border-[#EBE6DC] dark:border-stone-700/60 space-y-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="space-y-0.5">
               {displayRootLetters && (
                 <div className="flex items-center space-x-1.5">
-                  <span className="text-xs font-mono font-semibold text-slate-500 dark:text-slate-400">
+                  <span className="text-xs text-ink-mute dark:text-stone-400 font-sans font-medium">
                     Akar:
                   </span>
-                  <span className="font-arabic text-xl font-bold text-amber-900 dark:text-amber-300 tracking-widest">
+                  <span className="font-arabic text-lg font-bold text-primary dark:text-primary-light tracking-wider">
                     {displayRootLetters}
                   </span>
                   {displayRootLatin && (
-                    <span className="text-xs font-mono italic text-slate-500">
+                    <span className="text-xs text-ink-mute dark:text-stone-400 font-sans">
                       ({displayRootLatin})
                     </span>
                   )}
                 </div>
               )}
               {transliteration && (
-                <p className="text-sm font-mono italic text-slate-600 dark:text-slate-400 font-medium">
+                <p className="text-xs text-ink-secondary dark:text-stone-300 font-medium font-sans">
                   {transliteration}
                 </p>
               )}
             </div>
 
             <div className="text-right">
-              <span className="font-arabic-lg text-4xl sm:text-5xl font-bold text-primary dark:text-primary-light block leading-tight" dir="rtl">
+              <span className="font-arabic-lg text-3xl sm:text-4xl font-bold text-ink-primary dark:text-white block leading-tight" dir="rtl">
                 {wordArabic}
               </span>
             </div>
           </div>
 
           {/* Primary & Detailed Meanings */}
-          <div className="pt-2 border-t border-amber-200/50 dark:border-slate-800 space-y-2">
-            <p className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white font-sans leading-snug">
+          <div className="pt-2 border-t border-[#EBE6DC] dark:border-stone-700 space-y-1.5">
+            <p className="text-base font-bold text-ink-primary dark:text-white font-sans leading-snug">
               {wordDetail.primaryMeaning || meaningIndo || 'Kata dalam Al-Qur\'an'}
             </p>
 
             {wordDetail.meanings.length > 1 && (
-              <div className="space-y-1.5 pt-1">
-                <span className="text-[11px] font-mono uppercase font-semibold text-slate-400 dark:text-slate-500 block">
-                  Ragam Definisi &amp; Nuansa Makna:
+              <div className="space-y-1 pt-1">
+                <span className="text-[10px] font-semibold text-ink-mute dark:text-stone-400 uppercase tracking-wider block font-sans">
+                  Ragam Definisi:
                 </span>
-                <ul className="space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                <ul className="space-y-1 text-xs text-ink-secondary dark:text-stone-300 font-sans">
                   {wordDetail.meanings.slice(1).map((m, idx) => (
                     <li key={idx} className="flex items-start space-x-2">
                       <span className="text-primary font-bold text-xs mt-0.5">•</span>
@@ -215,29 +215,29 @@ export default function WordEtymologyModal({
           </div>
         </div>
 
-        {/* Deep Root Etymology & Grammatical Role Breakdown */}
-        <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-3">
+        {/* Deep Root Etymology & Grammatical Role */}
+        <div className="p-4 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-hairline dark:border-hairline-dark space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 flex items-center space-x-1.5">
-              <Compass className="w-4 h-4 text-primary" />
-              <span>Bedah Etimologi &amp; Morfologi Akar Kata</span>
+            <span className="text-xs font-bold text-ink-primary dark:text-stone-200 flex items-center space-x-1.5 font-sans">
+              <Compass className="w-3.5 h-3.5 text-primary" />
+              <span>Bedah Etimologi &amp; Morfologi</span>
             </span>
             {root && (
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary dark:text-primary-light font-mono font-bold">
+              <span className="text-[10px] px-2 py-0.5 rounded bg-primary-subdued dark:bg-primary/20 text-primary dark:text-primary-light font-medium font-sans">
                 {root.totalOccurrences}x di Al-Qur&apos;an
               </span>
             )}
           </div>
 
-          <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-sans leading-relaxed">
+          <p className="text-xs text-ink-secondary dark:text-stone-300 font-sans leading-relaxed">
             {displayGrammar}
           </p>
 
           {wordDetail.rootExplanation && (
-            <div className="p-3 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 leading-relaxed space-y-1.5">
+            <div className="p-3 bg-white dark:bg-stone-800 rounded-lg border border-hairline dark:border-hairline-dark text-xs text-ink-secondary dark:text-stone-300 leading-relaxed space-y-1 font-sans">
               <p>{wordDetail.rootExplanation}</p>
               {wordDetail.classicalCitation && (
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 italic pt-1 border-t border-slate-100 dark:border-slate-700">
+                <p className="text-[11px] text-ink-mute dark:text-stone-400 italic pt-1 border-t border-hairline dark:border-hairline-dark">
                   {wordDetail.classicalCitation}
                 </p>
               )}
@@ -247,14 +247,14 @@ export default function WordEtymologyModal({
 
         {/* Ayah Context Block */}
         {ayahArabic && (
-          <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 space-y-2.5">
-            <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-800 pb-2">
-              <span className="text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
-                <BookOpen className="w-3.5 h-3.5 text-primary" />
+          <div className="p-4 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-hairline dark:border-hairline-dark space-y-2">
+            <div className="flex items-center justify-between border-b border-hairline dark:border-hairline-dark pb-1.5">
+              <span className="text-xs font-medium text-ink-mute dark:text-stone-400 flex items-center space-x-1 font-sans">
+                <BookOpen className="w-3 h-3 text-primary" />
                 <span>Konteks Ayat:</span>
               </span>
               {ayahNumber && (
-                <span className="text-[11px] font-mono text-slate-500">
+                <span className="text-[11px] text-ink-mute dark:text-stone-400 font-sans">
                   Ayat {ayahNumber}
                 </span>
               )}
@@ -263,8 +263,8 @@ export default function WordEtymologyModal({
             {renderHighlightedAyah()}
 
             {ayahIndo && (
-              <div className="pt-1.5 border-t border-slate-200/60 dark:border-slate-800">
-                <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed italic">
+              <div className="pt-1 border-t border-hairline dark:border-hairline-dark">
+                <p className="text-xs text-ink-secondary dark:text-stone-300 leading-relaxed italic font-sans">
                   &ldquo;{ayahIndo}&rdquo;
                 </p>
               </div>
@@ -273,26 +273,26 @@ export default function WordEtymologyModal({
         )}
 
         {/* Action Buttons */}
-        <div className="pt-1 space-y-2">
+        <div className="pt-1">
           {root ? (
             <Link
               href={`/akar/${root.id}`}
               onClick={onClose}
-              className="w-full flex items-center justify-center space-x-2 bg-primary hover:bg-primary-deep text-white py-3.5 px-4 rounded-2xl text-xs sm:text-sm font-semibold shadow-soft hover:shadow-hover transition-all"
+              className="w-full flex items-center justify-center space-x-2 bg-primary hover:bg-primary-deep text-white py-3 px-4 rounded-xl text-xs font-semibold shadow-subtle hover:shadow-soft transition-all"
             >
-              <BookOpen className="w-4 h-4" />
+              <BookOpen className="w-3.5 h-3.5" />
               <span>Buka Bedah Akar Kata Lengkap ({root.rootLatin})</span>
-              <ArrowRight className="w-4 h-4 ml-1" />
+              <ArrowRight className="w-3.5 h-3.5 ml-1" />
             </Link>
           ) : (
             <Link
               href={`/cari?q=${encodeURIComponent(wordArabic)}`}
               onClick={onClose}
-              className="w-full flex items-center justify-center space-x-2 bg-primary hover:bg-primary-deep text-white py-3.5 px-4 rounded-2xl text-xs sm:text-sm font-semibold shadow-soft hover:shadow-hover transition-all"
+              className="w-full flex items-center justify-center space-x-2 bg-primary hover:bg-primary-deep text-white py-3 px-4 rounded-xl text-xs font-semibold shadow-subtle hover:shadow-soft transition-all"
             >
-              <BookOpen className="w-4 h-4" />
-              <span>Cari Semua Kemunculan &ldquo;{wordArabic}&rdquo; di Al-Qur&apos;an</span>
-              <ArrowRight className="w-4 h-4 ml-1" />
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>Cari Semua Kemunculan &ldquo;{wordArabic}&rdquo;</span>
+              <ArrowRight className="w-3.5 h-3.5 ml-1" />
             </Link>
           )}
         </div>

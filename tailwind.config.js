@@ -10,55 +10,51 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // 3-Tone Seamless Terra Palette
+        // Tone 1: Terra Deep Forest (Primary Accent)
         primary: {
-          DEFAULT: '#059669', // Emerald Green Primary
-          deep: '#047857',
-          press: '#065f46',
-          soft: '#10b981',
-          subdued: '#d1fae5',
-          fixed: '#ecfdf5',
-          'fixed-dim': '#a7f3d0',
+          DEFAULT: '#1B3B2B', // Deep Forest Terra
+          deep: '#143022',
+          press: '#0E2419',
+          soft: '#2D5540',
+          subdued: '#E8F0EB', // Soft Mineral Sage Tint
+          fixed: '#F2F7F4',
+          'fixed-dim': '#C8DCD0',
+          light: '#A7F3D0',
         },
+        // Tone 2: Terra Mineral Charcoal (Ink & Typography)
         ink: {
-          primary: '#0d253d',
-          secondary: '#273951',
-          mute: '#64748d',
+          primary: '#1C1917', // Warm Deep Charcoal
+          secondary: '#44403C', // Warm Stone
+          mute: '#78716C', // Soft Stone
         },
+        // Tone 3: Terra Neutral Canvas & Sand (Surface & Background)
         canvas: {
-          DEFAULT: '#ffffff',
-          soft: '#f6f9fc',
-          cream: '#f5e9d4',
+          DEFAULT: '#FAF8F5', // Warm Terra Paper
+          soft: '#F4F0EA', // Soft Sand
+          surface: '#FFFFFF', // Clean Surface
+          cream: '#F5EBE1', // Warm Bookpaper
+          dark: '#11171D', // Deep Obsidian
+          'dark-surface': '#182129',
         },
         hairline: {
-          DEFAULT: '#e3e8ee',
-          input: '#a8c3de',
+          DEFAULT: '#E7E2D8', // Seamless Warm Sand Hairline
+          input: '#D3CCC0',
+          dark: '#222D37',
         },
-        ruby: '#ea2261',
-        magenta: '#f96bee',
-        lemon: '#9b6829',
-        'shadow-blue': '#003770',
       },
       borderRadius: {
         pill: '9999px',
       },
       boxShadow: {
-        soft: '0 4px 24px -6px rgba(5, 150, 105, 0.08)',
-        hover: '0 12px 32px -8px rgba(5, 150, 105, 0.14)',
+        soft: '0 2px 12px -2px rgba(28, 25, 23, 0.04)',
+        hover: '0 8px 24px -4px rgba(28, 25, 23, 0.08)',
+        subtle: '0 1px 4px 0 rgba(28, 25, 23, 0.03)',
       },
       fontFamily: {
-        sans: ['Inter', 'var(--font-sans)', 'system-ui', 'sans-serif'],
-        arabic: ['var(--font-arabic)', 'Amiri', 'Traditional Arabic', 'serif'],
+        sans: ['Inter', 'var(--font-sans)', 'system-ui', '-apple-system', 'sans-serif'],
+        arabic: ['var(--font-arabic)', 'Noto Naskh Arabic', 'Amiri', 'serif'],
       },
-      spacing: {
-        xxs: '2px',
-        xs: '4px',
-        sm: '8px',
-        md: '12px',
-        lg: '16px',
-        xl: '24px',
-        xxl: '32px',
-        huge: '64px',
-      }
     },
   },
   plugins: [],
