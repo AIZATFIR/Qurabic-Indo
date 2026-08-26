@@ -142,12 +142,12 @@ export default function RandomAyahPage() {
       </Link>
 
       {/* Header Banner */}
-      <div className="p-6 sm:p-7 rounded-2xl bg-white dark:bg-stone-900 border border-hairline dark:border-hairline-dark shadow-subtle text-center space-y-3">
-        <span className="inline-block px-3 py-0.5 rounded-md bg-primary-subdued dark:bg-primary/20 text-primary dark:text-primary-light text-xs font-semibold uppercase tracking-wider font-sans">
+      <div className="p-6 sm:p-7 rounded-2xl bg-canvas-surface border border-hairline shadow-subtle text-center space-y-3">
+        <span className="inline-block px-3 py-0.5 rounded-md bg-primary-subdued text-primary text-xs font-semibold uppercase tracking-wider font-sans">
           Ayat Acak &amp; Tadabbur
         </span>
 
-        <h1 className="text-2xl sm:text-3xl font-light text-ink-primary dark:text-white tracking-tight font-sans">
+        <h1 className="text-2xl sm:text-3xl font-light text-ink-primary tracking-tight font-sans">
           Inspirasi Ayat Al-Qur&apos;an
         </h1>
 
@@ -166,24 +166,24 @@ export default function RandomAyahPage() {
 
       {/* Random Ayah Display Card */}
       {loading ? (
-        <div className="p-14 text-center bg-white dark:bg-stone-900 border border-hairline dark:border-hairline-dark rounded-2xl space-y-3 shadow-subtle">
+        <div className="p-14 text-center bg-canvas-surface border border-hairline rounded-2xl space-y-3 shadow-subtle">
           <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-xs text-ink-mute dark:text-stone-400 font-sans">Memilih Ayat Acak...</p>
+          <p className="text-xs text-ink-mute font-sans">Memilih Ayat Acak...</p>
         </div>
       ) : ayah ? (
-        <div className="p-6 sm:p-8 bg-white dark:bg-stone-900 border border-hairline dark:border-hairline-dark rounded-2xl shadow-subtle space-y-6">
+        <div className="p-6 sm:p-8 bg-canvas-surface border border-hairline rounded-2xl shadow-subtle space-y-6">
           
           {/* Ayah Surah Header & Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline dark:border-hairline-dark pb-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline pb-3">
             <div className="flex items-center space-x-2.5">
-              <span className="w-7 h-7 rounded-full bg-primary-subdued dark:bg-primary/20 text-primary dark:text-primary-light font-bold text-xs font-sans flex items-center justify-center">
+              <span className="w-7 h-7 rounded-full bg-primary-subdued text-primary font-bold text-xs font-sans flex items-center justify-center">
                 {ayah.surahNumber}
               </span>
               <div>
-                <h3 className="font-bold text-ink-primary dark:text-white text-base font-sans">
+                <h3 className="font-bold text-ink-primary text-base font-sans">
                   Surah {ayah.surahNameIndo} {ayah.surahNameArabic && `(${ayah.surahNameArabic})`}
                 </h3>
-                <span className="text-xs text-ink-mute dark:text-stone-400 font-sans">
+                <span className="text-xs text-ink-mute font-sans">
                   Ayat Ke-{ayah.ayahNumber}
                 </span>
               </div>
@@ -194,7 +194,7 @@ export default function RandomAyahPage() {
               <button
                 onClick={handlePlayAudio}
                 className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all font-sans ${
-                  isPlaying ? 'bg-primary text-white shadow-subtle' : 'bg-stone-100 dark:bg-stone-800 text-ink-secondary dark:text-stone-300 hover:bg-stone-200'
+                  isPlaying ? 'bg-primary text-white shadow-subtle' : 'bg-canvas-soft text-ink-secondary hover:bg-primary-fixed'
                 }`}
               >
                 <Volume2 className="w-3.5 h-3.5" />
@@ -203,9 +203,9 @@ export default function RandomAyahPage() {
 
               <button
                 onClick={handleCopy}
-                className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-stone-100 dark:bg-stone-800 text-ink-secondary dark:text-stone-300 hover:bg-stone-200 transition-all font-sans"
+                className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-canvas-soft text-ink-secondary hover:bg-primary-fixed transition-all font-sans"
               >
-                {copied ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5 text-stone-400" />}
+                {copied ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5 text-ink-mute" />}
                 <span>{copied ? 'Tersalin' : 'Salin'}</span>
               </button>
             </div>
@@ -213,7 +213,7 @@ export default function RandomAyahPage() {
 
           {/* Arabic Text with Interactive Clickable Words */}
           <div className="py-3 text-right dir-rtl">
-            <div className="font-arabic-lg text-3xl sm:text-4xl text-ink-primary dark:text-white leading-loose tracking-wide dir-rtl">
+            <div className="font-arabic-lg text-3xl sm:text-4xl text-ink-primary leading-loose tracking-wide dir-rtl">
               {ayah.words.map((w, idx) => {
                 if (w.charType === 'end') {
                   return (
@@ -246,11 +246,11 @@ export default function RandomAyahPage() {
           </div>
 
           {/* Indonesian Kemenag Translation */}
-          <div className="p-5 bg-stone-50 dark:bg-stone-800/60 border border-hairline dark:border-hairline-dark rounded-xl space-y-1">
-            <span className="text-[11px] font-semibold text-ink-mute dark:text-stone-400 uppercase tracking-wider block font-sans">
+          <div className="p-5 bg-canvas-soft border border-hairline rounded-xl space-y-1">
+            <span className="text-[11px] font-semibold text-ink-mute uppercase tracking-wider block font-sans">
               Terjemahan Kemenag RI:
             </span>
-            <p className="text-sm sm:text-base translation-kemenag text-ink-secondary dark:text-stone-200 leading-relaxed font-sans">
+            <p className="text-sm sm:text-base translation-kemenag text-ink-secondary leading-relaxed font-sans">
               &ldquo;{ayah.verseIndo}&rdquo;
             </p>
           </div>

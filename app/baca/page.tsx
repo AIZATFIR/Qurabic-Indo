@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import QuranWordInteractive from '@/components/QuranWordInteractive';
 import { fetchSurahWithWBW, FullAyahWBW } from '@/lib/api/quran-corpus-api';
+import { useTheme } from '@/lib/context/ThemeContext';
 
 const SURAH_SEED_DEFAULT = [
   { number: 1, nameIndo: 'Al-Fatihah', nameArabic: 'الفاتحة', ayahsCount: 7, revelationType: 'Meccan' },
@@ -32,7 +33,7 @@ const SURAH_SEED_DEFAULT = [
 export default function BacaQuranPage() {
   const [surahList, setSurahList] = useState(SURAH_SEED_DEFAULT);
   const [selectedSurah, setSelectedSurah] = useState<number>(1);
-  const [theme, setTheme] = useState<'bookpaper' | 'white' | 'dark'>('bookpaper');
+  const { theme, setTheme, options } = useTheme();
   const [fontSize, setFontSize] = useState<'sm' | 'md' | 'lg' | 'xl'>('lg');
   const [showTranslation, setShowTranslation] = useState(true);
   const [ayahs, setAyahs] = useState<FullAyahWBW[]>([]);
@@ -80,48 +81,6 @@ export default function BacaQuranPage() {
 
   const currentSurahMeta = surahList.find((s) => s.number === selectedSurah) || surahList[0];
 
-  // Theme-aware styles for seamless visual harmony
-  const themeBg =
-    theme === 'bookpaper'
-      ? 'bg-[#FAF4EC] text-[#2C241E]'
-      : theme === 'white'
-      ? 'bg-[#FAF8F5] text-[#1C1917]'
-      : 'bg-[#11171D] text-[#FAF8F5]';
-
-  const containerBorder =
-    theme === 'bookpaper'
-      ? 'border-[#E7DECة]'
-      : theme === 'white'
-      ? 'border-[#E7E2D8]'
-      : 'border-[#222D37]';
-
-  const cardBg =
-    theme === 'bookpaper'
-      ? 'bg-[#F4ECE1] border-[#E5DACD]'
-      : theme === 'white'
-      ? 'bg-white shadow-subtle border-[#E7E2D8]'
-      : 'bg-[#182129] shadow-soft border-[#222D37]';
-
-  const headbarBg =
-    theme === 'bookpaper'
-      ? 'bg-[#EFE5D8] text-[#2C241E] border-[#E0D4C5]'
-      : theme === 'dark'
-      ? 'bg-[#182129] text-white border-[#222D37]'
-      : 'bg-white text-[#1C1917] border-[#E7E2D8]';
-
-  const selectBg =
-    theme === 'bookpaper'
-      ? 'bg-[#E6DBCC] border-[#D6C9B8] text-[#2C241E]'
-      : theme === 'dark'
-      ? 'bg-[#1D2833] border-[#2B3948] text-white'
-      : 'bg-stone-50 border-[#D8D2C5] text-[#1C1917]';
-
-  const textArabicColor =
-    theme === 'dark' ? 'text-[#FAF8F5]' : 'text-[#1C1917]';
-
-  const textTranslationColor =
-    theme === 'dark' ? 'text-stone-300' : 'text-stone-700';
-
   // High-impact font size scaling
   const fontArabicClass =
     fontSize === 'sm'
@@ -133,10 +92,10 @@ export default function BacaQuranPage() {
       : 'text-6xl sm:text-7xl leading-[2.8]';
 
   return (
-    <div className={`min-h-screen transition-colors duration-200 ${themeBg}`}>
+    <div className="min-h-screen transition-colors duration-200 bg-canvas text-ink-primary">
       
       {/* Sticky Reader Headbar */}
-      <div className={`sticky top-0 z-30 border-b px-4 py-2.5 transition-colors duration-200 shadow-subtle ${headbarBg}`}>
+      <div className="sticky top-0 z-30 border-b border-hairline px-4 py-2.5 transition-colors duration-200 shadow-subtle bg-canvas/95 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
           
           {/* LEFT SIDE: Surah Selector & Random Ayah Button */}
@@ -145,7 +104,7 @@ export default function BacaQuranPage() {
             <select
               value={selectedSurah}
               onChange={(e) => setSelectedSurah(Number(e.target.value))}
-              className={`font-medium rounded-xl px-3 py-1.5 text-xs border focus:outline-none focus:ring-1 focus:ring-primary transition-all cursor-pointer font-sans ${selectBg}`}
+              className="font-medium rounded-xl px-3 py-1.5 text-xs border border-hairline bg-canvas-surface text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all cursor-pointer font-sans shadow-subtle"
             >
               {surahList.map((s) => (
                 <option key={s.number} value={s.number}>
@@ -156,10 +115,10 @@ export default function BacaQuranPage() {
 
             <Link
               href="/ayat-random"
-              className="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-transparent hover:border-hairline transition-all"
+              className="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-transparent hover:border-hairline transition-all text-ink-secondary hover:text-primary"
               title="Buka Ayat Acak"
             >
-              <Shuffle className="w-3.5 h-3.5" />
+              <Shuffle className="w-3.5 h-3.5 text-primary" />
               <span>Ayat Acak</span>
             </Link>
           </div>
@@ -167,49 +126,26 @@ export default function BacaQuranPage() {
           {/* RIGHT SIDE: Theme Selector, Font Size Controls & Translation Toggle */}
           <div className="flex flex-wrap items-center space-x-2 text-xs ml-auto">
             
-            {/* 1. Theme Toggle */}
-            <div className={`flex items-center p-0.5 rounded-lg border ${
-              theme === 'bookpaper' ? 'bg-[#E5DACD] border-[#D6C9B8]' : theme === 'dark' ? 'bg-[#1D2833] border-[#2B3948]' : 'bg-stone-100 border-stone-200'
-            }`}>
-              <button
-                onClick={() => setTheme('bookpaper')}
-                className={`px-2.5 py-1 rounded-md text-[11px] font-sans font-medium transition-all ${
-                  theme === 'bookpaper'
-                    ? 'bg-[#D6C8B5] text-[#2C2014] font-bold shadow-subtle'
-                    : 'text-stone-500 hover:text-stone-900'
-                }`}
-                title="Tema Kertas Bookpaper"
-              >
-                Bookpaper
-              </button>
-              <button
-                onClick={() => setTheme('white')}
-                className={`px-2.5 py-1 rounded-md text-[11px] font-sans font-medium transition-all ${
-                  theme === 'white'
-                    ? 'bg-white text-stone-900 font-bold shadow-subtle'
-                    : 'text-stone-500 hover:text-stone-900'
-                }`}
-                title="Tema Terang"
-              >
-                Terang
-              </button>
-              <button
-                onClick={() => setTheme('dark')}
-                className={`px-2.5 py-1 rounded-md text-[11px] font-sans font-medium transition-all ${
-                  theme === 'dark'
-                    ? 'bg-primary text-white font-bold shadow-subtle'
-                    : 'text-stone-400 hover:text-white'
-                }`}
-                title="Tema Malam"
-              >
-                Malam
-              </button>
+            {/* 1. Theme Toggle Tabs (4 Options: Bookpaper, Terang, Hijau, Malam) */}
+            <div className="flex items-center p-0.5 rounded-lg border border-hairline bg-canvas-soft">
+              {options.map((opt) => (
+                <button
+                  key={opt.id}
+                  onClick={() => setTheme(opt.id)}
+                  className={`px-2 py-1 rounded-md text-[11px] font-sans transition-all ${
+                    theme === opt.id
+                      ? 'bg-canvas-surface text-primary font-bold shadow-subtle'
+                      : 'text-ink-mute hover:text-ink-primary'
+                  }`}
+                  title={`Tema ${opt.label}`}
+                >
+                  {opt.shortLabel}
+                </button>
+              ))}
             </div>
 
             {/* 2. Font Size Scaling */}
-            <div className={`flex items-center space-x-0.5 p-0.5 rounded-lg border ${
-              theme === 'bookpaper' ? 'bg-[#E5DACD] border-[#D6C9B8]' : theme === 'dark' ? 'bg-[#1D2833] border-[#2B3948]' : 'bg-stone-100 border-stone-200'
-            }`}>
+            <div className="flex items-center space-x-0.5 p-0.5 rounded-lg border border-hairline bg-canvas-soft">
               {(['sm', 'md', 'lg', 'xl'] as const).map((sz) => (
                 <button
                   key={sz}
@@ -217,11 +153,7 @@ export default function BacaQuranPage() {
                   className={`px-2 py-1 rounded text-[10px] font-sans font-bold transition-all ${
                     fontSize === sz
                       ? 'bg-primary text-white shadow-subtle'
-                      : theme === 'bookpaper'
-                      ? 'text-[#5A4E40] hover:text-[#2C2014]'
-                      : theme === 'dark'
-                      ? 'text-stone-400 hover:text-white'
-                      : 'text-stone-500 hover:text-stone-900'
+                      : 'text-ink-mute hover:text-ink-primary'
                   }`}
                   title={`Ukuran Huruf ${sz.toUpperCase()}`}
                 >
@@ -236,11 +168,7 @@ export default function BacaQuranPage() {
               className={`px-3 py-1.5 rounded-lg border text-[11px] font-medium transition-all font-sans ${
                 showTranslation
                   ? 'bg-primary text-white border-primary shadow-subtle'
-                  : theme === 'bookpaper'
-                  ? 'bg-[#E5DACD] border-[#D6C9B8] text-[#5A4E40]'
-                  : theme === 'dark'
-                  ? 'bg-[#1D2833] border-[#2B3948] text-stone-300'
-                  : 'bg-white border-stone-300 text-stone-600'
+                  : 'bg-canvas-surface border-hairline text-ink-secondary'
               }`}
             >
               Terjemahan
@@ -254,18 +182,18 @@ export default function BacaQuranPage() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
         
         {/* Surah Header Card */}
-        <div className={`p-6 sm:p-7 rounded-2xl border text-center space-y-2 ${containerBorder} ${cardBg}`}>
+        <div className="p-6 sm:p-7 rounded-2xl border border-hairline bg-canvas-surface text-center space-y-2 shadow-subtle">
           <div>
-            <span className="inline-block px-3 py-0.5 rounded-md bg-primary-subdued dark:bg-primary/20 text-primary dark:text-primary-light text-xs font-semibold uppercase tracking-wider font-sans">
+            <span className="inline-block px-3 py-0.5 rounded-md bg-primary-subdued text-primary text-xs font-semibold uppercase tracking-wider font-sans">
               Surah Ke-{currentSurahMeta.number} • {currentSurahMeta.revelationType}
             </span>
           </div>
 
-          <h1 className="font-arabic-lg text-4xl sm:text-5xl font-bold text-primary dark:text-primary-light">
+          <h1 className="font-arabic-lg text-4xl sm:text-5xl font-bold text-primary">
             {currentSurahMeta.nameArabic}
           </h1>
 
-          <h2 className="text-lg sm:text-xl font-light font-sans tracking-tight">
+          <h2 className="text-lg sm:text-xl font-light font-sans tracking-tight text-ink-primary">
             Surah {currentSurahMeta.nameIndo} ({currentSurahMeta.ayahsCount} Ayat)
           </h2>
         </div>
@@ -274,7 +202,7 @@ export default function BacaQuranPage() {
         {loading ? (
           <div className="py-16 text-center space-y-3">
             <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-xs font-sans text-stone-500">Memuat teks Al-Qur&apos;an &amp; analisis kata...</p>
+            <p className="text-xs font-sans text-ink-mute">Memuat teks Al-Qur&apos;an &amp; analisis kata...</p>
           </div>
         ) : (
           /* Ayah Reader List */
@@ -282,21 +210,21 @@ export default function BacaQuranPage() {
             {ayahs.map((ayah) => (
               <div
                 key={ayah.ayahNumber}
-                className={`p-6 sm:p-7 rounded-2xl border transition-all ${containerBorder} ${cardBg}`}
+                className="p-6 sm:p-7 rounded-2xl border border-hairline bg-canvas-surface transition-all shadow-subtle"
               >
                 {/* Ayah Header Number */}
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-hairline/60">
-                  <span className="w-6 h-6 rounded-full bg-primary-subdued dark:bg-primary/20 text-primary dark:text-primary-light text-xs font-bold font-sans flex items-center justify-center">
+                <div className="flex items-center justify-between mb-4 pb-2 border-b border-hairline">
+                  <span className="w-6 h-6 rounded-full bg-primary-subdued text-primary text-xs font-bold font-sans flex items-center justify-center">
                     {ayah.ayahNumber}
                   </span>
 
-                  <span className="text-xs text-stone-400 font-sans">
+                  <span className="text-xs text-ink-mute font-sans">
                     {currentSurahMeta.nameIndo} : {ayah.ayahNumber}
                   </span>
                 </div>
 
                 {/* Arabic Text with Interactive Clickable Words */}
-                <div className={`font-arabic ${fontArabicClass} ${textArabicColor} text-right space-x-2 space-x-reverse flex flex-wrap flex-row-reverse items-center justify-start`}>
+                <div className={`font-arabic ${fontArabicClass} text-ink-primary text-right space-x-2 space-x-reverse flex flex-wrap flex-row-reverse items-center justify-start`}>
                   {ayah.words.map((word, wIdx) => {
                     if (word.charType === 'end') {
                       return (
@@ -329,8 +257,8 @@ export default function BacaQuranPage() {
 
                 {/* Indonesian Translation Kemenag RI */}
                 {showTranslation && ayah.textIndo && (
-                  <div className="mt-5 pt-3 border-t border-hairline/60">
-                    <p className={`text-xs sm:text-sm leading-relaxed font-sans ${textTranslationColor}`}>
+                  <div className="mt-5 pt-3 border-t border-hairline">
+                    <p className="text-xs sm:text-sm leading-relaxed font-sans text-ink-secondary">
                       &ldquo;{ayah.textIndo}&rdquo;
                     </p>
                   </div>

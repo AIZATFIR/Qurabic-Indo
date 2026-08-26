@@ -28,7 +28,7 @@ export default function RootCard({ root }: RootCardProps) {
     : root.etymologyNote;
 
   return (
-    <div className="group bg-white dark:bg-stone-900 border border-hairline dark:border-hairline-dark rounded-2xl p-5 shadow-subtle hover:shadow-soft hover:border-primary/40 transition-all duration-200 flex flex-col justify-between relative">
+    <div className="group bg-canvas-surface border border-hairline rounded-2xl p-5 shadow-subtle hover:shadow-soft hover:border-primary/40 transition-all duration-200 flex flex-col justify-between relative">
       
       {/* Bookmark Button */}
       <button
@@ -40,8 +40,8 @@ export default function RootCard({ root }: RootCardProps) {
         title={bookmarked ? 'Hapus dari Favorit' : 'Simpan ke Favorit'}
         className={`absolute top-4 right-4 p-1.5 rounded-full border transition-all z-10 ${
           bookmarked
-            ? 'bg-primary-subdued border-primary/30 text-primary dark:bg-primary/20 dark:text-primary-light'
-            : 'bg-stone-50 dark:bg-stone-800 border-hairline dark:border-hairline-dark text-stone-400 hover:text-primary'
+            ? 'bg-primary-subdued border-primary/30 text-primary'
+            : 'bg-canvas-soft border-hairline text-ink-mute hover:text-primary'
         }`}
       >
         <Heart className={`w-3.5 h-3.5 ${bookmarked ? 'fill-current' : ''}`} />
@@ -49,33 +49,33 @@ export default function RootCard({ root }: RootCardProps) {
 
       <div>
         {/* Occurrences Badge */}
-        <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 bg-primary-subdued dark:bg-primary/20 text-primary dark:text-primary-light text-[11px] font-semibold rounded-md mb-3 font-sans">
+        <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 bg-primary-subdued text-primary text-[11px] font-semibold rounded-md mb-3 font-sans">
           <span>{root.totalOccurrences} Kemunculan</span>
         </div>
 
         {/* Arabic Root & Title Link */}
         <Link href={`/akar/${root.id}`} className="block group-hover:text-primary transition-colors">
           <div className="flex items-baseline space-x-2.5 mb-2">
-            <h3 className="font-arabic text-2xl font-bold text-ink-primary dark:text-white group-hover:text-primary transition-colors">
+            <h3 className="font-arabic text-2xl font-bold text-ink-primary group-hover:text-primary transition-colors">
               {root.rootArabic}
             </h3>
-            <span className="text-sm font-medium text-ink-mute dark:text-stone-400 font-sans">
+            <span className="text-sm font-medium text-ink-mute font-sans">
               ({root.rootLatin})
             </span>
           </div>
 
           {/* Primary Definition Block */}
-          <div className="mb-2.5 p-2.5 rounded-xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200/60 dark:border-stone-700/50 space-y-0.5">
-            <span className="text-[10px] font-semibold text-ink-mute dark:text-stone-400 uppercase tracking-wider block font-sans">
+          <div className="mb-2.5 p-2.5 rounded-xl bg-canvas-soft border border-hairline space-y-0.5">
+            <span className="text-[10px] font-semibold text-ink-mute uppercase tracking-wider block font-sans">
               Arti Utama:
             </span>
-            <p className="text-xs font-bold text-ink-primary dark:text-stone-100 font-sans leading-snug line-clamp-2">
+            <p className="text-xs font-bold text-ink-primary font-sans leading-snug line-clamp-2">
               {primaryMeaning}
             </p>
           </div>
 
           {/* Etymology Description */}
-          <div className="text-xs text-ink-secondary dark:text-stone-300 leading-relaxed line-clamp-2 mb-3 font-sans italic">
+          <div className="text-xs text-ink-secondary leading-relaxed line-clamp-2 mb-3 font-sans italic">
             &ldquo;{displayEtymology}&rdquo;
           </div>
 
@@ -85,7 +85,7 @@ export default function RootCard({ root }: RootCardProps) {
               {root.verbs?.slice(0, 2).map((v, idx) => (
                 <span
                   key={`v-${idx}`}
-                  className="px-2 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-ink-secondary dark:text-stone-300 text-[10px] font-medium font-sans"
+                  className="px-2 py-0.5 rounded bg-canvas-soft text-ink-secondary text-[10px] font-medium font-sans"
                 >
                   Fi&apos;il: {v.arabic} ({v.meaningIndo})
                 </span>
@@ -93,7 +93,7 @@ export default function RootCard({ root }: RootCardProps) {
               {root.nouns?.slice(0, 2).map((n, idx) => (
                 <span
                   key={`n-${idx}`}
-                  className="px-2 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-ink-secondary dark:text-stone-300 text-[10px] font-medium font-sans"
+                  className="px-2 py-0.5 rounded bg-canvas-soft text-ink-secondary text-[10px] font-medium font-sans"
                 >
                   Isim: {n.arabic} ({n.meaningIndo})
                 </span>
@@ -104,19 +104,19 @@ export default function RootCard({ root }: RootCardProps) {
       </div>
 
       {/* Derivatives Counter & Action Link */}
-      <div className="pt-3 border-t border-hairline dark:border-hairline-dark flex items-center justify-between">
-        <div className="flex items-center space-x-2 text-xs text-ink-mute dark:text-stone-400 font-sans">
+      <div className="pt-3 border-t border-hairline flex items-center justify-between">
+        <div className="flex items-center space-x-2 text-xs text-ink-mute font-sans">
           <span className="flex items-center space-x-1">
             <Layers className="w-3.5 h-3.5 text-primary" />
-            <span className="font-medium text-ink-secondary dark:text-stone-300">{root.verbsCount} Fi&apos;il</span>
+            <span className="font-medium text-ink-secondary">{root.verbsCount} Fi&apos;il</span>
           </span>
           <span>•</span>
-          <span className="font-medium text-ink-secondary dark:text-stone-300">{root.nounsCount} Isim</span>
+          <span className="font-medium text-ink-secondary">{root.nounsCount} Isim</span>
         </div>
 
         <Link
           href={`/akar/${root.id}`}
-          className="inline-flex items-center space-x-1 text-xs font-semibold text-primary dark:text-primary-light hover:underline transition-colors"
+          className="inline-flex items-center space-x-1 text-xs font-semibold text-primary hover:underline transition-colors"
         >
           <span>Detail</span>
           <BookOpen className="w-3 h-3" />

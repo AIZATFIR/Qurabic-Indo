@@ -22,7 +22,7 @@ export default function MobileBottomNav() {
 
   return (
     <>
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#FAF8F5] dark:bg-[#11171D] border-t border-hairline dark:border-hairline-dark px-2 py-1.5 shadow-soft">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-canvas/95 border-t border-hairline px-2 py-1.5 shadow-soft">
         <div className="flex items-center justify-around max-w-md mx-auto">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
@@ -34,8 +34,8 @@ export default function MobileBottomNav() {
                 href={item.href}
                 className={`flex flex-col items-center justify-center space-y-0.5 py-1 px-2.5 rounded-xl transition-all relative ${
                   isActive
-                    ? 'text-primary dark:text-primary-light font-bold'
-                    : 'text-ink-mute hover:text-ink-primary dark:text-stone-400 dark:hover:text-white'
+                    ? 'text-primary font-bold'
+                    : 'text-ink-mute hover:text-ink-primary'
                 }`}
               >
                 <div className="relative">

@@ -7,9 +7,83 @@
 :root {
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-arabic: 'Noto Naskh Arabic', 'Amiri', serif;
+
+  /* Default Theme: Bookpaper */
+  --bg-page: #FAF5ED;
+  --bg-surface: #FFFFFF;
+  --bg-soft: #F4ECE1;
+  --color-primary: #2D5A43;
+  --color-primary-deep: #1F3F2E;
+  --color-primary-subdued: #E8F0EB;
+  --color-primary-fixed: #F2F7F4;
+  --color-ink-primary: #2C241E;
+  --color-ink-secondary: #574B40;
+  --color-ink-mute: #8C7E72;
+  --color-border: #E5DACD;
 }
 
-/* Premium Smooth Scroll Physics */
+/* 1. Theme Bookpaper (Kertas Mushaf Klasik) */
+[data-theme="bookpaper"] {
+  --bg-page: #FAF5ED;
+  --bg-surface: #FFFFFF;
+  --bg-soft: #F4ECE1;
+  --color-primary: #2D5A43;
+  --color-primary-deep: #1F3F2E;
+  --color-primary-subdued: #E8F0EB;
+  --color-primary-fixed: #F2F7F4;
+  --color-ink-primary: #2C241E;
+  --color-ink-secondary: #574B40;
+  --color-ink-mute: #8C7E72;
+  --color-border: #E5DACD;
+}
+
+/* 2. Theme Light (Terang Minimalis) */
+[data-theme="light"] {
+  --bg-page: #FAFCFA;
+  --bg-surface: #FFFFFF;
+  --bg-soft: #F0F7F3;
+  --color-primary: #059669;
+  --color-primary-deep: #047857;
+  --color-primary-subdued: #E6F7F0;
+  --color-primary-fixed: #ECFDF5;
+  --color-ink-primary: #0F172A;
+  --color-ink-secondary: #334155;
+  --color-ink-mute: #64748B;
+  --color-border: #E2ECE6;
+}
+
+/* 3. Theme Green (Hijau Zamrud Islami) */
+[data-theme="green"] {
+  --bg-page: #F0F9F4;
+  --bg-surface: #FFFFFF;
+  --bg-soft: #E4F4EC;
+  --color-primary: #047857;
+  --color-primary-deep: #065F46;
+  --color-primary-subdued: #D1FAE5;
+  --color-primary-fixed: #ECFDF5;
+  --color-ink-primary: #06281C;
+  --color-ink-secondary: #1F4D3C;
+  --color-ink-mute: #407A65;
+  --color-border: #CBE8D8;
+}
+
+/* 4. Theme Dark (Malam Obsidian) */
+[data-theme="dark"],
+.dark {
+  --bg-page: #0B1410;
+  --bg-surface: #12221B;
+  --bg-soft: #182E25;
+  --color-primary: #10B981;
+  --color-primary-deep: #059669;
+  --color-primary-subdued: #064E3B;
+  --color-primary-fixed: #0E3628;
+  --color-ink-primary: #F1F5F9;
+  --color-ink-secondary: #CBD5E1;
+  --color-ink-mute: #94A3B8;
+  --color-border: #1E3D30;
+}
+
+/* Premium Smooth Scroll */
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 5rem;
@@ -18,42 +92,47 @@ html {
 
 body {
   font-feature-settings: "ss01" 1, "tnum" 1;
-  background-color: #FAFCFA;
-  color: #0F172A;
+  background-color: var(--bg-page);
+  color: var(--color-ink-primary);
   font-family: var(--font-sans);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Fresh Elevation Shadows */
+/* Elevation Shadows */
 .shadow-soft {
   box-shadow: 0 4px 20px -4px rgba(5, 150, 105, 0.08);
 }
 
 .shadow-hover {
-  box-shadow: 0 12px 30px -6px rgba(5, 150, 105, 0.15);
+  box-shadow: 0 12px 30px -6px rgba(5, 150, 105, 0.14);
 }
 
-/* Custom Scrollbar - Subdued & Emerald Tinted */
+.shadow-subtle {
+  box-shadow: 0 1px 4px 0 rgba(15, 23, 42, 0.04);
+}
+
+/* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #F0F7F3;
+  background: var(--bg-soft);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #A7F3D0;
+  background: var(--color-border);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #10B981;
+  background: var(--color-primary);
 }
 
-/* Crystal Clear Quranic Arabic Typography */
+/* Quranic Arabic Typography */
 .font-arabic {
   font-family: var(--font-arabic);
   line-height: 2.2;
@@ -64,7 +143,6 @@ body {
   font-weight: 500;
 }
 
-/* Large Display Arabic Text */
 .font-arabic-lg {
   font-family: var(--font-arabic);
   line-height: 2.4;
@@ -79,14 +157,13 @@ body {
 .translation-kemenag {
   font-family: var(--font-sans);
   line-height: 1.7;
-  color: #334155;
 }
 
 .translation-kemenag::before {
   content: "“";
   font-family: serif;
   font-size: 1.2em;
-  color: #10B981;
+  color: var(--color-primary);
   margin-right: 0.15em;
 }
 
@@ -94,6 +171,6 @@ body {
   content: "”";
   font-family: serif;
   font-size: 1.2em;
-  color: #10B981;
+  color: var(--color-primary);
   margin-left: 0.15em;
 }

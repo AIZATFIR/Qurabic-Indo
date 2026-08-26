@@ -10,33 +10,33 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Vibrant, Fresh, & Elegant Quranic Emerald Palette
+        // Multi-Theme Dynamic Tokens
         primary: {
-          DEFAULT: '#059669', // Vibrant Emerald Green
-          deep: '#047857',
+          DEFAULT: 'var(--color-primary, #059669)',
+          deep: 'var(--color-primary-deep, #047857)',
           press: '#065F46',
           soft: '#10B981',
-          subdued: '#E6F7F0', // Fresh Mint Emerald Tint
-          fixed: '#ECFDF5',
+          subdued: 'var(--color-primary-subdued, #E6F7F0)',
+          fixed: 'var(--color-primary-fixed, #ECFDF5)',
           'fixed-dim': '#A7F3D0',
           light: '#34D399',
         },
         ink: {
-          primary: '#0F172A', // Crisp Dark Slate
-          secondary: '#334155',
-          mute: '#64748B',
+          primary: 'var(--color-ink-primary, #0F172A)',
+          secondary: 'var(--color-ink-secondary, #334155)',
+          mute: 'var(--color-ink-mute, #64748B)',
         },
         canvas: {
-          DEFAULT: '#FAFCFA', // Clean fresh white with subtle vitality
-          soft: '#F0F7F3',
-          surface: '#FFFFFF',
-          cream: '#FAF4EC', // Classic Mushaf Bookpaper
+          DEFAULT: 'var(--bg-page, #FAFCFA)',
+          soft: 'var(--bg-soft, #F0F7F3)',
+          surface: 'var(--bg-surface, #FFFFFF)',
+          cream: '#FAF4EC',
           dark: '#0B1410',
           'dark-surface': '#12221B',
         },
         hairline: {
-          DEFAULT: '#E2ECE6', // Soft fresh hairline
-          input: '#CBDCD2',
+          DEFAULT: 'var(--color-border, #E2ECE6)',
+          input: 'var(--color-border, #CBDCD2)',
           dark: '#1E362B',
         },
       },
