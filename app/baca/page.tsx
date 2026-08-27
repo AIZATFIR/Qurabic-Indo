@@ -94,8 +94,8 @@ export default function BacaQuranPage() {
   return (
     <div className="min-h-screen transition-colors duration-200 bg-canvas text-ink-primary">
       
-      {/* Sticky Reader Headbar */}
-      <div className="sticky top-0 z-30 border-b border-hairline px-4 py-2.5 transition-colors duration-200 shadow-subtle bg-canvas/95 backdrop-blur-sm">
+      {/* Reader Headbar - Non-sticky, Solid Opaque */}
+      <div className="w-full border-b border-hairline px-4 py-2.5 transition-colors duration-200 shadow-subtle bg-canvas">
         <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
           
           {/* LEFT SIDE: Surah Selector & Random Ayah Button */}

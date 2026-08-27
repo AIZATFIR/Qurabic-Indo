@@ -1,23 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import { BookOpen, Search, Heart, BookMarked, Shuffle, LogOut, User } from 'lucide-react';
+import { BookOpen, Search, Heart, BookMarked, Shuffle } from 'lucide-react';
 import OmniSearch from './OmniSearch';
-import GoogleAuthModal from './GoogleAuthModal';
 import ThemeSelector from './ThemeSelector';
 import { useState } from 'react';
 import { useBookmarks } from '@/lib/hooks/useBookmarks';
-import { useAuth } from '@/lib/hooks/useAuth';
 
 export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const { bookmarkedIds } = useBookmarks();
-  const { user, logout } = useAuth();
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-canvas/95 border-b border-hairline transition-colors">
+      {/* Static Solid Headbar - Non-sticky, Solid Color, Stays at the top */}
+      <header className="w-full bg-canvas border-b border-hairline transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             
@@ -82,11 +79,11 @@ export default function Navbar() {
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="hidden sm:flex items-center space-x-2 bg-canvas-soft hover:bg-white border border-hairline text-ink-mute px-3.5 py-1.5 rounded-full text-xs transition-all shadow-subtle hover:border-primary/40"
+                className="hidden sm:flex items-center space-x-2 bg-canvas-soft hover:bg-canvas-surface border border-hairline text-ink-mute px-3.5 py-1.5 rounded-full text-xs transition-all shadow-subtle hover:border-primary/40"
               >
                 <Search className="w-3.5 h-3.5 text-primary" />
                 <span>Cari akar kata (sabar, كتب)...</span>
-                <kbd className="hidden lg:inline-block bg-white dark:bg-stone-800 text-stone-500 text-[9px] px-1.5 py-0.5 rounded border border-hairline font-sans ml-1">
+                <kbd className="hidden lg:inline-block bg-canvas-surface text-ink-mute text-[9px] px-1.5 py-0.5 rounded border border-hairline font-sans ml-1">
                   ⌘K
                 </kbd>
               </button>
@@ -101,35 +98,6 @@ export default function Navbar() {
 
               {/* Global Theme Selector Dropdown */}
               <ThemeSelector />
-
-              {/* Login / User Profile Toggle */}
-              {user ? (
-                <div className="flex items-center space-x-2 bg-white dark:bg-canvas-dark-surface border border-hairline p-1 pr-2.5 rounded-full shadow-subtle">
-                  <img
-                    src={user.avatar}
-                    alt={user.name}
-                    className="w-6 h-6 rounded-full bg-primary-subdued border border-primary/20"
-                  />
-                  <span className="text-xs font-semibold text-ink-primary max-w-[90px] truncate font-sans">
-                    {user.name}
-                  </span>
-                  <button
-                    onClick={logout}
-                    title="Keluar"
-                    className="text-stone-400 hover:text-primary ml-1 transition-colors"
-                  >
-                    <LogOut className="w-3 h-3" />
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setIsAuthOpen(true)}
-                  className="bg-primary hover:bg-primary-deep text-white text-xs font-semibold px-4 py-1.5 rounded-full shadow-soft hover:shadow-hover transition-all flex items-center space-x-1.5"
-                >
-                  <User className="w-3.5 h-3.5" />
-                  <span>Masuk</span>
-                </button>
-              )}
             </div>
 
           </div>
@@ -138,9 +106,6 @@ export default function Navbar() {
 
       {/* OmniSearch Modal Overlay */}
       <OmniSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
-
-      {/* Google Auth Modal Overlay */}
-      <GoogleAuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
     </>
   );
 }
