@@ -104,7 +104,7 @@ export default function QuranWordInteractive({
           {wordArabic}
         </span>
         {displayTransliteration && (
-          <span className="text-[11px] sm:text-xs font-mono text-slate-500 dark:text-slate-400 group-hover:text-primary transition-colors -mt-0.5 font-medium italic opacity-85">
+          <span className="text-[11px] sm:text-xs font-sans text-ink-mute group-hover:text-primary transition-colors -mt-0.5 font-medium italic opacity-85">
             {displayTransliteration}
           </span>
         )}

@@ -10,59 +10,27 @@ import {
   Volume2,
   BookMarked,
   Shuffle,
-  ArrowLeft
+  ArrowLeft,
+  Search,
+  ChevronDown
 } from 'lucide-react';
 import QuranWordInteractive from '@/components/QuranWordInteractive';
+import SurahSearchModal from '@/components/SurahSearchModal';
 import { fetchSurahWithWBW, FullAyahWBW } from '@/lib/api/quran-corpus-api';
+import { SURAH_LIST, getSurahByNumber } from '@/lib/data/surah-list';
 import { useTheme } from '@/lib/context/ThemeContext';
 
-const SURAH_SEED_DEFAULT = [
-  { number: 1, nameIndo: 'Al-Fatihah', nameArabic: 'الفاتحة', ayahsCount: 7, revelationType: 'Meccan' },
-  { number: 2, nameIndo: 'Al-Baqarah', nameArabic: 'البقرة', ayahsCount: 286, revelationType: 'Medinan' },
-  { number: 3, nameIndo: 'Ali \'Imran', nameArabic: 'آل عمران', ayahsCount: 200, revelationType: 'Medinan' },
-  { number: 18, nameIndo: 'Al-Kahf', nameArabic: 'الكهف', ayahsCount: 110, revelationType: 'Meccan' },
-  { number: 36, nameIndo: 'Yasin', nameArabic: 'يس', ayahsCount: 83, revelationType: 'Meccan' },
-  { number: 55, nameIndo: 'Ar-Rahman', nameArabic: 'الرحمن', ayahsCount: 78, revelationType: 'Medinan' },
-  { number: 56, nameIndo: 'Al-Waqi\'ah', nameArabic: 'الواقعة', ayahsCount: 96, revelationType: 'Meccan' },
-  { number: 67, nameIndo: 'Al-Mulk', nameArabic: 'الملك', ayahsCount: 30, revelationType: 'Meccan' },
-  { number: 112, nameIndo: 'Al-Ikhlas', nameArabic: 'الإخلاص', ayahsCount: 4, revelationType: 'Meccan' },
-  { number: 113, nameIndo: 'Al-Falaq', nameArabic: 'الفلق', ayahsCount: 5, revelationType: 'Meccan' },
-  { number: 114, nameIndo: 'An-Nas', nameArabic: 'الناس', ayahsCount: 6, revelationType: 'Meccan' },
-];
-
 export default function BacaQuranPage() {
-  const [surahList, setSurahList] = useState(SURAH_SEED_DEFAULT);
   const [selectedSurah, setSelectedSurah] = useState<number>(1);
+  const [isSurahModalOpen, setIsSurahModalOpen] = useState(false);
   const { theme, setTheme, options } = useTheme();
   const [fontSize, setFontSize] = useState<'sm' | 'md' | 'lg' | 'xl'>('lg');
   const [showTranslation, setShowTranslation] = useState(true);
   const [ayahs, setAyahs] = useState<FullAyahWBW[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filterAyahNum, setFilterAyahNum] = useState<string>('');
 
-  // 1. Fetch FULL 114 Surahs list dynamically
-  useEffect(() => {
-    async function loadAll114Surahs() {
-      try {
-        const res = await fetch('https://api.alquran.cloud/v1/surah');
-        if (res.ok) {
-          const json = await res.json();
-          const fullSurahs = json.data.map((s: any) => ({
-            number: s.number,
-            nameIndo: s.englishName,
-            nameArabic: s.name,
-            ayahsCount: s.numberOfAyahs,
-            revelationType: s.revelationType
-          }));
-          setSurahList(fullSurahs);
-        }
-      } catch (err) {
-        console.warn('Using seed surahs fallback', err);
-      }
-    }
-    loadAll114Surahs();
-  }, []);
-
-  // 2. Fetch selected Surah with real Word-by-Word (WBW) data
+  // Fetch selected Surah with real Word-by-Word (WBW) data
   useEffect(() => {
     async function loadSurahData() {
       setLoading(true);
@@ -79,7 +47,25 @@ export default function BacaQuranPage() {
     loadSurahData();
   }, [selectedSurah]);
 
-  const currentSurahMeta = surahList.find((s) => s.number === selectedSurah) || surahList[0];
+  const currentSurahMeta = getSurahByNumber(selectedSurah) || SURAH_LIST[0];
+
+  // Handle Surah & target Ayah selection from Search Modal
+  const handleSelectSurah = (surahNum: number, targetAyah?: number) => {
+    setSelectedSurah(surahNum);
+    if (targetAyah) {
+      setTimeout(() => {
+        const el = document.getElementById(`ayah-${targetAyah}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 500);
+    }
+  };
+
+  // Filter Ayahs if user entered specific number in quick filter
+  const displayedAyahs = filterAyahNum.trim()
+    ? ayahs.filter(a => a.ayahNumber.toString() === filterAyahNum.trim() || a.textIndo.toLowerCase().includes(filterAyahNum.toLowerCase()))
+    : ayahs;
 
   // High-impact font size scaling
   const fontArabicClass =
@@ -88,8 +74,8 @@ export default function BacaQuranPage() {
       : fontSize === 'md'
       ? 'text-3xl sm:text-4xl leading-[2.4]'
       : fontSize === 'lg'
-      ? 'text-5xl sm:text-6xl leading-[2.6]'
-      : 'text-6xl sm:text-7xl leading-[2.8]';
+      ? 'text-4xl sm:text-5xl lg:text-6xl leading-[2.6]'
+      : 'text-5xl sm:text-6xl lg:text-7xl leading-[2.8]';
 
   return (
     <div className="min-h-screen transition-colors duration-200 bg-canvas text-ink-primary">
@@ -98,20 +84,45 @@ export default function BacaQuranPage() {
       <div className="w-full border-b border-hairline px-4 py-2.5 transition-colors duration-200 shadow-subtle bg-canvas">
         <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
           
-          {/* LEFT SIDE: Surah Selector & Random Ayah Button */}
+          {/* LEFT SIDE: Searchable Surah Trigger Button & Random Ayah Button */}
           <div className="flex items-center space-x-2">
-            <BookMarked className="w-4 h-4 text-primary shrink-0" />
-            <select
-              value={selectedSurah}
-              onChange={(e) => setSelectedSurah(Number(e.target.value))}
-              className="font-medium rounded-xl px-3 py-1.5 text-xs border border-hairline bg-canvas-surface text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all cursor-pointer font-sans shadow-subtle"
+            <button
+              onClick={() => setIsSurahModalOpen(true)}
+              className="flex items-center space-x-2 font-medium rounded-xl px-3.5 py-1.5 text-xs border border-hairline bg-canvas-surface text-ink-primary hover:border-primary/50 transition-all font-sans shadow-subtle group"
+              title="Klik untuk Cari & Ganti Surah"
             >
-              {surahList.map((s) => (
-                <option key={s.number} value={s.number}>
-                  {s.number}. Surah {s.nameIndo} ({s.nameArabic}) - {s.ayahsCount} Ayat
-                </option>
-              ))}
-            </select>
+              <BookMarked className="w-3.5 h-3.5 text-primary shrink-0" />
+              <span className="font-bold text-ink-primary">
+                {currentSurahMeta.number}. Surah {currentSurahMeta.nameIndo}
+              </span>
+              <span className="font-arabic font-bold text-sm text-primary" dir="rtl">
+                ({currentSurahMeta.nameArabic})
+              </span>
+              <span className="text-[10px] text-ink-mute hidden sm:inline">
+                - {currentSurahMeta.ayahsCount} Ayat
+              </span>
+              <ChevronDown className="w-3.5 h-3.5 text-ink-mute group-hover:text-primary transition-colors" />
+            </button>
+
+            {/* Quick Ayah Filter/Search */}
+            <div className="relative hidden md:flex items-center">
+              <Search className="w-3 h-3 absolute left-2.5 text-ink-mute" />
+              <input
+                type="text"
+                value={filterAyahNum}
+                onChange={(e) => setFilterAyahNum(e.target.value)}
+                placeholder="Cari / No. Ayat..."
+                className="w-28 pl-7 pr-2 py-1.5 rounded-lg border border-hairline bg-canvas-surface text-[11px] text-ink-primary placeholder:text-ink-mute focus:outline-none focus:ring-1 focus:ring-primary font-sans"
+              />
+              {filterAyahNum && (
+                <button
+                  onClick={() => setFilterAyahNum('')}
+                  className="text-[10px] text-ink-mute hover:text-ink-primary ml-1"
+                >
+                  Reset
+                </button>
+              )}
+            </div>
 
             <Link
               href="/ayat-random"
@@ -126,7 +137,7 @@ export default function BacaQuranPage() {
           {/* RIGHT SIDE: Theme Selector, Font Size Controls & Translation Toggle */}
           <div className="flex flex-wrap items-center space-x-2 text-xs ml-auto">
             
-            {/* 1. Theme Toggle Tabs (4 Options: Bookpaper, Terang, Hijau, Malam) */}
+            {/* 1. Theme Toggle Tabs */}
             <div className="flex items-center p-0.5 rounded-lg border border-hairline bg-canvas-soft">
               {options.map((opt) => (
                 <button
@@ -189,13 +200,16 @@ export default function BacaQuranPage() {
             </span>
           </div>
 
-          <h1 className="font-arabic-lg text-4xl sm:text-5xl font-bold text-primary">
-            {currentSurahMeta.nameArabic}
+          <h1 className="font-arabic-lg text-4xl sm:text-5xl lg:text-6xl font-bold text-primary leading-relaxed" dir="rtl">
+            سُورَةُ {currentSurahMeta.nameArabic}
           </h1>
 
           <h2 className="text-lg sm:text-xl font-light font-sans tracking-tight text-ink-primary">
             Surah {currentSurahMeta.nameIndo} ({currentSurahMeta.ayahsCount} Ayat)
           </h2>
+          <p className="text-xs text-ink-mute font-sans">
+            Arti: &ldquo;{currentSurahMeta.translationId}&rdquo;
+          </p>
         </div>
 
         {/* Loading Indicator */}
@@ -207,9 +221,10 @@ export default function BacaQuranPage() {
         ) : (
           /* Ayah Reader List */
           <div className="space-y-5">
-            {ayahs.map((ayah) => (
+            {displayedAyahs.map((ayah) => (
               <div
                 key={ayah.ayahNumber}
+                id={`ayah-${ayah.ayahNumber}`}
                 className="p-6 sm:p-7 rounded-2xl border border-hairline bg-canvas-surface transition-all shadow-subtle"
               >
                 {/* Ayah Header Number */}
@@ -223,12 +238,15 @@ export default function BacaQuranPage() {
                   </span>
                 </div>
 
-                {/* Arabic Text with Interactive Clickable Words */}
-                <div className={`font-arabic ${fontArabicClass} text-ink-primary text-right space-x-2 space-x-reverse flex flex-wrap flex-row-reverse items-center justify-start`}>
+                {/* Arabic Text with Interactive Clickable Words (RIGHT TO LEFT NATURAL QURANIC FLOW) */}
+                <div
+                  dir="rtl"
+                  className={`font-arabic ${fontArabicClass} text-ink-primary text-right flex flex-wrap items-center justify-start gap-x-2 gap-y-3 leading-loose`}
+                >
                   {ayah.words.map((word, wIdx) => {
                     if (word.charType === 'end') {
                       return (
-                        <span key={wIdx} className="text-primary font-bold text-xl px-2 font-arabic">
+                        <span key={wIdx} className="text-primary font-bold text-xl px-2 font-arabic shrink-0 select-none" dir="rtl">
                           {word.arabic || `﴿${ayah.ayahNumber}﴾`}
                         </span>
                       );
@@ -269,6 +287,14 @@ export default function BacaQuranPage() {
         )}
 
       </main>
+
+      {/* Surah & Ayah Search Modal */}
+      <SurahSearchModal
+        isOpen={isSurahModalOpen}
+        onClose={() => setIsSurahModalOpen(false)}
+        selectedSurah={selectedSurah}
+        onSelectSurah={handleSelectSurah}
+      />
     </div>
   );
 }
