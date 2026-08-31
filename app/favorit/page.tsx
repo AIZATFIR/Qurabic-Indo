@@ -5,7 +5,7 @@ import { useBookmarks } from '@/lib/hooks/useBookmarks';
 import { ROOT_DATABASE } from '@/lib/data/roots';
 import RootCard from '@/components/RootCard';
 import Link from 'next/link';
-import { Heart, BookOpen, ArrowLeft, Layers } from 'lucide-react';
+import { Bookmark, BookOpen, ArrowLeft } from 'lucide-react';
 
 export default function FavoritPage() {
   const { bookmarkedIds, isLoaded } = useBookmarks();
@@ -17,53 +17,53 @@ export default function FavoritPage() {
       {/* Back Link */}
       <Link
         href="/"
-        className="inline-flex items-center space-x-2 text-sm text-slate-500 hover:text-primary transition-colors mb-2 font-medium"
+        className="inline-flex items-center space-x-2 text-sm text-ink-mute hover:text-primary transition-colors mb-2 font-medium font-sans"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>Kembali ke Beranda</span>
       </Link>
 
       {/* Header Banner */}
-      <div className="gradient-mesh bg-white border border-hairline rounded-3xl p-8 sm:p-10 shadow-soft space-y-3">
-        <div className="inline-flex items-center space-x-2 px-3.5 py-1 bg-rose-50 text-rose-600 border border-rose-200 text-xs font-semibold rounded-full uppercase tracking-wider">
-          <Heart className="w-3.5 h-3.5 fill-current" />
+      <div className="bg-canvas-surface border border-hairline rounded-3xl p-8 sm:p-10 shadow-subtle space-y-3">
+        <div className="inline-flex items-center space-x-2 px-3.5 py-1 bg-primary-subdued text-primary text-xs font-semibold rounded-full uppercase tracking-wider font-sans">
+          <Bookmark className="w-3.5 h-3.5 fill-current" />
           <span>DAFTAR BELAJAR PRIBADI</span>
         </div>
 
         <h1 className="text-3xl sm:text-5xl font-light text-ink-primary tracking-tight font-sans">
-          Akar Kata Al-Qur&apos;an Tersimpan
+          Kata &amp; Akar Al-Qur&apos;an Tersimpan
         </h1>
 
-        <p className="text-sm text-slate-600 max-w-2xl leading-relaxed">
-          Koleksi akar kata yang telah Anda tandai untuk dipelajari lebih dalam. Data tersimpan dengan aman di browser Anda.
+        <p className="text-sm text-ink-secondary max-w-2xl leading-relaxed font-sans">
+          Koleksi akar kata dan kosakata Al-Qur&apos;an yang telah Anda tandai untuk dipelajari lebih dalam. Tersimpan dengan aman di browser Anda.
         </p>
       </div>
 
       {/* Content */}
       {!isLoaded ? (
-        <div className="p-12 text-center text-slate-400 font-mono">Memuat favorit...</div>
+        <div className="p-12 text-center text-ink-mute font-sans">Memuat kata tersimpan...</div>
       ) : savedRoots.length === 0 ? (
-        <div className="p-12 sm:p-16 text-center bg-canvas-soft border border-hairline rounded-3xl space-y-4">
-          <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto">
-            <Heart className="w-6 h-6" />
+        <div className="p-12 sm:p-16 text-center bg-canvas-surface border border-hairline rounded-3xl space-y-4 shadow-subtle">
+          <div className="w-12 h-12 rounded-2xl bg-primary-subdued text-primary flex items-center justify-center mx-auto">
+            <Bookmark className="w-6 h-6" />
           </div>
-          <h3 className="text-lg font-semibold text-ink-primary">Belum Ada Akar Kata Tersimpan</h3>
-          <p className="text-sm text-slate-500 max-w-md mx-auto">
-            Klik ikon hati pada kartu akar kata apapun untuk menyimpannya ke daftar belajar pribadi Anda.
+          <h3 className="text-lg font-semibold text-ink-primary font-sans">Belum Ada Kata Tersimpan</h3>
+          <p className="text-sm text-ink-mute max-w-md mx-auto font-sans">
+            Klik ikon simpan pada kartu akar kata atau kata manapun untuk menyimpannya ke daftar belajar pribadi Anda.
           </p>
           <div className="pt-2">
             <Link
               href="/morfologi"
-              className="inline-flex items-center space-x-2 bg-primary hover:bg-primary-deep text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow-soft transition-all"
+              className="inline-flex items-center space-x-2 bg-primary hover:bg-primary-deep text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow-soft transition-all font-sans"
             >
               <BookOpen className="w-4 h-4" />
-              <span>Jelajahi Katalog Roots</span>
+              <span>Jelajahi Katalog Kosakata</span>
             </Link>
           </div>
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="flex items-center justify-between text-xs text-slate-500 font-mono">
+          <div className="flex items-center justify-between text-xs text-ink-mute font-sans">
             <span>Menampilkan <strong>{savedRoots.length}</strong> akar kata tersimpan</span>
           </div>
 

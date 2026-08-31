@@ -225,15 +225,15 @@ export default function BacaQuranPage() {
               <div
                 key={ayah.ayahNumber}
                 id={`ayah-${ayah.ayahNumber}`}
-                className="p-6 sm:p-7 rounded-2xl border border-hairline bg-canvas-surface transition-all shadow-subtle"
+                className="p-7 sm:p-8 rounded-3xl border border-hairline bg-canvas-surface transition-all shadow-subtle space-y-4"
               >
                 {/* Ayah Header Number */}
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-hairline">
-                  <span className="w-6 h-6 rounded-full bg-primary-subdued text-primary text-xs font-bold font-sans flex items-center justify-center">
+                <div className="flex items-center justify-between pb-3 border-b border-hairline">
+                  <span className="w-7 h-7 rounded-full bg-primary-subdued text-primary text-xs font-bold font-sans flex items-center justify-center">
                     {ayah.ayahNumber}
                   </span>
 
-                  <span className="text-xs text-ink-mute font-sans">
+                  <span className="text-xs sm:text-sm text-ink-mute font-sans font-medium">
                     {currentSurahMeta.nameIndo} : {ayah.ayahNumber}
                   </span>
                 </div>
@@ -275,8 +275,8 @@ export default function BacaQuranPage() {
 
                 {/* Indonesian Translation Kemenag RI */}
                 {showTranslation && ayah.textIndo && (
-                  <div className="mt-5 pt-3 border-t border-hairline">
-                    <p className="text-xs sm:text-sm leading-relaxed font-sans text-ink-secondary">
+                  <div className="mt-4 pt-3 border-t border-hairline">
+                    <p className="text-sm sm:text-base translation-kemenag leading-relaxed font-sans text-ink-secondary">
                       &ldquo;{ayah.textIndo}&rdquo;
                     </p>
                   </div>

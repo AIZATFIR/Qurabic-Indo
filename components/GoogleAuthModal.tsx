@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, ShieldCheck, User, CheckCircle2 } from 'lucide-react';
+import { X, ShieldCheck, User, Bookmark } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { isFirebaseConfigured } from '@/lib/firebase';
 
@@ -36,41 +36,32 @@ export default function GoogleAuthModal({ isOpen, onClose }: GoogleAuthModalProp
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-primary/50 backdrop-blur-sm animate-in fade-in duration-200 font-sans">
       {/* Backdrop */}
       <div className="fixed inset-0" onClick={onClose} />
 
       {/* Auth Modal Box */}
-      <div className="relative w-full max-w-md bg-white dark:bg-slate-900 border border-hairline dark:border-slate-800 rounded-3xl shadow-hover overflow-hidden z-10 p-6 sm:p-8 space-y-6 animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md bg-canvas-surface border border-hairline rounded-3xl shadow-2xl overflow-hidden z-10 p-6 sm:p-8 space-y-6 animate-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-hairline dark:border-slate-800 pb-4">
+        <div className="flex items-center justify-between border-b border-hairline pb-4">
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-lg shadow-soft">
-              Q
+            <div className="w-10 h-10 rounded-2xl bg-primary-subdued text-primary flex items-center justify-center font-bold">
+              <Bookmark className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-ink-primary dark:text-white text-base font-sans flex items-center space-x-2">
+              <h3 className="font-bold text-ink-primary text-base font-sans flex items-center space-x-2">
                 <span>Profil Belajar Qurabic</span>
-                {isFirebaseConfigured ? (
-                  <span className="text-[10px] bg-emerald-100 text-emerald-800 font-mono px-2 py-0.5 rounded-full font-semibold">
-                    Firebase Live
-                  </span>
-                ) : (
-                  <span className="text-[10px] bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 font-mono px-2 py-0.5 rounded-full font-semibold">
-                    Mode Tamu / Lokal
-                  </span>
-                )}
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">
-                Simpan kata favorit &amp; bookmark belajar
+              <p className="text-xs text-ink-mute font-sans">
+                Simpan kata &amp; riwayat belajar Al-Qur&apos;an
               </p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full text-slate-400 hover:text-ink-primary dark:hover:text-white hover:bg-canvas-soft dark:hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-full text-ink-mute hover:text-ink-primary hover:bg-canvas-soft transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -79,38 +70,38 @@ export default function GoogleAuthModal({ isOpen, onClose }: GoogleAuthModalProp
         {/* Quick Custom Name Login Form */}
         <div className="space-y-4 pt-1">
           <form onSubmit={handleCustomLogin} className="space-y-3">
-            <label className="block text-xs font-mono font-semibold text-slate-600 dark:text-slate-300">
+            <label className="block text-xs font-semibold text-ink-secondary font-sans">
               Nama Profil Anda:
             </label>
             <div className="relative">
-              <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+              <User className="w-4 h-4 text-ink-mute absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={customName}
                 onChange={(e) => setCustomName(e.target.value)}
-                placeholder="Contoh: Aizat Zafir..."
-                className="w-full pl-10 pr-4 py-3 rounded-2xl border border-hairline dark:border-slate-700 bg-canvas-soft dark:bg-slate-800 text-sm text-ink-primary dark:text-white focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
+                placeholder="Contoh: Ahmad, Sarah..."
+                className="w-full pl-10 pr-4 py-3 rounded-2xl border border-hairline bg-canvas-soft text-sm text-ink-primary placeholder:text-ink-mute focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-subtle font-sans"
               />
             </div>
             <button
               type="submit"
-              className="w-full bg-primary hover:bg-primary-deep text-white py-3.5 rounded-2xl font-semibold text-xs shadow-soft transition-all"
+              className="w-full bg-primary hover:bg-primary-deep text-white py-3.5 rounded-2xl font-semibold text-xs shadow-subtle transition-all font-sans"
             >
               Mulai Belajar Sekarang
             </button>
           </form>
 
           <div className="flex items-center my-3">
-            <div className="flex-1 border-t border-hairline dark:border-slate-800" />
-            <span className="px-3 text-xs text-slate-400 font-mono">atau Google Sign-In</span>
-            <div className="flex-1 border-t border-hairline dark:border-slate-800" />
+            <div className="flex-1 border-t border-hairline" />
+            <span className="px-3 text-xs text-ink-mute font-sans">atau Masuk dengan Google</span>
+            <div className="flex-1 border-t border-hairline" />
           </div>
 
           {/* Google Sign-In Button */}
           <button
             onClick={handleGoogleLogin}
             disabled={isLoggingIn}
-            className="w-full flex items-center justify-center space-x-3 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 py-3.5 px-4 rounded-2xl font-semibold text-sm shadow-soft hover:shadow-hover transition-all disabled:opacity-50"
+            className="w-full flex items-center justify-center space-x-3 bg-canvas-surface hover:bg-canvas-soft border border-hairline text-ink-primary py-3.5 px-4 rounded-2xl font-semibold text-sm shadow-subtle hover:shadow-soft transition-all disabled:opacity-50 font-sans"
           >
             {isLoggingIn ? (
               <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -138,9 +129,9 @@ export default function GoogleAuthModal({ isOpen, onClose }: GoogleAuthModalProp
           </button>
         </div>
 
-        <div className="pt-2 text-center text-xs text-slate-400 font-mono flex items-center justify-center space-x-1">
-          <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>Tersimpan lokal &amp; kompatibel dengan Firebase Auth.</span>
+        <div className="pt-2 text-center text-xs text-ink-mute font-sans flex items-center justify-center space-x-1">
+          <ShieldCheck className="w-4 h-4 text-primary" />
+          <span>Data tersimpan dengan aman pada peramban Anda.</span>
         </div>
 
       </div>

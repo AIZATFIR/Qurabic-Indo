@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { WordSegment } from '@/lib/types/morphology';
 import GrammarBadge from './GrammarBadge';
-import { Volume2, BookOpen } from 'lucide-react';
+import { Volume2 } from 'lucide-react';
 import WordEtymologyModal from './WordEtymologyModal';
 
 interface WordByWordViewerProps {
@@ -48,10 +48,10 @@ export default function WordByWordViewer({ segments }: WordByWordViewerProps) {
     <>
       <div className="mt-4 pt-4 border-t border-hairline">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex items-center space-x-1.5 font-sans">
-            <span>Analisis Morfologi Per Kata (Word-by-Word Interlinear)</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-ink-primary flex items-center space-x-1.5 font-sans">
+            <span>Analisis Morfologi Per Kata</span>
           </span>
-          <span className="text-[11px] font-mono text-primary bg-primary-subdued px-2.5 py-0.5 rounded-full font-medium">
+          <span className="text-[11px] font-sans text-primary bg-primary-subdued px-2.5 py-0.5 rounded-full font-semibold">
             Klik kata untuk Bedah Akar Kata
           </span>
         </div>
@@ -64,7 +64,7 @@ export default function WordByWordViewer({ segments }: WordByWordViewerProps) {
               <div
                 key={seg.wordIndex || idx}
                 onClick={() => setSelectedWord(seg)}
-                className="p-3 bg-canvas-soft border border-hairline rounded-2xl hover:border-primary hover:shadow-soft transition-all duration-200 flex flex-col justify-between text-center relative group cursor-pointer active:scale-95"
+                className="p-3.5 bg-canvas-soft border border-hairline rounded-2xl hover:border-primary/40 hover:shadow-subtle transition-all duration-200 flex flex-col justify-between text-center relative group cursor-pointer active:scale-95"
                 title="Klik untuk Bedah Akar Kata"
               >
                 {/* Play Audio Button */}
@@ -73,20 +73,20 @@ export default function WordByWordViewer({ segments }: WordByWordViewerProps) {
                   title="Dengarkan pengucapan kata"
                   className={`absolute top-2 left-2 p-1.5 rounded-full transition-all ${
                     isPlaying
-                      ? 'bg-primary text-white scale-110 shadow-md animate-pulse'
-                      : 'text-slate-400 hover:text-primary hover:bg-white border border-transparent hover:border-hairline'
+                      ? 'bg-primary text-white scale-110 shadow-subtle animate-pulse'
+                      : 'text-ink-mute hover:text-primary hover:bg-canvas-surface border border-transparent hover:border-hairline'
                   }`}
                 >
                   <Volume2 className="w-3.5 h-3.5" />
                 </button>
 
                 {/* Arabic Word */}
-                <div className="font-arabic text-2xl font-bold text-ink-primary mb-1 pt-1 group-hover:text-primary transition-colors">
+                <div className="font-arabic text-2xl font-bold text-ink-primary mb-1 pt-1 group-hover:text-primary transition-colors" dir="rtl">
                   {seg.arabic}
                 </div>
 
                 {/* Transliteration */}
-                <div className="text-xs font-mono font-medium text-slate-700 italic mb-1.5">
+                <div className="text-xs font-sans font-medium text-ink-secondary italic mb-1.5">
                   {seg.transliteration}
                 </div>
 
@@ -96,7 +96,7 @@ export default function WordByWordViewer({ segments }: WordByWordViewerProps) {
                 </div>
 
                 {/* Indonesian Meaning */}
-                <div className="text-xs font-sans text-ink-primary font-medium border-t border-hairline/60 pt-1.5 mt-auto">
+                <div className="text-xs font-sans text-ink-primary font-medium border-t border-hairline pt-1.5 mt-auto">
                   {seg.meaningIndo}
                 </div>
               </div>

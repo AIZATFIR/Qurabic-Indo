@@ -3,7 +3,7 @@ import { fetchLiveRoot } from '@/lib/api/quran-corpus-api';
 import RootCard from '@/components/RootCard';
 import AyahConcordance from '@/components/AyahConcordance';
 import Link from 'next/link';
-import { Search, ArrowLeft, Radio, BookOpen, Layers } from 'lucide-react';
+import { Search, ArrowLeft, Radio, BookOpen, Layers, ShieldCheck } from 'lucide-react';
 
 interface PageProps {
   searchParams: {
@@ -33,24 +33,24 @@ export default async function SearchResultsPage({ searchParams }: PageProps) {
       {/* Back Link */}
       <Link
         href="/"
-        className="inline-flex items-center space-x-2 text-sm text-slate-500 hover:text-primary transition-colors mb-2 font-medium"
+        className="inline-flex items-center space-x-2 text-sm text-ink-mute hover:text-primary transition-colors font-medium font-sans"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>Kembali ke Beranda</span>
       </Link>
 
       {/* Search Header Banner */}
-      <div className="gradient-mesh bg-white border border-hairline rounded-3xl p-8 sm:p-10 shadow-soft space-y-4">
+      <div className="bg-canvas-surface border border-hairline rounded-3xl p-8 sm:p-10 shadow-subtle space-y-4">
         <div className="flex items-center space-x-2">
-          <span className="inline-flex items-center space-x-1.5 px-3.5 py-1 bg-primary-subdued text-primary-deep text-xs font-semibold rounded-full uppercase tracking-wider">
+          <span className="inline-flex items-center space-x-1.5 px-3.5 py-1 bg-primary-subdued text-primary text-xs font-semibold rounded-full uppercase tracking-wider font-sans">
             <Search className="w-3.5 h-3.5" />
-            <span>HASIL PENCARIAN CORPUS</span>
+            <span>Hasil Pencarian Akar Kata &amp; Ayat</span>
           </span>
 
           {isLiveFetched && (
-            <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 text-xs font-mono font-semibold rounded-full animate-pulse">
-              <Radio className="w-3 h-3 text-amber-600" />
-              <span>REAL-TIME LIVE QURAN API</span>
+            <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-primary-fixed text-primary-deep text-xs font-semibold rounded-full font-sans">
+              <Radio className="w-3 h-3 text-primary animate-pulse" />
+              <span>Pencarian Ayat Al-Qur&apos;an (Live API)</span>
             </span>
           )}
         </div>
@@ -62,19 +62,19 @@ export default async function SearchResultsPage({ searchParams }: PageProps) {
         {/* Dynamic Search Input Bar */}
         <form action="/cari" method="GET" className="pt-2 max-w-2xl">
           <div className="relative">
-            <Search className="w-5 h-5 text-primary absolute left-4 top-3.5" />
+            <Search className="w-4 h-4 text-ink-mute absolute left-4 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               name="q"
               defaultValue={query}
-              placeholder="Cari akar kata (e.g. sabar, ص-ل-و, batu, sholat)..."
-              className="w-full pl-12 pr-28 py-3 rounded-full bg-white border border-hairline text-sm text-ink-primary placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
+              placeholder="Cari akar kata (contoh: sabar, كتب, batu, sholat)..."
+              className="w-full pl-11 pr-28 py-3 rounded-full bg-canvas-surface border border-hairline text-sm text-ink-primary placeholder:text-ink-mute focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-subtle font-sans"
             />
             <button
               type="submit"
-              className="absolute right-2 top-1.5 bottom-1.5 bg-primary hover:bg-primary-deep text-white px-5 rounded-full text-xs font-semibold shadow-soft transition-all"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary-deep text-white px-5 py-2 rounded-full text-xs font-semibold shadow-subtle transition-all font-sans"
             >
-              Cari Lagi
+              Cari
             </button>
           </div>
         </form>
@@ -82,13 +82,13 @@ export default async function SearchResultsPage({ searchParams }: PageProps) {
 
       {/* Results Content */}
       {!query ? (
-        <div className="p-12 text-center bg-canvas-soft border border-hairline rounded-3xl text-slate-500 font-sans">
+        <div className="p-12 text-center bg-canvas-surface border border-hairline rounded-3xl text-ink-mute font-sans shadow-subtle">
           Silakan masukkan kata kunci pencarian pada kotak di atas.
         </div>
       ) : localResults.length > 0 ? (
         <div className="space-y-6">
-          <div className="flex items-center justify-between text-xs text-slate-500 font-mono border-b border-hairline pb-3">
-            <span>Ditemukan <strong>{localResults.length}</strong> akar kata cocok di Corpus</span>
+          <div className="flex items-center justify-between text-xs text-ink-mute font-sans border-b border-hairline pb-3">
+            <span>Ditemukan <strong className="text-ink-primary">{localResults.length}</strong> akar kata cocok dalam database</span>
             <span>Diurutkan berdasarkan kemunculan terbanyak</span>
           </div>
 
@@ -100,20 +100,20 @@ export default async function SearchResultsPage({ searchParams }: PageProps) {
         </div>
       ) : liveRoot ? (
         <div className="space-y-8">
-          <div className="p-6 bg-amber-50 border border-amber-200 rounded-3xl text-amber-900 space-y-2">
-            <div className="flex items-center space-x-2 text-xs font-mono font-bold text-amber-700">
-              <Radio className="w-4 h-4 text-amber-600 animate-pulse" />
-              <span>LIVE QURAN CORPUS MATCH</span>
+          <div className="p-6 bg-primary-fixed/50 border border-primary/20 rounded-3xl text-ink-primary space-y-2 font-sans">
+            <div className="flex items-center space-x-2 text-xs font-bold text-primary">
+              <Radio className="w-4 h-4 text-primary animate-pulse" />
+              <span>Ditemukan dari Pencarian Al-Qur&apos;an Live</span>
             </div>
             <h3 className="text-xl font-bold font-sans">{liveRoot.titleIndo}</h3>
-            <p className="text-xs text-amber-800 leading-relaxed font-sans">{liveRoot.etymologyNote}</p>
+            <p className="text-xs text-ink-secondary leading-relaxed font-sans">{liveRoot.etymologyNote}</p>
           </div>
 
           {/* Live Ayah Occurrences */}
           <div className="space-y-4">
             <h2 className="text-2xl font-light text-ink-primary tracking-tight flex items-center space-x-2 font-sans">
-              <BookOpen className="w-6 h-6 text-primary" />
-              <span>Ayat-ayat Kemunculan dalam Al-Qur&apos;an (Live API)</span>
+              <BookOpen className="w-5 h-5 text-primary" />
+              <span>Ayat Kemunculan dalam Al-Qur&apos;an</span>
             </h2>
             <AyahConcordance
               occurrences={liveRoot.occurrences}
@@ -123,18 +123,18 @@ export default async function SearchResultsPage({ searchParams }: PageProps) {
           </div>
         </div>
       ) : (
-        <div className="p-12 sm:p-16 text-center bg-canvas-soft border border-hairline rounded-3xl space-y-4">
-          <div className="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+        <div className="p-12 sm:p-16 text-center bg-canvas-surface border border-hairline rounded-3xl space-y-4 shadow-subtle">
+          <div className="w-12 h-12 rounded-2xl bg-canvas-soft text-ink-mute flex items-center justify-center mx-auto">
             <Search className="w-6 h-6" />
           </div>
-          <h3 className="text-lg font-semibold text-ink-primary">Tidak Ada Hasil Ditemukan</h3>
-          <p className="text-sm text-slate-500 max-w-md mx-auto">
-            Kata kunci &ldquo;{query}&rdquo; tidak menghasilkan data di Corpus lokal maupun Live API. Cobalah kata kunci Latin (e.g. &quot;sholat&quot;), Arab (e.g. &quot;صبر&quot;), atau fonetik Indonesia lainnya.
+          <h3 className="text-lg font-semibold text-ink-primary font-sans">Tidak Ada Hasil Ditemukan</h3>
+          <p className="text-sm text-ink-mute max-w-md mx-auto font-sans leading-relaxed">
+            Kata kunci &ldquo;{query}&rdquo; tidak menghasilkan data. Cobalah kata kunci Latin (contoh: &quot;sholat&quot;), Arab (contoh: &quot;صبر&quot;), atau akar kata lainnya.
           </p>
           <div className="pt-2">
             <Link
               href="/morfologi"
-              className="inline-flex items-center space-x-2 bg-primary hover:bg-primary-deep text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow-soft transition-all"
+              className="inline-flex items-center space-x-2 bg-primary hover:bg-primary-deep text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow-subtle transition-all font-sans"
             >
               <BookOpen className="w-4 h-4" />
               <span>Lihat Katalog Morfologi Lengkap</span>

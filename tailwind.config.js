@@ -49,8 +49,8 @@ module.exports = {
         subtle: '0 1px 4px 0 rgba(15, 23, 42, 0.04)',
       },
       fontFamily: {
-        sans: ['Inter', 'var(--font-sans)', 'system-ui', '-apple-system', 'sans-serif'],
-        arabic: ['var(--font-arabic)', 'Noto Naskh Arabic', 'Amiri', 'serif'],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"SF Pro Display"', '"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
+        arabic: ['var(--font-arabic)', 'Amiri', 'Noto Naskh Arabic', 'Scheherazade New', 'serif'],
       },
     },
   },

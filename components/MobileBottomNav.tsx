@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BookOpen, Heart, Search, BookMarked, Shuffle } from 'lucide-react';
+import { Home, BookOpen, Bookmark, Search, BookMarked, Shuffle } from 'lucide-react';
 import OmniSearch from './OmniSearch';
 import { useBookmarks } from '@/lib/hooks/useBookmarks';
 
@@ -17,12 +17,12 @@ export default function MobileBottomNav() {
     { label: 'Baca', href: '/baca', icon: BookMarked },
     { label: 'Ayat Acak', href: '/ayat-random', icon: Shuffle },
     { label: 'Katalog', href: '/morfologi', icon: BookOpen },
-    { label: 'Favorit', href: '/favorit', icon: Heart, badge: bookmarkedIds.length },
+    { label: 'Tersimpan', href: '/favorit', icon: Bookmark, badge: bookmarkedIds.length },
   ];
 
   return (
     <>
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-canvas/95 border-t border-hairline px-2 py-1.5 shadow-soft">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-canvas/95 backdrop-blur-md border-t border-hairline px-2 py-1.5 shadow-subtle">
         <div className="flex items-center justify-around max-w-md mx-auto">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
@@ -32,7 +32,7 @@ export default function MobileBottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center justify-center space-y-0.5 py-1 px-2.5 rounded-xl transition-all relative ${
+                className={`flex flex-col items-center justify-center space-y-0.5 py-1 px-2 rounded-xl transition-all relative ${
                   isActive
                     ? 'text-primary font-bold'
                     : 'text-ink-mute hover:text-ink-primary'
@@ -54,7 +54,7 @@ export default function MobileBottomNav() {
           {/* Search Trigger Button */}
           <button
             onClick={() => setIsSearchOpen(true)}
-            className="flex flex-col items-center justify-center space-y-0.5 py-1 px-2 rounded-xl text-ink-mute hover:text-primary transition-all"
+            className="flex flex-col items-center justify-center space-y-0.5 py-1 px-2 rounded-xl text-ink-mute hover:text-primary transition-all cursor-pointer"
           >
             <Search className="w-4 h-4" />
             <span className="text-[9px] font-medium font-sans">Cari</span>

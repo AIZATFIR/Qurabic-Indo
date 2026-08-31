@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { BookOpen, Search, Heart, BookMarked, Shuffle } from 'lucide-react';
+import { BookOpen, Search, Bookmark, BookMarked, Shuffle } from 'lucide-react';
 import OmniSearch from './OmniSearch';
 import ThemeSelector from './ThemeSelector';
 import { useState } from 'react';
@@ -18,17 +18,14 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             
-            {/* Logo Branding */}
+            {/* Logo Branding (Clean Minimalist Typographic) */}
             <div className="flex items-center space-x-3">
-              <Link href="/" className="flex items-center space-x-2.5 group">
-                <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm shadow-soft group-hover:scale-105 transition-transform">
-                  Q
-                </div>
+              <Link href="/" className="flex items-center space-x-2 group">
                 <div className="flex flex-col">
-                  <span className="font-sans font-semibold text-base text-ink-primary tracking-tight leading-none group-hover:text-primary transition-colors">
-                    Qurabic <span className="text-primary font-medium">(Indo)</span>
+                  <span className="font-sans font-bold text-base text-ink-primary tracking-tight leading-none group-hover:text-primary transition-colors">
+                    Qurabic <span className="text-primary font-normal">(Indo)</span>
                   </span>
-                  <span className="text-[10px] text-ink-mute font-sans mt-0.5">
+                  <span className="text-[10px] text-ink-mute font-sans mt-0.5 tracking-wide">
                     Corpus &amp; Morfologi
                   </span>
                 </div>
@@ -65,8 +62,8 @@ export default function Navbar() {
                 href="/favorit"
                 className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-lg hover:bg-primary-fixed relative"
               >
-                <Heart className="w-3.5 h-3.5 text-primary" />
-                <span>Akar Tersimpan</span>
+                <Bookmark className="w-3.5 h-3.5 text-primary" />
+                <span>Kata Tersimpan</span>
                 {bookmarkedIds.length > 0 && (
                   <span className="w-4 h-4 rounded-full bg-primary text-white text-[9px] font-bold flex items-center justify-center ml-0.5">
                     {bookmarkedIds.length}

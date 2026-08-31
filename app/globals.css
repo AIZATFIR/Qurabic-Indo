@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-arabic: 'Amiri', 'Noto Naskh Arabic', 'Scheherazade New', serif;
 
   /* Default Theme: Bookpaper */
@@ -113,6 +113,17 @@ body {
   box-shadow: 0 1px 4px 0 rgba(15, 23, 42, 0.04);
 }
 
+/* Editorial Photographic Mask Layers */
+.hero-image-mask {
+  mask-image: radial-gradient(ellipse 75% 65% at 50% 45%, black 25%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 45%, black 25%, transparent 85%);
+}
+
+.editorial-image-mask {
+  mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 5px;
@@ -135,7 +146,7 @@ body {
 /* Quranic Arabic Typography */
 .font-arabic {
   font-family: var(--font-arabic);
-  line-height: 2.2;
+  line-height: 2.3;
   padding-top: 0.1em;
   padding-bottom: 0.1em;
   direction: rtl;
@@ -145,7 +156,7 @@ body {
 
 .font-arabic-lg {
   font-family: var(--font-arabic);
-  line-height: 2.4;
+  line-height: 2.5;
   padding-top: 0.15em;
   padding-bottom: 0.15em;
   direction: rtl;
@@ -156,13 +167,13 @@ body {
 /* Kemenag RI Translation Typography */
 .translation-kemenag {
   font-family: var(--font-sans);
-  line-height: 1.7;
+  line-height: 1.75;
 }
 
 .translation-kemenag::before {
   content: "“";
   font-family: serif;
-  font-size: 1.2em;
+  font-size: 1.25em;
   color: var(--color-primary);
   margin-right: 0.15em;
 }
@@ -170,7 +181,7 @@ body {
 .translation-kemenag::after {
   content: "”";
   font-family: serif;
-  font-size: 1.2em;
+  font-size: 1.25em;
   color: var(--color-primary);
   margin-left: 0.15em;
 }

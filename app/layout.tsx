@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import MobileBottomNav from '@/components/MobileBottomNav';
+import SmoothScroll from '@/components/SmoothScroll';
 import { ThemeProvider } from '@/lib/context/ThemeContext';
 
 export const metadata: Metadata = {
@@ -19,11 +20,12 @@ export default function RootLayout({
     <html lang="id" className="scroll-smooth" data-theme="bookpaper">
       <body className="min-h-screen flex flex-col bg-canvas text-ink-primary selection:bg-primary-subdued selection:text-primary-deep font-sans pb-16 md:pb-0">
         <ThemeProvider>
-          <Navbar />
-          <main className="flex-1 w-full">
-            {children}
-          </main>
-          <footer className="bg-canvas border-t border-hairline text-caption opacity-90 hover:opacity-100 transition-all duration-200 py-12 mt-16">
+          <SmoothScroll>
+            <Navbar />
+            <main className="flex-1 w-full">
+              {children}
+            </main>
+            <footer className="bg-canvas border-t border-hairline text-caption opacity-90 hover:opacity-100 transition-all duration-200 py-12 mt-16">
             <div className="max-w-7xl mx-auto px-6 sm:px-12 flex flex-col md:flex-row justify-between items-center gap-6">
               <div className="font-bold text-lg text-ink-primary font-sans">
                 Qurabic <span className="text-primary font-normal">(Indo)</span>
@@ -32,7 +34,7 @@ export default function RootLayout({
                 <a className="hover:text-primary transition-colors" href="/baca">Baca Qur&apos;an</a>
                 <a className="hover:text-primary transition-colors" href="/morfologi">Katalog Morfologi</a>
                 <a className="hover:text-primary transition-colors" href="/ayat-random">Ayat Acak</a>
-                <a className="hover:text-primary transition-colors" href="/favorit">Akar Tersimpan</a>
+                <a className="hover:text-primary transition-colors" href="/favorit">Kata Tersimpan</a>
                 <a className="hover:text-primary transition-colors" href="https://github.com/AIZATFIR/Qurabic-Indo" target="_blank" rel="noreferrer">GitHub Repo</a>
               </div>
               <div className="text-xs text-ink-mute font-sans">
@@ -43,6 +45,7 @@ export default function RootLayout({
 
           {/* Mobile Bottom Navigation */}
           <MobileBottomNav />
+          </SmoothScroll>
         </ThemeProvider>
       </body>
     </html>

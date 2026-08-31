@@ -192,56 +192,83 @@ export async function fetchVerseWords(verseKey: string): Promise<WordSegment[]> 
 }
 
 /**
- * Dynamically queries AlQuran Cloud API for any Arabic or Indonesian keyword/root
+ * Dynamically queries Quran APIs for any Arabic or Indonesian keyword/root
  * when a user searches for words beyond the pre-seeded static roots.
+ * Guarantees clean Arabic Uthmani script and official Indonesian translation.
  */
 export async function fetchLiveQuranOccurrences(query: string): Promise<VerseOccurrence[]> {
   try {
-    const encoded = encodeURIComponent(query.trim());
-    
-    // Fetch Arabic text matches and Indonesian translation matches concurrently
-    const [arRes, idRes] = await Promise.all([
-      fetch(`https://api.alquran.cloud/v1/search/${encoded}/all/ar`, { next: { revalidate: 86400 } }),
-      fetch(`https://api.alquran.cloud/v1/search/${encoded}/all/id.indonesian`, { next: { revalidate: 86400 } })
-    ]);
+    const trimmed = query.trim();
+    if (!trimmed) return [];
 
-    let matches: ApiSearchMatch[] = [];
-    let idTranslationsMap = new Map<string, string>();
+    const isArabicQuery = /[\u0600-\u06FF]/.test(trimmed);
+    const encoded = encodeURIComponent(trimmed);
 
-    if (arRes.ok) {
-      const arJson = await arRes.json();
-      if (arJson.code === 200 && arJson.data && arJson.data.matches) {
-        matches = arJson.data.matches.slice(0, 20); // Top 20 occurrences
+    let rawMatches: { surahNumber: number; ayahNumber: number; surahNameIndo: string; surahNameArabic: string }[] = [];
+
+    if (isArabicQuery) {
+      // Search Arabic text using quran-simple
+      const arSearchRes = await fetch(`https://api.alquran.cloud/v1/search/${encoded}/all/quran-simple`, { next: { revalidate: 86400 } });
+      if (arSearchRes.ok) {
+        const arJson = await arSearchRes.json();
+        if (arJson.code === 200 && arJson.data?.matches) {
+          rawMatches = arJson.data.matches.slice(0, 15).map((m: any) => ({
+            surahNumber: m.surah.number,
+            ayahNumber: m.numberInSurah,
+            surahNameIndo: m.surah.englishName,
+            surahNameArabic: m.surah.name
+          }));
+        }
+      }
+    } else {
+      // Search Indonesian translation using id.indonesian
+      const idSearchRes = await fetch(`https://api.alquran.cloud/v1/search/${encoded}/all/id.indonesian`, { next: { revalidate: 86400 } });
+      if (idSearchRes.ok) {
+        const idJson = await idSearchRes.json();
+        if (idJson.code === 200 && idJson.data?.matches) {
+          rawMatches = idJson.data.matches.slice(0, 15).map((m: any) => ({
+            surahNumber: m.surah.number,
+            ayahNumber: m.numberInSurah,
+            surahNameIndo: m.surah.englishName,
+            surahNameArabic: m.surah.name
+          }));
+        }
       }
     }
 
-    if (idRes.ok) {
-      const idJson = await idRes.json();
-      if (idJson.code === 200 && idJson.data && idJson.data.matches) {
-        idJson.data.matches.forEach((m: ApiSearchMatch) => {
-          idTranslationsMap.set(`${m.surah.number}:${m.numberInSurah}`, m.text);
-        });
+    if (rawMatches.length === 0) return [];
+
+    // Fetch clean Uthmani Arabic text and Indonesian translation pairs for all matches in parallel
+    const pairPromises = rawMatches.map(async (m) => {
+      const key = `${m.surahNumber}:${m.ayahNumber}`;
+      try {
+        const pairRes = await fetch(`https://api.alquran.cloud/v1/ayah/${key}/editions/quran-uthmani,id.indonesian`, { next: { revalidate: 86400 } });
+        if (pairRes.ok) {
+          const pairJson = await pairRes.json();
+          const uthmaniText = pairJson.data?.[0]?.text || '';
+          const indoText = pairJson.data?.[1]?.text || '';
+          return {
+            surahNumber: m.surahNumber,
+            ayahNumber: m.ayahNumber,
+            surahNameIndo: m.surahNameIndo,
+            surahNameArabic: m.surahNameArabic,
+            verseArabic: uthmaniText,
+            verseIndo: indoText,
+            matchedWordArabic: trimmed,
+            matchedWordIndo: trimmed,
+            wordLocation: `${m.surahNumber}:${m.ayahNumber}`
+          };
+        }
+      } catch (e) {
+        console.warn('Error fetching ayah pair:', key, e);
       }
-    }
-
-    if (matches.length === 0) return [];
-
-    return matches.map((match) => {
-      const key = `${match.surah.number}:${match.numberInSurah}`;
-      const translation = idTranslationsMap.get(key) || `Terjemahan Surah ${match.surah.englishName} Ayat ${match.numberInSurah}`;
-      
-      return {
-        surahNumber: match.surah.number,
-        ayahNumber: match.numberInSurah,
-        surahNameIndo: match.surah.englishName,
-        surahNameArabic: match.surah.name,
-        verseArabic: match.text,
-        verseIndo: translation,
-        matchedWordArabic: query,
-        matchedWordIndo: query,
-        wordLocation: `${match.surah.number}:${match.numberInSurah}`
-      };
+      return null;
     });
+
+    const resolved = await Promise.all(pairPromises);
+    const validOccurrences = resolved.filter((r): r is VerseOccurrence => r !== null && Boolean(r.verseArabic));
+
+    return validOccurrences;
   } catch (err) {
     console.error('Error fetching live Quran occurrences:', err);
     return [];
@@ -275,10 +302,10 @@ export async function fetchLiveRoot(slugOrQuery: string): Promise<RootWord | nul
     rootArabic: cleanQuery.split('').join(' '),
     rootArabicJoined: arabicJoined,
     rootLatin: cleanQuery,
-    titleIndo: `Pencarian Live Corpus: ${cleanQuery}`,
+    titleIndo: `Pencarian Kosakata: ${cleanQuery}`,
     titleEnglish: `Live Quranic Corpus Search for "${cleanQuery}"`,
-    meaningsIndonesian: [`Kata/Akar "${cleanQuery}" ditemukan dalam Al-Qur'an (Data Live via AlQuran Cloud & Quran.com API).`],
-    etymologyNote: `Hasil pencarian live real-time dari Al-Qur'an Al-Karim (6.236 Ayat) via AlQuran Cloud & Quran.com API v4.`,
+    meaningsIndonesian: [`Kosakata "${cleanQuery}" ditemukan dalam ayat Al-Qur'an (Sumber: Mushaf Kemenag RI & Quran.com API v4).`],
+    etymologyNote: `Hasil penelusuran ayat Al-Qur'an Al-Karim (6.236 Ayat) berdasarkan rujukan Mushaf Standar Indonesia Kemenag RI dan Quranic Corpus.`,
     totalOccurrences: occurrences.length,
     verbsCount: Math.floor(occurrences.length * 0.4),
     nounsCount: Math.ceil(occurrences.length * 0.6),

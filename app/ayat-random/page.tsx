@@ -249,13 +249,20 @@ export default function RandomAyahPage() {
           </div>
 
           {/* Indonesian Kemenag Translation */}
-          <div className="p-5 bg-canvas-soft border border-hairline rounded-xl space-y-1">
+          <div className="p-5 bg-canvas-soft border border-hairline rounded-2xl space-y-1">
             <span className="text-[11px] font-semibold text-ink-mute uppercase tracking-wider block font-sans">
-              Terjemahan Kemenag RI:
+              Terjemahan Resmi Kemenag RI:
             </span>
             <p className="text-sm sm:text-base translation-kemenag text-ink-secondary leading-relaxed font-sans">
               &ldquo;{ayah.verseIndo}&rdquo;
             </p>
+          </div>
+
+          {/* Subtle Source Attribution */}
+          <div className="flex justify-end pt-1">
+            <span className="text-[10px] text-ink-mute font-sans">
+              Sumber: Mushaf Standar Indonesia (Kemenag RI) &amp; Quran.com API
+            </span>
           </div>
 
         </div>

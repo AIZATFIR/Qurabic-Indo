@@ -6,7 +6,7 @@ import EtymologyCard from '@/components/EtymologyCard';
 import DerivativesGrid from '@/components/DerivativesGrid';
 import AyahConcordance from '@/components/AyahConcordance';
 import Link from 'next/link';
-import { ArrowLeft, BookOpen, Layers, Radio, Compass } from 'lucide-react';
+import { ArrowLeft, BookOpen, Layers, Radio, ShieldCheck } from 'lucide-react';
 
 export function generateStaticParams() {
   return ROOT_DATABASE.map((root) => ({
@@ -43,71 +43,71 @@ export default async function RootDetailPage({ params }: PageProps) {
       <div className="flex items-center justify-between">
         <Link
           href="/"
-          className="inline-flex items-center space-x-2 text-sm text-slate-500 hover:text-primary transition-colors font-medium"
+          className="inline-flex items-center space-x-2 text-sm text-ink-mute hover:text-primary transition-colors font-medium font-sans"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Kembali ke Beranda</span>
         </Link>
 
         {/* Anchor Quick Links */}
-        <div className="hidden sm:flex items-center space-x-2 text-xs font-mono">
+        <div className="hidden sm:flex items-center space-x-2 text-xs font-sans">
           <a
             href="#etimologi"
-            className="px-3 py-1.5 rounded-full bg-white border border-hairline hover:border-primary text-slate-600 hover:text-primary transition-all shadow-sm"
+            className="px-3 py-1.5 rounded-full bg-canvas-surface border border-hairline hover:border-primary text-ink-secondary hover:text-primary transition-all shadow-subtle"
           >
-            #Etimologi
+            Etimologi
           </a>
           <a
             href="#turunan"
-            className="px-3 py-1.5 rounded-full bg-white border border-hairline hover:border-primary text-slate-600 hover:text-primary transition-all shadow-sm"
+            className="px-3 py-1.5 rounded-full bg-canvas-surface border border-hairline hover:border-primary text-ink-secondary hover:text-primary transition-all shadow-subtle"
           >
-            #Turunan Kata
+            Turunan Kata
           </a>
           <a
             href="#concordance"
-            className="px-3 py-1.5 rounded-full bg-white border border-hairline hover:border-primary text-slate-600 hover:text-primary transition-all shadow-sm"
+            className="px-3 py-1.5 rounded-full bg-canvas-surface border border-hairline hover:border-primary text-ink-secondary hover:text-primary transition-all shadow-subtle"
           >
-            #Ayah Concordance
+            Daftar Ayat
           </a>
         </div>
       </div>
 
       {/* Root Banner */}
-      <div className="gradient-mesh bg-white border border-hairline rounded-3xl p-8 sm:p-12 shadow-soft">
+      <div className="bg-canvas-surface border border-hairline rounded-3xl p-8 sm:p-10 shadow-subtle">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
             <div className="flex items-center space-x-2 mb-3">
-              <span className="inline-flex items-center space-x-2 px-3 py-1 bg-primary-subdued text-primary-deep text-xs font-mono font-bold rounded-full">
-                <span>AKAR KATA AL-QUR'AN</span>
+              <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-primary-subdued text-primary text-xs font-semibold rounded-full font-sans">
+                <span>AKAR KATA AL-QUR&apos;AN</span>
                 <span>•</span>
                 <span>{root.totalOccurrences} KEMUNCULAN</span>
               </span>
 
               {isLiveFetched && (
-                <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 text-xs font-mono font-semibold rounded-full animate-pulse">
-                  <Radio className="w-3 h-3 text-amber-600" />
-                  <span>REAL-TIME LIVE API FETCH</span>
+                <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-primary-fixed text-primary-deep text-xs font-semibold rounded-full font-sans">
+                  <Radio className="w-3 h-3 text-primary animate-pulse" />
+                  <span>Pencarian Ayat Al-Qur&apos;an (Live)</span>
                 </span>
               )}
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-light text-ink-primary tracking-tight mb-2">
+            <h1 className="text-3xl sm:text-5xl font-light text-ink-primary tracking-tight mb-2 font-sans">
               Akar Kata <span className="font-arabic font-bold text-primary">{root.rootArabic}</span> ({root.rootLatin})
             </h1>
 
-            <p className="text-lg text-slate-600 font-sans">
+            <p className="text-base sm:text-lg text-ink-secondary font-sans leading-relaxed">
               {root.titleIndo}
             </p>
           </div>
 
-          <div className="flex items-center space-x-4 bg-canvas-soft border border-hairline rounded-2xl p-4">
+          <div className="flex items-center space-x-4 bg-canvas-soft border border-hairline rounded-2xl p-4 font-sans">
             <div className="text-center px-4 border-r border-hairline">
-              <span className="block text-2xl font-bold font-mono text-ink-primary">{root.verbsCount}</span>
-              <span className="text-xs text-slate-500 font-mono">Kata Kerja</span>
+              <span className="block text-2xl font-bold text-ink-primary">{root.verbsCount}</span>
+              <span className="text-xs text-ink-mute">Kata Kerja (Fi&apos;il)</span>
             </div>
             <div className="text-center px-4">
-              <span className="block text-2xl font-bold font-mono text-ink-primary">{root.nounsCount}</span>
-              <span className="text-xs text-slate-500 font-mono">Kata Benda</span>
+              <span className="block text-2xl font-bold text-ink-primary">{root.nounsCount}</span>
+              <span className="text-xs text-ink-mute">Kata Benda (Isim)</span>
             </div>
           </div>
         </div>
@@ -125,19 +125,20 @@ export default async function RootDetailPage({ params }: PageProps) {
 
       {/* Derivatives Section */}
       <section id="turunan" className="scroll-mt-24">
-        <h2 className="text-2xl font-light text-ink-primary tracking-tight mb-4 flex items-center space-x-2 font-sans">
-          <Layers className="w-6 h-6 text-primary" />
-          <span>Katalog Turunan Kata (Derivatives)</span>
-        </h2>
         <DerivativesGrid verbs={root.verbs} nouns={root.nouns} />
       </section>
 
       {/* Ayah Concordance Section */}
-      <section id="concordance" className="scroll-mt-24">
-        <h2 className="text-2xl font-light text-ink-primary tracking-tight mb-4 flex items-center space-x-2 font-sans">
-          <BookOpen className="w-6 h-6 text-primary" />
-          <span>Ayah Concordance & Analysis Per Kata</span>
-        </h2>
+      <section id="concordance" className="scroll-mt-24 space-y-4">
+        <div className="border-b border-hairline pb-2">
+          <h2 className="text-2xl font-light text-ink-primary tracking-tight flex items-center space-x-2 font-sans">
+            <BookOpen className="w-5 h-5 text-primary" />
+            <span>Daftar Ayat Kemunculan dalam Al-Qur&apos;an</span>
+          </h2>
+          <p className="text-xs text-ink-mute mt-0.5 font-sans">
+            Teks Al-Qur&apos;an rujukan Mushaf Standar Kemenag RI berserta analisis perkata
+          </p>
+        </div>
         <AyahConcordance
           occurrences={root.occurrences}
           rootArabic={root.rootArabic}

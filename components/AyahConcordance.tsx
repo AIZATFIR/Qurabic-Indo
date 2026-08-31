@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { VerseOccurrence, WordSegment } from '@/lib/types/morphology';
 import WordByWordViewer from './WordByWordViewer';
-import { Copy, Check, BookOpen, ChevronDown, ChevronUp } from 'lucide-react';
+import { Copy, Check, BookOpen, ChevronDown, ChevronUp, ShieldCheck } from 'lucide-react';
 
 interface AyahConcordanceProps {
   occurrences: VerseOccurrence[];
@@ -17,7 +17,7 @@ export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: 
 
   if (!occurrences || occurrences.length === 0) {
     return (
-      <div className="p-8 text-center bg-canvas-soft border border-hairline rounded-2xl text-slate-500 font-sans">
+      <div className="p-8 text-center bg-canvas-surface border border-hairline rounded-2xl text-ink-mute font-sans shadow-subtle">
         Belum ada contoh kemunculan ayat yang terdaftar untuk akar kata ini.
       </div>
     );
@@ -48,10 +48,10 @@ export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: 
           return {
             wordIndex: i + 1,
             arabic: w,
-            transliteration: i % 2 === 0 ? 'ism' : 'fi\'il',
+            transliteration: i % 2 === 0 ? 'ism' : "fi'il",
             posTagCode: tagCode,
             posTag: tagCode === 'N' ? 'Isim' : tagCode === 'V' ? "Fi'il" : 'Haraf',
-            meaningIndo: item.matchedWordIndo || 'Terjemahan kata',
+            meaningIndo: item.matchedWordIndo || 'Kata Al-Qur\'an',
             wordLocation: `${item.surahNumber}:${item.ayahNumber}:${i + 1}`
           };
         });
@@ -59,20 +59,20 @@ export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: 
         return (
           <div
             key={itemKey}
-            className="p-6 sm:p-8 bg-white border border-hairline rounded-3xl shadow-soft hover:border-slate-300 transition-all space-y-4"
+            className="p-6 sm:p-8 bg-canvas-surface border border-hairline rounded-3xl shadow-subtle hover:border-primary/30 transition-all space-y-4"
           >
             {/* Header Badge & Copy Button */}
-            <div className="flex items-center justify-between border-b border-hairline pb-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline pb-4">
               <div className="flex items-center space-x-3">
-                <span className="w-8 h-8 rounded-full bg-primary-subdued text-primary font-bold font-mono text-xs flex items-center justify-center">
+                <span className="w-9 h-9 rounded-2xl bg-primary-subdued text-primary font-bold text-sm flex items-center justify-center font-sans">
                   {item.surahNumber}
                 </span>
                 <div>
-                  <h4 className="font-semibold text-ink-primary text-base font-sans">
-                    Q.S. {item.surahNameIndo} ({item.surahNameArabic}) : Ayat {item.ayahNumber}
+                  <h4 className="font-bold text-ink-primary text-base sm:text-lg font-sans">
+                    Q.S. {item.surahNameIndo} {item.surahNameArabic && `(${item.surahNameArabic})`} • Ayat {item.ayahNumber}
                   </h4>
-                  <span className="text-xs text-slate-500 font-mono">
-                    Akar Kata Terkait: <strong className="text-primary font-arabic text-sm">{rootArabic}</strong> ({rootLatin})
+                  <span className="text-xs sm:text-sm text-ink-mute font-sans">
+                    Akar Kata Terkait: <strong className="text-primary font-arabic text-base">{rootArabic}</strong> ({rootLatin})
                   </span>
                 </div>
               </div>
@@ -81,46 +81,54 @@ export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: 
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => handleCopyVerse(item, itemKey)}
-                  className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                  className={`inline-flex items-center space-x-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-all font-sans ${
                     isCopied
                       ? 'bg-emerald-100 text-emerald-700 border border-emerald-300'
-                      : 'bg-canvas-soft hover:bg-slate-100 border border-hairline text-slate-600'
+                      : 'bg-canvas-soft hover:bg-primary-fixed border border-hairline text-ink-secondary'
                   }`}
                 >
-                  {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-slate-500" />}
+                  {isCopied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-ink-mute" />}
                   <span>{isCopied ? 'Tersalin!' : 'Salin Ayat'}</span>
                 </button>
 
                 <button
                   onClick={() => toggleInterlinear(itemKey)}
-                  className="inline-flex items-center space-x-1 px-3.5 py-1.5 rounded-full bg-primary-subdued text-primary-deep hover:bg-primary/20 text-xs font-semibold transition-all"
+                  className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-full bg-primary-subdued text-primary hover:bg-primary/20 text-xs font-semibold transition-all font-sans"
                 >
-                  <BookOpen className="w-3.5 h-3.5" />
-                  <span>{isInterlinearOpen ? 'Tutup Interlinear' : 'Analisis Per Kata'}</span>
-                  {isInterlinearOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                  <BookOpen className="w-4 h-4" />
+                  <span>{isInterlinearOpen ? 'Tutup Analisis' : 'Analisis Per Kata'}</span>
+                  {isInterlinearOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
             {/* Verse Arabic Utsmani Text */}
-            <div className="py-2 text-right dir-rtl">
-              <p className="font-arabic text-2xl sm:text-4xl text-ink-primary leading-loose tracking-wide">
+            <div className="py-3 text-right dir-rtl">
+              <p className="font-arabic-lg text-3xl sm:text-4xl lg:text-5xl text-ink-primary leading-loose tracking-wide" dir="rtl">
                 {item.verseArabic}
               </p>
             </div>
 
             {/* Indonesian Translation */}
-            <div className="bg-canvas-soft border border-hairline rounded-2xl p-4 text-sm text-slate-700 leading-relaxed font-sans">
-              <span className="font-semibold text-ink-primary block mb-1 text-xs uppercase tracking-wider font-mono">
-                Terjemahan Bahasa Indonesia (Kemenag RI):
+            <div className="bg-canvas-soft border border-hairline rounded-2xl p-5 text-base sm:text-lg text-ink-secondary leading-relaxed font-sans space-y-1.5">
+              <span className="font-semibold text-ink-primary block text-xs uppercase tracking-wider font-sans">
+                Terjemahan Resmi Kemenag RI:
               </span>
-              &ldquo;{item.verseIndo}&rdquo;
+              <p className="translation-kemenag">&ldquo;{item.verseIndo}&rdquo;</p>
             </div>
 
             {/* Interlinear Accordion */}
             {isInterlinearOpen && (
               <WordByWordViewer segments={segments} />
             )}
+
+            {/* Small Reference Badge in Bottom Corner */}
+            <div className="pt-2 flex justify-end">
+              <span className="inline-flex items-center space-x-1.5 text-xs text-ink-mute font-sans">
+                <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+                <span>Sumber: Mushaf Standar Indonesia (Kemenag RI) &amp; Quran.com API</span>
+              </span>
+            </div>
           </div>
         );
       })}
