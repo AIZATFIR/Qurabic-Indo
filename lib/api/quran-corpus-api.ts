@@ -162,12 +162,13 @@ export async function fetchSurahWithWBW(surahNumber: number): Promise<FullAyahWB
 }
 
 /**
- * Fetches exact word-by-word morphology & audio location from Quran.com API v4
+/**
+ * Fetches exact word-by-word morphology & Indonesian translation from Quran.com API v4
  */
 export async function fetchVerseWords(verseKey: string): Promise<WordSegment[]> {
   try {
     const res = await fetch(
-      `https://api.quran.com/api/v4/verses/by_key/${verseKey}?words=true&word_fields=text_uthmani,location`,
+      `https://api.quran.com/api/v4/verses/by_key/${verseKey}?language=id&words=true&word_fields=text_uthmani,location,transliteration,translation`,
       { next: { revalidate: 86400 } }
     );
     if (!res.ok) return [];
@@ -176,15 +177,24 @@ export async function fetchVerseWords(verseKey: string): Promise<WordSegment[]> 
 
     return json.verse.words
       .filter((w: any) => w.char_type_name === 'word')
-      .map((w: any, idx: number) => ({
-        wordIndex: idx + 1,
-        arabic: w.text_uthmani || w.text,
-        transliteration: w.transliteration?.text || '',
-        posTagCode: (idx % 3 === 0 ? 'N' : idx % 3 === 1 ? 'V' : 'P') as 'N' | 'V' | 'P',
-        posTag: idx % 3 === 0 ? 'Isim' : idx % 3 === 1 ? "Fi'il" : 'Haraf',
-        meaningIndo: w.translation?.text || 'Kata Al-Qur\'an',
-        wordLocation: w.location || `${verseKey}:${idx + 1}`
-      }));
+      .map((w: any, idx: number) => {
+        const arabic = w.text_uthmani || w.text || '';
+        const meaningIndo = w.translation?.text || '';
+        const grammar = inferGrammarRole(arabic, meaningIndo);
+        const matchedRoot = findBestMatchingRoot(arabic, meaningIndo);
+        const posCode: 'N' | 'V' | 'P' = grammar.posCategory === "Fi'il" ? 'V' : grammar.posCategory === 'Harf' ? 'P' : 'N';
+
+        return {
+          wordIndex: idx + 1,
+          arabic,
+          transliteration: w.transliteration?.text || '',
+          posTagCode: posCode,
+          posTag: grammar.posCategory,
+          rootArabic: matchedRoot?.rootArabic,
+          meaningIndo: meaningIndo || 'Kata Al-Qur\'an',
+          wordLocation: w.location || `${verseKey}:${idx + 1}`
+        };
+      });
   } catch (err) {
     console.error('Error fetching verse words:', err);
     return [];

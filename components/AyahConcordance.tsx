@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import { VerseOccurrence, WordSegment } from '@/lib/types/morphology';
+import { fetchVerseWords } from '@/lib/api/quran-corpus-api';
 import WordByWordViewer from './WordByWordViewer';
-import { Copy, Check, BookOpen, ChevronDown, ChevronUp, ShieldCheck } from 'lucide-react';
+import { Copy, Check, BookOpen, ChevronDown, ChevronUp, ShieldCheck, Loader2 } from 'lucide-react';
 
 interface AyahConcordanceProps {
   occurrences: VerseOccurrence[];
@@ -14,6 +15,8 @@ interface AyahConcordanceProps {
 export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: AyahConcordanceProps) {
   const [openInterlinearId, setOpenInterlinearId] = useState<string | null>(null);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [segmentsMap, setSegmentsMap] = useState<Record<string, WordSegment[]>>({});
+  const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({});
 
   if (!occurrences || occurrences.length === 0) {
     return (
@@ -23,8 +26,33 @@ export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: 
     );
   }
 
-  const toggleInterlinear = (key: string) => {
-    setOpenInterlinearId(openInterlinearId === key ? null : key);
+  const toggleInterlinear = async (item: VerseOccurrence, key: string) => {
+    if (openInterlinearId === key) {
+      setOpenInterlinearId(null);
+      return;
+    }
+
+    setOpenInterlinearId(key);
+
+    // If segments already loaded in cache or directly attached, reuse
+    if (segmentsMap[key] || (item.wordSegments && item.wordSegments.length > 0)) {
+      if (item.wordSegments && !segmentsMap[key]) {
+        setSegmentsMap((prev) => ({ ...prev, [key]: item.wordSegments! }));
+      }
+      return;
+    }
+
+    // Fetch real word-by-word data from Quran.com API v4
+    setLoadingMap((prev) => ({ ...prev, [key]: true }));
+    try {
+      const verseKey = `${item.surahNumber}:${item.ayahNumber}`;
+      const data = await fetchVerseWords(verseKey);
+      setSegmentsMap((prev) => ({ ...prev, [key]: data }));
+    } catch (err) {
+      console.error('Error loading verse words:', err);
+    } finally {
+      setLoadingMap((prev) => ({ ...prev, [key]: false }));
+    }
   };
 
   const handleCopyVerse = (item: VerseOccurrence, key: string) => {
@@ -40,21 +68,8 @@ export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: 
         const itemKey = `${item.surahNumber}-${item.ayahNumber}-${idx}`;
         const isInterlinearOpen = openInterlinearId === itemKey;
         const isCopied = copiedKey === itemKey;
-
-        // Generate synthetic interlinear segments for demo
-        const words = item.verseArabic.split(/\s+/);
-        const segments: WordSegment[] = words.map((w, i) => {
-          const tagCode: 'N' | 'V' | 'P' = i % 3 === 0 ? 'N' : i % 3 === 1 ? 'V' : 'P';
-          return {
-            wordIndex: i + 1,
-            arabic: w,
-            transliteration: i % 2 === 0 ? 'ism' : "fi'il",
-            posTagCode: tagCode,
-            posTag: tagCode === 'N' ? 'Isim' : tagCode === 'V' ? "Fi'il" : 'Haraf',
-            meaningIndo: item.matchedWordIndo || 'Kata Al-Qur\'an',
-            wordLocation: `${item.surahNumber}:${item.ayahNumber}:${i + 1}`
-          };
-        });
+        const isLoadingSegments = loadingMap[itemKey];
+        const activeSegments = segmentsMap[itemKey] || item.wordSegments;
 
         return (
           <div
@@ -92,7 +107,7 @@ export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: 
                 </button>
 
                 <button
-                  onClick={() => toggleInterlinear(itemKey)}
+                  onClick={() => toggleInterlinear(item, itemKey)}
                   className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-full bg-primary-subdued text-primary hover:bg-primary/20 text-xs font-semibold transition-all font-sans"
                 >
                   <BookOpen className="w-4 h-4" />
@@ -119,14 +134,27 @@ export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: 
 
             {/* Interlinear Accordion */}
             {isInterlinearOpen && (
-              <WordByWordViewer segments={segments} />
+              <div className="pt-2">
+                {isLoadingSegments ? (
+                  <div className="p-8 text-center bg-canvas-soft border border-hairline rounded-2xl flex items-center justify-center space-x-2 text-ink-mute text-xs font-sans">
+                    <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                    <span>Memuat analisis kata per kata otentik (Quran.com API v4)...</span>
+                  </div>
+                ) : activeSegments && activeSegments.length > 0 ? (
+                  <WordByWordViewer segments={activeSegments} />
+                ) : (
+                  <div className="p-6 text-center bg-canvas-soft border border-hairline rounded-2xl text-ink-mute text-xs font-sans">
+                    Analisis kata per kata belum tersedia dari sumber.
+                  </div>
+                )}
+              </div>
             )}
 
             {/* Small Reference Badge in Bottom Corner */}
             <div className="pt-2 flex justify-end">
               <span className="inline-flex items-center space-x-1.5 text-xs text-ink-mute font-sans">
                 <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-                <span>Sumber: Mushaf Standar Indonesia (Kemenag RI) &amp; Quran.com API</span>
+                <span>Sumber: Mushaf Standar Indonesia (Kemenag RI) &amp; Quran.com API v4</span>
               </span>
             </div>
           </div>
