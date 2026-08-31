@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "npx tsx lib/search/root-search.test.ts && npx tsx lib/search/word-dictionary.test.ts && npx tsx lib/context/theme.test.ts && npx tsx lib/data/surah-list.test.ts"
+    "test": "npx tsx lib/search/root-search.test.ts && npx tsx lib/search/word-dictionary.test.ts && npx tsx lib/context/theme.test.ts && npx tsx lib/data/surah-list.test.ts && npx tsx lib/api/audio.test.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",

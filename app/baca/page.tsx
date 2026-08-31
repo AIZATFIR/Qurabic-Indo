@@ -8,6 +8,9 @@ import {
   ChevronRight,
   Layers,
   Volume2,
+  Play,
+  Pause,
+  Loader2,
   BookMarked,
   Shuffle,
   ArrowLeft,
@@ -16,9 +19,11 @@ import {
 } from 'lucide-react';
 import QuranWordInteractive from '@/components/QuranWordInteractive';
 import SurahSearchModal from '@/components/SurahSearchModal';
+import QuranAudioPlayer from '@/components/QuranAudioPlayer';
 import { fetchSurahWithWBW, FullAyahWBW } from '@/lib/api/quran-corpus-api';
 import { SURAH_LIST, getSurahByNumber } from '@/lib/data/surah-list';
 import { useTheme } from '@/lib/context/ThemeContext';
+import { useQuranAudio } from '@/lib/hooks/useQuranAudio';
 
 export default function BacaQuranPage() {
   const [selectedSurah, setSelectedSurah] = useState<number>(1);
@@ -29,6 +34,15 @@ export default function BacaQuranPage() {
   const [ayahs, setAyahs] = useState<FullAyahWBW[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterAyahNum, setFilterAyahNum] = useState<string>('');
+
+  const currentSurahMeta = getSurahByNumber(selectedSurah) || SURAH_LIST[0];
+
+  // Quran Audio Recitation Hook (Ayah-by-Ayah with Auto-Advance & Sync)
+  const audio = useQuranAudio({
+    surahNumber: selectedSurah,
+    totalAyahs: currentSurahMeta.ayahsCount,
+    autoScroll: true,
+  });
 
   // Fetch selected Surah with real Word-by-Word (WBW) data
   useEffect(() => {
@@ -46,8 +60,6 @@ export default function BacaQuranPage() {
 
     loadSurahData();
   }, [selectedSurah]);
-
-  const currentSurahMeta = getSurahByNumber(selectedSurah) || SURAH_LIST[0];
 
   // Handle Surah & target Ayah selection from Search Modal
   const handleSelectSurah = (surahNum: number, targetAyah?: number) => {
@@ -196,7 +208,7 @@ export default function BacaQuranPage() {
         <div className="bg-canvas-surface rounded-2xl border border-hairline shadow-subtle overflow-hidden">
           
           {/* Surah Header */}
-          <div className="p-8 sm:p-12 text-center space-y-3 border-b border-hairline bg-canvas-soft/40">
+          <div className="p-8 sm:p-12 text-center space-y-4 border-b border-hairline bg-canvas-soft/40">
             <span className="text-xs text-ink-mute font-medium font-sans uppercase tracking-wider">
               Surah Ke-{currentSurahMeta.number} • {currentSurahMeta.revelationType}
             </span>
@@ -211,6 +223,24 @@ export default function BacaQuranPage() {
             <p className="text-xs sm:text-sm text-ink-mute font-sans">
               Arti: &ldquo;{currentSurahMeta.translationId}&rdquo;
             </p>
+
+            {/* Audio Recitation Trigger */}
+            <div className="pt-2 flex items-center justify-center space-x-3">
+              <button
+                onClick={audio.togglePlayPause}
+                className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary-deep text-white text-xs font-semibold shadow-subtle transition-all font-sans"
+                title={audio.isPlaying ? 'Jeda Tilawah' : 'Putar Tilawah Surah Ini (Space)'}
+              >
+                {audio.isLoading ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : audio.isPlaying ? (
+                  <Pause className="w-3.5 h-3.5 fill-current" />
+                ) : (
+                  <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
+                )}
+                <span>{audio.isPlaying ? 'Jeda Tilawah' : 'Putar Tilawah'}</span>
+              </button>
+            </div>
           </div>
 
           {/* Loading Indicator */}
@@ -222,73 +252,122 @@ export default function BacaQuranPage() {
           ) : (
             /* Continuous Ayah List with Subtle Dividers */
             <div className="divide-y divide-hairline">
-              {displayedAyahs.map((ayah) => (
-                <div
-                  key={ayah.ayahNumber}
-                  id={`ayah-${ayah.ayahNumber}`}
-                  className="p-6 sm:p-8 md:p-10 transition-colors hover:bg-canvas-soft/20 space-y-5"
-                >
-                  {/* Ayah Header Bar */}
-                  <div className="flex items-center justify-between">
-                    <span className="w-7 h-7 rounded-lg bg-canvas-soft border border-hairline text-ink-secondary text-xs font-semibold font-sans flex items-center justify-center">
-                      {ayah.ayahNumber}
-                    </span>
+              {displayedAyahs.map((ayah) => {
+                const isActiveAyah = audio.currentAyah === ayah.ayahNumber;
 
-                    <span className="text-xs text-ink-mute font-sans font-medium">
-                      {currentSurahMeta.nameIndo} : {ayah.ayahNumber}
-                    </span>
-                  </div>
-
-                  {/* Arabic Text with Interactive Clickable Words */}
+                return (
                   <div
-                    dir="rtl"
-                    className={`font-arabic ${fontArabicClass} text-ink-primary text-right flex flex-wrap items-center justify-start gap-x-2 gap-y-3 leading-loose`}
+                    key={ayah.ayahNumber}
+                    id={`ayah-${ayah.ayahNumber}`}
+                    className={`p-6 sm:p-8 md:p-10 transition-all space-y-5 ${
+                      isActiveAyah
+                        ? 'bg-primary-subdued/25 border-l-4 border-l-primary shadow-subtle'
+                        : 'hover:bg-canvas-soft/20'
+                    }`}
                   >
-                    {ayah.words.map((word, wIdx) => {
-                      if (word.charType === 'end') {
-                        return (
-                          <span key={wIdx} className="text-primary font-bold text-xl px-2 font-arabic shrink-0 select-none" dir="rtl">
-                            {word.arabic || `﴿${ayah.ayahNumber}﴾`}
-                          </span>
-                        );
-                      }
+                    {/* Ayah Header Bar */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <span
+                          className={`w-7 h-7 rounded-lg text-xs font-semibold font-sans flex items-center justify-center transition-colors ${
+                            isActiveAyah
+                              ? 'bg-primary text-white shadow-subtle'
+                              : 'bg-canvas-soft border border-hairline text-ink-secondary'
+                          }`}
+                        >
+                          {ayah.ayahNumber}
+                        </span>
 
-                      return (
-                        <QuranWordInteractive
-                          key={wIdx}
-                          wordArabic={word.arabic}
-                          transliteration={word.transliteration}
-                          meaningIndo={word.meaningIndo}
-                          posTag={word.posTag}
-                          posDetail={word.posDetail}
-                          matchedRootSlug={word.rootSlug}
-                          rootLetters={word.rootLetters}
-                          audioUrl={word.audioUrl}
-                          ayahArabic={ayah.textArabic}
-                          ayahIndo={ayah.textIndo}
-                          surahNumber={currentSurahMeta.number}
-                          ayahNumber={ayah.ayahNumber}
-                          surahNameIndo={currentSurahMeta.nameIndo}
-                        />
-                      );
-                    })}
-                  </div>
+                        <button
+                          onClick={() => {
+                            if (isActiveAyah && audio.isPlaying) {
+                              audio.pause();
+                            } else {
+                              audio.playAyah(ayah.ayahNumber);
+                            }
+                          }}
+                          className={`p-1.5 rounded-lg text-xs transition-colors flex items-center space-x-1 ${
+                            isActiveAyah && audio.isPlaying
+                              ? 'text-primary bg-primary-subdued'
+                              : 'text-ink-mute hover:text-primary hover:bg-canvas-soft'
+                          }`}
+                          title={isActiveAyah && audio.isPlaying ? 'Jeda Ayat Ini' : 'Putar Tilawah Ayat Ini'}
+                          aria-label={`Putar Tilawah Ayat ${ayah.ayahNumber}`}
+                        >
+                          {isActiveAyah && audio.isLoading ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+                          ) : isActiveAyah && audio.isPlaying ? (
+                            <Pause className="w-3.5 h-3.5 fill-current" />
+                          ) : (
+                            <Volume2 className="w-3.5 h-3.5" />
+                          )}
+                        </button>
+                      </div>
 
-                  {/* Indonesian Translation Kemenag RI */}
-                  {showTranslation && ayah.textIndo && (
-                    <div className="pt-2">
-                      <p className="text-sm sm:text-base translation-kemenag leading-relaxed font-sans text-ink-secondary">
-                        &ldquo;{ayah.textIndo}&rdquo;
-                      </p>
+                      <span className="text-xs text-ink-mute font-sans font-medium">
+                        {currentSurahMeta.nameIndo} : {ayah.ayahNumber}
+                      </span>
                     </div>
-                  )}
-                </div>
-              ))}
+
+                    {/* Arabic Text with Interactive Clickable Words */}
+                    <div
+                      dir="rtl"
+                      className={`font-arabic ${fontArabicClass} text-ink-primary text-right flex flex-wrap items-center justify-start gap-x-2 gap-y-3 leading-loose`}
+                    >
+                      {ayah.words.map((word, wIdx) => {
+                        if (word.charType === 'end') {
+                          return (
+                            <span key={wIdx} className="text-primary font-bold text-xl px-2 font-arabic shrink-0 select-none" dir="rtl">
+                              {word.arabic || `﴿${ayah.ayahNumber}﴾`}
+                            </span>
+                          );
+                        }
+
+                        return (
+                          <QuranWordInteractive
+                            key={wIdx}
+                            wordArabic={word.arabic}
+                            transliteration={word.transliteration}
+                            meaningIndo={word.meaningIndo}
+                            posTag={word.posTag}
+                            posDetail={word.posDetail}
+                            matchedRootSlug={word.rootSlug}
+                            rootLetters={word.rootLetters}
+                            audioUrl={word.audioUrl}
+                            ayahArabic={ayah.textArabic}
+                            ayahIndo={ayah.textIndo}
+                            surahNumber={currentSurahMeta.number}
+                            ayahNumber={ayah.ayahNumber}
+                            surahNameIndo={currentSurahMeta.nameIndo}
+                          />
+                        );
+                      })}
+                    </div>
+
+                    {/* Indonesian Translation Kemenag RI */}
+                    {showTranslation && ayah.textIndo && (
+                      <div className="pt-2">
+                        <p className="text-sm sm:text-base translation-kemenag leading-relaxed font-sans text-ink-secondary">
+                          &ldquo;{ayah.textIndo}&rdquo;
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
 
       </main>
+
+      {/* Floating Minimalist Audio Player */}
+      <QuranAudioPlayer
+        audio={audio}
+        surahNameIndo={currentSurahMeta.nameIndo}
+        surahNameArabic={currentSurahMeta.nameArabic}
+        totalAyahs={currentSurahMeta.ayahsCount}
+      />
 
       {/* Surah & Ayah Search Modal */}
       <SurahSearchModal
