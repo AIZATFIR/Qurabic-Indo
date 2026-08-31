@@ -75,24 +75,22 @@ export default async function RootDetailPage({ params }: PageProps) {
       {/* Root Banner */}
       <div className="bg-canvas-surface border border-hairline rounded-3xl p-8 sm:p-10 shadow-subtle">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div>
-            <div className="flex items-center space-x-2 mb-3">
-              <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-primary-subdued text-primary text-xs font-semibold rounded-full font-sans">
-                <span>AKAR KATA AL-QUR&apos;AN</span>
-                <span>•</span>
-                <span>{root.totalOccurrences} KEMUNCULAN</span>
-              </span>
+          <div className="space-y-2">
+            <div className="flex items-center space-x-3 text-xs text-ink-mute font-medium font-sans">
+              <span>Akar Kata Al-Qur&apos;an</span>
+              <span>•</span>
+              <span>{root.totalOccurrences} Kemunculan</span>
 
               {isLiveFetched && (
-                <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-primary-fixed text-primary-deep text-xs font-semibold rounded-full font-sans">
+                <span className="inline-flex items-center space-x-1 text-primary">
                   <Radio className="w-3 h-3 text-primary animate-pulse" />
-                  <span>Pencarian Ayat Al-Qur&apos;an (Live)</span>
+                  <span>Pencarian Ayat (Live)</span>
                 </span>
               )}
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-light text-ink-primary tracking-tight mb-2 font-sans">
-              Akar Kata <span className="font-arabic font-bold text-primary">{root.rootArabic}</span> ({root.rootLatin})
+            <h1 className="text-3xl sm:text-5xl font-light text-ink-primary tracking-tight font-sans">
+              Akar Kata <span className="font-arabic font-semibold text-primary">{root.rootArabic}</span> ({root.rootLatin})
             </h1>
 
             <p className="text-base sm:text-lg text-ink-secondary font-sans leading-relaxed">
@@ -102,12 +100,12 @@ export default async function RootDetailPage({ params }: PageProps) {
 
           <div className="flex items-center space-x-4 bg-canvas-soft border border-hairline rounded-2xl p-4 font-sans">
             <div className="text-center px-4 border-r border-hairline">
-              <span className="block text-2xl font-bold text-ink-primary">{root.verbsCount}</span>
-              <span className="text-xs text-ink-mute">Kata Kerja (Fi&apos;il)</span>
+              <span className="block text-2xl font-semibold text-ink-primary">{root.verbsCount}</span>
+              <span className="text-xs text-ink-mute font-medium">Fi&apos;il (Kata Kerja)</span>
             </div>
             <div className="text-center px-4">
-              <span className="block text-2xl font-bold text-ink-primary">{root.nounsCount}</span>
-              <span className="text-xs text-ink-mute">Kata Benda (Isim)</span>
+              <span className="block text-2xl font-semibold text-ink-primary">{root.nounsCount}</span>
+              <span className="text-xs text-ink-mute font-medium">Isim (Kata Benda)</span>
             </div>
           </div>
         </div>

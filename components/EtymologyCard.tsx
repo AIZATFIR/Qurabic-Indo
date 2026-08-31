@@ -22,7 +22,7 @@ export default function EtymologyCard({
             <Compass className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="font-bold text-base sm:text-lg text-ink-primary font-sans">Etimologi dan Makna Klasik</h3>
+            <h3 className="font-semibold text-base sm:text-lg text-ink-primary font-sans">Etimologi dan Makna Klasik</h3>
             <p className="text-xs sm:text-sm text-ink-mute font-sans">Tafsir Linguistik Akar Kata ({rootLatin})</p>
           </div>
         </div>
@@ -35,11 +35,11 @@ export default function EtymologyCard({
       {/* Classical Etymology Note */}
       {etymologyNote && (
         <div className="p-5 sm:p-6 rounded-2xl bg-canvas-soft border border-hairline text-sm sm:text-base text-ink-secondary leading-relaxed font-sans space-y-2">
-          <div className="flex items-center space-x-2 font-bold text-ink-primary text-xs sm:text-sm">
+          <div className="flex items-center space-x-2 font-semibold text-ink-primary text-xs sm:text-sm">
             <BookMarked className="w-4 h-4 text-primary" />
             <span>Kajian Kamus Klasik (Lisan al-&apos;Arab &amp; Mu&apos;jam Maqayis al-Lughah):</span>
           </div>
-          <p className="italic text-ink-primary leading-relaxed">&ldquo;{etymologyNote}&rdquo;</p>
+          <p className="italic text-ink-primary leading-relaxed font-normal">&ldquo;{etymologyNote}&rdquo;</p>
         </div>
       )}
 
@@ -51,7 +51,7 @@ export default function EtymologyCard({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm sm:text-base">
           {meaningsIndonesian.map((meaning, idx) => (
             <div key={idx} className="flex items-start space-x-3 p-4 rounded-2xl bg-canvas-soft border border-hairline text-ink-primary font-sans">
-              <span className="w-6 h-6 rounded-xl bg-primary-subdued text-primary flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 font-sans">
+              <span className="w-6 h-6 rounded-xl bg-primary-subdued text-primary flex items-center justify-center text-xs font-semibold shrink-0 mt-0.5 font-sans">
                 {idx + 1}
               </span>
               <span className="leading-relaxed font-medium">{meaning}</span>

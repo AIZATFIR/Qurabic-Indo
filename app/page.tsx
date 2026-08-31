@@ -87,15 +87,15 @@ export default function HomePage() {
           {/* Card 1: Mode Baca */}
           <Link
             href="/baca"
-            className="p-7 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle hover:shadow-hover hover:border-primary/40 transition-all group space-y-4"
+            className="p-7 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle hover:border-primary/40 transition-all group space-y-4"
           >
-            <div className="w-12 h-12 rounded-2xl bg-primary-subdued text-primary flex items-center justify-center group-hover:scale-105 transition-transform shadow-subtle">
-              <BookMarked className="w-6 h-6" />
+            <div className="w-11 h-11 rounded-2xl bg-primary-subdued text-primary flex items-center justify-center transition-transform group-hover:scale-105 shadow-subtle">
+              <BookMarked className="w-5 h-5" />
             </div>
-            <h3 className="text-lg sm:text-xl font-bold text-ink-primary group-hover:text-primary transition-colors font-sans">
+            <h3 className="text-lg font-semibold text-ink-primary group-hover:text-primary transition-colors font-sans">
               Mode Baca &amp; Bedah Kata
             </h3>
-            <p className="text-sm text-ink-mute leading-relaxed font-sans">
+            <p className="text-sm text-ink-mute leading-relaxed font-sans font-normal">
               Mushaf Al-Qur&apos;an interaktif dengan ukuran huruf nyaman. Klik kata manapun untuk membuka definisi, audio pelafalan, dan bedah akar kata.
             </p>
           </Link>
@@ -103,15 +103,15 @@ export default function HomePage() {
           {/* Card 2: Ayat Acak */}
           <Link
             href="/ayat-random"
-            className="p-7 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle hover:shadow-hover hover:border-primary/40 transition-all group space-y-4"
+            className="p-7 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle hover:border-primary/40 transition-all group space-y-4"
           >
-            <div className="w-12 h-12 rounded-2xl bg-primary-subdued text-primary flex items-center justify-center group-hover:scale-105 transition-transform shadow-subtle">
-              <Shuffle className="w-6 h-6" />
+            <div className="w-11 h-11 rounded-2xl bg-primary-subdued text-primary flex items-center justify-center transition-transform group-hover:scale-105 shadow-subtle">
+              <Shuffle className="w-5 h-5" />
             </div>
-            <h3 className="text-lg sm:text-xl font-bold text-ink-primary group-hover:text-primary transition-colors font-sans">
+            <h3 className="text-lg font-semibold text-ink-primary group-hover:text-primary transition-colors font-sans">
               Ayat Acak &amp; Tadabbur
             </h3>
-            <p className="text-sm text-ink-mute leading-relaxed font-sans">
+            <p className="text-sm text-ink-mute leading-relaxed font-sans font-normal">
               Inspirasi ayat Al-Qur&apos;an pilihan lengkap dengan audio murottal qari dan analisis kata perkata untuk tadabbur harian.
             </p>
           </Link>
@@ -119,15 +119,15 @@ export default function HomePage() {
           {/* Card 3: Katalog Morfologi */}
           <Link
             href="/morfologi"
-            className="p-7 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle hover:shadow-hover hover:border-primary/40 transition-all group space-y-4"
+            className="p-7 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle hover:border-primary/40 transition-all group space-y-4"
           >
-            <div className="w-12 h-12 rounded-2xl bg-primary-subdued text-primary flex items-center justify-center group-hover:scale-105 transition-transform shadow-subtle">
-              <Layers className="w-6 h-6" />
+            <div className="w-11 h-11 rounded-2xl bg-primary-subdued text-primary flex items-center justify-center transition-transform group-hover:scale-105 shadow-subtle">
+              <Layers className="w-5 h-5" />
             </div>
-            <h3 className="text-lg sm:text-xl font-bold text-ink-primary group-hover:text-primary transition-colors font-sans">
+            <h3 className="text-lg font-semibold text-ink-primary group-hover:text-primary transition-colors font-sans">
               Katalog Morfologi &amp; Akar Kata
             </h3>
-            <p className="text-sm text-ink-mute leading-relaxed font-sans">
+            <p className="text-sm text-ink-mute leading-relaxed font-sans font-normal">
               Indeks 154 akar kata Al-Qur&apos;an terorganisasi berdasarkan abjad hijaiyyah, frekuensi kemunculan, dan wazan Sharaf.
             </p>
           </Link>
@@ -186,53 +186,53 @@ export default function HomePage() {
             {/* Lemma 1 */}
             <Link
               href="/akar/s-l-w"
-              className="bg-canvas-surface p-6 rounded-3xl border border-hairline hover:border-primary/40 shadow-subtle hover:shadow-soft transition-all group space-y-2"
+              className="bg-canvas-surface p-6 rounded-3xl border border-hairline hover:border-primary/40 shadow-subtle transition-all group space-y-2.5"
             >
-              <div className="flex justify-between items-center">
-                <span className="text-3xl font-bold font-arabic text-ink-primary group-hover:text-primary transition-colors" dir="rtl">صَلَاة</span>
-                <span className="text-xs text-primary bg-primary-fixed px-2.5 py-0.5 rounded-md font-semibold font-sans">99x</span>
+              <div className="flex justify-between items-baseline">
+                <span className="text-3xl font-arabic text-ink-primary group-hover:text-primary transition-colors" dir="rtl">صَلَاة</span>
+                <span className="text-xs text-ink-mute font-medium font-sans">99x</span>
               </div>
-              <h4 className="text-sm font-bold text-ink-primary font-sans">Sholat (ص-ل-و)</h4>
-              <p className="text-xs sm:text-sm text-ink-mute line-clamp-2 font-sans leading-relaxed">Shalawain (urat punggung yang menyambungkan). Tali penyambung ruhani hamba dengan Sang Khaliq.</p>
+              <h4 className="text-sm font-semibold text-ink-primary font-sans">Sholat (ص-ل-و)</h4>
+              <p className="text-xs sm:text-sm text-ink-secondary line-clamp-2 font-sans leading-relaxed">Shalawain (urat punggung yang menyambungkan). Tali penyambung ruhani hamba dengan Sang Khaliq.</p>
             </Link>
 
             {/* Lemma 2 */}
             <Link
               href="/akar/s-b-r"
-              className="bg-canvas-surface p-6 rounded-3xl border border-hairline hover:border-primary/40 shadow-subtle hover:shadow-soft transition-all group space-y-2"
+              className="bg-canvas-surface p-6 rounded-3xl border border-hairline hover:border-primary/40 shadow-subtle transition-all group space-y-2.5"
             >
-              <div className="flex justify-between items-center">
-                <span className="text-3xl font-bold font-arabic text-ink-primary group-hover:text-primary transition-colors" dir="rtl">صَبْر</span>
-                <span className="text-xs text-primary bg-primary-fixed px-2.5 py-0.5 rounded-md font-semibold font-sans">103x</span>
+              <div className="flex justify-between items-baseline">
+                <span className="text-3xl font-arabic text-ink-primary group-hover:text-primary transition-colors" dir="rtl">صَبْر</span>
+                <span className="text-xs text-ink-mute font-medium font-sans">103x</span>
               </div>
-              <h4 className="text-sm font-bold text-ink-primary font-sans">Sabar (ص-ب-ر)</h4>
-              <p className="text-xs sm:text-sm text-ink-mute line-clamp-2 font-sans leading-relaxed">Shobarah (batu padat yang kokoh) dan obat pahit penyembuh. Ketabahan jiwa yang tidak goyah.</p>
+              <h4 className="text-sm font-semibold text-ink-primary font-sans">Sabar (ص-ب-ر)</h4>
+              <p className="text-xs sm:text-sm text-ink-secondary line-clamp-2 font-sans leading-relaxed">Shobarah (batu padat yang kokoh) dan obat pahit penyembuh. Ketabahan jiwa yang tidak goyah.</p>
             </Link>
 
             {/* Lemma 3 */}
             <Link
               href="/akar/a-l-m"
-              className="bg-canvas-surface p-6 rounded-3xl border border-hairline hover:border-primary/40 shadow-subtle hover:shadow-soft transition-all group space-y-2"
+              className="bg-canvas-surface p-6 rounded-3xl border border-hairline hover:border-primary/40 shadow-subtle transition-all group space-y-2.5"
             >
-              <div className="flex justify-between items-center">
-                <span className="text-3xl font-bold font-arabic text-ink-primary group-hover:text-primary transition-colors" dir="rtl">عِلْم</span>
-                <span className="text-xs text-primary bg-primary-fixed px-2.5 py-0.5 rounded-md font-semibold font-sans">854x</span>
+              <div className="flex justify-between items-baseline">
+                <span className="text-3xl font-arabic text-ink-primary group-hover:text-primary transition-colors" dir="rtl">عِلْم</span>
+                <span className="text-xs text-ink-mute font-medium font-sans">854x</span>
               </div>
-              <h4 className="text-sm font-bold text-ink-primary font-sans">Ilmu (ع-ل-م)</h4>
-              <p className="text-xs sm:text-sm text-ink-mute line-clamp-2 font-sans leading-relaxed">&apos;Alam (tanda penunjuk). Pengetahuan hakiki yang menyingkap kebenaran dan memberi arah jalan hidup.</p>
+              <h4 className="text-sm font-semibold text-ink-primary font-sans">Ilmu (ع-ل-م)</h4>
+              <p className="text-xs sm:text-sm text-ink-secondary line-clamp-2 font-sans leading-relaxed">&apos;Alam (tanda penunjuk). Pengetahuan hakiki yang menyingkap kebenaran dan memberi arah jalan hidup.</p>
             </Link>
 
             {/* Lemma 4 */}
             <Link
               href="/akar/r-h-m"
-              className="bg-canvas-surface p-6 rounded-3xl border border-hairline hover:border-primary/40 shadow-subtle hover:shadow-soft transition-all group space-y-2"
+              className="bg-canvas-surface p-6 rounded-3xl border border-hairline hover:border-primary/40 shadow-subtle transition-all group space-y-2.5"
             >
-              <div className="flex justify-between items-center">
-                <span className="text-3xl font-bold font-arabic text-ink-primary group-hover:text-primary transition-colors" dir="rtl">رَحْمَة</span>
-                <span className="text-xs text-primary bg-primary-fixed px-2.5 py-0.5 rounded-md font-semibold font-sans">339x</span>
+              <div className="flex justify-between items-baseline">
+                <span className="text-3xl font-arabic text-ink-primary group-hover:text-primary transition-colors" dir="rtl">رَحْمَة</span>
+                <span className="text-xs text-ink-mute font-medium font-sans">339x</span>
               </div>
-              <h4 className="text-sm font-bold text-ink-primary font-sans">Rahmat (ر-ح-م)</h4>
-              <p className="text-xs sm:text-sm text-ink-mute line-clamp-2 font-sans leading-relaxed">Rahim (kandungan ibu). Kasih sayang mendalam yang melindungi, memelihara, dan memberi kehidupan.</p>
+              <h4 className="text-sm font-semibold text-ink-primary font-sans">Rahmat (ر-ح-م)</h4>
+              <p className="text-xs sm:text-sm text-ink-secondary line-clamp-2 font-sans leading-relaxed">Rahim (kandungan ibu). Kasih sayang mendalam yang melindungi, memelihara, dan memberi kehidupan.</p>
             </Link>
           </div>
         </div>

@@ -193,20 +193,20 @@ export default function WordEtymologyModal({
 
           {/* Primary & Detailed Meanings */}
           <div className="pt-3 border-t border-hairline space-y-2">
-            <p className="text-lg sm:text-xl font-bold text-ink-primary font-sans leading-snug">
+            <p className="text-lg sm:text-xl font-semibold text-ink-primary font-sans leading-snug">
               {wordDetail.primaryMeaning || meaningIndo || 'Kata dalam Al-Qur\'an'}
             </p>
 
             {wordDetail.meanings.length > 1 && (
               <div className="space-y-1.5 pt-1">
                 <span className="text-xs font-semibold text-ink-mute uppercase tracking-wider block font-sans">
-                  Ragam Definisi Lengkap:
+                  Ragam Definisi:
                 </span>
                 <ul className="space-y-1.5 text-xs sm:text-sm text-ink-secondary font-sans">
                   {wordDetail.meanings.slice(1).map((m, idx) => (
                     <li key={idx} className="flex items-start space-x-2.5">
                       <span className="text-primary font-bold text-sm mt-0.5">•</span>
-                      <span className="leading-relaxed font-medium">{m}</span>
+                      <span className="leading-relaxed font-normal">{m}</span>
                     </li>
                   ))}
                 </ul>
@@ -218,12 +218,12 @@ export default function WordEtymologyModal({
         {/* Deep Root Etymology & Grammatical Role */}
         <div className="p-5 sm:p-6 rounded-2xl bg-canvas-soft border border-hairline space-y-3.5">
           <div className="flex items-center justify-between border-b border-hairline pb-2.5">
-            <span className="text-xs sm:text-sm font-bold text-ink-primary flex items-center space-x-2 font-sans">
+            <span className="text-xs sm:text-sm font-semibold text-ink-primary flex items-center space-x-2 font-sans">
               <Compass className="w-4 h-4 text-primary" />
-              <span>Analisis Morfologi &amp; Tata Bahasa Sharaf (Corpus)</span>
+              <span>Analisis Morfologi &amp; Tata Bahasa Sharaf</span>
             </span>
             {root && (
-              <span className="text-xs px-2.5 py-0.5 rounded-lg bg-primary-subdued text-primary font-semibold font-sans">
+              <span className="text-xs text-ink-mute font-medium font-sans">
                 {root.totalOccurrences}x di Al-Qur&apos;an
               </span>
             )}
@@ -245,9 +245,9 @@ export default function WordEtymologyModal({
           {wordDetail.rootExplanation && (
             <div className="p-4 bg-canvas-surface rounded-2xl border border-hairline text-xs sm:text-sm text-ink-secondary leading-relaxed space-y-2 font-sans">
               <span className="text-xs font-semibold uppercase tracking-wider text-ink-mute block">Kajian Etimologi Klasik:</span>
-              <p className="text-ink-primary leading-relaxed">{wordDetail.rootExplanation}</p>
+              <p className="text-ink-primary leading-relaxed font-normal">{wordDetail.rootExplanation}</p>
               {wordDetail.classicalCitation && (
-                <p className="text-xs text-ink-mute italic pt-2 border-t border-hairline">
+                <p className="text-xs text-ink-mute italic pt-2 border-t border-hairline font-normal">
                   Rujukan: {wordDetail.classicalCitation}
                 </p>
               )}
