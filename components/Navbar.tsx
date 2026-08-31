@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { BookOpen, Search, Bookmark, BookMarked, Shuffle } from 'lucide-react';
+import { BookOpen, Search, Bookmark, BookMarked, Shuffle, Sparkles } from 'lucide-react';
 import OmniSearch from './OmniSearch';
 import ThemeSelector from './ThemeSelector';
 import { useState } from 'react';
@@ -56,6 +56,14 @@ export default function Navbar() {
               >
                 <BookOpen className="w-3.5 h-3.5 text-primary" />
                 <span>Katalog Morfologi</span>
+              </Link>
+
+              <Link
+                href="/rekomendasi"
+                className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-lg hover:bg-canvas-surface/80"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                <span>Rekomendasi</span>
               </Link>
 
               <Link
