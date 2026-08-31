@@ -59,18 +59,13 @@ export default function MorfologiPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header Banner */}
-      <div className="p-8 sm:p-10 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
-        <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-primary-subdued text-primary text-xs font-semibold uppercase tracking-wider font-sans">
-          <Layers className="w-3.5 h-3.5" />
-          <span>Katalog Morfologi &amp; Indeks Akar Kata</span>
-        </div>
-
-        <h1 className="text-3xl sm:text-5xl font-light text-ink-primary tracking-tight font-sans">
-          Database Akar Kata Al-Qur&apos;an
+      <div className="p-8 sm:p-10 rounded-2xl bg-canvas-surface border border-hairline shadow-subtle space-y-3">
+        <h1 className="text-3xl sm:text-4xl font-light text-ink-primary tracking-tight font-sans">
+          Katalog Akar Kata <span className="font-semibold text-primary">Al-Qur&apos;an</span>
         </h1>
 
-        <p className="text-sm text-ink-mute max-w-2xl leading-relaxed font-sans">
-          Koleksi 154 indeks akar kata Al-Qur&apos;an berbahasa Indonesia. Jelajahi turunan kata kerja (Fi&apos;il), kata benda (Isim), dan wawasan etimologi secara instan.
+        <p className="text-sm text-ink-secondary max-w-2xl leading-relaxed font-sans">
+          Koleksi 154 indeks akar kata Al-Qur&apos;an berbahasa Indonesia. Jelajahi turunan kata kerja (Fi&apos;il), kata benda (Isim), dan intisari etimologi secara instan.
         </p>
 
         {/* Filter & Search Bar */}
@@ -82,16 +77,16 @@ export default function MorfologiPage() {
               value={filterQuery}
               onChange={(e) => setFilterQuery(e.target.value)}
               placeholder="Cari akar kata (contoh: sabar, كتب, batu)..."
-              className="w-full pl-11 pr-4 py-3 rounded-full bg-canvas-surface border border-hairline text-sm text-ink-primary placeholder:text-ink-mute focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-subtle font-sans"
+              className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-canvas-surface border border-hairline text-sm text-ink-primary placeholder:text-ink-mute focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-subtle font-sans"
             />
           </div>
 
-          <div className="flex items-center space-x-1 p-1 rounded-full bg-canvas-soft border border-hairline text-xs w-full sm:w-auto font-sans">
+          <div className="flex items-center space-x-1 p-1 rounded-xl bg-canvas-soft border border-hairline text-xs w-full sm:w-auto font-sans">
             <button
               onClick={() => setSelectedCategory('all')}
-              className={`px-4 py-2 rounded-full font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
                 selectedCategory === 'all'
-                  ? 'bg-primary text-white font-semibold shadow-sm'
+                  ? 'bg-canvas-surface text-primary font-semibold shadow-subtle'
                   : 'text-ink-mute hover:text-ink-primary'
               }`}
             >
@@ -99,9 +94,9 @@ export default function MorfologiPage() {
             </button>
             <button
               onClick={() => setSelectedCategory('high_verbs')}
-              className={`px-4 py-2 rounded-full font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
                 selectedCategory === 'high_verbs'
-                  ? 'bg-primary text-white font-semibold shadow-sm'
+                  ? 'bg-canvas-surface text-primary font-semibold shadow-subtle'
                   : 'text-ink-mute hover:text-ink-primary'
               }`}
             >
@@ -109,9 +104,9 @@ export default function MorfologiPage() {
             </button>
             <button
               onClick={() => setSelectedCategory('high_nouns')}
-              className={`px-4 py-2 rounded-full font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
                 selectedCategory === 'high_nouns'
-                  ? 'bg-primary text-white font-semibold shadow-sm'
+                  ? 'bg-canvas-surface text-primary font-semibold shadow-subtle'
                   : 'text-ink-mute hover:text-ink-primary'
               }`}
             >

@@ -190,101 +190,103 @@ export default function BacaQuranPage() {
       </div>
 
       {/* Main Quran Reader Container */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-6">
         
-        {/* Surah Header Card */}
-        <div className="p-6 sm:p-7 rounded-2xl border border-hairline bg-canvas-surface text-center space-y-2 shadow-subtle">
-          <div>
-            <span className="inline-block px-3 py-0.5 rounded-md bg-primary-subdued text-primary text-xs font-semibold uppercase tracking-wider font-sans">
+        {/* Continuous Scholarly Reading Surface */}
+        <div className="bg-canvas-surface rounded-2xl border border-hairline shadow-subtle overflow-hidden">
+          
+          {/* Surah Header */}
+          <div className="p-8 sm:p-12 text-center space-y-3 border-b border-hairline bg-canvas-soft/40">
+            <span className="text-xs text-ink-mute font-medium font-sans uppercase tracking-wider">
               Surah Ke-{currentSurahMeta.number} • {currentSurahMeta.revelationType}
             </span>
+
+            <h1 className="font-arabic-lg text-4xl sm:text-5xl lg:text-6xl font-semibold text-primary leading-relaxed" dir="rtl">
+              سُورَةُ {currentSurahMeta.nameArabic}
+            </h1>
+
+            <h2 className="text-lg sm:text-xl font-medium font-sans text-ink-primary">
+              Surah {currentSurahMeta.nameIndo} ({currentSurahMeta.ayahsCount} Ayat)
+            </h2>
+            <p className="text-xs sm:text-sm text-ink-mute font-sans">
+              Arti: &ldquo;{currentSurahMeta.translationId}&rdquo;
+            </p>
           </div>
 
-          <h1 className="font-arabic-lg text-4xl sm:text-5xl lg:text-6xl font-bold text-primary leading-relaxed" dir="rtl">
-            سُورَةُ {currentSurahMeta.nameArabic}
-          </h1>
-
-          <h2 className="text-lg sm:text-xl font-light font-sans tracking-tight text-ink-primary">
-            Surah {currentSurahMeta.nameIndo} ({currentSurahMeta.ayahsCount} Ayat)
-          </h2>
-          <p className="text-xs text-ink-mute font-sans">
-            Arti: &ldquo;{currentSurahMeta.translationId}&rdquo;
-          </p>
-        </div>
-
-        {/* Loading Indicator */}
-        {loading ? (
-          <div className="py-16 text-center space-y-3">
-            <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-xs font-sans text-ink-mute">Memuat teks Al-Qur&apos;an &amp; analisis kata...</p>
-          </div>
-        ) : (
-          /* Ayah Reader List */
-          <div className="space-y-5">
-            {displayedAyahs.map((ayah) => (
-              <div
-                key={ayah.ayahNumber}
-                id={`ayah-${ayah.ayahNumber}`}
-                className="p-7 sm:p-8 rounded-3xl border border-hairline bg-canvas-surface transition-all shadow-subtle space-y-4"
-              >
-                {/* Ayah Header Number */}
-                <div className="flex items-center justify-between pb-3 border-b border-hairline">
-                  <span className="w-7 h-7 rounded-full bg-primary-subdued text-primary text-xs font-bold font-sans flex items-center justify-center">
-                    {ayah.ayahNumber}
-                  </span>
-
-                  <span className="text-xs sm:text-sm text-ink-mute font-sans font-medium">
-                    {currentSurahMeta.nameIndo} : {ayah.ayahNumber}
-                  </span>
-                </div>
-
-                {/* Arabic Text with Interactive Clickable Words (RIGHT TO LEFT NATURAL QURANIC FLOW) */}
+          {/* Loading Indicator */}
+          {loading ? (
+            <div className="py-24 text-center space-y-3">
+              <div className="w-7 h-7 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
+              <p className="text-xs font-sans text-ink-mute">Memuat teks Al-Qur&apos;an &amp; analisis kata...</p>
+            </div>
+          ) : (
+            /* Continuous Ayah List with Subtle Dividers */
+            <div className="divide-y divide-hairline">
+              {displayedAyahs.map((ayah) => (
                 <div
-                  dir="rtl"
-                  className={`font-arabic ${fontArabicClass} text-ink-primary text-right flex flex-wrap items-center justify-start gap-x-2 gap-y-3 leading-loose`}
+                  key={ayah.ayahNumber}
+                  id={`ayah-${ayah.ayahNumber}`}
+                  className="p-6 sm:p-8 md:p-10 transition-colors hover:bg-canvas-soft/20 space-y-5"
                 >
-                  {ayah.words.map((word, wIdx) => {
-                    if (word.charType === 'end') {
-                      return (
-                        <span key={wIdx} className="text-primary font-bold text-xl px-2 font-arabic shrink-0 select-none" dir="rtl">
-                          {word.arabic || `﴿${ayah.ayahNumber}﴾`}
-                        </span>
-                      );
-                    }
+                  {/* Ayah Header Bar */}
+                  <div className="flex items-center justify-between">
+                    <span className="w-7 h-7 rounded-lg bg-canvas-soft border border-hairline text-ink-secondary text-xs font-semibold font-sans flex items-center justify-center">
+                      {ayah.ayahNumber}
+                    </span>
 
-                    return (
-                      <QuranWordInteractive
-                        key={wIdx}
-                        wordArabic={word.arabic}
-                        transliteration={word.transliteration}
-                        meaningIndo={word.meaningIndo}
-                        posTag={word.posTag}
-                        posDetail={word.posDetail}
-                        matchedRootSlug={word.rootSlug}
-                        rootLetters={word.rootLetters}
-                        audioUrl={word.audioUrl}
-                        ayahArabic={ayah.textArabic}
-                        ayahIndo={ayah.textIndo}
-                        surahNumber={currentSurahMeta.number}
-                        ayahNumber={ayah.ayahNumber}
-                        surahNameIndo={currentSurahMeta.nameIndo}
-                      />
-                    );
-                  })}
-                </div>
-
-                {/* Indonesian Translation Kemenag RI */}
-                {showTranslation && ayah.textIndo && (
-                  <div className="mt-4 pt-3 border-t border-hairline">
-                    <p className="text-sm sm:text-base translation-kemenag leading-relaxed font-sans text-ink-secondary">
-                      &ldquo;{ayah.textIndo}&rdquo;
-                    </p>
+                    <span className="text-xs text-ink-mute font-sans font-medium">
+                      {currentSurahMeta.nameIndo} : {ayah.ayahNumber}
+                    </span>
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+
+                  {/* Arabic Text with Interactive Clickable Words */}
+                  <div
+                    dir="rtl"
+                    className={`font-arabic ${fontArabicClass} text-ink-primary text-right flex flex-wrap items-center justify-start gap-x-2 gap-y-3 leading-loose`}
+                  >
+                    {ayah.words.map((word, wIdx) => {
+                      if (word.charType === 'end') {
+                        return (
+                          <span key={wIdx} className="text-primary font-bold text-xl px-2 font-arabic shrink-0 select-none" dir="rtl">
+                            {word.arabic || `﴿${ayah.ayahNumber}﴾`}
+                          </span>
+                        );
+                      }
+
+                      return (
+                        <QuranWordInteractive
+                          key={wIdx}
+                          wordArabic={word.arabic}
+                          transliteration={word.transliteration}
+                          meaningIndo={word.meaningIndo}
+                          posTag={word.posTag}
+                          posDetail={word.posDetail}
+                          matchedRootSlug={word.rootSlug}
+                          rootLetters={word.rootLetters}
+                          audioUrl={word.audioUrl}
+                          ayahArabic={ayah.textArabic}
+                          ayahIndo={ayah.textIndo}
+                          surahNumber={currentSurahMeta.number}
+                          ayahNumber={ayah.ayahNumber}
+                          surahNameIndo={currentSurahMeta.nameIndo}
+                        />
+                      );
+                    })}
+                  </div>
+
+                  {/* Indonesian Translation Kemenag RI */}
+                  {showTranslation && ayah.textIndo && (
+                    <div className="pt-2">
+                      <p className="text-sm sm:text-base translation-kemenag leading-relaxed font-sans text-ink-secondary">
+                        &ldquo;{ayah.textIndo}&rdquo;
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
       </main>
 

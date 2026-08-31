@@ -44,9 +44,27 @@ export default function WordEtymologyModal({
 }: WordEtymologyModalProps) {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
+  // Body scroll lock & ESC keyboard dismissal
   useEffect(() => {
+    if (!isOpen) return;
+
     setIsPlayingAudio(false);
-  }, [isOpen, wordArabic]);
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, wordArabic, onClose]);
 
   if (!isOpen) return null;
 
@@ -117,15 +135,15 @@ export default function WordEtymologyModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 animate-in fade-in duration-150 overscroll-contain">
       <div className="fixed inset-0" onClick={onClose} />
 
-      <div className="relative w-full max-w-2xl sm:max-w-3xl max-h-[88vh] overflow-y-auto bg-canvas-surface text-ink-primary border border-hairline rounded-3xl shadow-2xl z-10 p-6 sm:p-8 space-y-5 animate-in zoom-in-95 duration-150">
+      <div className="relative w-full max-w-2xl sm:max-w-3xl max-h-[88vh] overflow-y-auto overscroll-contain bg-canvas-surface text-ink-primary border border-hairline rounded-2xl shadow-hover z-10 p-6 sm:p-8 space-y-5 animate-in zoom-in-95 duration-150">
         
         {/* Header Bar */}
         <div className="flex items-center justify-between border-b border-hairline pb-4">
           <div className="flex items-center space-x-3">
-            <span className="px-3 py-1 rounded-xl bg-primary-subdued text-primary text-xs font-bold font-sans uppercase">
+            <span className="px-2.5 py-0.5 rounded-lg bg-primary-subdued text-primary text-xs font-semibold font-sans uppercase">
               {displayPosTag}
             </span>
             {surahNameIndo && (
@@ -151,7 +169,8 @@ export default function WordEtymologyModal({
 
             <button
               onClick={onClose}
-              className="p-2 rounded-full text-ink-mute hover:text-ink-primary hover:bg-canvas-soft transition-colors"
+              className="p-1.5 rounded-full text-ink-mute hover:text-ink-primary hover:bg-canvas-soft transition-colors"
+              title="Tutup (ESC)"
             >
               <X className="w-5 h-5" />
             </button>

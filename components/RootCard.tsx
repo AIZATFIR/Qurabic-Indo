@@ -28,7 +28,7 @@ export default function RootCard({ root }: RootCardProps) {
     : root.etymologyNote;
 
   return (
-    <div className="group bg-canvas-surface border border-hairline rounded-3xl p-6 sm:p-7 shadow-subtle hover:border-primary/40 transition-all duration-200 flex flex-col justify-between relative space-y-4">
+    <div className="group bg-canvas-surface border border-hairline rounded-2xl p-6 sm:p-7 shadow-subtle hover:border-primary/40 transition-all duration-200 flex flex-col justify-between relative space-y-4">
       
       {/* Bookmark Button (Quiet, subtle interaction) */}
       <button

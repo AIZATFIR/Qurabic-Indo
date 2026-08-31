@@ -63,7 +63,7 @@ export default function Navbar() {
                 className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-lg hover:bg-primary-fixed relative"
               >
                 <Bookmark className="w-3.5 h-3.5 text-primary" />
-                <span>Kata Tersimpan</span>
+                <span>Tersimpan</span>
                 {bookmarkedIds.length > 0 && (
                   <span className="w-4 h-4 rounded-full bg-primary text-white text-[9px] font-bold flex items-center justify-center ml-0.5">
                     {bookmarkedIds.length}
@@ -79,7 +79,7 @@ export default function Navbar() {
                 className="hidden sm:flex items-center space-x-2 bg-canvas-soft hover:bg-canvas-surface border border-hairline text-ink-mute px-3.5 py-1.5 rounded-full text-xs transition-all shadow-subtle hover:border-primary/40"
               >
                 <Search className="w-3.5 h-3.5 text-primary" />
-                <span>Cari akar kata (sabar, كتب)...</span>
+                <span>Cari kata atau akar kata...</span>
                 <kbd className="hidden lg:inline-block bg-canvas-surface text-ink-mute text-[9px] px-1.5 py-0.5 rounded border border-hairline font-sans ml-1">
                   ⌘K
                 </kbd>

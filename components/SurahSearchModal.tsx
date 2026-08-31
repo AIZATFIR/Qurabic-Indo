@@ -28,8 +28,24 @@ export default function SurahSearchModal({
       setTargetAyahInput('');
       setResults(SURAH_LIST);
       setTimeout(() => inputRef.current?.focus(), 50);
+
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          onClose();
+        }
+      };
+
+      window.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        window.removeEventListener('keydown', handleKeyDown);
+      };
     }
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   useEffect(() => {
     setResults(searchSurahs(query));
@@ -46,10 +62,10 @@ export default function SurahSearchModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-12 sm:pt-20 p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-12 sm:pt-20 p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150 overscroll-contain">
       <div className="fixed inset-0" onClick={onClose} />
 
-      <div className="relative w-full max-w-xl max-h-[82vh] flex flex-col bg-canvas-surface text-ink-primary border border-hairline rounded-2xl shadow-hover z-10 overflow-hidden animate-in zoom-in-95 duration-150">
+      <div className="relative w-full max-w-xl max-h-[82vh] flex flex-col bg-canvas-surface text-ink-primary border border-hairline rounded-2xl shadow-hover z-10 overflow-hidden overscroll-contain animate-in zoom-in-95 duration-150">
         
         {/* Search Header */}
         <div className="p-4 border-b border-hairline space-y-3 bg-canvas-surface">

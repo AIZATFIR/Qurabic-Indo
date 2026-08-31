@@ -142,21 +142,21 @@ export default function RandomAyahPage() {
       </Link>
 
       {/* Header Banner */}
-      <div className="p-6 sm:p-7 rounded-2xl bg-canvas-surface border border-hairline shadow-subtle text-center space-y-3">
-        <span className="inline-block px-3 py-0.5 rounded-md bg-primary-subdued text-primary text-xs font-semibold uppercase tracking-wider font-sans">
-          Ayat Acak &amp; Tadabbur
-        </span>
-
+      <div className="p-6 sm:p-8 rounded-2xl bg-canvas-surface border border-hairline shadow-subtle text-center space-y-3">
         <h1 className="text-2xl sm:text-3xl font-light text-ink-primary tracking-tight font-sans">
-          Inspirasi Ayat Al-Qur&apos;an
+          Inspirasi Ayat <span className="font-semibold text-primary">Al-Qur&apos;an</span>
         </h1>
 
+        <p className="text-xs sm:text-sm text-ink-secondary max-w-md mx-auto leading-relaxed font-sans">
+          Pilihan ayat Al-Qur&apos;an lengkap dengan audio pelafalan dan analisis per kata untuk tadabbur harian.
+        </p>
+
         {/* Acak Button */}
-        <div>
+        <div className="pt-1">
           <button
             onClick={fetchRandomAyah}
             disabled={loading}
-            className="inline-flex items-center space-x-2 bg-primary hover:bg-primary-deep text-white px-5 py-2 rounded-full font-medium text-xs shadow-subtle transition-all disabled:opacity-50"
+            className="inline-flex items-center space-x-2 bg-primary hover:bg-primary-deep text-white px-4 py-2 rounded-xl font-medium text-xs shadow-subtle transition-all disabled:opacity-50 font-sans"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
             <span>{loading ? 'Memilih...' : 'Pilih Ayat Lain'}</span>

@@ -41,6 +41,13 @@ export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 100);
       setResults(searchRoots(''));
+
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
     } else {
       setQuery('');
     }
@@ -58,21 +65,21 @@ export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!query.trim()) return;
-    onClose();
-    router.push(`/cari?q=${encodeURIComponent(query.trim())}`);
+    if (results.length > 0) {
+      handleSelectRoot(results[0].id);
+    }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-ink-primary/50 backdrop-blur-sm transition-opacity animate-in fade-in duration-200 font-sans">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-ink-primary/50 backdrop-blur-sm transition-opacity animate-in fade-in duration-200 font-sans overscroll-contain">
       
       {/* Backdrop Dismiss */}
       <div className="fixed inset-0" onClick={onClose} />
 
       {/* Search Modal Box */}
-      <div className="relative w-full max-w-2xl bg-canvas-surface border border-hairline rounded-3xl shadow-2xl overflow-hidden z-10 flex flex-col max-h-[80vh]">
+      <div className="relative w-full max-w-2xl bg-canvas-surface border border-hairline rounded-2xl shadow-2xl overflow-hidden overscroll-contain z-10 flex flex-col max-h-[80vh]">
         
         {/* Search Input Bar */}
         <form onSubmit={handleFormSubmit} className="flex items-center px-5 py-4 border-b border-hairline bg-canvas-surface">
