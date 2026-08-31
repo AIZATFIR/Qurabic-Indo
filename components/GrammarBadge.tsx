@@ -38,8 +38,11 @@ export default function GrammarBadge({ posTagCode = 'N', posTag, className = '' 
   return (
     <>
       <button
-        onClick={() => setIsModalOpen(true)}
-        title="Klik untuk melihat penjelasan tata bahasa"
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsModalOpen(true);
+        }}
+        title="Klik untuk melihat panduan tata bahasa Sharaf & Nahwu"
         className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10px] font-sans font-semibold border transition-all cursor-pointer ${getStyle(codeUpper)} ${className}`}
       >
         <span className="font-bold">{codeUpper}</span>

@@ -110,19 +110,28 @@ export default function GrammarLegendModal({ isOpen, onClose, selectedTagCode }:
           })}
         </div>
 
-        {/* Footer */}
-        <div className="pt-3 border-t border-hairline flex items-center justify-between text-xs text-ink-mute font-sans">
+        {/* Footer with Detail Link & Close */}
+        <div className="pt-3 border-t border-hairline flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-ink-mute font-sans">
           <span className="flex items-center space-x-1">
             <ShieldCheck className="w-3.5 h-3.5 text-primary" />
             <span>Sumber: Quranic Arabic Corpus (Univ. of Leeds)</span>
           </span>
 
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-primary hover:bg-primary-deep text-white text-xs font-semibold rounded-full shadow-subtle transition-all font-sans"
-          >
-            Tutup
-          </button>
+          <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
+            <a
+              href="/morfologi"
+              onClick={onClose}
+              className="px-3.5 py-1.5 bg-canvas-soft hover:bg-primary-fixed border border-hairline text-ink-primary hover:text-primary text-xs font-semibold rounded-full transition-all font-sans"
+            >
+              Lihat Katalog Morfologi
+            </a>
+            <button
+              onClick={onClose}
+              className="px-4 py-1.5 bg-primary hover:bg-primary-deep text-white text-xs font-semibold rounded-full shadow-subtle transition-all font-sans"
+            >
+              Tutup
+            </button>
+          </div>
         </div>
 
       </div>

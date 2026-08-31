@@ -135,10 +135,10 @@ export default function WordEtymologyModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 animate-in fade-in duration-150 overscroll-contain">
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-6 overflow-y-auto bg-black/60 backdrop-blur-sm animate-in fade-in duration-150 overscroll-contain">
       <div className="fixed inset-0" onClick={onClose} />
 
-      <div className="relative w-full max-w-2xl sm:max-w-3xl max-h-[88vh] overflow-y-auto overscroll-contain bg-canvas-surface text-ink-primary border border-hairline rounded-2xl shadow-hover z-10 p-6 sm:p-8 space-y-5 animate-in zoom-in-95 duration-150">
+      <div className="relative w-full max-w-2xl sm:max-w-3xl max-h-[88vh] my-auto overflow-y-auto overscroll-contain bg-canvas-surface text-ink-primary border border-hairline rounded-3xl shadow-hover z-10 p-5 sm:p-8 space-y-5 animate-in zoom-in-95 duration-150">
         
         {/* Header Bar */}
         <div className="flex items-center justify-between border-b border-hairline pb-4">

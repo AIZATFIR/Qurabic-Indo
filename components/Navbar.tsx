@@ -13,12 +13,12 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Static Solid Headbar - Non-sticky, Solid Color, Stays at the top */}
-      <header className="w-full bg-canvas border-b border-hairline transition-colors">
+      {/* Hermes-style Floating Translucent Headbar with Soft Glassmorphic Fade */}
+      <header className="sticky top-0 z-40 w-full bg-canvas-page/75 backdrop-blur-md border-b border-hairline/40 transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             
-            {/* Logo Branding (Clean Minimalist Typographic) */}
+            {/* Logo Branding */}
             <div className="flex items-center space-x-3">
               <Link href="/" className="flex items-center space-x-2 group">
                 <div className="flex flex-col">
@@ -36,7 +36,7 @@ export default function Navbar() {
             <nav className="hidden md:flex items-center space-x-1 text-xs font-medium text-ink-secondary">
               <Link
                 href="/baca"
-                className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-lg hover:bg-primary-fixed"
+                className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-lg hover:bg-canvas-surface/80"
               >
                 <BookMarked className="w-3.5 h-3.5 text-primary" />
                 <span>Baca Qur&apos;an</span>
@@ -44,7 +44,7 @@ export default function Navbar() {
               
               <Link
                 href="/ayat-random"
-                className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-lg hover:bg-primary-fixed"
+                className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-lg hover:bg-canvas-surface/80"
               >
                 <Shuffle className="w-3.5 h-3.5 text-primary" />
                 <span>Ayat Acak</span>
@@ -52,7 +52,7 @@ export default function Navbar() {
 
               <Link
                 href="/morfologi"
-                className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-lg hover:bg-primary-fixed"
+                className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-lg hover:bg-canvas-surface/80"
               >
                 <BookOpen className="w-3.5 h-3.5 text-primary" />
                 <span>Katalog Morfologi</span>
@@ -60,7 +60,7 @@ export default function Navbar() {
 
               <Link
                 href="/favorit"
-                className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-lg hover:bg-primary-fixed relative"
+                className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-lg hover:bg-canvas-surface/80 relative"
               >
                 <Bookmark className="w-3.5 h-3.5 text-primary" />
                 <span>Tersimpan</span>
@@ -76,18 +76,18 @@ export default function Navbar() {
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="hidden sm:flex items-center space-x-2 bg-canvas-soft hover:bg-canvas-surface border border-hairline text-ink-mute px-3.5 py-1.5 rounded-full text-xs transition-all shadow-subtle hover:border-primary/40"
+                className="hidden sm:flex items-center space-x-2 bg-canvas-surface/80 hover:bg-canvas-surface border border-hairline/60 text-ink-mute px-3.5 py-1.5 rounded-full text-xs transition-all shadow-subtle hover:border-primary/40"
               >
                 <Search className="w-3.5 h-3.5 text-primary" />
-                <span>Cari kata atau akar kata...</span>
-                <kbd className="hidden lg:inline-block bg-canvas-surface text-ink-mute text-[9px] px-1.5 py-0.5 rounded border border-hairline font-sans ml-1">
+                <span>Cari akar kata...</span>
+                <kbd className="hidden lg:inline-block bg-canvas-soft text-ink-mute text-[9px] px-1.5 py-0.5 rounded border border-hairline/50 font-sans ml-1">
                   ⌘K
                 </kbd>
               </button>
 
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="sm:hidden p-1.5 rounded-full text-ink-secondary hover:bg-primary-fixed border border-hairline"
+                className="sm:hidden p-1.5 rounded-full text-ink-secondary hover:bg-canvas-surface border border-hairline/60"
                 aria-label="Cari"
               >
                 <Search className="w-4 h-4 text-primary" />
@@ -101,8 +101,11 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* OmniSearch Modal Overlay */}
-      <OmniSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      {/* Global OmniSearch Modal Dialog */}
+      <OmniSearch
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+      />
     </>
   );
 }

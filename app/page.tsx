@@ -47,28 +47,29 @@ export default function HomePage() {
             Jelajahi akar kata, analisis per kata, morfologi Sharaf, dan tafsir linguistik klasik Al-Qur&apos;an secara jernih, terstruktur, dan mendalam.
           </p>
 
-          {/* Simple Search Input Bar */}
-          <div className="max-w-2xl mx-auto relative group pt-3">
-            <Search className="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-ink-mute group-hover:text-primary transition-colors" />
-            <input
-              onClick={() => setIsSearchOpen(true)}
-              readOnly
-              type="text"
-              placeholder="Cari kata atau akar kata..."
-              className="w-full pl-14 pr-32 py-4 rounded-2xl border border-hairline bg-canvas-surface/95 backdrop-blur-md shadow-subtle hover:border-primary/40 focus:outline-none font-sans text-base text-ink-primary cursor-pointer transition-all placeholder:text-ink-mute"
-            />
+          {/* Hero Action Button Group (Spacious & Majestic) */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+            <Link
+              href="/baca"
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-primary hover:bg-primary-deep text-white font-medium text-sm sm:text-base px-8 py-3.5 rounded-full shadow-subtle hover:shadow-soft transition-all active:scale-95 font-sans"
+            >
+              <BookMarked className="w-4 h-4" />
+              <span>Mulai Membaca &amp; Mentadabburi</span>
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </Link>
+
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary-deep text-white font-medium text-sm px-6 py-2.5 rounded-xl transition-all flex items-center space-x-2 shadow-subtle"
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-canvas-surface/90 hover:bg-canvas-surface border border-hairline hover:border-primary/40 text-ink-primary font-medium text-sm sm:text-base px-6 py-3.5 rounded-full shadow-subtle transition-all font-sans"
             >
-              <span>Cari</span>
-              <ArrowRight className="w-4 h-4" />
+              <Search className="w-4 h-4 text-primary" />
+              <span>Cari Akar Kata (⌘K)</span>
             </button>
           </div>
 
           {/* Last Search (Quiet & Functional) */}
           {lastSearch && (
-            <div className="flex items-center justify-center space-x-2 text-xs text-ink-mute font-sans pt-1">
+            <div className="flex items-center justify-center space-x-2 text-xs text-ink-mute font-sans pt-2">
               <span>Pencarian terakhir:</span>
               <button
                 onClick={() => setIsSearchOpen(true)}
@@ -207,7 +208,7 @@ export default function HomePage() {
                 <span className="text-3xl font-arabic text-ink-primary group-hover:text-primary transition-colors" dir="rtl">صَبْر</span>
                 <span className="text-xs text-ink-mute font-medium font-sans">103x</span>
               </div>
-              <h4 className="text-sm font-semibold text-ink-primary font-sans">Sabar (ص-ب-r)</h4>
+              <h4 className="text-sm font-semibold text-ink-primary font-sans">Sabar (ص-ب-ر)</h4>
               <p className="text-xs sm:text-sm text-ink-secondary line-clamp-2 font-sans leading-relaxed">Shobarah (batu padat yang kokoh) dan obat pahit penyembuh. Ketabahan jiwa yang tidak goyah.</p>
             </Link>
 
