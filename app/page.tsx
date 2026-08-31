@@ -242,21 +242,21 @@ export default function HomePage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <span className="inline-flex items-center space-x-2 px-4 py-1.5 bg-primary-subdued text-primary text-xs font-bold rounded-full uppercase tracking-wider font-sans">
               <ShieldCheck className="w-4 h-4" />
-              <span>Portofolio Keaslian Data (100% Non-AI Generated)</span>
+              <span>Sumber Belajar &amp; Rujukan Terpercaya</span>
             </span>
 
             <span className="text-xs text-ink-mute font-sans font-medium">
-              Transparansi Sumber &amp; Direct Live API Hook
+              Alat Bantu Belajar Bahasa Al-Qur&apos;an
             </span>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7 space-y-4">
               <h3 className="text-2xl sm:text-4xl font-light text-ink-primary tracking-tight font-sans">
-                Otentik, Mu&apos;tabar &amp; <span className="font-bold text-primary">Terhubung Langsung</span>
+                Jernih, Bersumber Langsung &amp; <span className="font-bold text-primary">Mudah Dipelajari</span>
               </h3>
               <p className="text-sm sm:text-base text-ink-secondary leading-relaxed font-sans">
-                <strong>Qurabic (Indo)</strong> dibangun dengan komitmen ilmiah tertinggi untuk menjaga kesucian dan keaslian teks Al-Qur&apos;an. <strong>Seluruh ayat, terjemahan, audio pelafalan, dan anotasi morfologi Sharaf TIDAK dibuat atau dihalusinasikan oleh AI</strong>, melainkan terhubung langsung (*live hook*) ke server resmi Kementerian Agama RI dan dataset akademis internasional.
+                <strong>Qurabic (Indo)</strong> dirancang sebagai ruang belajar yang bersahabat untuk membantu siapa saja menikmati keindahan bahasa Al-Qur&apos;an. Seluruh ayat, audio murottal, dan terjemahan bahasa Indonesia terhubung langsung dengan basis data resmi Kementerian Agama RI dan riset korpus Al-Qur&apos;an, dipadukan dengan wawasan kamus klasik agar proses belajar Anda terasa hangat, terang, dan bermakna.
               </p>
             </div>
 
@@ -271,13 +271,13 @@ export default function HomePage() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent flex items-end p-5">
                 <span className="text-white text-xs sm:text-sm font-sans font-medium leading-snug">
-                  Rujukan leksikografi klasik &amp; anotasi morfologi komputasi University of Leeds
+                  Khazanah leksikografi klasik &amp; anotasi morfologi komputasi University of Leeds
                 </span>
               </div>
             </div>
           </div>
 
-          {/* 3 Pillars of Data Authenticity */}
+          {/* 3 Pillars of Learning References */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-hairline text-xs sm:text-sm font-sans">
             
             {/* Pillar 1 */}
@@ -285,12 +285,12 @@ export default function HomePage() {
               <div className="w-9 h-9 rounded-xl bg-primary-subdued text-primary flex items-center justify-center font-bold">
                 1
               </div>
-              <span className="font-bold text-ink-primary block text-base">Direct Live API Kemenag RI:</span>
+              <span className="font-bold text-ink-primary block text-base">Terhubung Langsung ke Data Kemenag RI:</span>
               <p className="text-ink-secondary leading-relaxed">
-                Teks Rasm Utsmani dan Terjemahan Resmi Bahasa Indonesia di-fetch secara <em>real-time</em> langsung dari basis data resmi Lajnah Pentashihan Mushaf Al-Qur&apos;an (LPMQ) Kemenag RI dan Quran.com API v4.
+                Menampilkan teks Al-Qur&apos;an Rasm Utsmani dan terjemahan resmi bahasa Indonesia langsung dari server resmi Lajnah Pentashihan Mushaf Al-Qur&apos;an (LPMQ) Kemenag RI dan Quran.com.
               </p>
-              <div className="pt-2 text-[11px] text-ink-mute font-medium">
-                Status: Live Hook (Bebas Rekayasa AI)
+              <div className="pt-2 text-[11px] text-primary font-semibold">
+                Rujukan: Data Resmi Kemenag RI
               </div>
             </div>
 
@@ -299,12 +299,12 @@ export default function HomePage() {
               <div className="w-9 h-9 rounded-xl bg-primary-subdued text-primary flex items-center justify-center font-bold">
                 2
               </div>
-              <span className="font-bold text-ink-primary block text-base">Kamus Turats Lughah Klasik:</span>
+              <span className="font-bold text-ink-primary block text-base">Khazanah Kamus Klasik:</span>
               <p className="text-ink-secondary leading-relaxed">
-                Kajian etimologi dan makna asal akar kata merujuk pada kitab leksikografi mu&apos;tabar: <em>Lisān al-&apos;Arab</em> (Ibn Manzhur), <em>Mu&apos;jam Maqāyīs al-Lughah</em> (Ibn Faris), dan <em>Al-Mufradāt</em> (Ar-Raghib Al-Isfahani).
+                Memperkaya pemahaman asal-usul kata melalui intisari kamus klasik seperti <em>Lisān al-&apos;Arab</em> (Ibn Manzhur), <em>Mu&apos;jam Maqāyīs al-Lughah</em> (Ibn Faris), dan <em>Al-Mufradāt</em> (Ar-Raghib Al-Isfahani).
               </p>
-              <div className="pt-2 text-[11px] text-ink-mute font-medium">
-                Status: Rujukan Kitab Induk Bahasa Arab
+              <div className="pt-2 text-[11px] text-primary font-semibold">
+                Rujukan: Khazanah Leksikografi Arab
               </div>
             </div>
 
@@ -313,9 +313,9 @@ export default function HomePage() {
               <div className="w-9 h-9 rounded-xl bg-primary-subdued text-primary flex items-center justify-center font-bold">
                 3
               </div>
-              <span className="font-bold text-ink-primary block text-base">The Quranic Arabic Corpus:</span>
+              <span className="font-bold text-ink-primary block text-base">Riset Quranic Arabic Corpus:</span>
               <p className="text-ink-secondary leading-relaxed">
-                Penandaan part-of-speech (POS), wazan fi&apos;il, pola isim, dan pemetaan akar kata merujuk pada riset komputasi linguistik University of Leeds (Dr. Kais Dukes).
+                Menyajikan pemetaan kata kerja (fi&apos;il), kata benda (isim), dan wazan Sharaf yang terstruktur rapi berdasarkan riset komputasi bahasa dari University of Leeds.
               </p>
               <a
                 href="https://corpus.quran.com/"
@@ -323,7 +323,7 @@ export default function HomePage() {
                 rel="noreferrer"
                 className="inline-flex items-center space-x-1.5 text-primary hover:underline font-bold pt-1 text-xs"
               >
-                <span>corpus.quran.com</span>
+                <span>Kunjungi corpus.quran.com</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
             </div>
