@@ -33,7 +33,7 @@ export default function HomePage() {
     <div className="space-y-20 pb-20">
       
       {/* HERO SECTION - SPACIOUS, ELEGANT, UNCOMPRESSED */}
-      <header className="relative pt-28 pb-32 sm:pt-36 sm:pb-44 min-h-[540px] sm:min-h-[640px] flex flex-col justify-center overflow-hidden border-b border-hairline transition-colors">
+      <header className="relative pt-32 pb-40 sm:pt-40 sm:pb-52 min-h-[580px] sm:min-h-[680px] flex flex-col justify-center overflow-hidden border-b border-hairline transition-colors">
         <AmbientHeroCanvas />
 
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10 space-y-7">

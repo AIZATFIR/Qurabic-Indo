@@ -42,12 +42,12 @@ export default function AmbientHeroCanvas() {
         }}
       >
         <Image
-          src="/images/quran-hero.jpg"
+          src="/images/quran.jpg"
           alt="Mushaf Al-Qur'anul Karim"
           fill
           sizes="100vw"
           priority
-          className={`object-cover object-[50%_20%] sm:object-[50%_18%] filter ${
+          className={`object-cover object-[50%_22%] sm:object-[50%_20%] filter ${
             theme === 'dark'
               ? 'brightness-[0.70] contrast-[1.12] saturate-[0.9]'
               : theme === 'green'
