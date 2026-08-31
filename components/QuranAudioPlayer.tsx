@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Play, Pause, SkipBack, SkipForward, X, Volume2, AlertCircle, Loader2 } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, X, AlertCircle, Loader2 } from 'lucide-react';
 import { UseQuranAudioReturn } from '@/lib/hooks/useQuranAudio';
 
 interface QuranAudioPlayerProps {
@@ -25,10 +25,12 @@ export default function QuranAudioPlayer({
     currentTime,
     duration,
     progress,
+    repeatMode,
     error,
     togglePlayPause,
     nextAyah,
     prevAyah,
+    cycleRepeatMode,
     seek,
     stop,
   } = audio;
@@ -97,6 +99,28 @@ export default function QuranAudioPlayer({
 
           {/* Right: Primary Controls */}
           <div className="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
+            {/* Repeat Mode Button */}
+            <button
+              onClick={cycleRepeatMode}
+              className={`p-1.5 rounded-lg text-xs font-semibold font-sans transition-colors flex items-center space-x-1 ${
+                repeatMode !== 'off'
+                  ? 'bg-primary-subdued text-primary'
+                  : 'text-ink-mute hover:text-ink-primary hover:bg-canvas-soft'
+              }`}
+              title={
+                repeatMode === 'ayah'
+                  ? 'Ulangi Ayat Ini (Ayah Loop)'
+                  : repeatMode === 'surah'
+                  ? 'Ulangi Surah Ini (Surah Loop)'
+                  : 'Ulangi: Mati (Normal)'
+              }
+              aria-label="Mode Ulangi"
+            >
+              <span className="text-[10px] uppercase">
+                {repeatMode === 'ayah' ? '1x' : repeatMode === 'surah' ? 'Surah' : 'Loop'}
+              </span>
+            </button>
+
             {/* Prev Ayah */}
             <button
               onClick={prevAyah}

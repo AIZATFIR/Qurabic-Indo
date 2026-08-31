@@ -273,9 +273,13 @@ export default function WordEtymologyModal({
             </div>
           )}
 
-          <div className="pt-1 flex justify-end">
-            <span className="text-[11px] text-ink-mute font-sans">
-              Sumber: Quranic Arabic Corpus &amp; Lisan al-&apos;Arab
+          <div className="pt-1 flex justify-between items-center text-[11px] text-ink-mute font-sans">
+            <span className="inline-flex items-center space-x-1">
+              <span className={`w-1.5 h-1.5 rounded-full ${wordDetail.isVerified ? 'bg-primary' : 'bg-amber-500'}`} />
+              <span>{wordDetail.isVerified ? 'Terverifikasi Leksikografi' : 'Data Live API'}</span>
+            </span>
+            <span className="truncate max-w-[280px]">
+              Sumber: {wordDetail.sourceCitation}
             </span>
           </div>
         </div>

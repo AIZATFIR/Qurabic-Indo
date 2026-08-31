@@ -15,6 +15,8 @@ export interface WordDetailedInfo {
   classicalCitation?: string;
   quranicNuances?: string[];
   totalOccurrences?: number;
+  isVerified: boolean;
+  sourceCitation: string;
 }
 
 // Deep Lexical & Etymological Knowledge Base for High-Frequency & Key Quranic Vocabulary
@@ -399,7 +401,9 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
       meanings: [defaultMeaningIndo || 'Kata Al-Qur\'an'],
       rootExplanation: 'Informasi etimologi kata Al-Qur\'an.',
       grammaticalRole: 'Morfologi Arab',
-      posTag: 'Isim'
+      posTag: 'Isim',
+      isVerified: false,
+      sourceCitation: 'Quran.com API v4'
     };
   }
 
@@ -421,7 +425,9 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
         posTag: val.posTag,
         wazanOrForm: val.wazanOrForm,
         classicalCitation: val.classicalCitation,
-        quranicNuances: val.quranicNuances
+        quranicNuances: val.quranicNuances,
+        isVerified: true,
+        sourceCitation: 'Kamus Leksikografi Bahasa Arab Klasik (Lisan al-Arab, Ibn Faris, & Raghib al-Isfahani)'
       };
     }
   }
@@ -448,27 +454,31 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
       grammaticalRole: grammar.posDetail,
       posTag: grammar.posCategory,
       wazanOrForm: grammar.wazanOrPattern,
-      totalOccurrences: matchedRoot.totalOccurrences
+      totalOccurrences: matchedRoot.totalOccurrences,
+      isVerified: true,
+      sourceCitation: 'Katalog Morfologi & Leksikografi Qurabic (154 Akar Kata Terindeks)'
     };
   }
 
-  // 3. Dynamic generic fallback
+  // 3. Dynamic generic fallback (Transparent unindexed state)
   const primaryFallback = defaultMeaningIndo && !defaultMeaningIndo.startsWith('Potongan kata')
     ? defaultMeaningIndo
     : 'Kata dalam Al-Qur\'an';
 
   return {
     wordArabic,
-    rootLetters: extractedRoot || 'Akar Kata',
-    rootLatin: extractedRoot.replace(/\s+/g, '-'),
+    rootLetters: extractedRoot || '',
+    rootLatin: extractedRoot ? extractedRoot.replace(/\s+/g, '-') : '',
     primaryMeaning: primaryFallback,
     meanings: [
       primaryFallback,
       `Bentuk ${grammar.posCategory} yang terdapat dalam susunan ayat Al-Qur'an`
     ],
-    rootExplanation: `Akar kata ${extractedRoot || wordArabic} terhubung dengan sistem pembentukan kosakata bahasa Arab Al-Qur'an.`,
+    rootExplanation: `Akar kata dan analisis etimologi mendalam belum terindeks dalam katalog leksikografi lokal (154 akar kata).`,
     grammaticalRole: grammar.posDetail,
     posTag: grammar.posCategory,
-    wazanOrForm: grammar.wazanOrPattern
+    wazanOrForm: grammar.wazanOrPattern,
+    isVerified: false,
+    sourceCitation: 'Data Per Kata (Quran.com API v4 & Mushaf Kemenag RI)'
   };
 }

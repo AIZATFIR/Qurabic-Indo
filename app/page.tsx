@@ -239,33 +239,38 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* PROVENANCE & REFERENCES SECTION */}
+        {/* PROVENANCE & REFERENCES SECTION (Source of Truth) */}
         <section className="p-7 sm:p-10 rounded-2xl bg-canvas-surface border border-hairline space-y-8">
-          <div className="flex items-center justify-between border-b border-hairline pb-4">
-            <h3 className="text-lg font-semibold text-ink-primary font-sans">
-              Sumber Rujukan &amp; Metodologi
-            </h3>
-            <span className="text-xs text-ink-mute font-sans">
-              Kementerian Agama RI &amp; Riset Leksikografi
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-hairline pb-4">
+            <div>
+              <h3 className="text-lg font-semibold text-ink-primary font-sans">
+                Sumber Rujukan &amp; Provenance Data
+              </h3>
+              <p className="text-xs text-ink-mute font-sans mt-0.5">
+                Setiap informasi dan konten dalam Qurabic terhubung langsung ke sumber rujukan otentik.
+              </p>
+            </div>
+            <span className="text-xs text-primary font-semibold font-sans px-3 py-1 bg-primary-subdued rounded-lg self-start sm:self-auto">
+              Source-Grounded Architecture
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs sm:text-sm font-sans">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-xs sm:text-sm font-sans">
             <div className="space-y-2">
               <span className="font-semibold text-ink-primary block text-sm">
-                1. Teks &amp; Terjemahan Resmi:
+                1. Teks &amp; Terjemahan:
               </span>
               <p className="text-ink-secondary leading-relaxed">
-                Teks Rasm Utsmani dan Terjemahan Bahasa Indonesia bersumber dari basis data resmi Kementerian Agama RI dan Quran.com.
+                Teks Rasm Utsmani (Madinah) dan Terjemahan Bahasa Indonesia resmi dari Kementerian Agama RI &amp; Quran.com API v4.
               </p>
             </div>
 
             <div className="space-y-2">
               <span className="font-semibold text-ink-primary block text-sm">
-                2. Kamus Klasik Bahasa Arab:
+                2. Leksikografi Klasik:
               </span>
               <p className="text-ink-secondary leading-relaxed">
-                Kajian etimologi merujuk pada <em>Lisān al-&apos;Arab</em> (Ibn Manzhur), <em>Mu&apos;jam Maqāyīs al-Lughah</em> (Ibn Faris), dan <em>Al-Mufradāt</em> (Ar-Raghib Al-Isfahani).
+                Kajian etimologi berlandaskan <em>Lisān al-&apos;Arab</em> (Ibn Manzhur), <em>Maqāyīs al-Lughah</em> (Ibn Faris), dan <em>Al-Mufradāt</em> (Ar-Raghib Al-Isfahani).
               </p>
             </div>
 
@@ -274,17 +279,26 @@ export default function HomePage() {
                 3. Quranic Arabic Corpus:
               </span>
               <p className="text-ink-secondary leading-relaxed">
-                Anotasi part-of-speech (POS) dan wazan Sharaf merujuk pada riset komputasi bahasa University of Leeds.
+                Anotasi part-of-speech (POS) dan dekomposisi morfologi Sharaf dari riset komputasi bahasa University of Leeds.
               </p>
               <a
                 href="https://corpus.quran.com/"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center space-x-1 text-primary hover:underline font-medium pt-1 text-xs"
+                className="inline-flex items-center space-x-1 text-primary hover:underline font-medium text-xs pt-1"
               >
                 <span>corpus.quran.com</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
+            </div>
+
+            <div className="space-y-2">
+              <span className="font-semibold text-ink-primary block text-sm">
+                4. Tilawah Per-Ayat:
+              </span>
+              <p className="text-ink-secondary leading-relaxed">
+                Audio tilawah otentik Syaikh Mishary Rashid Al-Afasy bersumber dari repository EveryAyah dengan sinkronisasi per ayat.
+              </p>
             </div>
           </div>
         </section>
