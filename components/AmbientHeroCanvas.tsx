@@ -36,7 +36,7 @@ export default function AmbientHeroCanvas() {
       
       {/* 1. FULL-BLEED HIGH-CONTRAST PHOTOGRAPHIC ENVIRONMENT */}
       <div
-        className="absolute -inset-x-0 -top-12 bottom-0 w-full h-[calc(100%+48px)] transition-transform duration-100 ease-out"
+        className="absolute -inset-x-0 -top-8 bottom-0 w-full h-[calc(100%+40px)] transition-transform duration-100 ease-out"
         style={{
           transform: `translateY(${parallaxOffset}px)`,
         }}
@@ -47,14 +47,14 @@ export default function AmbientHeroCanvas() {
           fill
           sizes="100vw"
           priority
-          className={`object-cover object-[50%_35%] sm:object-[50%_30%] filter ${
+          className={`object-cover object-[50%_20%] sm:object-[50%_18%] filter ${
             theme === 'dark'
-              ? 'brightness-[0.75] contrast-[1.1] saturate-[0.9]'
+              ? 'brightness-[0.70] contrast-[1.12] saturate-[0.9]'
               : theme === 'green'
-              ? 'brightness-[0.85] contrast-[1.05] saturate-[1.05]'
+              ? 'brightness-[0.88] contrast-[1.06] saturate-[1.05]'
               : theme === 'bookpaper'
-              ? 'brightness-[0.90] contrast-[1.05] sepia-[0.15]'
-              : 'brightness-[0.92] contrast-[1.02]'
+              ? 'brightness-[0.92] contrast-[1.06] sepia-[0.12]'
+              : 'brightness-[0.94] contrast-[1.04]'
           }`}
         />
       </div>
@@ -65,27 +65,27 @@ export default function AmbientHeroCanvas() {
         style={{
           background:
             theme === 'dark'
-              ? 'radial-gradient(ellipse 90% 70% at 50% 40%, rgba(11, 20, 16, 0.72) 0%, rgba(11, 20, 16, 0.85) 60%, rgba(11, 20, 16, 0.98) 100%)'
+              ? 'radial-gradient(ellipse 95% 75% at 50% 35%, rgba(11, 20, 16, 0.65) 0%, rgba(11, 20, 16, 0.82) 55%, rgba(11, 20, 16, 0.98) 100%)'
               : theme === 'green'
-              ? 'radial-gradient(ellipse 90% 70% at 50% 40%, rgba(240, 249, 244, 0.80) 0%, rgba(240, 249, 244, 0.88) 55%, rgba(240, 249, 244, 0.98) 100%)'
+              ? 'radial-gradient(ellipse 95% 75% at 50% 35%, rgba(240, 249, 244, 0.72) 0%, rgba(240, 249, 244, 0.84) 55%, rgba(240, 249, 244, 0.98) 100%)'
               : theme === 'bookpaper'
-              ? 'radial-gradient(ellipse 90% 70% at 50% 40%, rgba(250, 245, 237, 0.78) 0%, rgba(250, 245, 237, 0.86) 55%, rgba(250, 245, 237, 0.98) 100%)'
-              : 'radial-gradient(ellipse 90% 70% at 50% 40%, rgba(250, 252, 250, 0.82) 0%, rgba(250, 252, 250, 0.90) 55%, rgba(250, 252, 250, 0.98) 100%)',
+              ? 'radial-gradient(ellipse 95% 75% at 50% 35%, rgba(245, 239, 230, 0.70) 0%, rgba(245, 239, 230, 0.82) 55%, rgba(245, 239, 230, 0.98) 100%)'
+              : 'radial-gradient(ellipse 95% 75% at 50% 35%, rgba(250, 252, 250, 0.74) 0%, rgba(250, 252, 250, 0.86) 55%, rgba(250, 252, 250, 0.98) 100%)',
         }}
       />
 
       {/* 3. DEEP BOTTOM SEAMLESS TONAL TRANSITION (Continues until the bottom edge of the hero) */}
       <div
-        className="absolute inset-x-0 bottom-0 h-44 sm:h-56 pointer-events-none transition-all duration-300"
+        className="absolute inset-x-0 bottom-0 h-48 sm:h-64 pointer-events-none transition-all duration-300"
         style={{
           background:
             theme === 'dark'
-              ? 'linear-gradient(to bottom, rgba(11, 20, 16, 0) 0%, rgba(11, 20, 16, 0.6) 40%, #0B1410 100%)'
+              ? 'linear-gradient(to bottom, rgba(11, 20, 16, 0) 0%, rgba(11, 20, 16, 0.5) 40%, #0B1410 100%)'
               : theme === 'green'
-              ? 'linear-gradient(to bottom, rgba(240, 249, 244, 0) 0%, rgba(240, 249, 244, 0.7) 40%, #F0F9F4 100%)'
+              ? 'linear-gradient(to bottom, rgba(240, 249, 244, 0) 0%, rgba(240, 249, 244, 0.6) 40%, #F0F9F4 100%)'
               : theme === 'bookpaper'
-              ? 'linear-gradient(to bottom, rgba(250, 245, 237, 0) 0%, rgba(250, 245, 237, 0.7) 40%, #FAF5ED 100%)'
-              : 'linear-gradient(to bottom, rgba(250, 252, 250, 0) 0%, rgba(250, 252, 250, 0.7) 40%, #FAFCFA 100%)',
+              ? 'linear-gradient(to bottom, rgba(245, 239, 230, 0) 0%, rgba(245, 239, 230, 0.6) 40%, #F5EFE6 100%)'
+              : 'linear-gradient(to bottom, rgba(250, 252, 250, 0) 0%, rgba(250, 252, 250, 0.6) 40%, #FAFCFA 100%)',
         }}
       />
 

@@ -59,6 +59,16 @@ export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
   };
 
   const handleSelectRoot = (slug: string) => {
+    try {
+      if (query.trim()) {
+        localStorage.setItem('qurabic_last_search', query.trim());
+      } else {
+        const selected = results.find(r => r.id === slug);
+        if (selected) {
+          localStorage.setItem('qurabic_last_search', `${selected.rootArabic} (${selected.rootLatin})`);
+        }
+      }
+    } catch (e) {}
     onClose();
     router.push(`/akar/${slug}`);
   };

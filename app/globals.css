@@ -9,32 +9,32 @@
   --font-arabic: 'Amiri', 'Noto Naskh Arabic', 'Scheherazade New', serif;
 
   /* Default Theme: Bookpaper */
-  --bg-page: #FAF5ED;
-  --bg-surface: #FFFFFF;
-  --bg-soft: #F4ECE1;
+  --bg-page: #F5EFE6;
+  --bg-surface: #FAF5ED;
+  --bg-soft: #EDE3D4;
   --color-primary: #2D5A43;
   --color-primary-deep: #1F3F2E;
-  --color-primary-subdued: #E8F0EB;
-  --color-primary-fixed: #F2F7F4;
+  --color-primary-subdued: #E4EEE7;
+  --color-primary-fixed: #EFF5F1;
   --color-ink-primary: #2C241E;
   --color-ink-secondary: #574B40;
   --color-ink-mute: #8C7E72;
-  --color-border: #E5DACD;
+  --color-border: #E0D4C3;
 }
 
 /* 1. Theme Bookpaper (Kertas Mushaf Klasik) */
 [data-theme="bookpaper"] {
-  --bg-page: #FAF5ED;
-  --bg-surface: #FFFFFF;
-  --bg-soft: #F4ECE1;
+  --bg-page: #F5EFE6;
+  --bg-surface: #FAF5ED;
+  --bg-soft: #EDE3D4;
   --color-primary: #2D5A43;
   --color-primary-deep: #1F3F2E;
-  --color-primary-subdued: #E8F0EB;
-  --color-primary-fixed: #F2F7F4;
+  --color-primary-subdued: #E4EEE7;
+  --color-primary-fixed: #EFF5F1;
   --color-ink-primary: #2C241E;
   --color-ink-secondary: #574B40;
   --color-ink-mute: #8C7E72;
-  --color-border: #E5DACD;
+  --color-border: #E0D4C3;
 }
 
 /* 2. Theme Light (Terang Minimalis) */
@@ -55,8 +55,8 @@
 /* 3. Theme Green (Hijau Zamrud Islami) */
 [data-theme="green"] {
   --bg-page: #F0F9F4;
-  --bg-surface: #FFFFFF;
-  --bg-soft: #E4F4EC;
+  --bg-surface: #F7FCF9;
+  --bg-soft: #E2F4EB;
   --color-primary: #047857;
   --color-primary-deep: #065F46;
   --color-primary-subdued: #D1FAE5;
@@ -64,7 +64,7 @@
   --color-ink-primary: #06281C;
   --color-ink-secondary: #1F4D3C;
   --color-ink-mute: #407A65;
-  --color-border: #CBE8D8;
+  --color-border: #CFE8DA;
 }
 
 /* 4. Theme Dark (Malam Obsidian) */

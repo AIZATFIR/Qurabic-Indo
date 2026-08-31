@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -20,27 +20,35 @@ import AmbientHeroCanvas from '@/components/AmbientHeroCanvas';
 
 export default function HomePage() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [lastSearch, setLastSearch] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('qurabic_last_search');
+      if (saved) setLastSearch(saved);
+    } catch (e) {}
+  }, [isSearchOpen]);
 
   return (
     <div className="space-y-20 pb-20">
       
-      {/* HERO SECTION */}
-      <header className="relative pt-20 pb-24 sm:pt-28 sm:pb-32 overflow-hidden border-b border-hairline transition-colors">
+      {/* HERO SECTION - SPACIOUS, ELEGANT, UNCOMPRESSED */}
+      <header className="relative pt-28 pb-32 sm:pt-36 sm:pb-44 min-h-[540px] sm:min-h-[640px] flex flex-col justify-center overflow-hidden border-b border-hairline transition-colors">
         <AmbientHeroCanvas />
 
-        <div className="max-w-3xl mx-auto px-6 text-center relative z-10 space-y-6">
+        <div className="max-w-4xl mx-auto px-6 text-center relative z-10 space-y-7">
           
-          <h1 className="text-4xl sm:text-6xl font-light text-ink-primary tracking-tight font-sans leading-[1.15]">
-            Membedah Bahasa <br />
-            <span className="font-semibold text-primary">Al-Qur&apos;an</span>
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-light text-ink-primary tracking-tight font-sans leading-[1.15] drop-shadow-sm">
+            Membedah Kedalaman <br />
+            <span className="font-semibold text-primary">Bahasa Al-Qur&apos;an</span>
           </h1>
 
-          <p className="text-base sm:text-lg text-ink-secondary font-normal max-w-2xl mx-auto leading-relaxed font-sans">
-            Kajian akar kata, analisis per kata, morfologi Sharaf, dan intisari kamus klasik Al-Qur&apos;an secara jernih, terstruktur, dan mudah dipelajari.
+          <p className="text-base sm:text-lg lg:text-xl text-ink-secondary font-normal max-w-2xl mx-auto leading-relaxed font-sans">
+            Jelajahi akar kata, analisis per kata, morfologi Sharaf, dan tafsir linguistik klasik Al-Qur&apos;an secara jernih, terstruktur, dan mendalam.
           </p>
 
           {/* Simple Search Input Bar */}
-          <div className="max-w-2xl mx-auto relative group pt-2">
+          <div className="max-w-2xl mx-auto relative group pt-3">
             <Search className="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-ink-mute group-hover:text-primary transition-colors" />
             <input
               onClick={() => setIsSearchOpen(true)}
@@ -57,6 +65,19 @@ export default function HomePage() {
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
+
+          {/* Last Search (Quiet & Functional) */}
+          {lastSearch && (
+            <div className="flex items-center justify-center space-x-2 text-xs text-ink-mute font-sans pt-1">
+              <span>Pencarian terakhir:</span>
+              <button
+                onClick={() => setIsSearchOpen(true)}
+                className="text-primary hover:underline font-medium"
+              >
+                {lastSearch}
+              </button>
+            </div>
+          )}
 
         </div>
       </header>
