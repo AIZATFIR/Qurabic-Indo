@@ -28,54 +28,70 @@ export default function AmbientHeroCanvas() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Subtle image opacity & blend mode based on theme
-  const imageOpacity =
-    theme === 'dark'
-      ? 'opacity-20 mix-blend-luminosity'
-      : theme === 'green'
-      ? 'opacity-15 mix-blend-multiply'
-      : theme === 'bookpaper'
-      ? 'opacity-20 mix-blend-multiply'
-      : 'opacity-15 mix-blend-multiply';
-
-  // Subconscious, very subtle parallax (0.12x rate)
-  const parallaxOffset = Math.min(scrollY * 0.12, 60);
+  // Subconscious, very subtle parallax for the entire photographic environment (0.08x rate)
+  const parallaxOffset = Math.min(scrollY * 0.08, 45);
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0">
-      {/* 1. Quran Photographic Editorial Layer (Emerging naturally from page surface) */}
+      
+      {/* 1. FULL-BLEED HIGH-CONTRAST PHOTOGRAPHIC ENVIRONMENT */}
       <div
-        className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${imageOpacity} hero-image-mask`}
+        className="absolute -inset-x-0 -top-12 bottom-0 w-full h-[calc(100%+48px)] transition-transform duration-100 ease-out"
         style={{
           transform: `translateY(${parallaxOffset}px)`,
         }}
       >
-        <div className="relative w-full max-w-4xl h-[480px] sm:h-[560px]">
-          <Image
-            src="/images/quran-hero.jpg"
-            alt="Mushaf Al-Qur'an"
-            fill
-            sizes="(max-width: 768px) 100vw, 896px"
-            priority
-            className="object-cover object-center filter grayscale-[25%] contrast-[0.95]"
-          />
-        </div>
+        <Image
+          src="/images/quran-hero.jpg"
+          alt="Mushaf Al-Qur'anul Karim"
+          fill
+          sizes="100vw"
+          priority
+          className={`object-cover object-[50%_35%] sm:object-[50%_30%] filter ${
+            theme === 'dark'
+              ? 'brightness-[0.75] contrast-[1.1] saturate-[0.9]'
+              : theme === 'green'
+              ? 'brightness-[0.85] contrast-[1.05] saturate-[1.05]'
+              : theme === 'bookpaper'
+              ? 'brightness-[0.90] contrast-[1.05] sepia-[0.15]'
+              : 'brightness-[0.92] contrast-[1.02]'
+          }`}
+        />
       </div>
 
-      {/* 2. Soft Ambient Vignette Aura */}
+      {/* 2. DIRECTIONAL DEPTH & TEXT CONTRAST SCRIM */}
       <div
-        className="absolute inset-0 transition-opacity duration-300"
+        className="absolute inset-0 transition-all duration-300"
         style={{
           background:
-            theme === 'bookpaper'
-              ? 'radial-gradient(ellipse 70% 50% at 50% 30%, rgba(214, 187, 149, 0.22), transparent 75%)'
+            theme === 'dark'
+              ? 'radial-gradient(ellipse 90% 70% at 50% 40%, rgba(11, 20, 16, 0.72) 0%, rgba(11, 20, 16, 0.85) 60%, rgba(11, 20, 16, 0.98) 100%)'
               : theme === 'green'
-              ? 'radial-gradient(ellipse 70% 50% at 50% 30%, rgba(16, 185, 129, 0.14), transparent 75%)'
-              : theme === 'dark'
-              ? 'radial-gradient(ellipse 70% 50% at 50% 30%, rgba(16, 185, 129, 0.10), transparent 75%)'
-              : 'radial-gradient(ellipse 70% 50% at 50% 30%, rgba(5, 150, 105, 0.08), transparent 75%)',
+              ? 'radial-gradient(ellipse 90% 70% at 50% 40%, rgba(240, 249, 244, 0.80) 0%, rgba(240, 249, 244, 0.88) 55%, rgba(240, 249, 244, 0.98) 100%)'
+              : theme === 'bookpaper'
+              ? 'radial-gradient(ellipse 90% 70% at 50% 40%, rgba(250, 245, 237, 0.78) 0%, rgba(250, 245, 237, 0.86) 55%, rgba(250, 245, 237, 0.98) 100%)'
+              : 'radial-gradient(ellipse 90% 70% at 50% 40%, rgba(250, 252, 250, 0.82) 0%, rgba(250, 252, 250, 0.90) 55%, rgba(250, 252, 250, 0.98) 100%)',
         }}
       />
+
+      {/* 3. DEEP BOTTOM SEAMLESS TONAL TRANSITION (Continues until the bottom edge of the hero) */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-44 sm:h-56 pointer-events-none transition-all duration-300"
+        style={{
+          background:
+            theme === 'dark'
+              ? 'linear-gradient(to bottom, rgba(11, 20, 16, 0) 0%, rgba(11, 20, 16, 0.6) 40%, #0B1410 100%)'
+              : theme === 'green'
+              ? 'linear-gradient(to bottom, rgba(240, 249, 244, 0) 0%, rgba(240, 249, 244, 0.7) 40%, #F0F9F4 100%)'
+              : theme === 'bookpaper'
+              ? 'linear-gradient(to bottom, rgba(250, 245, 237, 0) 0%, rgba(250, 245, 237, 0.7) 40%, #FAF5ED 100%)'
+              : 'linear-gradient(to bottom, rgba(250, 252, 250, 0) 0%, rgba(250, 252, 250, 0.7) 40%, #FAFCFA 100%)',
+        }}
+      />
+
+      {/* 4. SUBTLE PERIMETER VIGNETTE */}
+      <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-black/5 dark:to-black/30 pointer-events-none" />
+
     </div>
   );
 }

@@ -25,22 +25,22 @@ export default function HomePage() {
     <div className="space-y-20 pb-20">
       
       {/* HERO SECTION */}
-      <header className="relative pt-20 pb-24 sm:pt-28 sm:pb-32 bg-canvas border-b border-hairline transition-colors">
+      <header className="relative pt-24 pb-28 sm:pt-32 sm:pb-36 overflow-hidden border-b border-hairline transition-colors">
         <AmbientHeroCanvas />
 
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10 space-y-7">
           
-          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-primary-fixed text-primary-deep border border-primary/20 text-xs sm:text-sm font-semibold font-sans shadow-subtle">
+          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-canvas-surface/90 backdrop-blur-md text-primary-deep border border-primary/30 text-xs sm:text-sm font-bold font-sans shadow-md">
             <BookOpen className="w-4 h-4 text-primary" />
             <span>Eksplorasi Bahasa Arab Al-Qur&apos;an Berbahasa Indonesia</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-light text-ink-primary tracking-tight font-sans leading-[1.15]">
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-light text-ink-primary tracking-tight font-sans leading-[1.15] drop-shadow-sm">
             Membedah Kedalaman <br />
-            <span className="font-semibold text-primary">Bahasa Al-Qur&apos;an</span>
+            <span className="font-bold text-primary">Bahasa Al-Qur&apos;an</span>
           </h1>
 
-          <p className="text-base sm:text-lg lg:text-xl text-ink-secondary font-normal max-w-2xl mx-auto leading-relaxed font-sans">
+          <p className="text-base sm:text-lg lg:text-xl text-ink-secondary font-medium max-w-2xl mx-auto leading-relaxed font-sans">
             Jelajahi akar kata, analisis per kata, morfologi Sharaf, dan tafsir linguistik klasik Al-Qur&apos;an secara jernih, terstruktur, dan mendalam.
           </p>
 
@@ -52,7 +52,7 @@ export default function HomePage() {
               readOnly
               type="text"
               placeholder="Cari kata atau akar kata (contoh: sabar, كتب, sholat)..."
-              className="w-full pl-14 pr-32 py-4 rounded-full border border-hairline bg-canvas-surface shadow-subtle hover:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 font-sans text-base text-ink-primary cursor-pointer transition-all placeholder:text-ink-mute"
+              className="w-full pl-14 pr-32 py-4 rounded-full border border-hairline bg-canvas-surface/95 backdrop-blur-md shadow-hover hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 font-sans text-base text-ink-primary cursor-pointer transition-all placeholder:text-ink-mute"
             />
             <button
               onClick={() => setIsSearchOpen(true)}
@@ -65,12 +65,12 @@ export default function HomePage() {
 
           {/* Quick Search Suggestions */}
           <div className="flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm text-ink-mute pt-2 font-sans">
-            <span className="font-medium text-ink-secondary">Populer:</span>
+            <span className="font-semibold text-ink-secondary">Populer:</span>
             {['ص-ب-ر (Sabar)', 'ص-ل-و (Sholat)', 'ك-ت-ب (Kitab)', 'ع-ل-م (Ilmu)'].map((tag, idx) => (
               <button
                 key={idx}
                 onClick={() => setIsSearchOpen(true)}
-                className="px-3 py-1.5 rounded-xl text-ink-secondary hover:text-primary hover:bg-primary-fixed border border-transparent hover:border-hairline transition-all font-sans"
+                className="px-3 py-1.5 rounded-xl bg-canvas-surface/80 backdrop-blur-sm text-ink-secondary hover:text-primary hover:bg-primary-fixed border border-hairline transition-all font-sans font-medium"
               >
                 {tag}
               </button>
@@ -238,71 +238,96 @@ export default function HomePage() {
         </div>
 
         {/* DEDICATED INSPIRATION & ATTRIBUTION SECTION WITH EDITORIAL MANUSCRIPT IMAGE */}
-        <section className="p-8 sm:p-12 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-8">
-          <div className="flex items-center space-x-2">
-            <span className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 bg-primary-subdued text-primary text-xs font-semibold rounded-full uppercase tracking-wider font-sans">
+        <section className="p-8 sm:p-12 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-10">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <span className="inline-flex items-center space-x-2 px-4 py-1.5 bg-primary-subdued text-primary text-xs font-bold rounded-full uppercase tracking-wider font-sans">
               <ShieldCheck className="w-4 h-4" />
-              <span>Sumber Data &amp; Inspirasi Proyek</span>
+              <span>Portofolio Keaslian Data (100% Non-AI Generated)</span>
+            </span>
+
+            <span className="text-xs text-ink-mute font-sans font-medium">
+              Transparansi Sumber &amp; Direct Live API Hook
             </span>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7 space-y-4">
-              <h3 className="text-2xl sm:text-3xl font-light text-ink-primary tracking-tight font-sans">
-                Terinspirasi dari <span className="font-semibold text-primary">Quranic Arabic Corpus</span>
+              <h3 className="text-2xl sm:text-4xl font-light text-ink-primary tracking-tight font-sans">
+                Otentik, Mu&apos;tabar &amp; <span className="font-bold text-primary">Terhubung Langsung</span>
               </h3>
               <p className="text-sm sm:text-base text-ink-secondary leading-relaxed font-sans">
-                <strong>Qurabic (Indo)</strong> dibangun untuk menjembatani penutur Bahasa Indonesia dengan keindahan linguistik Al-Qur&apos;an. Proyek ini mengadaptasi dan merujuk anotasi morfologi gramatikal dari <strong>Quranic Arabic Corpus</strong> (University of Leeds), dipadukan dengan leksikografi klasik mu&apos;tabar dan terjemahan resmi Kementerian Agama Republik Indonesia.
+                <strong>Qurabic (Indo)</strong> dibangun dengan komitmen ilmiah tertinggi untuk menjaga kesucian dan keaslian teks Al-Qur&apos;an. <strong>Seluruh ayat, terjemahan, audio pelafalan, dan anotasi morfologi Sharaf TIDAK dibuat atau dihalusinasikan oleh AI</strong>, melainkan terhubung langsung (*live hook*) ke server resmi Kementerian Agama RI dan dataset akademis internasional.
               </p>
             </div>
 
             {/* Editorial Manuscript Image Layer */}
-            <div className="lg:col-span-5 relative h-56 sm:h-64 rounded-2xl overflow-hidden border border-hairline shadow-subtle group">
+            <div className="lg:col-span-5 relative h-60 sm:h-72 rounded-3xl overflow-hidden border border-hairline shadow-soft group">
               <Image
                 src="/images/quran-manuscript.jpg"
                 alt="Manuskrip Al-Qur'an Klasik"
                 fill
                 sizes="(max-width: 1024px) 100vw, 400px"
-                className="object-cover object-center group-hover:scale-105 transition-transform duration-500 filter contrast-[0.95]"
+                className="object-cover object-center group-hover:scale-105 transition-transform duration-700 filter contrast-[0.98]"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-4">
-                <span className="text-white text-xs font-sans font-medium">
-                  Rujukan morfologi &amp; leksikografi klasik Al-Qur&apos;an
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent flex items-end p-5">
+                <span className="text-white text-xs sm:text-sm font-sans font-medium leading-snug">
+                  Rujukan leksikografi klasik &amp; anotasi morfologi komputasi University of Leeds
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-4 border-t border-hairline text-xs sm:text-sm font-sans">
-            <div className="p-5 rounded-2xl bg-canvas-soft border border-hairline space-y-2">
-              <span className="font-bold text-ink-primary block text-sm">Morfologi &amp; Sintaksis:</span>
-              <p className="text-ink-mute leading-relaxed text-xs sm:text-sm">
-                Quranic Arabic Corpus (University of Leeds) untuk penandaan akar kata, lemma, dan part-of-speech.
+          {/* 3 Pillars of Data Authenticity */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-hairline text-xs sm:text-sm font-sans">
+            
+            {/* Pillar 1 */}
+            <div className="p-6 rounded-3xl bg-canvas-soft border border-hairline space-y-3">
+              <div className="w-9 h-9 rounded-xl bg-primary-subdued text-primary flex items-center justify-center font-bold">
+                1
+              </div>
+              <span className="font-bold text-ink-primary block text-base">Direct Live API Kemenag RI:</span>
+              <p className="text-ink-secondary leading-relaxed">
+                Teks Rasm Utsmani dan Terjemahan Resmi Bahasa Indonesia di-fetch secara <em>real-time</em> langsung dari basis data resmi Lajnah Pentashihan Mushaf Al-Qur&apos;an (LPMQ) Kemenag RI dan Quran.com API v4.
+              </p>
+              <div className="pt-2 text-[11px] text-ink-mute font-medium">
+                Status: Live Hook (Bebas Rekayasa AI)
+              </div>
+            </div>
+
+            {/* Pillar 2 */}
+            <div className="p-6 rounded-3xl bg-canvas-soft border border-hairline space-y-3">
+              <div className="w-9 h-9 rounded-xl bg-primary-subdued text-primary flex items-center justify-center font-bold">
+                2
+              </div>
+              <span className="font-bold text-ink-primary block text-base">Kamus Turats Lughah Klasik:</span>
+              <p className="text-ink-secondary leading-relaxed">
+                Kajian etimologi dan makna asal akar kata merujuk pada kitab leksikografi mu&apos;tabar: <em>Lisān al-&apos;Arab</em> (Ibn Manzhur), <em>Mu&apos;jam Maqāyīs al-Lughah</em> (Ibn Faris), dan <em>Al-Mufradāt</em> (Ar-Raghib Al-Isfahani).
+              </p>
+              <div className="pt-2 text-[11px] text-ink-mute font-medium">
+                Status: Rujukan Kitab Induk Bahasa Arab
+              </div>
+            </div>
+
+            {/* Pillar 3 */}
+            <div className="p-6 rounded-3xl bg-canvas-soft border border-hairline space-y-3">
+              <div className="w-9 h-9 rounded-xl bg-primary-subdued text-primary flex items-center justify-center font-bold">
+                3
+              </div>
+              <span className="font-bold text-ink-primary block text-base">The Quranic Arabic Corpus:</span>
+              <p className="text-ink-secondary leading-relaxed">
+                Penandaan part-of-speech (POS), wazan fi&apos;il, pola isim, dan pemetaan akar kata merujuk pada riset komputasi linguistik University of Leeds (Dr. Kais Dukes).
               </p>
               <a
                 href="https://corpus.quran.com/"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center space-x-1.5 text-primary hover:underline font-semibold pt-1 text-xs"
+                className="inline-flex items-center space-x-1.5 text-primary hover:underline font-bold pt-1 text-xs"
               >
                 <span>corpus.quran.com</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
             </div>
 
-            <div className="p-5 rounded-2xl bg-canvas-soft border border-hairline space-y-2">
-              <span className="font-bold text-ink-primary block text-sm">Etimologi Klasik:</span>
-              <p className="text-ink-mute leading-relaxed text-xs sm:text-sm">
-                Lisan al-&apos;Arab (Ibn Manzhur), Mu&apos;jam Maqayis al-Lughah (Ibn Faris), dan Al-Mufradat (Ar-Raghib Al-Isfahani).
-              </p>
-            </div>
-
-            <div className="p-5 rounded-2xl bg-canvas-soft border border-hairline space-y-2">
-              <span className="font-bold text-ink-primary block text-sm">Mushaf &amp; Terjemahan:</span>
-              <p className="text-ink-mute leading-relaxed text-xs sm:text-sm">
-                Mushaf Standar Indonesia Kemenag RI &amp; Quran.com API v4 untuk teks Utsmani dan audio per kata.
-              </p>
-            </div>
           </div>
         </section>
 
