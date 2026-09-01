@@ -12,7 +12,7 @@ import {
   Shuffle,
   ShieldCheck,
   ExternalLink,
-  Sparkles
+  Compass
 } from 'lucide-react';
 import { ROOT_DATABASE } from '@/lib/data/roots';
 import RootCard from '@/components/RootCard';
@@ -245,9 +245,9 @@ export default function HomePage() {
         <section className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-primary-subdued/40 via-canvas-surface to-primary-subdued/20 border border-hairline relative overflow-hidden space-y-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
             <div className="space-y-2 max-w-xl">
-              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-primary-subdued text-primary text-xs font-semibold">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Rekomendasi Tambahan Ilmu</span>
+              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-primary-subdued text-primary text-xs font-medium">
+                <Compass className="w-3.5 h-3.5" />
+                <span>Rekomendasi Tambahan</span>
               </div>
               <h3 className="text-2xl sm:text-3xl font-light text-ink-primary tracking-tight font-sans">
                 Kajian Video Bedah Kata &amp; <br />

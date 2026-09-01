@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BookOpen, Bookmark, Search, BookMarked, Shuffle, Sparkles } from 'lucide-react';
+import { Home, BookOpen, Bookmark, Search, BookMarked, Compass } from 'lucide-react';
 import OmniSearch from './OmniSearch';
 import { useBookmarks } from '@/lib/hooks/useBookmarks';
 
@@ -16,13 +16,13 @@ export default function MobileBottomNav() {
     { label: 'Beranda', href: '/', icon: Home },
     { label: 'Baca', href: '/baca', icon: BookMarked },
     { label: 'Katalog', href: '/morfologi', icon: BookOpen },
-    { label: 'Rekomendasi', href: '/rekomendasi', icon: Sparkles },
+    { label: 'Rekomendasi', href: '/rekomendasi', icon: Compass },
     { label: 'Tersimpan', href: '/favorit', icon: Bookmark, badge: bookmarkedIds.length },
   ];
 
   return (
     <>
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-canvas/95 backdrop-blur-md border-t border-hairline px-2 py-1.5 shadow-subtle">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-canvas-page/90 backdrop-blur-md border-t border-hairline px-2 py-1.5 shadow-subtle">
         <div className="flex items-center justify-around max-w-md mx-auto">
           {navItems.map((item) => {
             const isActive = pathname === item.href;

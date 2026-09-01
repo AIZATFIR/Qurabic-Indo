@@ -36,7 +36,7 @@ export const RECOMMENDED_APPS: RecommendedApp[] = [
     appUrl: 'https://www.kalaamapp.com/',
     appleStoreUrl: 'https://apps.apple.com/app/kalaam-quranic-arabic/id1578142345',
     googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kalaamapp.kalaam',
-    rating: '4.9 ★',
+    rating: '4.9 / 5.0',
     activeUsers: '100.000+ Pembelajar'
   }
 ];

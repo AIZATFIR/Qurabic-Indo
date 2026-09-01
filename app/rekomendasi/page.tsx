@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Sparkles, Video, Smartphone, Search, BookOpen, Layers, ArrowLeft } from 'lucide-react';
+import { Video, Smartphone, Search, Compass, ArrowLeft } from 'lucide-react';
 import { CURATED_VIDEOS, CuratedVideo, VIDEO_CATEGORIES } from '@/lib/data/curated-videos';
 import VideoCard from '@/components/VideoCard';
 import VideoTheaterModal from '@/components/VideoTheaterModal';
@@ -38,25 +38,25 @@ export default function RekomendasiPage() {
           <span>Kembali ke Beranda</span>
         </Link>
 
-        <span className="text-xs text-primary font-semibold font-sans px-3 py-1 bg-primary-subdued rounded-full">
-          Eksplorasi Tambahan Ilmu
+        <span className="text-xs text-primary font-medium font-sans px-3 py-1 bg-primary-subdued rounded-full">
+          Rujukan Tambahan
         </span>
       </div>
 
       {/* Hero Banner for Rekomendasi */}
-      <div className="text-center max-w-3xl mx-auto space-y-4">
-        <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-primary-subdued text-primary text-xs font-semibold">
-          <Sparkles className="w-4 h-4" />
-          <span>Kurasi Sumber Belajar &amp; Bedah Al-Qur&apos;an</span>
+      <div className="text-center max-w-3xl mx-auto space-y-3">
+        <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-primary-subdued text-primary text-xs font-medium">
+          <Compass className="w-3.5 h-3.5" />
+          <span>Kurasi Sumber Belajar</span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-light text-ink-primary tracking-tight font-sans">
-          Inspirasi &amp; Rekomendasi <br />
-          <span className="font-semibold text-primary">Tadabbur Bahasa Qur&apos;ani</span>
+        <h1 className="text-3xl sm:text-4xl font-light text-ink-primary tracking-tight font-sans">
+          Rekomendasi Kajian &amp; <br />
+          <span className="font-semibold text-primary">Aplikasi Belajar Al-Qur&apos;an</span>
         </h1>
 
         <p className="text-sm sm:text-base text-ink-secondary leading-relaxed font-sans max-w-2xl mx-auto">
-          Kumpulan kajian video pilihan yang membedah keajaiban kata, ayat, dan surat, serta kurasi sarana belajar harian untuk memperkaya pemahaman Anda.
+          Kurasi video pilihan yang membedah keajaiban kata, ayat, dan surat, serta rujukan sarana belajar harian untuk memperkaya pemahaman.
         </p>
       </div>
 

@@ -320,7 +320,7 @@ export default function WordEtymologyModal({
               className="w-full flex items-center justify-center space-x-2 bg-primary hover:bg-primary-deep text-white py-3.5 px-5 rounded-2xl text-xs sm:text-sm font-semibold shadow-subtle hover:shadow-soft transition-all font-sans"
             >
               <BookOpen className="w-4 h-4" />
-              <span>Buka Halaman Definisi &amp; Bedah Akar Kata Lengkap ({root.rootLatin})</span>
+              <span>Lihat Detail Akar Kata ({root.rootLatin})</span>
               <ArrowRight className="w-4 h-4 ml-1" />
             </Link>
           ) : wordDetail.rootSlug ? (
@@ -330,7 +330,7 @@ export default function WordEtymologyModal({
               className="w-full flex items-center justify-center space-x-2 bg-primary hover:bg-primary-deep text-white py-3.5 px-5 rounded-2xl text-xs sm:text-sm font-semibold shadow-subtle hover:shadow-soft transition-all font-sans"
             >
               <BookOpen className="w-4 h-4" />
-              <span>Buka Halaman Definisi &amp; Bedah Morfologi Lengkap</span>
+              <span>Lihat Detail Morfologi &amp; Sharaf</span>
               <ArrowRight className="w-4 h-4 ml-1" />
             </Link>
           ) : (
@@ -340,7 +340,7 @@ export default function WordEtymologyModal({
               className="w-full flex items-center justify-center space-x-2 bg-primary hover:bg-primary-deep text-white py-3.5 px-5 rounded-2xl text-xs sm:text-sm font-semibold shadow-subtle hover:shadow-soft transition-all font-sans"
             >
               <BookOpen className="w-4 h-4" />
-              <span>Cari Definisi &amp; Semua Kemunculan &ldquo;{wordArabic}&rdquo;</span>
+              <span>Lihat Detail Kata &ldquo;{wordArabic}&rdquo;</span>
               <ArrowRight className="w-4 h-4 ml-1" />
             </Link>
           )}

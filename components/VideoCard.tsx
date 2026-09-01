@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Play, BookOpen, Clock, User, Sparkles } from 'lucide-react';
+import { Play, BookOpen, Clock, User } from 'lucide-react';
 import { CuratedVideo } from '@/lib/data/curated-videos';
 import Link from 'next/link';
 
@@ -11,7 +11,6 @@ interface VideoCardProps {
 }
 
 export default function VideoCard({ video, onSelectVideo }: VideoCardProps) {
-  // Use high-quality YouTube thumbnail with fallback
   const thumbnailUrl = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
 
   return (
@@ -39,13 +38,13 @@ export default function VideoCard({ video, onSelectVideo }: VideoCardProps) {
         </div>
 
         {/* Duration Badge */}
-        <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm text-white text-[11px] font-semibold flex items-center space-x-1">
+        <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-sm text-white text-[11px] font-medium flex items-center space-x-1">
           <Clock className="w-3 h-3" />
           <span>{video.duration}</span>
         </div>
 
-        {/* Category Badge */}
-        <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-canvas-surface/90 backdrop-blur-sm text-primary text-[10px] font-bold uppercase tracking-wider border border-hairline/60">
+        {/* Category Tag */}
+        <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-canvas-surface/95 backdrop-blur-sm text-primary text-[10px] font-semibold border border-hairline">
           {video.category}
         </div>
       </div>
@@ -53,25 +52,25 @@ export default function VideoCard({ video, onSelectVideo }: VideoCardProps) {
       {/* Content Body */}
       <div className="p-5 sm:p-6 space-y-3 flex-1 flex flex-col justify-between">
         <div className="space-y-2">
-          <h3 className="font-bold text-base text-ink-primary group-hover:text-primary transition-colors leading-snug line-clamp-2">
+          <h3 className="font-semibold text-base text-ink-primary group-hover:text-primary transition-colors leading-snug line-clamp-2">
             {video.title}
           </h3>
 
-          <div className="flex items-center space-x-1.5 text-xs text-ink-mute font-medium">
-            <User className="w-3.5 h-3.5 text-primary" />
-            <span className="text-ink-secondary">{video.speaker}</span>
-            <span>•</span>
+          <div className="flex items-center space-x-1.5 text-xs text-ink-mute">
+            <User className="w-3.5 h-3.5 text-primary shrink-0" />
+            <span className="text-ink-secondary font-medium">{video.speaker}</span>
+            <span className="text-ink-mute">&bull;</span>
             <span className="truncate">{video.channel}</span>
           </div>
 
-          <p className="text-xs text-ink-secondary line-clamp-2 leading-relaxed pt-1">
+          <p className="text-xs text-ink-secondary line-clamp-2 leading-relaxed pt-1 font-normal">
             {video.linguisticTakeaway}
           </p>
         </div>
 
         {/* Bottom Actions */}
         <div className="pt-3 border-t border-hairline flex items-center justify-between gap-2">
-          <span className="inline-flex items-center space-x-1 text-xs font-semibold text-primary group-hover:underline">
+          <span className="inline-flex items-center space-x-1.5 text-xs font-semibold text-primary group-hover:underline">
             <Play className="w-3.5 h-3.5 fill-current" />
             <span>Tonton Video</span>
           </span>

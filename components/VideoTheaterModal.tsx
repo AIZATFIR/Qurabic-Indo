@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { X, ExternalLink, BookOpen, Sparkles, User } from 'lucide-react';
+import { X, ExternalLink, BookOpen, User, Compass } from 'lucide-react';
 import { CuratedVideo } from '@/lib/data/curated-videos';
 import Link from 'next/link';
 
@@ -47,7 +47,7 @@ export default function VideoTheaterModal({ video, onClose }: VideoTheaterModalP
             <span className="px-2.5 py-0.5 rounded-full bg-primary-subdued text-primary text-[11px] font-semibold tracking-wide shrink-0">
               {video.category}
             </span>
-            <h3 className="font-bold text-sm sm:text-base text-ink-primary truncate font-sans">
+            <h3 className="font-semibold text-sm sm:text-base text-ink-primary truncate font-sans">
               {video.title}
             </h3>
           </div>
@@ -84,12 +84,12 @@ export default function VideoTheaterModal({ video, onClose }: VideoTheaterModalP
         </div>
 
         {/* Bottom Details Panel with Linguistic Takeaway */}
-        <div className="p-5 sm:p-6 overflow-y-auto space-y-4 bg-canvas-surface">
+        <div className="p-5 sm:p-6 overflow-y-auto space-y-4 bg-canvas-surface overscroll-contain">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-hairline pb-3">
-            <div className="flex items-center space-x-2 text-xs sm:text-sm text-ink-secondary">
-              <User className="w-4 h-4 text-primary" />
+            <div className="flex items-center space-x-1.5 text-xs sm:text-sm text-ink-secondary">
+              <User className="w-4 h-4 text-primary shrink-0" />
               <span className="font-semibold text-ink-primary">{video.speaker}</span>
-              <span>•</span>
+              <span className="text-ink-mute">&bull;</span>
               <span className="text-ink-mute">{video.channel}</span>
             </div>
 
@@ -100,18 +100,18 @@ export default function VideoTheaterModal({ video, onClose }: VideoTheaterModalP
                 className="inline-flex items-center space-x-1.5 text-xs font-semibold text-primary hover:underline bg-primary-subdued px-3 py-1 rounded-full self-start sm:self-auto transition-colors"
               >
                 <BookOpen className="w-3.5 h-3.5" />
-                <span>Bedah Akar Kata {video.relatedRootArabic} ({video.relatedRootSlug}) di Qurabic</span>
+                <span>Bedah Akar Kata {video.relatedRootArabic} ({video.relatedRootSlug})</span>
               </Link>
             )}
           </div>
 
           {/* Intisari Pelajaran Kebahasaan */}
-          <div className="p-4 rounded-2xl bg-canvas-soft border border-hairline space-y-2">
-            <div className="flex items-center space-x-2 text-xs font-bold text-ink-primary uppercase tracking-wider">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span>Intisari Pelajaran Linguistik:</span>
+          <div className="p-4 rounded-2xl bg-canvas-soft border border-hairline space-y-1.5">
+            <div className="flex items-center space-x-1.5 text-xs font-semibold text-ink-primary uppercase tracking-wider">
+              <Compass className="w-3.5 h-3.5 text-primary" />
+              <span>Intisari Pelajaran:</span>
             </div>
-            <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed font-sans">
+            <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed font-sans font-normal">
               {video.linguisticTakeaway}
             </p>
           </div>
