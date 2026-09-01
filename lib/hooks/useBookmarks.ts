@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 const BOOKMARKS_KEY = 'qurabic_indo_bookmarked_roots';
 
@@ -21,13 +22,15 @@ export function useBookmarks() {
     }
   }, []);
 
-  const toggleBookmark = (rootId: string) => {
+  const toggleBookmark = (rootId: string, title?: string) => {
     setBookmarkedIds((prev) => {
       let updated: string[];
       if (prev.includes(rootId)) {
         updated = prev.filter((id) => id !== rootId);
+        toast.info(title ? `Dihapus dari simpanan: ${title}` : 'Dihapus dari daftar tersimpan');
       } else {
         updated = [...prev, rootId];
+        toast.success(title ? `Tersimpan: ${title}` : 'Disimpan ke daftar favorit');
       }
       try {
         localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(updated));

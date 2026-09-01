@@ -3,7 +3,9 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import SmoothScroll from '@/components/SmoothScroll';
+import Footer from '@/components/Footer';
 import { ThemeProvider } from '@/lib/context/ThemeContext';
+import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
   title: 'Qurabic (Indo) - Quranic Arabic Corpus & Root Word Explorer',
@@ -25,27 +27,22 @@ export default function RootLayout({
             <main className="flex-1 w-full">
               {children}
             </main>
-            <footer className="bg-canvas border-t border-hairline text-caption opacity-90 hover:opacity-100 transition-all duration-200 py-12 mt-16">
-            <div className="max-w-7xl mx-auto px-6 sm:px-12 flex flex-col md:flex-row justify-between items-center gap-6">
-              <div className="font-bold text-lg text-ink-primary font-sans">
-                Qurabic <span className="text-primary font-normal">(Indo)</span>
-              </div>
-              <div className="flex flex-wrap justify-center gap-6 text-sm text-ink-mute">
-                <a className="hover:text-primary transition-colors" href="/baca">Baca Qur&apos;an</a>
-                <a className="hover:text-primary transition-colors" href="/morfologi">Katalog Morfologi</a>
-                <a className="hover:text-primary transition-colors" href="/ayat-random">Ayat Acak</a>
-                <a className="hover:text-primary transition-colors" href="/favorit">Kata Tersimpan</a>
-                <a className="hover:text-primary transition-colors" href="https://github.com/AIZATFIR/Qurabic-Indo" target="_blank" rel="noreferrer">GitHub Repo</a>
-              </div>
-              <div className="text-xs text-ink-mute font-sans">
-                &copy; {new Date().getFullYear()} Qurabic (Indo). Quranic Arabic Corpus &amp; Root Word Explorer.
-              </div>
-            </div>
-          </footer>
-
-          {/* Mobile Bottom Navigation */}
-          <MobileBottomNav />
+            <Footer />
+            <MobileBottomNav />
           </SmoothScroll>
+
+          {/* Sonner Global Notifications */}
+          <Toaster
+            position="top-center"
+            richColors
+            toastOptions={{
+              style: {
+                borderRadius: '16px',
+                fontFamily: 'inherit',
+                fontSize: '13px',
+              },
+            }}
+          />
         </ThemeProvider>
       </body>
     </html>

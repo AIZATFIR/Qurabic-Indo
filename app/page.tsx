@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import {
   Search,
   ArrowRight,
@@ -12,12 +11,15 @@ import {
   Shuffle,
   ShieldCheck,
   ExternalLink,
-  Compass
+  Compass,
+  Volume2,
+  Sparkles
 } from 'lucide-react';
 import { ROOT_DATABASE } from '@/lib/data/roots';
 import RootCard from '@/components/RootCard';
 import OmniSearch from '@/components/OmniSearch';
-import AmbientHeroCanvas from '@/components/AmbientHeroCanvas';
+import BlackHoleHeroSection from '@/components/ui/blackhole-hero-section';
+import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 
 export default function HomePage() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -33,65 +35,104 @@ export default function HomePage() {
   return (
     <div className="space-y-20 pb-20">
       
-      {/* HERO SECTION - SPACIOUS, ELEGANT, UNCOMPRESSED */}
-      <header className="relative pt-32 pb-40 sm:pt-40 sm:pb-52 min-h-[580px] sm:min-h-[680px] flex flex-col justify-center overflow-hidden border-b border-hairline transition-colors">
-        <AmbientHeroCanvas />
+      {/* 1. BLACK HOLE GRAVITATIONAL HERO SECTION */}
+      <BlackHoleHeroSection
+        onOpenSearch={() => setIsSearchOpen(true)}
+        lastSearch={lastSearch || undefined}
+      />
 
-        <div className="max-w-4xl mx-auto px-6 text-center relative z-10 space-y-7">
-          
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-light text-ink-primary tracking-tight font-sans leading-[1.15] drop-shadow-sm">
-            Membedah Kedalaman <br />
-            <span className="font-semibold text-primary">Bahasa Al-Qur&apos;an</span>
-          </h1>
-
-          <p className="text-base sm:text-lg lg:text-xl text-ink-secondary font-normal max-w-2xl mx-auto leading-relaxed font-sans">
-            Jelajahi akar kata, analisis per kata, morfologi Sharaf, dan tafsir linguistik klasik Al-Qur&apos;an secara jernih, terstruktur, dan mendalam.
-          </p>
-
-          {/* Hero Action Button Group (Spacious & Majestic) */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
-            <Link
-              href="/baca"
-              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-primary hover:bg-primary-deep text-white font-medium text-sm sm:text-base px-8 py-3.5 rounded-full shadow-subtle hover:shadow-soft transition-all active:scale-95 font-sans"
-            >
-              <BookMarked className="w-4 h-4" />
-              <span>Mulai Membaca &amp; Mentadabburi</span>
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Link>
-
-            <button
-              onClick={() => setIsSearchOpen(true)}
-              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-canvas-surface/90 hover:bg-canvas-surface border border-hairline hover:border-primary/40 text-ink-primary font-medium text-sm sm:text-base px-6 py-3.5 rounded-full shadow-subtle transition-all font-sans"
-            >
-              <Search className="w-4 h-4 text-primary" />
-              <span>Cari Akar Kata (⌘K)</span>
-            </button>
-          </div>
-
-          {/* Last Search (Quiet & Functional) */}
-          {lastSearch && (
-            <div className="flex items-center justify-center space-x-2 text-xs text-ink-mute font-sans pt-2">
-              <span>Pencarian terakhir:</span>
-              <button
-                onClick={() => setIsSearchOpen(true)}
-                className="text-primary hover:underline font-medium"
-              >
-                {lastSearch}
-              </button>
+      {/* 2. CINEMATIC SCROLL PERSPECTIVE REVEAL */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <ContainerScroll
+          titleComponent={
+            <div className="space-y-4 mb-8">
+              <span className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-primary-subdued text-primary text-xs font-semibold uppercase tracking-wider">
+                <Compass className="w-3.5 h-3.5" />
+                <span>Metode Eksplorasi Terpadu</span>
+              </span>
+              <h2 className="text-3xl sm:text-5xl font-light text-ink-primary tracking-tight font-sans">
+                Membedah Satu Ayat <br />
+                <span className="font-semibold text-primary">Hingga ke Akar Maknanya</span>
+              </h2>
+              <p className="text-sm sm:text-base text-ink-mute max-w-xl mx-auto font-sans leading-relaxed">
+                Setiap kata dalam mushaf terhubung langsung dengan kamus etimologi klasik, klasifikasi gramatika Sharaf, dan pelafalan audio.
+              </p>
             </div>
-          )}
+          }
+        >
+          {/* Mock Interactive Quran Reader Viewport inside Scroll Frame */}
+          <div className="p-6 sm:p-10 flex flex-col justify-between h-full space-y-6 overflow-hidden select-none">
+            {/* Header of Mock Reader */}
+            <div className="flex items-center justify-between border-b border-hairline pb-4 text-xs font-sans text-ink-mute">
+              <div className="flex items-center space-x-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
+                <span className="font-semibold text-ink-primary">Q.S. Al-Baqarah [2]:255 (Ayat Kursi)</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="px-2.5 py-0.5 rounded-md bg-canvas-soft border border-hairline font-mono text-[11px]">
+                  Mode: Bookpaper Mushaf
+                </span>
+              </div>
+            </div>
 
-        </div>
-      </header>
+            {/* Arabic Text with Word-by-Word Interactivity Preview */}
+            <div className="space-y-6 text-center my-auto">
+              <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 font-arabic text-2xl sm:text-3xl lg:text-4xl text-ink-primary font-bold leading-loose" dir="rtl">
+                <span className="p-2 rounded-xl bg-primary-subdued text-primary ring-2 ring-primary/30">
+                  اللَّهُ
+                </span>
+                <span className="p-2 rounded-xl hover:bg-canvas-soft transition-colors">
+                  لَا إِلَـٰهَ
+                </span>
+                <span className="p-2 rounded-xl hover:bg-canvas-soft transition-colors">
+                  إِلَّا هُوَ
+                </span>
+                <span className="p-2 rounded-xl bg-canvas-soft border border-hairline">
+                  الْحَيُّ
+                </span>
+                <span className="p-2 rounded-xl bg-canvas-soft border border-hairline">
+                  الْقَيُّومُ
+                </span>
+              </div>
 
-      {/* FEATURED FEATURES HIGHLIGHT */}
+              {/* Translation & Linguistic Insight Preview */}
+              <div className="p-5 rounded-2xl bg-canvas-soft/80 border border-hairline max-w-2xl mx-auto space-y-2 text-left">
+                <div className="flex items-center justify-between text-xs font-sans">
+                  <span className="font-semibold text-primary">Bedah Morfologi Sharaf:</span>
+                  <span className="text-ink-mute font-mono">Akar: ح - ي - ي (h-y-y)</span>
+                </div>
+                <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed font-sans">
+                  <strong className="text-ink-primary">الْحَيُّ (Al-Hayyu):</strong> Isim Shifat Musyabbahah bi Ismi al-Fa&apos;il &mdash; Dzat Yang Maha Hidup secara mutlak, kekal abadi, dan menjadi sumber segala kehidupan di alam semesta.
+                </p>
+              </div>
+            </div>
+
+            {/* Mock Reader Footer */}
+            <div className="pt-4 border-t border-hairline flex items-center justify-between text-xs text-ink-mute font-sans">
+              <div className="flex items-center space-x-2">
+                <Volume2 className="w-4 h-4 text-primary" />
+                <span>Audio: Syaikh Mishary Rashid Al-Afasy</span>
+              </div>
+              <Link
+                href="/baca?surah=2"
+                className="inline-flex items-center space-x-1.5 text-primary font-semibold hover:underline"
+              >
+                <span>Buka Bacaan Penuh</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        </ContainerScroll>
+      </section>
+
+      {/* 3. FEATURED FEATURES HIGHLIGHT */}
       <section className="max-w-7xl mx-auto px-6 sm:px-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
           {/* Card 1: Mode Baca */}
           <Link
             href="/baca"
-            className="p-6 sm:p-7 rounded-2xl bg-canvas-surface border border-hairline hover:border-primary/40 transition-all group space-y-3"
+            className="p-6 sm:p-7 rounded-2xl bg-canvas-surface border border-hairline hover:border-primary/40 transition-all group space-y-3 shadow-subtle"
           >
             <div className="w-10 h-10 rounded-xl bg-primary-subdued text-primary flex items-center justify-center">
               <BookMarked className="w-5 h-5" />
@@ -107,7 +148,7 @@ export default function HomePage() {
           {/* Card 2: Ayat Acak */}
           <Link
             href="/ayat-random"
-            className="p-6 sm:p-7 rounded-2xl bg-canvas-surface border border-hairline hover:border-primary/40 transition-all group space-y-3"
+            className="p-6 sm:p-7 rounded-2xl bg-canvas-surface border border-hairline hover:border-primary/40 transition-all group space-y-3 shadow-subtle"
           >
             <div className="w-10 h-10 rounded-xl bg-primary-subdued text-primary flex items-center justify-center">
               <Shuffle className="w-5 h-5" />
@@ -123,7 +164,7 @@ export default function HomePage() {
           {/* Card 3: Katalog Morfologi */}
           <Link
             href="/morfologi"
-            className="p-6 sm:p-7 rounded-2xl bg-canvas-surface border border-hairline hover:border-primary/40 transition-all group space-y-3"
+            className="p-6 sm:p-7 rounded-2xl bg-canvas-surface border border-hairline hover:border-primary/40 transition-all group space-y-3 shadow-subtle"
           >
             <div className="w-10 h-10 rounded-xl bg-primary-subdued text-primary flex items-center justify-center">
               <Layers className="w-5 h-5" />
@@ -139,7 +180,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CATALOG SECTION: EXPLORE ROOT WORDS */}
+      {/* 4. CATALOG SECTION: EXPLORE ROOT WORDS */}
       <main className="max-w-7xl mx-auto px-6 sm:px-12 space-y-12">
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 border-b border-hairline pb-4">
           <div>
@@ -166,7 +207,7 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* FEATURED LEMMAS SECTION */}
+        {/* 5. FEATURED LEMMAS SECTION */}
         <div className="pt-8 space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 border-b border-hairline pb-4">
             <div>
@@ -241,7 +282,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* REKOMENDASI & SHOWCASE BELAJAR BANNER */}
+        {/* 6. REKOMENDASI & SHOWCASE BELAJAR BANNER */}
         <section className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-primary-subdued/40 via-canvas-surface to-primary-subdued/20 border border-hairline relative overflow-hidden space-y-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
             <div className="space-y-2 max-w-xl">
@@ -268,7 +309,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* PROVENANCE & REFERENCES SECTION (Source of Truth) */}
+        {/* 7. PROVENANCE & REFERENCES SECTION (Source of Truth) */}
         <section className="p-7 sm:p-10 rounded-2xl bg-canvas-surface border border-hairline space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-hairline pb-4">
             <div>
@@ -323,10 +364,10 @@ export default function HomePage() {
 
             <div className="space-y-2">
               <span className="font-semibold text-ink-primary block text-sm">
-                4. Tilawah Per-Ayat:
+                4. Audio Tilawah:
               </span>
               <p className="text-ink-secondary leading-relaxed">
-                Audio tilawah otentik Syaikh Mishary Rashid Al-Afasy bersumber dari repository EveryAyah dengan sinkronisasi per ayat.
+                Audio murottal per-ayat berkualitas tinggi oleh Syaikh Mishary Rashid Al-Afasy dari repositori EveryAyah.
               </p>
             </div>
           </div>
@@ -334,8 +375,11 @@ export default function HomePage() {
 
       </main>
 
-      {/* OmniSearch Modal */}
-      <OmniSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      {/* Global OmniSearch Modal Dialog */}
+      <OmniSearch
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+      />
     </div>
   );
 }
