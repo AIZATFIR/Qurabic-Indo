@@ -18,7 +18,7 @@ import {
 import { ROOT_DATABASE } from '@/lib/data/roots';
 import RootCard from '@/components/RootCard';
 import OmniSearch from '@/components/OmniSearch';
-import BlackHoleHeroSection from '@/components/ui/blackhole-hero-section';
+import IlluminatedQuranHero from '@/components/IlluminatedQuranHero';
 import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 
 export default function HomePage() {
@@ -35,8 +35,8 @@ export default function HomePage() {
   return (
     <div className="space-y-20 pb-20">
       
-      {/* 1. BLACK HOLE GRAVITATIONAL HERO SECTION */}
-      <BlackHoleHeroSection
+      {/* 1. ILLUMINATED QUR'AN CINEMATIC GSAP HERO SECTION */}
+      <IlluminatedQuranHero
         onOpenSearch={() => setIsSearchOpen(true)}
         lastSearch={lastSearch || undefined}
       />
