@@ -11,9 +11,47 @@ export interface RootSemanticProfile {
 /**
  * Curated Semantic Profiles for Key Quranic Roots (Tadabbur-Grade Insight)
  * Based on authentic Quranic context & linguistic nuance.
+ * Layer: LINGUISTIC_INTERPRETATION (Editorial / AI-assisted context).
  */
 export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
-  // 1. s-m-w (س م و) - Reference Root
+  // 1. q-w-l (ق و ل) - Dominant Quranic Speech Root
+  'q-w-l': {
+    titleIndo: 'Berkata / Mengucapkan / Perkataan / Qaul',
+    coreMeaning:
+      'Akar ق و ل berkaitan dengan tindakan mengucapkan, menyatakan, atau menyampaikan sesuatu melalui perkataan. Dalam Al-Qur\'an, akar ini menjadi salah satu pilar leksikal terbesar yang mengabadikan firman Allah, dialog para nabi, bantahan kaum ingkar, seruan tauhid, serta adab tutur kata antar-manusia.',
+    usagePatterns: [
+      {
+        title: 'Ucapan dan Perkataan Verbal (Qala / Yaqulu / Qul)',
+        description: 'Bentuk verba yang digunakan untuk menyampaikan firman, perintah risalah (Qul), jawaban, dan dialog langsung.',
+        examples: ['قَالَ', 'يَقُولُونَ', 'قُلْ', 'قِيلَ']
+      },
+      {
+        title: 'Isi Perkataan & Pernyataan (Qaul)',
+        description: 'Bentuk nomina (qaul) yang merujuk pada ucapan berbobot, ketetapan firman, atau anjuran tutur kata yang santun (qaulan layyina).',
+        examples: ['قَوْلًا سَدِيدًا', 'قَوْلًا لَّيِّنًا', 'قَوْلُ الْحَقِّ']
+      },
+      {
+        title: 'Pihak Penutur / Yang Berkata (Qa\'il)',
+        description: 'Bentuk isim fa\'il untuk menunjuk seseorang yang mengutarakan perkataan atau pertanyaan dalam peristiwa dialog.',
+        examples: ['قَالَ قَائِلٌ مِّنْهُمْ']
+      },
+      {
+        title: 'Perkataan yang Dibuat-buat (Taqawwala)',
+        description: 'Bentuk verba Form V (taqawwala) untuk menggambarkan tindakan mengada-adakan atau mereka-reka perkataan palsu atas nama Allah.',
+        examples: ['وَلَوْ تَقَوَّلَ عَلَيْنَا بَعْضَ الْأَقَاوِيلِ']
+      }
+    ],
+    contextualNote:
+      'Perintah "Qul" (Katakanlah!) dalam Al-Qur\'an menegaskan integritas wahyu, di mana Rasulullah saw bertindak sebagai penyampai amanah ilahi persis sebagaimana yang diturunkan.',
+    meaningsIndonesian: [
+      'Tindakan berbicara, mengucapkan, dan menyampaikan pesan',
+      'Isi perkataan, pernyataan, dan ketetapan firman (qaul)',
+      'Perintah dakwah dan penegasan wahyu (Qul)',
+      'Dialog, perbantahan, dan kesaksian lisan di akhirat'
+    ]
+  },
+
+  // 2. s-m-w (س م و) - Reference Root
   's-m-w': {
     titleIndo: 'Tinggi / Menjulang / Nama / Penamaan',
     coreMeaning:
@@ -51,7 +89,38 @@ export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
     ]
   },
 
-  // 2. x-w-f (خ و ف) - Golden Benchmark Root
+  // 3. E-f-w (ع ف و) - Forgiveness & Pardoning
+  'E-f-w': {
+    titleIndo: 'Memaafkan / Menghapus Kesalahan / Kelapangan',
+    coreMeaning:
+      'Akar ع ف و secara etimologi merujuk pada tindakan melenyapkan atau menghapus bekas tapak hingga tiada bersisa. Dalam Al-Qur\'an, \'afw adalah kerelaan hati untuk memaafkan kesalahan dan dosa tanpa meninggalkan dendam, hukuman, maupun celaan.',
+    usagePatterns: [
+      {
+        title: 'Pemaafan Allah atas Dosa Hamba (Al-\'Afuww)',
+        description: 'Sifat kemurahan Allah yang senang menghapus dosa dan membebaskan hamba dari catatan kesalahan.',
+        examples: ['إِنَّ اللَّهَ كَانَ عَفُوًّا غَفُورًا', 'وَيَعْفُو عَنْ كَثِيرٍ']
+      },
+      {
+        title: 'Sikap Pemaaf Antar-Sesama',
+        description: 'Anjuran akhlak mulia untuk berlapang dada, mengabaikan perlakuan buruk, dan memberi maaf.',
+        examples: ['خُذِ الْعَفْوَ وَأْمُرْ بِالْعُرْفِ', 'وَأَنْ تَعْفُوا أَقْرَبُ لِلتَّقْوَىٰ']
+      },
+      {
+        title: 'Kelapangan / Harta Berlebih',
+        description: 'Kelebihan rezeki setelah tercukupinya kebutuhan pokok yang disalurkan untuk infak.',
+        examples: ['وَيَسْأَلُونَكَ مَاذَا يُنْفِقُونَ قُلِ الْعَفْوَ']
+      }
+    ],
+    contextualNote:
+      'Tingkatan \'afw (memaafkan) lebih luhur daripada sekadar menahan amarah (kazhm al-ghaizh), karena \'afw melenyapkan sisa kebencian di dalam hati.',
+    meaningsIndonesian: [
+      'Menghapus dosa dan memaafkan tanpa membalas',
+      'Kelapangan hati dalam memaklumi kekurangan sesama',
+      'Kelebihan rezeki yang dinafkahkan di jalan kebaikan'
+    ]
+  },
+
+  // 4. x-w-f (خ و ف) - Golden Benchmark Root
   'x-w-f': {
     titleIndo: 'Rasa Takut / Kekhawatiran / Kewaspadaan / Khauf',
     coreMeaning:
@@ -88,7 +157,7 @@ export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
     ]
   },
 
-  // 3. S-b-r (ص ب ر)
+  // 5. S-b-r (ص ب ر)
   'S-b-r': {
     titleIndo: 'Sabar / Menahan Diri / Keteguhan Hati',
     coreMeaning:
@@ -120,7 +189,7 @@ export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
     ]
   },
 
-  // 4. S-l-w (ص ل و)
+  // 6. S-l-w (ص ل و)
   'S-l-w': {
     titleIndo: 'Shalat / Doa / Hubungan Spiritual / Shalawat',
     coreMeaning:
@@ -151,7 +220,7 @@ export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
     ]
   },
 
-  // 5. r-H-m (ر ح م)
+  // 7. r-H-m (ر ح م)
   'r-H-m': {
     titleIndo: 'Rahmat / Kasih Sayang / Rahim / Kelembutan',
     coreMeaning:
@@ -182,7 +251,7 @@ export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
     ]
   },
 
-  // 6. H-m-d (ح م د)
+  // 8. H-m-d (ح م د)
   'H-m-d': {
     titleIndo: 'Pujian / Sanjungan / Kesyukuran / Hamdalah',
     coreMeaning:
@@ -213,7 +282,7 @@ export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
     ]
   },
 
-  // 7. k-Z-b (ك ذ ب)
+  // 9. k-Z-b (ك ذ ب)
   'k-Z-b': {
     titleIndo: 'Dusta / Kebohongan / Pendustaan Ayat',
     coreMeaning:
@@ -244,7 +313,7 @@ export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
     ]
   },
 
-  // 8. A-m-n (أ م ن)
+  // 10. A-m-n (أ م ن)
   'A-m-n': {
     titleIndo: 'Iman / Aman / Ketenangan / Kepercayaan',
     coreMeaning:
@@ -275,7 +344,7 @@ export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
     ]
   },
 
-  // 9. k-f-r (ك ف ر)
+  // 11. k-f-r (ك ف ر)
   'k-f-r': {
     titleIndo: 'Kafir / Mengingkari / Menutupi Kebenaran / Kufur',
     coreMeaning:
@@ -306,7 +375,7 @@ export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
     ]
   },
 
-  // 10. E-l-m (ع ل م)
+  // 12. E-l-m (ع ل م)
   'E-l-m': {
     titleIndo: 'Ilmu / Mengetahui / Pemahaman / Tanda Pengenal',
     coreMeaning:
@@ -337,38 +406,7 @@ export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
     ]
   },
 
-  // 11. E-f-w (ع ف و)
-  'E-f-w': {
-    titleIndo: 'Memaafkan / Menghapus Kesalahan / Kelapangan',
-    coreMeaning:
-      'Akar ع ف و secara etimologi berarti menghapus bekas tapak atau melenyapkan sesuatu hingga tidak bersisa. Dalam konteks Qur\'ani, \'afw adalah memaafkan kesalahan orang lain dengan kerelaan hati tanpa meninggalkan rasa dendam atau tuntutan hukuman.',
-    usagePatterns: [
-      {
-        title: 'Pemaafan Allah atas Dosa Hamba',
-        description: 'Sifat Allah Al-\'Afuww yang senang menghapus dosa dan memberi kelapangan ampunan.',
-        examples: ['إِنَّ اللَّهَ كَانَ عَفُوًّا غَفُورًا', 'وَيَعْفُو عَنْ كَثِيرٍ']
-      },
-      {
-        title: 'Memaafkan Sesama Manusia',
-        description: 'Anjuran bersikap pemaaf, berlapang dada, dan tidak membalas kezaliman.',
-        examples: ['خُذِ الْعَفْوَ وَأْمُرْ بِالْعُرْفِ', 'وَأَنْ تَعْفُوا أَقْرَبُ لِلتَّقْوَىٰ']
-      },
-      {
-        title: 'Harta yang Berlebih / Kelapangan Rezeki',
-        description: 'Kelebihan harta setelah tercukupinya kebutuhan pokok yang disedekahkan.',
-        examples: ['وَيَسْأَلُونَكَ مَاذَا يُنْفِقُونَ قُلِ الْعَفْوَ']
-      }
-    ],
-    contextualNote:
-      '\'Afw lebih tinggi daripada sekadar menahan marah, karena \'afw melenyapkan sisa kebencian di dalam hati.',
-    meaningsIndonesian: [
-      'Menghapus kesalahan dan memaafkan tanpa membalas',
-      'Kelapangan hati menerima kekurangan sesama',
-      'Kelebihan rezeki yang dinafkahkan di jalan kebaikan'
-    ]
-  },
-
-  // 12. w-q-y (و ق ي)
+  // 13. w-q-y (و ق ي)
   'w-q-y': {
     titleIndo: 'Takwa / Menjaga Diri / Perlindungan / Membentengi',
     coreMeaning:

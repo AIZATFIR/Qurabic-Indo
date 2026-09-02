@@ -5409,21 +5409,52 @@
     "rootArabic": "ق و ل",
     "rootArabicJoined": "قول",
     "rootLatin": "qwl",
-    "titleIndo": "Konsep & Turunan Akar قول",
+    "titleIndo": "Berkata / Mengucapkan / Perkataan / Qaul",
     "titleEnglish": "Root qwl",
-    "coreMeaning": "Akar kata ق و ل (qwl) memiliki peranan penting dalam kosakata Al-Qur'an dengan berbagai bentuk turunan verba (1620 bentuk) dan nomina (102 bentuk) yang tersebar di berbagai konteks ayat.",
+    "coreMeaning": "Akar ق و ل berkaitan dengan tindakan mengucapkan, menyatakan, atau menyampaikan sesuatu melalui perkataan. Dalam Al-Qur'an, akar ini menjadi salah satu pilar leksikal terbesar yang mengabadikan firman Allah, dialog para nabi, bantahan kaum ingkar, seruan tauhid, serta adab tutur kata antar-manusia.",
     "usagePatterns": [
       {
-        "title": "Penggunaan Kontekstual dalam Ayat",
-        "description": "Turunan akar قول hadir dalam konstruksi kalimat Al-Qur'an untuk menyampaikan pesan ketuhanan, hukum, peringatan, maupun kisah teladan sesuai ragam wazan sharaf yang digunakan."
+        "title": "Ucapan dan Perkataan Verbal (Qala / Yaqulu / Qul)",
+        "description": "Bentuk verba yang digunakan untuk menyampaikan firman, perintah risalah (Qul), jawaban, dan dialog langsung.",
+        "examples": [
+          "قَالَ",
+          "يَقُولُونَ",
+          "قُلْ",
+          "قِيلَ"
+        ]
+      },
+      {
+        "title": "Isi Perkataan & Pernyataan (Qaul)",
+        "description": "Bentuk nomina (qaul) yang merujuk pada ucapan berbobot, ketetapan firman, atau anjuran tutur kata yang santun (qaulan layyina).",
+        "examples": [
+          "قَوْلًا سَدِيدًا",
+          "قَوْلًا لَّيِّنًا",
+          "قَوْلُ الْحَقِّ"
+        ]
+      },
+      {
+        "title": "Pihak Penutur / Yang Berkata (Qa'il)",
+        "description": "Bentuk isim fa'il untuk menunjuk seseorang yang mengutarakan perkataan atau pertanyaan dalam peristiwa dialog.",
+        "examples": [
+          "قَالَ قَائِلٌ مِّنْهُمْ"
+        ]
+      },
+      {
+        "title": "Perkataan yang Dibuat-buat (Taqawwala)",
+        "description": "Bentuk verba Form V (taqawwala) untuk menggambarkan tindakan mengada-adakan atau mereka-reka perkataan palsu atas nama Allah.",
+        "examples": [
+          "وَلَوْ تَقَوَّلَ عَلَيْنَا بَعْضَ الْأَقَاوِيلِ"
+        ]
       }
     ],
-    "contextualNote": "Hubungan antar-turunan kata berpangkal pada akar leksikal yang sama, sedangkan makna definitif ditentukan oleh wazan sharaf dan konteks kalimat dalam ayat Al-Qur'an.",
+    "contextualNote": "Perintah \"Qul\" (Katakanlah!) dalam Al-Qur'an menegaskan integritas wahyu, di mana Rasulullah saw bertindak sebagai penyampai amanah ilahi persis sebagaimana yang diturunkan.",
     "meaningsIndonesian": [
-      "Gagasan pokok yang terhimpun dalam akar kata قول",
-      "Ragam makna kontekstual sesuai penggunaan ayat Al-Qur'an"
+      "Tindakan berbicara, mengucapkan, dan menyampaikan pesan",
+      "Isi perkataan, pernyataan, dan ketetapan firman (qaul)",
+      "Perintah dakwah dan penegasan wahyu (Qul)",
+      "Dialog, perbantahan, dan kesaksian lisan di akhirat"
     ],
-    "etymologyNote": "Akar kata ق و ل (qwl) memiliki peranan penting dalam kosakata Al-Qur'an dengan berbagai bentuk turunan verba (1620 bentuk) dan nomina (102 bentuk) yang tersebar di berbagai konteks ayat.",
+    "etymologyNote": "Akar ق و ل berkaitan dengan tindakan mengucapkan, menyatakan, atau menyampaikan sesuatu melalui perkataan. Dalam Al-Qur'an, akar ini menjadi salah satu pilar leksikal terbesar yang mengabadikan firman Allah, dialog para nabi, bantahan kaum ingkar, seruan tauhid, serta adab tutur kata antar-manusia.",
     "totalOccurrences": 1722,
     "verbsCount": 1620,
     "nounsCount": 102,
@@ -22166,39 +22197,39 @@
     "rootLatin": "Efw",
     "titleIndo": "Memaafkan / Menghapus Kesalahan / Kelapangan",
     "titleEnglish": "Root Efw",
-    "coreMeaning": "Akar ع ف و secara etimologi berarti menghapus bekas tapak atau melenyapkan sesuatu hingga tidak bersisa. Dalam konteks Qur'ani, 'afw adalah memaafkan kesalahan orang lain dengan kerelaan hati tanpa meninggalkan rasa dendam atau tuntutan hukuman.",
+    "coreMeaning": "Akar ع ف و secara etimologi merujuk pada tindakan melenyapkan atau menghapus bekas tapak hingga tiada bersisa. Dalam Al-Qur'an, 'afw adalah kerelaan hati untuk memaafkan kesalahan dan dosa tanpa meninggalkan dendam, hukuman, maupun celaan.",
     "usagePatterns": [
       {
-        "title": "Pemaafan Allah atas Dosa Hamba",
-        "description": "Sifat Allah Al-'Afuww yang senang menghapus dosa dan memberi kelapangan ampunan.",
+        "title": "Pemaafan Allah atas Dosa Hamba (Al-'Afuww)",
+        "description": "Sifat kemurahan Allah yang senang menghapus dosa dan membebaskan hamba dari catatan kesalahan.",
         "examples": [
           "إِنَّ اللَّهَ كَانَ عَفُوًّا غَفُورًا",
           "وَيَعْفُو عَنْ كَثِيرٍ"
         ]
       },
       {
-        "title": "Memaafkan Sesama Manusia",
-        "description": "Anjuran bersikap pemaaf, berlapang dada, dan tidak membalas kezaliman.",
+        "title": "Sikap Pemaaf Antar-Sesama",
+        "description": "Anjuran akhlak mulia untuk berlapang dada, mengabaikan perlakuan buruk, dan memberi maaf.",
         "examples": [
           "خُذِ الْعَفْوَ وَأْمُرْ بِالْعُرْفِ",
           "وَأَنْ تَعْفُوا أَقْرَبُ لِلتَّقْوَىٰ"
         ]
       },
       {
-        "title": "Harta yang Berlebih / Kelapangan Rezeki",
-        "description": "Kelebihan harta setelah tercukupinya kebutuhan pokok yang disedekahkan.",
+        "title": "Kelapangan / Harta Berlebih",
+        "description": "Kelebihan rezeki setelah tercukupinya kebutuhan pokok yang disalurkan untuk infak.",
         "examples": [
           "وَيَسْأَلُونَكَ مَاذَا يُنْفِقُونَ قُلِ الْعَفْوَ"
         ]
       }
     ],
-    "contextualNote": "'Afw lebih tinggi daripada sekadar menahan marah, karena 'afw melenyapkan sisa kebencian di dalam hati.",
+    "contextualNote": "Tingkatan 'afw (memaafkan) lebih luhur daripada sekadar menahan amarah (kazhm al-ghaizh), karena 'afw melenyapkan sisa kebencian di dalam hati.",
     "meaningsIndonesian": [
-      "Menghapus kesalahan dan memaafkan tanpa membalas",
-      "Kelapangan hati menerima kekurangan sesama",
+      "Menghapus dosa dan memaafkan tanpa membalas",
+      "Kelapangan hati dalam memaklumi kekurangan sesama",
       "Kelebihan rezeki yang dinafkahkan di jalan kebaikan"
     ],
-    "etymologyNote": "Akar ع ف و secara etimologi berarti menghapus bekas tapak atau melenyapkan sesuatu hingga tidak bersisa. Dalam konteks Qur'ani, 'afw adalah memaafkan kesalahan orang lain dengan kerelaan hati tanpa meninggalkan rasa dendam atau tuntutan hukuman.",
+    "etymologyNote": "Akar ع ف و secara etimologi merujuk pada tindakan melenyapkan atau menghapus bekas tapak hingga tiada bersisa. Dalam Al-Qur'an, 'afw adalah kerelaan hati untuk memaafkan kesalahan dan dosa tanpa meninggalkan dendam, hukuman, maupun celaan.",
     "totalOccurrences": 35,
     "verbsCount": 27,
     "nounsCount": 8,

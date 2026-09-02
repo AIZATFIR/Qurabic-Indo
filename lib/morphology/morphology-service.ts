@@ -2,6 +2,7 @@ import { AuthoritativeRootMorphology } from './types';
 import { RootWord, VerseOccurrence } from '../types/morphology';
 import { ROOT_DATABASE } from '../data/roots';
 import { PILOT_XWF_AUTHORITATIVE_DATA } from './pilot-data';
+import { CURATED_ROOT_SEMANTICS } from '../data/root-semantics';
 
 /**
  * Returns Authoritative Root Morphology & Occurrences for pilot root in QAC v0.4
@@ -19,7 +20,7 @@ export function getAuthoritativeRootMorphology(rootBw: string): AuthoritativeRoo
 export function isAuthoritativePilotRoot(slug: string): boolean {
   if (!slug) return false;
   const s = slug.toLowerCase().trim();
-  return s === 'kh-w-f' || s === 'khwf' || s === 'xwf' || s === 'خ-و-ف';
+  return s === 'kh-w-f' || s === 'khwf' || s === 'xwf' || s === 'x-w-f' || s === 'خ-و-ف';
 }
 
 /**
@@ -31,30 +32,32 @@ export function getAuthoritativePilotRootWord(slug: string): RootWord | null {
   const authData = getAuthoritativeRootMorphology('xwf');
   if (!authData) return null;
 
-  const existingRoot = ROOT_DATABASE.find((r) => r.id === 'kh-w-f');
+  const xwfSemantics = CURATED_ROOT_SEMANTICS['x-w-f'];
 
   return {
     id: 'kh-w-f',
     rootArabic: authData.rootArabic,
     rootArabicJoined: 'خوف',
     rootLatin: 'khauf',
-    titleIndo: 'Khauf / Rasa Takut / Khawatir',
+    titleIndo: xwfSemantics?.titleIndo || 'Rasa Takut / Kekhawatiran / Kewaspadaan / Khauf',
     titleEnglish: 'Fear / Dread / Apprehension',
-    meaningsIndonesian: [
-      'Rasa takut / kegentaran hati',
-      'Kekhawatiran akan marabahaya atau murka Allah SWT',
-      'Sikap waspada dan kehati-hatian jiwa'
+    coreMeaning: xwfSemantics?.coreMeaning,
+    usagePatterns: xwfSemantics?.usagePatterns,
+    contextualNote: xwfSemantics?.contextualNote,
+    meaningsIndonesian: xwfSemantics?.meaningsIndonesian || [
+      'Rasa takut dan kegentaran hati kepada Allah',
+      'Kekhawatiran manusiawi terhadap bahaya',
+      'Peringatan ancaman siksa dan hisab',
+      'Kewaspadaan batin dalam memelihara ketaatan'
     ],
-    etymologyNote:
-      existingRoot?.etymologyNote ||
-      'Akar kata خ و ف (khauf) secara leksikografis klasik merujuk pada kegelisahan dan kegentaran jiwa terhadap sesuatu yang dikhawatirkan terjadi di masa depan.',
+    etymologyNote: xwfSemantics?.coreMeaning || 'Akar kata خ و ف berkaitan dengan rasa takut dan kewaspadaan.',
     totalOccurrences: authData.totalSegments,
     verbsCount: authData.verbsCount,
     nounsCount: authData.nounsCount,
     verbs: authData.verbs,
     nouns: authData.nouns,
     occurrences: authData.occurrences,
-    tags: ['khauf', 'takut', 'khawatir', 'xwf', 'kh-w-f', 'خوف', 'خ و ف']
+    tags: ['khauf', 'takut', 'khawatir', 'xwf', 'x-w-f', 'kh-w-f', 'خوف', 'خ و ف']
   };
 }
 
@@ -79,4 +82,3 @@ export function getRootOccurrencesFromChunk(slug: string): VerseOccurrence[] {
   } catch (e) {}
   return [];
 }
-
