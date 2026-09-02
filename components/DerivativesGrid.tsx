@@ -140,10 +140,10 @@ export default function DerivativesGrid({ verbs = [], nouns = [] }: DerivativesG
                   <div className="flex items-center space-x-2">
                     <Link
                       href={`/kata/${encodeURIComponent(item.arabic)}`}
-                      className="text-ink-primary hover:text-primary font-semibold font-sans hover:underline inline-flex items-center space-x-1"
+                      className="text-ink-primary hover:text-primary font-semibold font-sans hover:underline inline-flex items-center space-x-1.5"
                     >
                       <span>Detail Kata</span>
-                      <ExternalLink className="w-3 h-3" />
+                      <ExternalLink aria-hidden="true" className="w-3 h-3" />
                     </Link>
                     <span className="text-ink-mute">·</span>
                     <a

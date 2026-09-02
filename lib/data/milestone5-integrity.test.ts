@@ -2,7 +2,7 @@ import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
 import { ROOT_DATABASE } from './roots';
-import { getRootBySlug } from '../search/root-search';
+import { getRootBySlug, findBestMatchingRoot, inferGrammarRole, extractArabicRootLetters } from '../search/root-search';
 import { getWordDetailedExplanation } from '../search/word-dictionary';
 
 console.log('🧪 RUNNING MILESTONE 5 COMPLETE ROOT & WORD EXPERIENCE REGRESSION TESTS...\n');
@@ -76,4 +76,49 @@ console.log('\nTesting Semantic Content Quality (No generic filler in key roots)
 });
 console.log('✅ Test 7 Passed: Key roots have substantive, non-generic Tadabbur content.');
 
-console.log('\n🎉 ALL MILESTONE 5 COMPLETE INTEGRITY TESTS PASSED SUCCESSFULLY!\n');
+// 8. Test P0 / P1: Word Identity for Particle "فَلَمَّآ"
+console.log('\nTesting P0/P1: Exact Identity & Non-Root Status for فَلَمَّآ...');
+const falammaRoot = findBestMatchingRoot('فَلَمَّآ');
+assert.strictEqual(falammaRoot, undefined, 'فَلَمَّآ must NEVER match to root l-w-m (or any other root)');
+
+const falammaGrammar = inferGrammarRole('فَلَمَّآ');
+assert.strictEqual(falammaGrammar.posCategory, 'Harf', 'فَلَمَّآ must be classified as Harf (Particle), NOT Isim');
+
+const falammaDetails = getWordDetailedExplanation('فَلَمَّآ');
+assert.strictEqual(falammaDetails.rootLetters, '', 'فَلَمَّآ must have empty root letters');
+assert.strictEqual(falammaDetails.rootSlug, undefined, 'فَلَمَّآ must have undefined rootSlug');
+assert.strictEqual(falammaDetails.posTag, 'Harf', 'POS for فَلَمَّآ must be Harf');
+assert.strictEqual(falammaDetails.wazanOrForm, 'Mabni (Tetap)', 'Wazan for particle must be Mabni (Tetap), not Morfologi Arab');
+console.log('✅ Test 8 Passed: فَلَمَّآ correctly resolved as Harf with no fake root.');
+
+// 9. Test P3: Isolation of Root l-w-m (ل و م)
+console.log('\nTesting P3: Root l-w-m (ل و م) isolation...');
+const lwmRoot = getRootBySlug('l-w-m');
+assert.ok(lwmRoot, 'Root l-w-m must exist');
+const invalidOccurrence = lwmRoot.occurrences.find(
+  o => o.matchedWordArabic === 'فَلَمَّآ' || o.matchedWordArabic === 'فَلَمَّا' || o.matchedWordArabic === 'لَمَّا'
+);
+assert.strictEqual(invalidOccurrence, undefined, 'Root l-w-m must NEVER contain occurrences of particle فَلَمَّا');
+console.log('✅ Test 9 Passed: Root l-w-m contains 0 occurrences of particle فَلَمَّا.');
+
+// 10. Test P2: Particle Set Substring Regression
+console.log('\nTesting P2: Particles never match roots via fuzzy/substring matching...');
+const testParticles = ['فَلَمَّا', 'لَمَّا', 'إِنَّ', 'مَا', 'لَا', 'إِلَّا', 'ثُمَّ', 'حَتَّى', 'إِذَا', 'إِذْ', 'كَلَّا', 'عَلَى', 'إِلَى', 'فِي', 'مِنْ'];
+for (const p of testParticles) {
+  const matched = findBestMatchingRoot(p);
+  assert.strictEqual(matched, undefined, `Particle '${p}' must NEVER match a tri-literal root`);
+  const g = inferGrammarRole(p);
+  assert.strictEqual(g.posCategory, 'Harf', `Particle '${p}' must have POS 'Harf', got '${g.posCategory}'`);
+  const rootExtracted = extractArabicRootLetters(p);
+  assert.strictEqual(rootExtracted, '', `Particle '${p}' root letters must be empty`);
+}
+console.log('✅ Test 10 Passed: All 15 sample particles strictly classified as Harf with no root.');
+
+// 11. Test P5: UI String Cleanliness
+console.log('\nTesting P5: UI String Cleanliness (Zero leaked "AI-assisted" or "Morfologi Arab")...');
+const testWord = getWordDetailedExplanation('فَلَمَّآ');
+assert.ok(!testWord.sourceCitation.includes('AI-assisted'), 'Source citation must NOT expose AI-assisted label');
+assert.notStrictEqual(testWord.wazanOrForm, 'Morfologi Arab', 'Wazan must NOT be generic Morfologi Arab');
+console.log('✅ Test 11 Passed: Zero leaked internal provenance or fallback strings.');
+
+console.log('\n🎉 ALL MILESTONE 5 & 5A INTEGRITY TESTS PASSED SUCCESSFULLY!\n');

@@ -2,9 +2,9 @@ import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getWordDetailedExplanation } from '@/lib/search/word-dictionary';
-import { findBestMatchingRoot, stripArabicHarakat } from '@/lib/search/root-search';
+import { findBestMatchingRoot } from '@/lib/search/root-search';
 import { ROOT_DATABASE } from '@/lib/data/roots';
-import { ArrowLeft, BookOpen, Layers, Sparkles, ExternalLink, ShieldCheck, Database, Volume2 } from 'lucide-react';
+import { ArrowLeft, BookOpen, Layers, Sparkles, ExternalLink, ShieldCheck } from 'lucide-react';
 
 interface PageProps {
   params: {
@@ -21,7 +21,7 @@ export default function WordDetailPage({ params }: PageProps) {
   // 1. Get detailed word info
   const wordInfo = getWordDetailedExplanation(rawSlug);
   
-  // 2. Find associated root word
+  // 2. Find exact associated root word (Strict matching only)
   let matchedRoot = wordInfo.rootSlug
     ? ROOT_DATABASE.find(r => r.id === wordInfo.rootSlug)
     : findBestMatchingRoot(rawSlug);
@@ -31,8 +31,8 @@ export default function WordDetailPage({ params }: PageProps) {
     matchedRoot = ROOT_DATABASE.find(r => r.rootArabicJoined === cleanLetters);
   }
 
-  // Related occurrences from root
-  const relatedOccurrences = matchedRoot?.occurrences?.slice(0, 8) || [];
+  // Related occurrences from exact root
+  const relatedOccurrences = (matchedRoot?.occurrences || []).slice(0, 8);
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 font-sans">
@@ -49,7 +49,7 @@ export default function WordDetailPage({ params }: PageProps) {
         {matchedRoot && (
           <Link
             href={`/akar/${matchedRoot.id}`}
-            className="inline-flex items-center space-x-1 px-3.5 py-1.5 rounded-full bg-canvas-surface border border-hairline text-xs font-semibold text-primary hover:bg-primary hover:text-white transition-all shadow-subtle"
+            className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-canvas-surface border border-hairline text-xs font-semibold text-primary hover:bg-primary hover:text-white transition-all shadow-subtle"
           >
             <span>Akar: {matchedRoot.rootArabic} ({matchedRoot.rootLatin})</span>
             <ExternalLink className="w-3 h-3" />
@@ -106,7 +106,7 @@ export default function WordDetailPage({ params }: PageProps) {
           </div>
           <div className="p-4 bg-canvas-soft rounded-2xl border border-hairline space-y-1">
             <span className="text-xs text-ink-mute block font-medium">Wazan / Bentuk Sharaf:</span>
-            <span className="text-ink-primary font-semibold text-base">{wordInfo.wazanOrForm || 'Tashrif Morfologis'}</span>
+            <span className="text-ink-primary font-semibold text-base">{wordInfo.wazanOrForm || (wordInfo.posTag === 'Harf' ? 'Mabni (Tetap)' : 'Bentuk Standar')}</span>
           </div>
         </div>
 
@@ -128,7 +128,7 @@ export default function WordDetailPage({ params }: PageProps) {
       </section>
 
       {/* 3. Hubungan ke Akar Kata (Root Connection) */}
-      {matchedRoot && (
+      {matchedRoot ? (
         <section className="p-6 sm:p-8 bg-canvas-surface border border-hairline rounded-3xl shadow-subtle space-y-4">
           <div className="flex items-center justify-between border-b border-hairline pb-3">
             <h2 className="text-lg font-semibold text-ink-primary font-sans flex items-center space-x-2">
@@ -137,7 +137,7 @@ export default function WordDetailPage({ params }: PageProps) {
             </h2>
             <Link
               href={`/akar/${matchedRoot.id}`}
-              className="text-xs text-primary font-semibold hover:underline inline-flex items-center space-x-1"
+              className="text-xs text-primary font-semibold hover:underline inline-flex items-center space-x-1.5"
             >
               <span>Eksplorasi Lengkap</span>
               <ExternalLink className="w-3 h-3" />
@@ -167,10 +167,20 @@ export default function WordDetailPage({ params }: PageProps) {
             </Link>
           </div>
         </section>
+      ) : (
+        <section className="p-6 sm:p-8 bg-canvas-surface border border-hairline rounded-3xl shadow-subtle space-y-3">
+          <h2 className="text-base font-semibold text-ink-primary font-sans flex items-center space-x-2">
+            <ShieldCheck className="w-4 h-4 text-primary" />
+            <span>Karakteristik Morfologi</span>
+          </h2>
+          <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed font-sans">
+            Kata ini tergolong sebagai <strong>Harf / Partikel</strong> (kata tugas / penghubung / syarat / zharf) dalam tata bahasa Arab dan tidak memiliki akar kata triliteral mandiri.
+          </p>
+        </section>
       )}
 
-      {/* 4. Contoh Ayat Terkait */}
-      {relatedOccurrences.length > 0 && (
+      {/* 4. Contoh Ayat Terkait (Hanya jika memiliki akar kata yang sah) */}
+      {matchedRoot && relatedOccurrences.length > 0 && (
         <section className="space-y-4">
           <div className="border-b border-hairline pb-2.5">
             <h2 className="text-xl font-light text-ink-primary tracking-tight flex items-center space-x-2 font-sans">
@@ -191,7 +201,7 @@ export default function WordDetailPage({ params }: PageProps) {
                   </span>
                   <Link
                     href={`/baca?surah=${occ.surahNumber}&ayah=${occ.ayahNumber}`}
-                    className="text-primary hover:underline font-medium inline-flex items-center space-x-1"
+                    className="text-primary hover:underline font-medium inline-flex items-center space-x-1.5"
                   >
                     <span>Buka di Mushaf</span>
                     <ExternalLink className="w-3 h-3" />

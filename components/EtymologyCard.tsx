@@ -42,7 +42,7 @@ export default function EtymologyCard({
         </div>
 
         <span className="text-xs px-3 py-1 rounded-full bg-canvas-soft border border-hairline text-ink-mute font-sans">
-          Catatan Semantik Editorial
+          Catatan Semantik
         </span>
       </div>
 

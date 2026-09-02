@@ -229,19 +229,19 @@ export default function WordEtymologyModal({
               <Link
                 href={`/kata/${encodeURIComponent(wordArabic.trim())}`}
                 onClick={onClose}
-                className="px-3 py-1.5 rounded-full bg-primary hover:bg-primary-deep text-white text-xs font-semibold shadow-subtle transition-all inline-flex items-center space-x-1"
+                className="px-3.5 py-1.5 rounded-full bg-primary hover:bg-primary-deep text-white text-xs font-semibold shadow-subtle transition-all inline-flex items-center space-x-1.5"
               >
                 <span>Buka Detail Kata</span>
-                <ArrowRight className="w-3 h-3" />
+                <ArrowRight aria-hidden="true" className="w-3 h-3" />
               </Link>
               {root && (
                 <Link
                   href={`/akar/${root.id}`}
                   onClick={onClose}
-                  className="px-3 py-1.5 rounded-full bg-canvas-surface hover:bg-canvas-page border border-hairline text-ink-primary hover:text-primary text-xs font-semibold transition-all inline-flex items-center space-x-1"
+                  className="px-3.5 py-1.5 rounded-full bg-canvas-surface hover:bg-canvas-page border border-hairline text-ink-primary hover:text-primary text-xs font-semibold transition-all inline-flex items-center space-x-1.5"
                 >
                   <span>Akar</span>
-                  <ExternalLink className="w-3 h-3" />
+                  <ExternalLink aria-hidden="true" className="w-3 h-3" />
                 </Link>
               )}
             </div>

@@ -449,22 +449,15 @@ export function getRootSemanticProfile(rootBw: string, rootArabic: string, total
   if (CURATED_ROOT_SEMANTICS[normalizedId]) return CURATED_ROOT_SEMANTICS[normalizedId];
   if (CURATED_ROOT_SEMANTICS[directId]) return CURATED_ROOT_SEMANTICS[directId];
 
-  // Dynamic semantic synthesis for all other roots (Clean, informative, context-aware)
   const rootArJoined = rootArabic.replace(/\s+/g, '');
   
   return {
-    titleIndo: `Konsep & Turunan Akar ${rootArJoined}`,
-    coreMeaning: `Akar kata ${rootArabic} (${rootBw}) memiliki peranan penting dalam kosakata Al-Qur'an dengan berbagai bentuk turunan verba (${verbsCount} bentuk) dan nomina (${nounsCount} bentuk) yang tersebar di berbagai konteks ayat.`,
-    usagePatterns: [
-      {
-        title: 'Penggunaan Kontekstual dalam Ayat',
-        description: `Turunan akar ${rootArJoined} hadir dalam konstruksi kalimat Al-Qur'an untuk menyampaikan pesan ketuhanan, hukum, peringatan, maupun kisah teladan sesuai ragam wazan sharaf yang digunakan.`
-      }
-    ],
-    contextualNote: 'Hubungan antar-turunan kata berpangkal pada akar leksikal yang sama, sedangkan makna definitif ditentukan oleh wazan sharaf dan konteks kalimat dalam ayat Al-Qur\'an.',
+    titleIndo: `Akar Kata ${rootArJoined}`,
+    coreMeaning: `Catatan semantik belum tersedia untuk akar kata ini. Silakan telaah bentuk turunan dan konkordansi ayat di bawah.`,
+    usagePatterns: [],
+    contextualNote: undefined,
     meaningsIndonesian: [
-      `Gagasan pokok yang terhimpun dalam akar kata ${rootArJoined}`,
-      `Ragam makna kontekstual sesuai penggunaan ayat Al-Qur'an`
+      `Turunan akar ${rootArJoined} dalam konteks ayat Al-Qur'an`
     ]
   };
 }
