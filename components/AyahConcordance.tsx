@@ -161,7 +161,7 @@ export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: 
 
               {/* Verse Arabic Utsmani Text */}
               <div className="py-3 text-right dir-rtl">
-                <p className="font-arabic-lg text-3xl sm:text-4xl lg:text-5xl text-ink-primary leading-loose tracking-wide" dir="rtl">
+                <p className="font-arabic-lg text-2xl sm:text-3xl lg:text-4xl text-ink-primary leading-[2.6] sm:leading-[2.8] lg:leading-[3.0] tracking-wide" dir="rtl">
                   {item.verseArabic}
                 </p>
               </div>

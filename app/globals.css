@@ -156,9 +156,9 @@ body {
 
 .font-arabic-lg {
   font-family: var(--font-arabic);
-  line-height: 2.5;
-  padding-top: 0.15em;
-  padding-bottom: 0.15em;
+  line-height: 2.8;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
   direction: rtl;
   unicode-bidi: isolate;
   font-weight: 600;
