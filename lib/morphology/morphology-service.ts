@@ -1,5 +1,5 @@
 import { AuthoritativeRootMorphology } from './types';
-import { RootWord } from '../types/morphology';
+import { RootWord, VerseOccurrence } from '../types/morphology';
 import { ROOT_DATABASE } from '../data/roots';
 import { PILOT_XWF_AUTHORITATIVE_DATA } from './pilot-data';
 
@@ -57,3 +57,26 @@ export function getAuthoritativePilotRootWord(slug: string): RootWord | null {
     tags: ['khauf', 'takut', 'khawatir', 'xwf', 'kh-w-f', 'خوف', 'خ و ف']
   };
 }
+
+/**
+ * Loads full occurrences array on-demand from chunk storage
+ */
+export function getRootOccurrencesFromChunk(slug: string): VerseOccurrence[] {
+  if (!slug || typeof window !== 'undefined') return [];
+  try {
+    const nodeReq = (globalThis as any).require || eval('require');
+    const fs = nodeReq('fs');
+    const path = nodeReq('path');
+    const clean = slug.trim();
+    const filePath = path.join(process.cwd(), 'lib/data/occurrences', `${clean}.json`);
+    if (fs.existsSync(filePath)) {
+      return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    }
+    const lowerPath = path.join(process.cwd(), 'lib/data/occurrences', `${clean.toLowerCase()}.json`);
+    if (fs.existsSync(lowerPath)) {
+      return JSON.parse(fs.readFileSync(lowerPath, 'utf8'));
+    }
+  } catch (e) {}
+  return [];
+}
+

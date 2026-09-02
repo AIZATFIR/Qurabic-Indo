@@ -9,12 +9,13 @@ import Link from 'next/link';
 import { ArrowLeft, BookOpen, Layers, Radio, ShieldCheck } from 'lucide-react';
 
 export function generateStaticParams() {
-  return ROOT_DATABASE.map((root) => ({
+  // Prerender top 200 high-frequency roots at build time; dynamicParams = true handles all 1,642 roots seamlessly
+  return ROOT_DATABASE.slice(0, 200).map((root) => ({
     slug: root.id,
   }));
 }
 
-// Allow dynamic params so queries beyond pre-seeded roots fetch live from API
+// Allow dynamic params for all 1,642 roots on demand
 export const dynamicParams = true;
 
 interface PageProps {

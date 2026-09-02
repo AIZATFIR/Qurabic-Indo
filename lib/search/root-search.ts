@@ -83,7 +83,7 @@ export function searchRoots(query: string): RootWord[] {
 
   return ROOT_DATABASE.filter((root) => {
     // 1. Direct ID / Slug match (e.g. "s-b-r", "s-l-w")
-    const idClean = root.id.replace(/-/g, '');
+    const idClean = root.id.toLowerCase().replace(/-/g, '');
     if (idClean.includes(normalized) || idClean.includes(rawCleaned)) return true;
 
     // 2. Arabic root match (e.g. "صلوة", "ص ل و")
@@ -132,7 +132,7 @@ export function searchRoots(query: string): RootWord[] {
   });
 }
 
-import { isAuthoritativePilotRoot, getAuthoritativePilotRootWord } from '../morphology/morphology-service';
+import { isAuthoritativePilotRoot, getAuthoritativePilotRootWord, getRootOccurrencesFromChunk } from '../morphology/morphology-service';
 
 export function getRootBySlug(slug: string): RootWord | undefined {
   if (!slug) return undefined;
@@ -145,14 +145,27 @@ export function getRootBySlug(slug: string): RootWord | undefined {
     if (authPilot) return authPilot;
   }
 
-  // 2. Fallback to ROOT_DATABASE for non-pilot roots
-  return ROOT_DATABASE.find(r => 
+  // 2. Lookup in ROOT_DATABASE
+  const root = ROOT_DATABASE.find(r => 
     r.id.toLowerCase() === cleanSlug || 
     r.rootLatin.toLowerCase() === cleanSlug ||
     r.rootLatin.toLowerCase() === normalizedSlug ||
     r.rootArabicJoined === cleanSlug ||
     r.id.replace(/-/g, '') === cleanSlug.replace(/-/g, '')
   );
+
+  if (!root) return undefined;
+
+  // Ensure full occurrences list is loaded for detail page
+  if (!root.occurrences || root.occurrences.length === 0) {
+    const occs = getRootOccurrencesFromChunk(root.id) || getRootOccurrencesFromChunk(cleanSlug);
+    return {
+      ...root,
+      occurrences: occs
+    };
+  }
+
+  return root;
 }
 
 /**
