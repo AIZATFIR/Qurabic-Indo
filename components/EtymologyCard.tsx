@@ -1,70 +1,75 @@
-import { Compass, BookMarked, ShieldCheck } from 'lucide-react';
+import React from 'react';
+import { BookOpen, ShieldCheck } from 'lucide-react';
 
 interface EtymologyCardProps {
   rootArabic: string;
   rootLatin: string;
-  etymologyNote: string;
-  meaningsIndonesian: string[];
+  etymologyNote?: string;
+  meaningsIndonesian?: string[];
 }
 
 export default function EtymologyCard({
   rootArabic,
   rootLatin,
   etymologyNote,
-  meaningsIndonesian,
+  meaningsIndonesian = [],
 }: EtymologyCardProps) {
-  return (
-    <div className="p-7 sm:p-9 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-6">
-      
-      <div className="flex items-center justify-between border-b border-hairline pb-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-2xl bg-primary-subdued text-primary flex items-center justify-center font-bold">
-            <Compass className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-base sm:text-lg text-ink-primary font-sans">Etimologi dan Makna Klasik</h3>
-            <p className="text-xs sm:text-sm text-ink-mute font-sans">Tafsir Linguistik Akar Kata ({rootLatin})</p>
-          </div>
-        </div>
+  // Filter out redundant template generic text
+  const cleanMeanings = meaningsIndonesian.filter(
+    (m) => m && !m.startsWith('Makna terkait akar kata')
+  );
 
-        <span className="font-arabic text-4xl sm:text-5xl font-bold text-primary" dir="rtl">
-          {rootArabic}
+  return (
+    <div className="p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-5">
+      {/* Section Header */}
+      <div className="flex items-center justify-between border-b border-hairline pb-3.5">
+        <div className="flex items-center space-x-2.5">
+          <BookOpen className="w-5 h-5 text-primary" />
+          <h3 className="font-semibold text-base sm:text-lg text-ink-primary font-sans">
+            Makna &amp; Konteks
+          </h3>
+        </div>
+        <span className="text-xs text-ink-mute font-sans">
+          Akar: <strong className="text-primary font-arabic text-sm" dir="rtl">{rootArabic}</strong> ({rootLatin})
         </span>
       </div>
 
-      {/* Classical Etymology Note */}
+      {/* Semantic Overview Note */}
       {etymologyNote && (
-        <div className="p-5 sm:p-6 rounded-2xl bg-canvas-soft border border-hairline text-sm sm:text-base text-ink-secondary leading-relaxed font-sans space-y-2">
-          <div className="flex items-center space-x-2 font-semibold text-ink-primary text-xs sm:text-sm">
-            <BookMarked className="w-4 h-4 text-primary" />
-            <span>Catatan Semantik Kontekstual (Editorial):</span>
+        <p className="text-sm sm:text-base text-ink-secondary leading-relaxed font-sans">
+          {etymologyNote}
+        </p>
+      )}
+
+      {/* Primary Meaning Points if Available */}
+      {cleanMeanings.length > 0 && (
+        <div className="space-y-2.5 pt-1">
+          <span className="text-xs font-semibold text-ink-mute uppercase tracking-wider block font-sans">
+            Cakupan Makna Pokok:
+          </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-sm font-sans">
+            {cleanMeanings.map((meaning, idx) => (
+              <div
+                key={idx}
+                className="flex items-start space-x-2.5 p-3.5 rounded-2xl bg-canvas-soft border border-hairline text-ink-primary"
+              >
+                <span className="w-5 h-5 rounded-full bg-primary-subdued text-primary flex items-center justify-center text-xs font-semibold shrink-0 mt-0.5 font-sans">
+                  {idx + 1}
+                </span>
+                <span className="leading-relaxed font-medium">{meaning}</span>
+              </div>
+            ))}
           </div>
-          <p className="italic text-ink-primary leading-relaxed font-normal">&ldquo;{etymologyNote}&rdquo;</p>
         </div>
       )}
 
-      {/* List of Primary Meanings */}
-      <div className="space-y-3 pt-1">
-        <h4 className="text-xs sm:text-sm font-semibold text-ink-mute uppercase tracking-wider font-sans">
-          Cakupan Makna dalam Bahasa Indonesia:
-        </h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm sm:text-base">
-          {meaningsIndonesian.map((meaning, idx) => (
-            <div key={idx} className="flex items-start space-x-3 p-4 rounded-2xl bg-canvas-soft border border-hairline text-ink-primary font-sans">
-              <span className="w-6 h-6 rounded-xl bg-primary-subdued text-primary flex items-center justify-center text-xs font-semibold shrink-0 mt-0.5 font-sans">
-                {idx + 1}
-              </span>
-              <span className="leading-relaxed font-medium">{meaning}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Transparent Editorial Provenance Attribution */}
-      <div className="pt-2 flex justify-end">
+      {/* Honest & Transparent Attribution Footer */}
+      <div className="pt-2 flex justify-end border-t border-hairline">
         <span className="inline-flex items-center space-x-1.5 text-xs text-ink-mute font-sans">
           <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-          <span>Catatan makna editorial (AI-assisted context). Morfologi &amp; konkordansi resmi: QAC v0.4 (Univ. of Leeds).</span>
+          <span>
+            Catatan makna editorial (AI-assisted context). Morfologi &amp; konkordansi: QAC v0.4 (University of Leeds).
+          </span>
         </span>
       </div>
     </div>

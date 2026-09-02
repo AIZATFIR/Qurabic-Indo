@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { VerseOccurrence, WordSegment } from '@/lib/types/morphology';
 import { fetchVerseWords } from '@/lib/api/quran-corpus-api';
 import WordByWordViewer from './WordByWordViewer';
-import { Copy, Check, BookOpen, ChevronDown, ChevronUp, ShieldCheck, Loader2, ArrowRight, ExternalLink } from 'lucide-react';
+import { Copy, Check, BookOpen, ChevronDown, ChevronUp, ExternalLink, ArrowDown } from 'lucide-react';
 
 interface AyahConcordanceProps {
   occurrences: VerseOccurrence[];
@@ -13,9 +13,9 @@ interface AyahConcordanceProps {
   rootLatin: string;
 }
 
-const INITIAL_VISIBLE_COUNT = 5;
+const INITIAL_VISIBLE_COUNT = 8;
 
-export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: AyahConcordanceProps) {
+export default function AyahConcordance({ occurrences = [], rootArabic, rootLatin }: AyahConcordanceProps) {
   const [openInterlinearId, setOpenInterlinearId] = useState<string | null>(null);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [segmentsMap, setSegmentsMap] = useState<Record<string, WordSegment[]>>({});
@@ -41,7 +41,6 @@ export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: 
 
     setOpenInterlinearId(key);
 
-    // If segments already loaded in cache or directly attached, reuse
     if (segmentsMap[key] || (item.wordSegments && item.wordSegments.length > 0)) {
       if (item.wordSegments && !segmentsMap[key]) {
         setSegmentsMap((prev) => ({ ...prev, [key]: item.wordSegments! }));
@@ -49,7 +48,6 @@ export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: 
       return;
     }
 
-    // Fetch real word-by-word data from Quran.com API v4
     setLoadingMap((prev) => ({ ...prev, [key]: true }));
     try {
       const verseKey = `${item.surahNumber}:${item.ayahNumber}`;
@@ -79,9 +77,8 @@ export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: 
 
   return (
     <div className="space-y-6 font-sans">
-      
       {/* Header Count Summary */}
-      <div className="flex items-center justify-between text-xs text-ink-mute pb-2 border-b border-hairline">
+      <div className="flex items-center justify-between text-xs text-ink-mute pb-3 border-b border-hairline">
         <span>
           Menampilkan <strong className="text-ink-primary font-semibold">{displayedOccurrences.length}</strong> dari{' '}
           <strong className="text-ink-primary font-semibold">{occurrences.length}</strong> ayat kemunculan otentik
@@ -89,7 +86,7 @@ export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: 
         {hasMore && (
           <button
             onClick={handleShowAll}
-            className="text-primary hover:underline font-medium text-xs"
+            className="text-primary hover:underline font-medium text-xs transition-colors"
           >
             Buka Seluruh ({occurrences.length}) Ayat
           </button>
@@ -97,7 +94,7 @@ export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: 
       </div>
 
       {/* List of Verified Verses */}
-      <div className="space-y-6">
+      <div className="space-y-5">
         {displayedOccurrences.map((item, idx) => {
           const itemKey = `${item.surahNumber}-${item.ayahNumber}-${idx}`;
           const isInterlinearOpen = openInterlinearId === itemKey;
@@ -111,26 +108,28 @@ export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: 
               className="p-6 sm:p-8 bg-canvas-surface border border-hairline rounded-3xl shadow-subtle hover:border-primary/30 transition-all space-y-4"
             >
               {/* Header Badge & Action Buttons */}
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline pb-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline pb-3.5">
                 <div className="flex items-center space-x-3">
-                  <span className="w-9 h-9 rounded-2xl bg-primary-subdued text-primary font-bold text-sm flex items-center justify-center font-sans">
+                  <span className="w-8 h-8 rounded-xl bg-primary-subdued text-primary font-semibold text-xs flex items-center justify-center font-sans">
                     {idx + 1}
                   </span>
                   <div>
-                    <h4 className="font-bold text-ink-primary text-base sm:text-lg font-sans">
-                      Q.S. {item.surahNameIndo} {item.surahNameArabic && `(${item.surahNameArabic})`} &bull; Ayat {item.ayahNumber}
+                    <h4 className="font-semibold text-ink-primary text-sm sm:text-base font-sans">
+                      Q.S. {item.surahNameIndo} [{item.surahNumber}]: {item.ayahNumber}
                     </h4>
-                    <span className="text-xs sm:text-sm text-ink-mute font-sans">
-                      Akar Kata Terkait: <strong className="text-primary font-arabic text-base">{rootArabic}</strong> ({rootLatin})
-                    </span>
+                    {item.matchedWordArabic && (
+                      <span className="text-xs text-ink-mute font-sans">
+                        Kata: <strong className="text-primary font-arabic text-sm" dir="rtl">{item.matchedWordArabic}</strong>
+                      </span>
+                    )}
                   </div>
                 </div>
 
                 {/* Action Button Group */}
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-2">
                   <Link
-                    href={`/baca?surah=${item.surahNumber}`}
-                    className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-canvas-soft hover:bg-canvas-page border border-hairline text-xs font-semibold text-ink-secondary hover:text-primary transition-all font-sans"
+                    href={`/baca?surah=${item.surahNumber}&ayah=${item.ayahNumber}`}
+                    className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-canvas-soft hover:bg-canvas-page border border-hairline text-xs font-medium text-ink-secondary hover:text-primary transition-all font-sans"
                   >
                     <span>Buka di Mushaf</span>
                     <ExternalLink className="w-3 h-3 text-ink-mute" />
@@ -138,55 +137,58 @@ export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: 
 
                   <button
                     onClick={() => handleCopyVerse(item, itemKey)}
-                    className={`inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all font-sans ${
+                    className={`inline-flex items-center space-x-1 px-3 py-1.5 rounded-full text-xs font-medium transition-all font-sans ${
                       isCopied
                         ? 'bg-emerald-100 text-emerald-700 border border-emerald-300'
                         : 'bg-canvas-soft hover:bg-primary-fixed border border-hairline text-ink-secondary'
                     }`}
                   >
-                    {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-ink-mute" />}
-                    <span>{isCopied ? 'Tersalin!' : 'Salin'}</span>
+                    {isCopied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 text-ink-mute" />}
+                    <span>{isCopied ? 'Tersalin' : 'Salin'}</span>
                   </button>
 
                   <button
                     onClick={() => toggleInterlinear(item, itemKey)}
-                    className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-primary-subdued text-primary hover:bg-primary/20 text-xs font-semibold transition-all font-sans"
+                    className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-full bg-primary-subdued text-primary hover:bg-primary/20 text-xs font-medium transition-all font-sans"
                   >
-                    <BookOpen className="w-3.5 h-3.5" />
-                    <span>{isInterlinearOpen ? 'Tutup Analisis' : 'Analisis Per Kata'}</span>
-                    {isInterlinearOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                    <BookOpen className="w-3 h-3" />
+                    <span>{isInterlinearOpen ? 'Tutup Analisis' : 'Analisis Kata'}</span>
+                    {isInterlinearOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                   </button>
                 </div>
               </div>
 
-              {/* Verse Arabic Utsmani Text */}
-              <div className="py-3 text-right dir-rtl">
-                <p className="font-arabic-lg text-2xl sm:text-3xl lg:text-4xl text-ink-primary leading-[2.6] sm:leading-[2.8] lg:leading-[3.0] tracking-wide" dir="rtl">
+              {/* Verse Arabic Text with Generous Line-Height & RTL */}
+              <div className="py-2 text-right" dir="rtl">
+                <p
+                  className="font-arabic text-2xl sm:text-3xl text-ink-primary leading-[2.6] sm:leading-[2.8] tracking-wide"
+                  dir="rtl"
+                >
                   {item.verseArabic}
                 </p>
               </div>
 
               {/* Indonesian Translation */}
-              <div className="bg-canvas-soft border border-hairline rounded-2xl p-5 text-base sm:text-lg text-ink-secondary leading-relaxed font-sans space-y-1.5">
-                <span className="font-semibold text-ink-primary block text-xs uppercase tracking-wider font-sans">
-                  Terjemahan Resmi Kemenag RI:
+              <div className="bg-canvas-soft border border-hairline rounded-2xl p-4 sm:p-5 text-sm sm:text-base text-ink-secondary leading-relaxed font-sans space-y-1">
+                <span className="font-semibold text-ink-primary block text-[11px] uppercase tracking-wider font-sans">
+                  Terjemahan Kemenag RI:
                 </span>
-                <p className="translation-kemenag">&ldquo;{item.verseIndo}&rdquo;</p>
+                <p className="font-normal text-ink-primary leading-relaxed">&ldquo;{item.verseIndo}&rdquo;</p>
               </div>
 
               {/* Interlinear Accordion */}
               {isInterlinearOpen && (
-                <div className="pt-2">
+                <div className="pt-2 border-t border-hairline">
                   {isLoadingSegments ? (
-                    <div className="p-8 text-center bg-canvas-soft border border-hairline rounded-2xl flex items-center justify-center space-x-2 text-ink-mute text-xs font-sans">
-                      <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                      <span>Memuat analisis kata per kata otentik (Quran.com API v4)...</span>
+                    <div className="p-6 text-center text-xs text-ink-mute font-sans flex items-center justify-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                      <span>Memuat analisis morfologi perkata...</span>
                     </div>
                   ) : activeSegments && activeSegments.length > 0 ? (
                     <WordByWordViewer segments={activeSegments} />
                   ) : (
-                    <div className="p-6 text-center bg-canvas-soft border border-hairline rounded-2xl text-ink-mute text-xs font-sans">
-                      Analisis kata per kata belum tersedia dari sumber.
+                    <div className="p-4 text-center text-xs text-ink-mute font-sans">
+                      Data morfologi perkata tersedia melalui tampilan Mushaf.
                     </div>
                   )}
                 </div>
@@ -196,34 +198,24 @@ export default function AyahConcordance({ occurrences, rootArabic, rootLatin }: 
         })}
       </div>
 
-      {/* Progressive Disclosure Action Bar */}
+      {/* Progressive Load More Buttons */}
       {hasMore && (
         <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
           <button
             onClick={handleLoadMore}
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-primary hover:bg-primary-deep text-white font-semibold text-xs sm:text-sm px-8 py-3 rounded-full shadow-subtle hover:shadow-soft transition-all"
+            className="w-full sm:w-auto px-6 py-3 rounded-full bg-canvas-surface hover:bg-canvas-soft border border-hairline text-ink-primary text-xs sm:text-sm font-semibold shadow-subtle transition-all flex items-center justify-center space-x-2"
           >
-            <span>Tampilkan 10 Ayat Berikutnya ({occurrences.length - visibleCount} Tersisa)</span>
-            <ChevronDown className="w-4 h-4" />
+            <ArrowDown className="w-4 h-4 text-primary" />
+            <span>Tampilkan 10 Ayat Lagi</span>
           </button>
-
           <button
             onClick={handleShowAll}
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-canvas-surface hover:bg-canvas-soft border border-hairline text-ink-primary font-semibold text-xs sm:text-sm px-6 py-3 rounded-full transition-all"
+            className="w-full sm:w-auto px-6 py-3 rounded-full bg-primary hover:bg-primary-deep text-white text-xs sm:text-sm font-semibold shadow-subtle transition-all"
           >
-            <span>Tampilkan Seluruh ({occurrences.length}) Ayat</span>
+            Tampilkan Seluruh ({occurrences.length}) Ayat
           </button>
         </div>
       )}
-
-      {/* Bottom Provenance Attribution */}
-      <div className="pt-4 flex justify-end">
-        <span className="inline-flex items-center space-x-1.5 text-xs text-ink-mute font-sans">
-          <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-          <span>Sumber: Mushaf Standar Indonesia (Kemenag RI) &amp; The Quranic Arabic Corpus (Univ. of Leeds)</span>
-        </span>
-      </div>
-
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import React from 'react';
 import { ROOT_DATABASE } from '@/lib/data/roots';
 import { getRootBySlug } from '@/lib/search/root-search';
 import { fetchLiveRoot } from '@/lib/api/quran-corpus-api';
@@ -6,7 +7,7 @@ import EtymologyCard from '@/components/EtymologyCard';
 import DerivativesGrid from '@/components/DerivativesGrid';
 import AyahConcordance from '@/components/AyahConcordance';
 import Link from 'next/link';
-import { ArrowLeft, BookOpen, Layers, Radio, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, BookOpen, Layers, ShieldCheck, Database, Radio } from 'lucide-react';
 
 export function generateStaticParams() {
   // Prerender top 200 high-frequency roots at build time; dynamicParams = true handles all 1,642 roots seamlessly
@@ -38,82 +39,93 @@ export default async function RootDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  const occurrencesCount = root.occurrences?.length || 0;
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      {/* Top Header Bar */}
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10 font-sans">
+      {/* Top Header Navigation */}
       <div className="flex items-center justify-between">
         <Link
           href="/"
-          className="inline-flex items-center space-x-2 text-sm text-ink-mute hover:text-primary transition-colors font-medium font-sans"
+          className="inline-flex items-center space-x-2 text-xs sm:text-sm text-ink-mute hover:text-primary transition-colors font-medium font-sans"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Kembali ke Beranda</span>
         </Link>
 
-        {/* Anchor Quick Links */}
-        <div className="hidden sm:flex items-center space-x-2 text-xs font-sans">
+        {/* Quick Section Anchor Pills */}
+        <div className="flex items-center space-x-2 text-xs font-sans">
           <a
-            href="#etimologi"
+            href="#makna"
             className="px-3 py-1.5 rounded-full bg-canvas-surface border border-hairline hover:border-primary text-ink-secondary hover:text-primary transition-all shadow-subtle"
           >
-            Etimologi
+            Makna
           </a>
           <a
-            href="#turunan"
+            href="#bentuk"
             className="px-3 py-1.5 rounded-full bg-canvas-surface border border-hairline hover:border-primary text-ink-secondary hover:text-primary transition-all shadow-subtle"
           >
-            Turunan Kata
+            Bentuk Kata
           </a>
           <a
             href="#concordance"
             className="px-3 py-1.5 rounded-full bg-canvas-surface border border-hairline hover:border-primary text-ink-secondary hover:text-primary transition-all shadow-subtle"
           >
-            Daftar Ayat
+            Ayat ({occurrencesCount})
           </a>
         </div>
       </div>
 
-      {/* Root Banner */}
-      <div className="bg-canvas-surface border border-hairline rounded-3xl p-8 sm:p-10 shadow-subtle">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="flex items-center space-x-3 text-xs text-ink-mute font-medium font-sans">
-              <span>Akar Kata Al-Qur&apos;an</span>
-              <span>•</span>
-              <span>{root.totalOccurrences} Kemunculan</span>
-
-              {isLiveFetched && (
-                <span className="inline-flex items-center space-x-1 text-primary">
-                  <Radio className="w-3 h-3 text-primary animate-pulse" />
-                  <span>Pencarian Ayat (Live)</span>
-                </span>
-              )}
-            </div>
-
-            <h1 className="text-3xl sm:text-5xl font-light text-ink-primary tracking-tight font-sans">
-              Akar Kata <span className="font-arabic font-semibold text-primary">{root.rootArabic}</span> ({root.rootLatin})
-            </h1>
-
-            <p className="text-base sm:text-lg text-ink-secondary font-sans leading-relaxed">
-              {root.titleIndo}
-            </p>
-          </div>
-
-          <div className="flex items-center space-x-4 bg-canvas-soft border border-hairline rounded-2xl p-4 font-sans">
-            <div className="text-center px-4 border-r border-hairline">
-              <span className="block text-2xl font-semibold text-ink-primary">{root.verbsCount}</span>
-              <span className="text-xs text-ink-mute font-medium">Fi&apos;il (Kata Kerja)</span>
-            </div>
-            <div className="text-center px-4">
-              <span className="block text-2xl font-semibold text-ink-primary">{root.nounsCount}</span>
-              <span className="text-xs text-ink-mute font-medium">Isim (Kata Benda)</span>
-            </div>
-          </div>
+      {/* Hero Section: Centered, Calm, Elegant Arabic & Transliteration */}
+      <section className="text-center py-8 sm:py-12 px-4 bg-canvas-surface border border-hairline rounded-3xl shadow-subtle space-y-4">
+        {/* Arabic Root Display */}
+        <div className="py-2" dir="rtl">
+          <span
+            className="font-arabic text-6xl sm:text-7xl lg:text-8xl font-bold text-primary tracking-wide block leading-[1.8]"
+            dir="rtl"
+          >
+            {root.rootArabic}
+          </span>
         </div>
-      </div>
 
-      {/* Etymology Section */}
-      <section id="etimologi" className="scroll-mt-24">
+        {/* Latin Transliteration */}
+        <h1 className="text-2xl sm:text-3xl font-light text-ink-primary tracking-tight font-sans">
+          {root.rootLatin}
+        </h1>
+
+        {/* Clean Stats Text */}
+        <p className="text-sm sm:text-base text-ink-mute font-sans">
+          <strong className="text-ink-primary font-semibold">{root.totalOccurrences}</strong> kemunculan morfologis ·{' '}
+          <strong className="text-ink-primary font-semibold">{occurrencesCount}</strong> ayat
+          {isLiveFetched && (
+            <span className="inline-flex items-center space-x-1 ml-2 text-xs text-primary font-medium">
+              <Radio className="w-3 h-3 animate-pulse" />
+              <span>Pencarian Live API</span>
+            </span>
+          )}
+        </p>
+
+        {/* Quick CTA Action Buttons */}
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-3">
+          <a
+            href="#concordance"
+            className="px-6 py-2.5 rounded-full bg-primary hover:bg-primary-deep text-white text-xs sm:text-sm font-semibold transition-all shadow-subtle flex items-center space-x-1.5"
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>Baca Ayat ({occurrencesCount})</span>
+          </a>
+          <a
+            href="#bentuk"
+            className="px-6 py-2.5 rounded-full bg-canvas-soft hover:bg-canvas-page border border-hairline text-ink-secondary hover:text-primary text-xs sm:text-sm font-semibold transition-all flex items-center space-x-1.5"
+          >
+            <Layers className="w-4 h-4" />
+            <span>Eksplorasi Bentuk</span>
+          </a>
+        </div>
+      </section>
+
+      {/* Makna & Konteks Section */}
+      <section id="makna" className="scroll-mt-24">
         <EtymologyCard
           rootArabic={root.rootArabic}
           rootLatin={root.rootLatin}
@@ -122,20 +134,20 @@ export default async function RootDetailPage({ params }: PageProps) {
         />
       </section>
 
-      {/* Derivatives Section */}
-      <section id="turunan" className="scroll-mt-24">
+      {/* Bentuk dalam Al-Qur'an (Morphology Forms) */}
+      <section id="bentuk" className="scroll-mt-24">
         <DerivativesGrid verbs={root.verbs} nouns={root.nouns} />
       </section>
 
-      {/* Ayah Concordance Section */}
+      {/* Konkordansi Ayat (The Heart of Root Explorer) */}
       <section id="concordance" className="scroll-mt-24 space-y-4">
-        <div className="border-b border-hairline pb-2">
-          <h2 className="text-2xl font-light text-ink-primary tracking-tight flex items-center space-x-2 font-sans">
+        <div className="border-b border-hairline pb-2.5">
+          <h2 className="text-xl sm:text-2xl font-light text-ink-primary tracking-tight flex items-center space-x-2 font-sans">
             <BookOpen className="w-5 h-5 text-primary" />
-            <span>Daftar Ayat Kemunculan dalam Al-Qur&apos;an</span>
+            <span>Konkordansi Ayat ({occurrencesCount} Ayat)</span>
           </h2>
-          <p className="text-xs text-ink-mute mt-0.5 font-sans">
-            Teks Al-Qur&apos;an rujukan Mushaf Standar Kemenag RI berserta analisis perkata
+          <p className="text-xs sm:text-sm text-ink-mute mt-0.5 font-sans">
+            Daftar ayat Al-Qur&apos;an yang memuat turunan kata dari akar <strong className="text-primary font-arabic text-sm" dir="rtl">{root.rootArabic}</strong>
           </p>
         </div>
         <AyahConcordance
@@ -143,6 +155,43 @@ export default async function RootDetailPage({ params }: PageProps) {
           rootArabic={root.rootArabic}
           rootLatin={root.rootLatin}
         />
+      </section>
+
+      {/* Kajian Lanjutan / Deep Corpus (Depth on Demand - Bottom Section) */}
+      <section className="pt-6 border-t border-hairline">
+        <div className="p-6 sm:p-7 rounded-3xl bg-canvas-soft border border-hairline space-y-4 text-xs sm:text-sm font-sans">
+          <div className="flex items-center space-x-2 text-ink-primary font-semibold">
+            <Database className="w-4 h-4 text-primary" />
+            <span>Kajian Lanjutan &amp; Metadata Korpus</span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-ink-secondary">
+            <div className="p-3 bg-canvas-surface rounded-2xl border border-hairline">
+              <span className="text-ink-mute block text-[11px]">Total Segmen:</span>
+              <span className="text-base font-semibold text-ink-primary">{root.totalOccurrences}</span>
+            </div>
+            <div className="p-3 bg-canvas-surface rounded-2xl border border-hairline">
+              <span className="text-ink-mute block text-[11px]">Segmen Verba (Fi&apos;il):</span>
+              <span className="text-base font-semibold text-ink-primary">{root.verbsCount}</span>
+            </div>
+            <div className="p-3 bg-canvas-surface rounded-2xl border border-hairline">
+              <span className="text-ink-mute block text-[11px]">Segmen Nomina (Isim):</span>
+              <span className="text-base font-semibold text-ink-primary">{root.nounsCount}</span>
+            </div>
+            <div className="p-3 bg-canvas-surface rounded-2xl border border-hairline">
+              <span className="text-ink-mute block text-[11px]">Total Ayat Unik:</span>
+              <span className="text-base font-semibold text-ink-primary">{occurrencesCount}</span>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-2 text-[11px] text-ink-mute border-t border-hairline">
+            <span className="inline-flex items-center space-x-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+              <span>Otoritas Korpus: The Quranic Arabic Corpus v0.4 (University of Leeds)</span>
+            </span>
+            <span>Teks &amp; Terjemahan: LPMQ / Kementerian Agama RI</span>
+          </div>
+        </div>
       </section>
     </div>
   );

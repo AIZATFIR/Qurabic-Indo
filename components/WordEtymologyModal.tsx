@@ -203,8 +203,8 @@ export default function WordEtymologyModal({
               )}
             </div>
 
-            <div className="text-right">
-              <span className="font-arabic-lg text-4xl sm:text-5xl lg:text-6xl font-bold text-ink-primary block leading-tight" dir="rtl">
+            <div className="text-right" dir="rtl">
+              <span className="font-arabic text-4xl sm:text-5xl lg:text-6xl font-bold text-ink-primary block leading-[2.2] py-1" dir="rtl">
                 {wordArabic}
               </span>
             </div>
@@ -263,7 +263,7 @@ export default function WordEtymologyModal({
 
           {wordDetail.rootExplanation && (
             <div className="p-4 bg-canvas-surface rounded-2xl border border-hairline text-xs sm:text-sm text-ink-secondary leading-relaxed space-y-2 font-sans">
-              <span className="text-xs font-semibold uppercase tracking-wider text-ink-mute block">Kajian Etimologi Klasik:</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-ink-mute block">Catatan Semantik Kontekstual:</span>
               <p className="text-ink-primary leading-relaxed font-normal">{wordDetail.rootExplanation}</p>
               {wordDetail.classicalCitation && (
                 <p className="text-xs text-ink-mute italic pt-2 border-t border-hairline font-normal">
@@ -276,7 +276,7 @@ export default function WordEtymologyModal({
           <div className="pt-1 flex justify-between items-center text-[11px] text-ink-mute font-sans">
             <span className="inline-flex items-center space-x-1">
               <span className={`w-1.5 h-1.5 rounded-full ${wordDetail.isVerified ? 'bg-primary' : 'bg-amber-500'}`} />
-              <span>{wordDetail.isVerified ? 'Terverifikasi Leksikografi' : 'Data Live API'}</span>
+              <span>{wordDetail.isVerified ? 'Korpus Otoritatif QAC' : 'Data Live API'}</span>
             </span>
             <span className="truncate max-w-[280px]">
               Sumber: {wordDetail.sourceCitation}
