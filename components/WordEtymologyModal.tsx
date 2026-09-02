@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { X, BookOpen, Volume2, ArrowRight, Layers, ChevronDown, ChevronUp, ExternalLink, ShieldCheck } from 'lucide-react';
-import { searchRoots, findBestMatchingRoot } from '@/lib/search/root-search';
+import { searchRoots, findBestMatchingRoot, stripArabicHarakat } from '@/lib/search/root-search';
 import { getWordDetailedExplanation } from '@/lib/search/word-dictionary';
 import { RootWord } from '@/lib/types/morphology';
 
@@ -86,10 +86,11 @@ export default function WordEtymologyModal({
     root = findBestMatchingRoot(wordArabic, meaningIndo);
   }
 
-  const displayRootLetters = root?.rootArabic || wordDetail.rootLetters || rootLetters;
-  const displayRootLatin = root?.rootLatin || wordDetail.rootLatin;
-  const displayPosTag = posTag || wordDetail.posTag;
-  const displayGrammar = posDetail || wordDetail.grammaticalRole;
+  const isParticle = wordDetail.posTag === 'Harf' || posTag === 'Harf';
+  const displayRootLetters = isParticle ? '' : (root?.rootArabic || wordDetail.rootLetters || rootLetters);
+  const displayRootLatin = isParticle ? '' : (root?.rootLatin || wordDetail.rootLatin);
+  const displayPosTag = wordDetail.posTag || posTag || 'Isim';
+  const displayGrammar = wordDetail.grammaticalRole || posDetail || (isParticle ? 'Harf / Partikel (Kaidah Nahwu)' : 'Isim (Kata Benda / Istilah)');
   const primaryMeaningClean = wordDetail.primaryMeaning || meaningIndo || 'Kosakata Al-Qur\'an';
 
   // Audio Playback
@@ -122,19 +123,19 @@ export default function WordEtymologyModal({
   const renderHighlightedAyah = () => {
     if (!ayahArabic) return null;
     const words = ayahArabic.split(' ');
-    const cleanTarget = wordArabic.replace(/[ًٌٍَُِّْٰٓ]/g, '');
+    const cleanTarget = stripArabicHarakat(wordArabic);
 
     return (
-      <div className="font-arabic text-xl sm:text-2xl leading-[2.6] sm:leading-[2.8] text-right dir-rtl text-ink-primary" dir="rtl">
+      <div className="font-arabic text-xl sm:text-2xl text-ink-primary text-right leading-[2.6] sm:leading-[2.8]" dir="rtl">
         {words.map((w, idx) => {
-          const cleanW = w.replace(/[ًٌٍَُِّْٰٓ]/g, '');
-          const isMatch = cleanW === cleanTarget || cleanW.includes(cleanTarget) || cleanTarget.includes(cleanW);
+          const cleanW = stripArabicHarakat(w);
+          const isMatch = cleanW === cleanTarget;
 
           if (isMatch) {
             return (
               <span
                 key={idx}
-                className="inline-block px-1.5 py-0.5 mx-1 rounded-lg bg-primary text-white font-bold"
+                className="inline-block px-2 py-0.5 mx-1 rounded-xl bg-primary text-white font-bold shadow-subtle"
               >
                 {w}
               </span>
@@ -215,13 +216,21 @@ export default function WordEtymologyModal({
           <div className="pt-2 border-t border-hairline flex flex-wrap items-center justify-between gap-2 text-xs font-sans">
             <div className="flex items-center space-x-2">
               <span className="text-ink-mute font-medium">Akar:</span>
-              <span className="font-arabic text-base font-bold text-primary" dir="rtl">
-                {displayRootLetters || '-'}
-              </span>
-              {displayRootLatin && (
-                <span className="text-ink-mute font-medium">
-                  ({displayRootLatin})
+              {isParticle || !displayRootLetters ? (
+                <span className="text-ink-mute italic">
+                  Tidak memiliki akar (Partikel / Harf)
                 </span>
+              ) : (
+                <>
+                  <span className="font-arabic text-base font-bold text-primary" dir="rtl">
+                    {displayRootLetters}
+                  </span>
+                  {displayRootLatin && (
+                    <span className="text-ink-mute font-medium">
+                      ({displayRootLatin})
+                    </span>
+                  )}
+                </>
               )}
             </div>
 
@@ -262,7 +271,7 @@ export default function WordEtymologyModal({
             </div>
             <div className="p-2.5 bg-canvas-soft rounded-xl border border-hairline">
               <span className="text-ink-mute block text-[11px]">Wazan / Pola:</span>
-              <span className="font-semibold text-ink-primary">{wordDetail.wazanOrForm || 'Bentuk Leksikal Standar'}</span>
+              <span className="font-semibold text-ink-primary">{wordDetail.wazanOrForm || (isParticle ? 'Mabni (Tetap)' : 'Bentuk Leksikal')}</span>
             </div>
           </div>
         </div>
@@ -319,11 +328,11 @@ export default function WordEtymologyModal({
             <div className="p-4 bg-canvas-soft rounded-2xl border border-hairline text-xs font-mono space-y-1.5 mt-2 animate-in fade-in duration-150">
               <div className="flex justify-between">
                 <span className="text-ink-mute">Lemma:</span>
-                <span className="text-ink-primary">{wordDetail.rootLatin || '-'}</span>
+                <span className="text-ink-primary">{isParticle ? '-' : (wordDetail.rootLatin || '-')}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-ink-mute">Root:</span>
-                <span className="text-ink-primary">{displayRootLetters || '-'}</span>
+                <span className="text-ink-primary">{isParticle ? 'Tidak berakar (Partikel / Harf)' : (displayRootLetters || '-')}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-ink-mute">POS Category:</span>
