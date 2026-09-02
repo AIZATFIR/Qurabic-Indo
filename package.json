@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "npx tsx lib/morphology/index-validation.test.ts && npx tsx lib/search/root-search.test.ts && npx tsx lib/search/word-dictionary.test.ts && npx tsx lib/context/theme.test.ts && npx tsx lib/data/surah-list.test.ts && npx tsx lib/api/audio.test.ts && npx tsx lib/data/sources.test.ts && npx tsx lib/data/curated-videos.test.ts && npx tsx lib/data/legal-routes.test.ts && npx tsx lib/data/concordance-integrity.test.ts"
+    "test": "npx tsx lib/morphology/contract.test.ts && npx tsx lib/morphology/index-validation.test.ts && npx tsx lib/search/root-search.test.ts && npx tsx lib/search/word-dictionary.test.ts && npx tsx lib/context/theme.test.ts && npx tsx lib/data/surah-list.test.ts && npx tsx lib/api/audio.test.ts && npx tsx lib/data/sources.test.ts && npx tsx lib/data/curated-videos.test.ts && npx tsx lib/data/legal-routes.test.ts && npx tsx lib/data/concordance-integrity.test.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",

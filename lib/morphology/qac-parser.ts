@@ -137,6 +137,8 @@ export function getQACAuthoritativeIndex(): QACAuthoritativeIndex {
     const wordLocationKey = `${surah}:${ayah}:${word}`;
     const ayahLocationKey = `${surah}:${ayah}`;
 
+    const sourceEvidence = `QAC POS:${pos}${rawFeatures.includes('PERF') ? ' + PERF' : ''}${rawFeatures.includes('IMPF') ? ' + IMPF' : ''}${rawFeatures.includes('IMPV') ? ' + IMPV' : ''}${rawFeatures.includes('ACT|PCPL') ? ' + ACT|PCPL' : ''}${rawFeatures.includes('VN') ? ' + VN' : ''}${isFormII ? ' + Form (II)' : ''}`;
+
     const record: NormalizedMorphologyRecord = {
       surah,
       ayah,
@@ -159,7 +161,13 @@ export function getQACAuthoritativeIndex(): QACAuthoritativeIndex {
       rawTag: tag,
       rawFeatures,
       normalizedCategory,
-      linguisticInterpretation
+      linguisticInterpretation,
+      interpretationContract: {
+        label: linguisticInterpretation,
+        sourceEvidence,
+        layer: 'interpretation',
+        derivation: 'derived'
+      }
     };
 
     // Index by Location
