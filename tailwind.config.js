@@ -50,7 +50,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"SF Pro Display"', '"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
-        arabic: ['var(--font-arabic)', 'Amiri', 'Noto Naskh Arabic', 'Scheherazade New', 'serif'],
+        arabic: ['var(--font-arabic)', '"Amiri Quran"', '"Scheherazade New"', '"Amiri"', '"Noto Naskh Arabic"', 'serif'],
       },
     },
   },

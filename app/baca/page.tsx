@@ -213,7 +213,7 @@ export default function BacaQuranPage() {
               Surah Ke-{currentSurahMeta.number} • {currentSurahMeta.revelationType}
             </span>
 
-            <h1 className="font-arabic-lg text-4xl sm:text-5xl lg:text-6xl font-semibold text-primary leading-relaxed" dir="rtl">
+            <h1 className="font-arabic text-4xl sm:text-5xl lg:text-6xl font-bold text-primary leading-[2.2] sm:leading-[2.6]" dir="rtl">
               سُورَةُ {currentSurahMeta.nameArabic}
             </h1>
 

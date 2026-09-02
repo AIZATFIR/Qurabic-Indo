@@ -215,7 +215,7 @@ export default function RandomAyahPage() {
           <div className="py-3 text-right" dir="rtl">
             <div
               dir="rtl"
-              className="font-arabic-lg text-3xl sm:text-4xl text-ink-primary leading-loose tracking-wide flex flex-wrap items-center justify-start gap-x-2 gap-y-3"
+              className="font-arabic text-3xl sm:text-4xl text-ink-primary leading-[2.6] sm:leading-[2.8] tracking-wide flex flex-wrap items-center justify-start gap-x-2 gap-y-3"
             >
               {ayah.words.map((w, idx) => {
                 if (w.charType === 'end') {
