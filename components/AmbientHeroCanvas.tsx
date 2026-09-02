@@ -92,6 +92,6 @@ export default function AmbientHeroCanvas() {
       {/* 4. SUBTLE PERIMETER VIGNETTE */}
       <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-black/5 dark:to-black/30 pointer-events-none" />
 
-    </div>
+{/*  */}    </div>
   );
 }
