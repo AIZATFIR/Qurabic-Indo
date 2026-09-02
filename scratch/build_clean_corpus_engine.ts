@@ -3,62 +3,65 @@ import path from 'path';
 import { getQACAuthoritativeIndex } from '../lib/morphology/qac-parser';
 import { buckwalterToArabic } from '../lib/morphology/buckwalter';
 import { DerivativeWord, VerseOccurrence, RootWord } from '../lib/types/morphology';
-import { NormalizedMorphologyRecord } from '../lib/morphology/types';
+import { getRootSemanticProfile } from '../lib/data/root-semantics';
 
-console.log('💎 BUILDING CLEAN RUNTIME CORPUS ENGINE (ZERO BLOAT, 1,642 ROOTS)...\n');
-
-const cacheDir = path.join(process.cwd(), 'scratch/data_cache');
-const uthmaniPath = path.join(cacheDir, 'quran_uthmani.json');
-const indoPath = path.join(cacheDir, 'quran_indonesian.json');
-
-const quranUthmani = JSON.parse(fs.readFileSync(uthmaniPath, 'utf8'));
-const quranIndo = JSON.parse(fs.readFileSync(indoPath, 'utf8'));
-
-interface QuranAyahData {
-  surahNumber: number;
-  ayahNumber: number;
-  surahNameIndo: string;
-  surahNameArabic: string;
-  textArabic: string;
-  textIndo: string;
-  lexicalWords: string[];
-}
-
-const quranMap = new Map<string, QuranAyahData>();
-
-for (let sIdx = 0; sIdx < quranUthmani.length; sIdx++) {
-  const sAr = quranUthmani[sIdx];
-  const sId = quranIndo[sIdx];
-  for (let aIdx = 0; aIdx < sAr.ayahs.length; aIdx++) {
-    const aAr = sAr.ayahs[aIdx];
-    const aId = sId.ayahs[aIdx];
-    const key = `${sAr.number}:${aAr.numberInSurah}`;
-
-    const rawTokens = aAr.text.split(' ');
-    const lexicalWords = rawTokens.filter(
-      (t: string) =>
-        !/^[\u06D6-\u06ED\u0615-\u061A\u06D6\u06D7\u06D8\u06D9\u06DA\u06DB\u06DC\u06DD\u06DE\u06DF\u06E0\u06E1\u06E2\u06E3\u06E4\u06E5\u06E6\u06E7\u06E8\u06E9\u06EA\u06EB\u06EC\u06ED\uFD3E\uFD3F\s]+$/.test(
-          t
-        )
-    );
-
-    quranMap.set(key, {
-      surahNumber: sAr.number,
-      ayahNumber: aAr.numberInSurah,
-      surahNameIndo: sAr.englishName,
-      surahNameArabic: sAr.name,
-      textArabic: aAr.text,
-      textIndo: aId.text,
-      lexicalWords
-    });
-  }
-}
+console.log('💎 BUILDING CLEAN RUNTIME CORPUS ENGINE WITH RICH TADABBUR SEMANTICS (1,642 ROOTS)...\n');
 
 // Load authoritative QAC index
 const index = getQACAuthoritativeIndex();
 const allRootsBw = Array.from(index.recordsByRoot.keys());
 
 const compactRootsSummary: RootWord[] = [];
+
+// Specific common lemma meanings map in Indonesian
+const COMMON_LEMMA_GLOSS: Record<string, string> = {
+  'sam~aY`': 'Menamai / memberi nama (Form II)',
+  'sam~aA\'': 'Langit / sesuatu yang tinggi / cakrawala',
+  '{somi': 'Nama / sebutan / asma',
+  'musam~FY': 'Ditetapkan / ditentukan batas waktunya',
+  'xawof': 'Rasa takut / kekhawatiran / kegentaran',
+  'xaAfa': 'Takut / merasa gentar (Form I)',
+  'xaw~afa': 'Menakut-nakuti / memberi peringatan (Form II)',
+  'xiyfah': 'Rasa takut / kekhawatiran yang mendalam',
+  'xaA}if': 'Orang yang takut / dalam keadaan cemas',
+  'Sabor': 'Sabar / ketabahan / menahan diri',
+  'Sabara': 'Bersabar / tabah / menahan diri (Form I)',
+  'SaAbir': 'Orang yang bersabar',
+  'Salawoh': 'Shalat / ibadah penghubung / doa',
+  'Sal~aY`': 'Mendirikan shalat / bershalawat / berdoa (Form II)',
+  'muSal~FY': 'Tempat shalat / orang yang shalat',
+  'raHiyom': 'Maha Penyayang / penuh kasih sayang',
+  'raHoma`n': 'Maha Pengasih bagi seluruh alam',
+  'raHomah': 'Rahmat / kasih sayang / anugerah',
+  'raHima': 'Mengasihi / menyayangi (Form I)',
+  'Hamod': 'Segala puji / sanjungan sempurna',
+  'Hamida': 'Memuji / menyanjung (Form I)',
+  'maHomuwd': 'Terpuji / kedudukan mulia',
+  'kadar': 'Kekeruhan / kesusahan',
+  'kazaba': 'Berdusta / berbohong (Form I)',
+  'kaz~aba': 'Mendustakan / menganggap bohong (Form II)',
+  'kiz~aAb': 'Pendustaan besar / kebohongan nyata',
+  'kaAzib': 'Orang yang berdusta / pembohong',
+  'kafara': 'Kafir / mengingkari / menutupi kebenaran (Form I)',
+  'kaf~ara': 'Menghapus / menutupi dosa (Form II)',
+  'kufor': 'Kekafiran / pengingkaran nikmat',
+  'kaAfir': 'Orang yang kafir / mengingkari',
+  'kaAfuwr': 'Kafur / wewangian penyejuk',
+  '|mana': 'Beriman / percaya teguh (Form IV)',
+  'Aamona': 'Rasa aman / ketenteraman',
+  'mu\'omin': 'Orang yang beriman / mukmin',
+  'Ealima': 'Mengetahui / berpengetahuan (Form I)',
+  'Eal~ama': 'Mengajarkan / memberi pemahaman (Form II)',
+  'Eilom': 'Ilmu / pengetahuan / wawasan',
+  'EaAlim': 'Orang yang berilmu / alim / mengetahui yang gaib',
+  'EaAlam': 'Alam semesta / ciptaan / tanda kebesaran',
+  'EafaA': 'Memaafkan / menghapus kesalahan (Form I)',
+  'EaAfiyah': 'Kesejahteraan / ampunan',
+  'Eafuww': 'Maha Pemaaf / penghapus dosa',
+  '{t~aqaY`': 'Bertakwa / memelihara diri (Form VIII)',
+  'taqowaY`': 'Takwa / benteng ketaatan kepada Allah',
+  'mut~aqiy': 'Orang yang bertakwa / muttaqin'
+};
 
 allRootsBw.forEach((rootBw) => {
   const segments = index.recordsByRoot.get(rootBw) || [];
@@ -105,6 +108,7 @@ allRootsBw.forEach((rootBw) => {
   let nounsCount = 0;
 
   lemmaMap.forEach((lem) => {
+    const customGloss = COMMON_LEMMA_GLOSS[lem.lemmaBw];
     if (lem.pos === 'V') {
       verbsCount += lem.frequency;
       verbs.push({
@@ -114,8 +118,11 @@ allRootsBw.forEach((rootBw) => {
         type: 'verb',
         form: lem.form || 'Form I',
         posTag: lem.linguisticInterpretation || 'Fi\'il',
-        meaningIndo: `Bentuk kata kerja (${lem.form || 'Form I'})`,
-        frequency: lem.frequency
+        meaningIndo: customGloss || `Verba ${lem.form || 'Form I'} (${lem.lemmaArabic})`,
+        frequency: lem.frequency,
+        buckwalter: lem.lemmaBw,
+        qacPos: 'V',
+        qacFeatures: lem.normalizedCategory
       });
     } else if (lem.pos === 'N') {
       nounsCount += lem.frequency;
@@ -125,8 +132,11 @@ allRootsBw.forEach((rootBw) => {
         transliteration: lem.lemmaBw,
         type: 'noun',
         posTag: lem.linguisticInterpretation || 'Isim',
-        meaningIndo: `Bentuk nomina (${lem.lemmaArabic})`,
-        frequency: lem.frequency
+        meaningIndo: customGloss || `Nomina (${lem.lemmaArabic})`,
+        frequency: lem.frequency,
+        buckwalter: lem.lemmaBw,
+        qacPos: 'N',
+        qacFeatures: lem.normalizedCategory
       });
     }
   });
@@ -134,9 +144,13 @@ allRootsBw.forEach((rootBw) => {
   verbs.sort((a, b) => b.frequency - a.frequency);
   nouns.sort((a, b) => b.frequency - a.frequency);
 
+  // Retrieve rich semantic profile
+  const profile = getRootSemanticProfile(rootBw, rootArabicSpaced, segments.length, verbsCount, nounsCount);
+
   // Editorial search tags mapping
   const extraTags: string[] = [];
-  if (rootBw === 'Slw' || slugId === 'S-l-w') extraTags.push('salat', 'sholat', 'solat', 'shalat', 'doa', 'sembahyang', 'sholat', 'selawat');
+  if (rootBw === 'smw' || slugId === 's-m-w') extraTags.push('langit', 'nama', 'sama', 'asma', 'menamai', 'ketinggian');
+  if (rootBw === 'Slw' || slugId === 'S-l-w') extraTags.push('salat', 'sholat', 'solat', 'shalat', 'doa', 'sembahyang', 'selawat');
   if (rootBw === 'wqy' || slugId === 'w-q-y') extraTags.push('takwa', 'taqwa', 'taqwaa', 'memelihara', 'berlindung');
   if (rootBw === 'zkw' || slugId === 'z-k-w') extraTags.push('zakat', 'jakat', 'zakah', 'bersih', 'suci', 'tumbuh');
   if (rootBw === 'Sbr' || slugId === 'S-b-r') extraTags.push('sabar', 'sabr', 'batu', 'ketabahan', 'menahan diri');
@@ -146,22 +160,27 @@ allRootsBw.forEach((rootBw) => {
   if (rootBw === 'kfr' || slugId === 'k-f-r') extraTags.push('kafir', 'kufur', 'ingkar', 'menutup');
   if (rootBw === 'Amn' || slugId === 'A-m-n') extraTags.push('iman', 'aman', 'percaya', 'mukmin');
   if (rootBw === 'Elm' || slugId === 'E-l-m') extraTags.push('ilmu', 'alim', 'mengetahui', 'pengetahuan');
+  if (rootBw === 'kZb' || rootBw === 'k*b') extraTags.push('dusta', 'bohong', 'kazib', 'mendustakan');
+  if (rootBw === 'Efw') extraTags.push('maaf', 'ampun', 'memaafkan', 'afwan');
 
   const rootRecord: RootWord = {
     id: slugId,
     rootArabic: rootArabicSpaced,
     rootArabicJoined: rootArabicJoined,
     rootLatin: rootBw,
-    titleIndo: `Akar Kata ${rootArabicJoined}`,
+    titleIndo: profile.titleIndo,
     titleEnglish: `Root ${rootBw}`,
-    meaningsIndonesian: [`Makna terkait akar kata ${rootArabicJoined} dalam konteks ayat Al-Qur'an`],
-    etymologyNote: `Akar kata ${rootArabicSpaced} (${rootBw}) memiliki ${segments.length} kemunculan morfologis dalam Al-Qur'an yang tersebar di ${uniqueAyahsSet.size} ayat.`,
+    coreMeaning: profile.coreMeaning,
+    usagePatterns: profile.usagePatterns,
+    contextualNote: profile.contextualNote,
+    meaningsIndonesian: profile.meaningsIndonesian,
+    etymologyNote: profile.coreMeaning,
     totalOccurrences: segments.length,
     verbsCount,
     nounsCount,
     verbs,
     nouns,
-    occurrences: [], // Dynamically resolved on-demand to maintain lightning-fast bundle
+    occurrences: [], // Dynamically resolved on-demand to keep runtime bundle lightweight
     tags: [
       rootBw.toLowerCase(),
       rootBw,
@@ -176,43 +195,8 @@ allRootsBw.forEach((rootBw) => {
   compactRootsSummary.push(rootRecord);
 });
 
-// Clean up old temporary files
-try { fs.unlinkSync(path.join(process.cwd(), 'lib/data/roots-full.json')); } catch (e) {}
-try { fs.unlinkSync(path.join(process.cwd(), 'lib/data/roots-occurrences.json')); } catch (e) {}
-
-// Write compact metadata JSON (~500 KB total for all 1,642 roots)
+// Write compact metadata JSON
 const compactJsonPath = path.join(process.cwd(), 'lib/data/roots-summary.json');
-fs.writeFileSync(compactJsonPath, JSON.stringify(compactRootsSummary), 'utf8');
+fs.writeFileSync(compactJsonPath, JSON.stringify(compactRootsSummary, null, 2), 'utf8');
 console.log(`💾 Saved lib/data/roots-summary.json (${(fs.statSync(compactJsonPath).size / 1024).toFixed(1)} KB)`);
-
-// Write clean lib/data/roots.ts
-const rootsTsContent = `import { RootWord, VerseOccurrence } from '../types/morphology';
-import rootsSummaryData from './roots-summary.json';
-import { getAuthoritativeRootMorphology } from '../morphology/morphology-service';
-
-/**
- * ==============================================================================
- * QURABIC AUTHORITATIVE ROOT DATABASE (1,642 ROOTS)
- * ==============================================================================
- * Source of Truth: Quranic Arabic Corpus (QAC v0.4, Univ. of Leeds)
- * Cryptographic Source Hash: SHA-256 a1d12923815341face765083805d2148ed2d9f5cc3f7d6665219d887675d8c46
- * ==============================================================================
- */
-
-export const ROOT_DATABASE: RootWord[] = (rootsSummaryData as unknown as RootWord[]).map(r => {
-  // Pre-attach occurrences for golden pilot if available
-  if (r.id === 'x-w-f' || r.id === 'kh-w-f') {
-    const auth = getAuthoritativeRootMorphology('xwf');
-    if (auth) {
-      return {
-        ...r,
-        occurrences: auth.occurrences
-      };
-    }
-  }
-  return r;
-});
-`;
-
-fs.writeFileSync(path.join(process.cwd(), 'lib/data/roots.ts'), rootsTsContent, 'utf8');
-console.log(`💾 Successfully updated lib/data/roots.ts with zero bloat!`);
+console.log(`🎉 1,642 Roots refreshed with rich Tadabbur semantics!`);

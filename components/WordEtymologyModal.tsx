@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { X, BookOpen, Volume2, ArrowRight, Compass } from 'lucide-react';
+import { X, BookOpen, Volume2, ArrowRight, Layers, ChevronDown, ChevronUp, ExternalLink, ShieldCheck } from 'lucide-react';
 import { searchRoots, findBestMatchingRoot } from '@/lib/search/root-search';
 import { getWordDetailedExplanation } from '@/lib/search/word-dictionary';
 import { RootWord } from '@/lib/types/morphology';
@@ -23,6 +23,7 @@ interface WordEtymologyModalProps {
   surahNumber?: number;
   ayahNumber?: number;
   surahNameIndo?: string;
+  wordIndex?: number;
 }
 
 export default function WordEtymologyModal({
@@ -41,14 +42,17 @@ export default function WordEtymologyModal({
   surahNumber,
   ayahNumber,
   surahNameIndo,
+  wordIndex,
 }: WordEtymologyModalProps) {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [isCorpusOpen, setIsCorpusOpen] = useState(false);
 
   // Body scroll lock & ESC keyboard dismissal
   useEffect(() => {
     if (!isOpen) return;
 
     setIsPlayingAudio(false);
+    setIsCorpusOpen(false);
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
@@ -68,7 +72,7 @@ export default function WordEtymologyModal({
 
   if (!isOpen) return null;
 
-  // 1. Get comprehensive dictionary & root etymology details
+  // 1. Get dictionary & root details
   const wordDetail = getWordDetailedExplanation(wordArabic, meaningIndo);
 
   // 2. Resolve Root Word from local database if available
@@ -86,6 +90,7 @@ export default function WordEtymologyModal({
   const displayRootLatin = root?.rootLatin || wordDetail.rootLatin;
   const displayPosTag = posTag || wordDetail.posTag;
   const displayGrammar = posDetail || wordDetail.grammaticalRole;
+  const primaryMeaningClean = wordDetail.primaryMeaning || meaningIndo || 'Kosakata Al-Qur\'an';
 
   // Audio Playback
   const handlePlayAudio = () => {
@@ -93,6 +98,13 @@ export default function WordEtymologyModal({
     setIsPlayingAudio(true);
 
     let audioSrc = audioUrl;
+    if (!audioSrc && surahNumber && ayahNumber && wordIndex) {
+      const sPad = String(surahNumber).padStart(3, '0');
+      const aPad = String(ayahNumber).padStart(3, '0');
+      const wPad = String(wordIndex).padStart(3, '0');
+      audioSrc = `https://audio.qurancdn.com/wbw/${sPad}_${aPad}_${wPad}.mp3`;
+    }
+
     if (!audioSrc) {
       audioSrc = `https://audio.qurancdn.com/wbw/001_001_001.mp3`;
     }
@@ -113,7 +125,7 @@ export default function WordEtymologyModal({
     const cleanTarget = wordArabic.replace(/[ًٌٍَُِّْٰٓ]/g, '');
 
     return (
-      <div className="font-arabic text-xl sm:text-2xl leading-loose text-right dir-rtl text-ink-primary">
+      <div className="font-arabic text-xl sm:text-2xl leading-[2.6] sm:leading-[2.8] text-right dir-rtl text-ink-primary" dir="rtl">
         {words.map((w, idx) => {
           const cleanW = w.replace(/[ًٌٍَُِّْٰٓ]/g, '');
           const isMatch = cleanW === cleanTarget || cleanW.includes(cleanTarget) || cleanTarget.includes(cleanW);
@@ -122,7 +134,7 @@ export default function WordEtymologyModal({
             return (
               <span
                 key={idx}
-                className="inline-block px-1.5 py-0.5 mx-1 rounded-md bg-primary text-white font-bold"
+                className="inline-block px-1.5 py-0.5 mx-1 rounded-lg bg-primary text-white font-bold"
               >
                 {w}
               </span>
@@ -138,16 +150,16 @@ export default function WordEtymologyModal({
     <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-6 overflow-y-auto bg-black/60 backdrop-blur-sm animate-in fade-in duration-150 overscroll-contain">
       <div className="fixed inset-0" onClick={onClose} />
 
-      <div className="relative w-full max-w-2xl sm:max-w-3xl max-h-[88vh] my-auto overflow-y-auto overscroll-contain bg-canvas-surface text-ink-primary border border-hairline rounded-3xl shadow-hover z-10 p-5 sm:p-8 space-y-5 animate-in zoom-in-95 duration-150">
+      <div className="relative w-full max-w-xl sm:max-w-2xl max-h-[88vh] my-auto overflow-y-auto overscroll-contain bg-canvas-surface text-ink-primary border border-hairline rounded-3xl shadow-hover z-10 p-5 sm:p-8 space-y-5 animate-in zoom-in-95 duration-150 font-sans">
         
-        {/* Header Bar */}
-        <div className="flex items-center justify-between border-b border-hairline pb-4">
-          <div className="flex items-center space-x-3">
-            <span className="px-2.5 py-0.5 rounded-lg bg-primary-subdued text-primary text-xs font-semibold font-sans uppercase">
-              {displayPosTag}
+        {/* Top Header Bar */}
+        <div className="flex items-center justify-between border-b border-hairline pb-3.5">
+          <div className="flex items-center space-x-2">
+            <span className="px-2.5 py-1 rounded-lg bg-primary-subdued text-primary text-xs font-semibold font-sans">
+              {displayPosTag} {wordDetail.wazanOrForm ? `· ${wordDetail.wazanOrForm}` : ''}
             </span>
             {surahNameIndo && (
-              <span className="text-xs sm:text-sm text-ink-mute font-sans font-medium">
+              <span className="text-xs text-ink-mute font-sans font-medium">
                 Q.S. {surahNameIndo} [{surahNumber}]:{ayahNumber}
               </span>
             )}
@@ -177,133 +189,103 @@ export default function WordEtymologyModal({
           </div>
         </div>
 
-        {/* Word Main Card */}
-        <div className="p-6 sm:p-7 rounded-2xl bg-canvas-soft border border-hairline space-y-4">
-          <div className="flex flex-col-reverse sm:flex-row sm:items-start justify-between gap-4">
-            <div className="space-y-1.5">
-              {displayRootLetters && (
-                <div className="flex items-center space-x-2">
-                  <span className="text-xs sm:text-sm text-ink-mute font-sans font-medium">
-                    Akar Kata:
-                  </span>
-                  <span className="font-arabic text-xl sm:text-2xl font-bold text-primary tracking-wider" dir="rtl">
-                    {displayRootLetters}
-                  </span>
-                  {displayRootLatin && (
-                    <span className="text-xs sm:text-sm text-ink-mute font-sans">
-                      ({displayRootLatin})
-                    </span>
-                  )}
-                </div>
-              )}
+        {/* 1. Main Word Display & Meaning */}
+        <div className="p-5 sm:p-6 rounded-2xl bg-canvas-soft border border-hairline space-y-3">
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <p className="text-lg sm:text-xl font-bold text-ink-primary font-sans leading-snug">
+                {primaryMeaningClean}
+              </p>
               {transliteration && (
-                <p className="text-sm sm:text-base text-ink-secondary font-medium font-sans italic">
+                <p className="text-xs sm:text-sm text-ink-mute font-medium font-sans italic mt-0.5">
                   {transliteration}
                 </p>
               )}
             </div>
 
-            <div className="text-right" dir="rtl">
-              <span className="font-arabic text-4xl sm:text-5xl lg:text-6xl font-bold text-ink-primary block leading-[2.2] py-1" dir="rtl">
+            {/* Arabic Word Display */}
+            <div className="text-right py-1" dir="rtl">
+              <span className="font-arabic text-4xl sm:text-5xl font-bold text-ink-primary block leading-[2.0]" dir="rtl">
                 {wordArabic}
               </span>
             </div>
           </div>
 
-          {/* Primary & Detailed Meanings */}
-          <div className="pt-3 border-t border-hairline space-y-2">
-            <p className="text-lg sm:text-xl font-semibold text-ink-primary font-sans leading-snug">
-              {wordDetail.primaryMeaning || meaningIndo || 'Kata dalam Al-Qur\'an'}
-            </p>
-
-            {wordDetail.meanings.length > 1 && (
-              <div className="space-y-1.5 pt-1">
-                <span className="text-xs font-semibold text-ink-mute uppercase tracking-wider block font-sans">
-                  Ragam Definisi:
+          {/* Root Link Banner */}
+          {displayRootLetters && (
+            <div className="pt-2 border-t border-hairline flex items-center justify-between text-xs font-sans">
+              <span className="text-ink-mute font-medium">Akar Kata:</span>
+              <div className="flex items-center space-x-2">
+                <span className="font-arabic text-base font-bold text-primary" dir="rtl">
+                  {displayRootLetters}
                 </span>
-                <ul className="space-y-1.5 text-xs sm:text-sm text-ink-secondary font-sans">
-                  {wordDetail.meanings.slice(1).map((m, idx) => (
-                    <li key={idx} className="flex items-start space-x-2.5">
-                      <span className="text-primary font-bold text-sm mt-0.5">•</span>
-                      <span className="leading-relaxed font-normal">{m}</span>
-                    </li>
-                  ))}
-                </ul>
+                {displayRootLatin && (
+                  <span className="text-ink-mute font-medium">
+                    ({displayRootLatin})
+                  </span>
+                )}
+                {root && (
+                  <Link
+                    href={`/akar/${root.id}`}
+                    onClick={onClose}
+                    className="text-primary hover:underline font-semibold ml-1 inline-flex items-center"
+                  >
+                    <span>Eksplorasi Akar</span>
+                    <ArrowRight className="w-3 h-3 ml-0.5" />
+                  </Link>
+                )}
               </div>
-            )}
-          </div>
-        </div>
-
-        {/* Deep Root Etymology & Grammatical Role */}
-        <div className="p-5 sm:p-6 rounded-2xl bg-canvas-soft border border-hairline space-y-3.5">
-          <div className="flex items-center justify-between border-b border-hairline pb-2.5">
-            <span className="text-xs sm:text-sm font-semibold text-ink-primary flex items-center space-x-2 font-sans">
-              <Compass className="w-4 h-4 text-primary" />
-              <span>Analisis Morfologi &amp; Tata Bahasa Sharaf</span>
-            </span>
-            {root && (
-              <span className="text-xs text-ink-mute font-medium font-sans">
-                {root.totalOccurrences}x di Al-Qur&apos;an
-              </span>
-            )}
-          </div>
-
-          <div className="space-y-2 text-xs sm:text-sm text-ink-secondary font-sans leading-relaxed">
-            <div className="flex items-baseline space-x-2">
-              <span className="text-ink-mute font-medium">Peran Gramatikal:</span>
-              <span className="text-ink-primary font-medium">{displayGrammar}</span>
-            </div>
-            {wordDetail.wazanOrForm && (
-              <div className="flex items-baseline space-x-2">
-                <span className="text-ink-mute font-medium">Wazan / Bentuk:</span>
-                <span className="text-ink-primary font-medium">{wordDetail.wazanOrForm}</span>
-              </div>
-            )}
-          </div>
-
-          {wordDetail.rootExplanation && (
-            <div className="p-4 bg-canvas-surface rounded-2xl border border-hairline text-xs sm:text-sm text-ink-secondary leading-relaxed space-y-2 font-sans">
-              <span className="text-xs font-semibold uppercase tracking-wider text-ink-mute block">Catatan Semantik Kontekstual:</span>
-              <p className="text-ink-primary leading-relaxed font-normal">{wordDetail.rootExplanation}</p>
-              {wordDetail.classicalCitation && (
-                <p className="text-xs text-ink-mute italic pt-2 border-t border-hairline font-normal">
-                  Rujukan: {wordDetail.classicalCitation}
-                </p>
-              )}
             </div>
           )}
+        </div>
 
-          <div className="pt-1 flex justify-between items-center text-[11px] text-ink-mute font-sans">
-            <span className="inline-flex items-center space-x-1">
-              <span className={`w-1.5 h-1.5 rounded-full ${wordDetail.isVerified ? 'bg-primary' : 'bg-amber-500'}`} />
-              <span>{wordDetail.isVerified ? 'Korpus Otoritatif QAC' : 'Data Live API'}</span>
-            </span>
-            <span className="truncate max-w-[280px]">
-              Sumber: {wordDetail.sourceCitation}
-            </span>
+        {/* 2. Bentuk Kata & Peran Morfologis */}
+        <div className="p-4 sm:p-5 rounded-2xl bg-canvas-surface border border-hairline space-y-2 text-xs sm:text-sm font-sans">
+          <div className="flex items-center space-x-2 font-semibold text-ink-primary">
+            <Layers className="w-4 h-4 text-primary" />
+            <span>Bentuk Kata &amp; Peran Morfologi</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
+            <div className="p-2.5 bg-canvas-soft rounded-xl border border-hairline">
+              <span className="text-ink-mute block text-[11px]">Kategori Gramatikal:</span>
+              <span className="font-semibold text-ink-primary">{displayGrammar || displayPosTag}</span>
+            </div>
+            <div className="p-2.5 bg-canvas-soft rounded-xl border border-hairline">
+              <span className="text-ink-mute block text-[11px]">Wazan / Pola:</span>
+              <span className="font-semibold text-ink-primary">{wordDetail.wazanOrForm || 'Bentuk Leksikal Standar'}</span>
+            </div>
           </div>
         </div>
 
-        {/* Ayah Context Block */}
+        {/* 3. Konteks Ayat & Terjemahan Kemenag RI */}
         {ayahArabic && (
-          <div className="p-5 rounded-2xl bg-canvas-soft border border-hairline space-y-2.5">
+          <div className="p-5 rounded-2xl bg-canvas-soft border border-hairline space-y-3 font-sans">
             <div className="flex items-center justify-between border-b border-hairline pb-2">
-              <span className="text-xs sm:text-sm font-medium text-ink-mute flex items-center space-x-1.5 font-sans">
+              <span className="text-xs font-semibold text-ink-primary flex items-center space-x-1.5 font-sans">
                 <BookOpen className="w-3.5 h-3.5 text-primary" />
-                <span>Konteks Ayat:</span>
+                <span>Konteks Ayat dalam Mushaf:</span>
               </span>
-              {ayahNumber && (
-                <span className="text-xs text-ink-mute font-sans">
-                  Ayat Ke-{ayahNumber}
-                </span>
+              {surahNumber && ayahNumber && (
+                <Link
+                  href={`/baca?surah=${surahNumber}&ayah=${ayahNumber}`}
+                  onClick={onClose}
+                  className="text-xs text-primary hover:underline font-semibold inline-flex items-center space-x-1"
+                >
+                  <span>Buka di Mushaf</span>
+                  <ExternalLink className="w-3 h-3" />
+                </Link>
               )}
             </div>
 
             {renderHighlightedAyah()}
 
             {ayahIndo && (
-              <div className="pt-2 border-t border-hairline">
-                <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed italic font-sans">
+              <div className="pt-2 border-t border-hairline space-y-1">
+                <span className="text-[11px] font-semibold text-ink-mute uppercase tracking-wider block">
+                  Terjemahan Kemenag RI:
+                </span>
+                <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed font-normal">
                   &ldquo;{ayahIndo}&rdquo;
                 </p>
               </div>
@@ -311,38 +293,40 @@ export default function WordEtymologyModal({
           </div>
         )}
 
-        {/* Action Buttons: Navigate Directly to Full Root Page */}
-        <div className="pt-2">
-          {root ? (
-            <Link
-              href={`/akar/${root.id}`}
-              onClick={onClose}
-              className="w-full flex items-center justify-center space-x-2 bg-primary hover:bg-primary-deep text-white py-3.5 px-5 rounded-2xl text-xs sm:text-sm font-semibold shadow-subtle hover:shadow-soft transition-all font-sans"
-            >
-              <BookOpen className="w-4 h-4" />
-              <span>Lihat Detail Akar Kata ({root.rootLatin})</span>
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Link>
-          ) : wordDetail.rootSlug ? (
-            <Link
-              href={`/akar/${wordDetail.rootSlug}`}
-              onClick={onClose}
-              className="w-full flex items-center justify-center space-x-2 bg-primary hover:bg-primary-deep text-white py-3.5 px-5 rounded-2xl text-xs sm:text-sm font-semibold shadow-subtle hover:shadow-soft transition-all font-sans"
-            >
-              <BookOpen className="w-4 h-4" />
-              <span>Lihat Detail Morfologi &amp; Sharaf</span>
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Link>
-          ) : (
-            <Link
-              href={`/cari?q=${encodeURIComponent(wordArabic)}`}
-              onClick={onClose}
-              className="w-full flex items-center justify-center space-x-2 bg-primary hover:bg-primary-deep text-white py-3.5 px-5 rounded-2xl text-xs sm:text-sm font-semibold shadow-subtle hover:shadow-soft transition-all font-sans"
-            >
-              <BookOpen className="w-4 h-4" />
-              <span>Lihat Detail Kata &ldquo;{wordArabic}&rdquo;</span>
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Link>
+        {/* 4. Collapsible Detail Corpus (Depth on Demand) */}
+        <div className="border-t border-hairline pt-2">
+          <button
+            onClick={() => setIsCorpusOpen(!isCorpusOpen)}
+            className="w-full flex items-center justify-between py-2 text-xs text-ink-mute hover:text-ink-primary font-medium font-sans transition-colors"
+          >
+            <span className="flex items-center space-x-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+              <span>Detail Corpus (QAC v0.4 · University of Leeds)</span>
+            </span>
+            {isCorpusOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          </button>
+
+          {isCorpusOpen && (
+            <div className="p-4 bg-canvas-soft rounded-2xl border border-hairline text-xs font-mono space-y-1.5 mt-2 animate-in fade-in duration-150">
+              <div className="flex justify-between">
+                <span className="text-ink-mute">Lemma:</span>
+                <span className="text-ink-primary">{wordDetail.rootLatin || '-'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-ink-mute">Root:</span>
+                <span className="text-ink-primary">{displayRootLetters || '-'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-ink-mute">POS Category:</span>
+                <span className="text-ink-primary">{displayPosTag}</span>
+              </div>
+              {surahNumber && ayahNumber && (
+                <div className="flex justify-between">
+                  <span className="text-ink-mute">QAC Coordinate:</span>
+                  <span className="text-ink-primary">{surahNumber}:{ayahNumber}:{wordIndex || 1}</span>
+                </div>
+              )}
+            </div>
           )}
         </div>
 

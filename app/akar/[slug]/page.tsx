@@ -40,9 +40,10 @@ export default async function RootDetailPage({ params }: PageProps) {
   }
 
   const occurrencesCount = root.occurrences?.length || 0;
+  const totalForms = (root.verbs?.length || 0) + (root.nouns?.length || 0);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10 font-sans">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10 font-sans">
       {/* Top Header Navigation */}
       <div className="flex items-center justify-between">
         <Link
@@ -53,19 +54,19 @@ export default async function RootDetailPage({ params }: PageProps) {
           <span>Kembali ke Beranda</span>
         </Link>
 
-        {/* Quick Section Anchor Pills */}
+        {/* Quick Section Anchor Navigation */}
         <div className="flex items-center space-x-2 text-xs font-sans">
           <a
             href="#makna"
             className="px-3 py-1.5 rounded-full bg-canvas-surface border border-hairline hover:border-primary text-ink-secondary hover:text-primary transition-all shadow-subtle"
           >
-            Makna
+            Makna &amp; Konteks
           </a>
           <a
             href="#bentuk"
             className="px-3 py-1.5 rounded-full bg-canvas-surface border border-hairline hover:border-primary text-ink-secondary hover:text-primary transition-all shadow-subtle"
           >
-            Bentuk Kata
+            Bentuk ({totalForms})
           </a>
           <a
             href="#concordance"
@@ -95,8 +96,9 @@ export default async function RootDetailPage({ params }: PageProps) {
 
         {/* Clean Stats Text */}
         <p className="text-sm sm:text-base text-ink-mute font-sans">
-          <strong className="text-ink-primary font-semibold">{root.totalOccurrences}</strong> kemunculan morfologis ·{' '}
-          <strong className="text-ink-primary font-semibold">{occurrencesCount}</strong> ayat
+          <strong className="text-ink-primary font-semibold">{root.totalOccurrences}</strong> kemunculan ·{' '}
+          <strong className="text-ink-primary font-semibold">{occurrencesCount}</strong> ayat ·{' '}
+          <strong className="text-ink-primary font-semibold">{totalForms}</strong> bentuk
           {isLiveFetched && (
             <span className="inline-flex items-center space-x-1 ml-2 text-xs text-primary font-medium">
               <Radio className="w-3 h-3 animate-pulse" />
@@ -119,27 +121,30 @@ export default async function RootDetailPage({ params }: PageProps) {
             className="px-6 py-2.5 rounded-full bg-canvas-soft hover:bg-canvas-page border border-hairline text-ink-secondary hover:text-primary text-xs sm:text-sm font-semibold transition-all flex items-center space-x-1.5"
           >
             <Layers className="w-4 h-4" />
-            <span>Eksplorasi Bentuk</span>
+            <span>Eksplorasi Bentuk ({totalForms})</span>
           </a>
         </div>
       </section>
 
-      {/* Makna & Konteks Section */}
+      {/* 1. Makna & Konteks Section (Tadabbur-Grade Insight) */}
       <section id="makna" className="scroll-mt-24">
         <EtymologyCard
           rootArabic={root.rootArabic}
           rootLatin={root.rootLatin}
+          coreMeaning={root.coreMeaning}
+          usagePatterns={root.usagePatterns}
+          contextualNote={root.contextualNote}
           etymologyNote={root.etymologyNote}
           meaningsIndonesian={root.meaningsIndonesian}
         />
       </section>
 
-      {/* Bentuk dalam Al-Qur'an (Morphology Forms) */}
+      {/* 2. Bentuk dalam Al-Qur'an (Morphology Forms) */}
       <section id="bentuk" className="scroll-mt-24">
         <DerivativesGrid verbs={root.verbs} nouns={root.nouns} />
       </section>
 
-      {/* Konkordansi Ayat (The Heart of Root Explorer) */}
+      {/* 3. Konkordansi Ayat (The Heart of Root Explorer) */}
       <section id="concordance" className="scroll-mt-24 space-y-4">
         <div className="border-b border-hairline pb-2.5">
           <h2 className="text-xl sm:text-2xl font-light text-ink-primary tracking-tight flex items-center space-x-2 font-sans">
@@ -157,12 +162,12 @@ export default async function RootDetailPage({ params }: PageProps) {
         />
       </section>
 
-      {/* Kajian Lanjutan / Deep Corpus (Depth on Demand - Bottom Section) */}
+      {/* 4. Analisis Corpus (Depth on Demand - Bottom Collapsed Section) */}
       <section className="pt-6 border-t border-hairline">
         <div className="p-6 sm:p-7 rounded-3xl bg-canvas-soft border border-hairline space-y-4 text-xs sm:text-sm font-sans">
           <div className="flex items-center space-x-2 text-ink-primary font-semibold">
             <Database className="w-4 h-4 text-primary" />
-            <span>Kajian Lanjutan &amp; Metadata Korpus</span>
+            <span>Analisis Corpus &amp; Metadata QAC v0.4</span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-ink-secondary">

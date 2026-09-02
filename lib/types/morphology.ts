@@ -7,17 +7,22 @@ export interface WordSegment {
   rootArabic?: string;       // e.g. "ص ل و"
   meaningIndo: string;
   wordLocation?: string;    // e.g. "2:153:4"
+  lemma?: string;           // e.g. "sam~aA'"
+  features?: string;        // e.g. "POS:N|ROOT:smw|LEM:sam~aA'"
 }
 
 export interface DerivativeWord {
   id: string;
-  arabic: string;            // e.g. "صَبَرَ"
-  transliteration: string;   // e.g. "sabara"
+  arabic: string;            // e.g. "سَمَّىٰ"
+  transliteration: string;   // e.g. "samma"
   type: 'verb' | 'noun' | 'adjective' | 'particle';
-  form?: string;             // e.g. "Form I", "Form III", "Form VIII"
+  form?: string;             // e.g. "Form I", "Form II", "Form VIII"
   posTag: string;            // e.g. "Fi'il Madhi", "Isim Fa'il", "Masdar"
-  meaningIndo: string;       // e.g. "Bersabar / Menahan Diri"
+  meaningIndo: string;       // e.g. "Menamai / memberi nama"
   frequency: number;         // Occurrence count in Quran
+  buckwalter?: string;       // e.g. "sam~aY`"
+  qacPos?: string;           // e.g. "V"
+  qacFeatures?: string;      // e.g. "ROOT:smw|LEM:sam~aY`"
 }
 
 export interface VerseOccurrence {
@@ -33,15 +38,24 @@ export interface VerseOccurrence {
   wordSegments?: WordSegment[]; // Word-by-Word Interlinear Analysis ala Quranic Corpus
 }
 
+export interface QuranicUsagePattern {
+  title: string;              // e.g. "Langit / Sesuatu yang tinggi"
+  description: string;        // e.g. "Digunakan untuk menunjuk sesuatu yang berada di atas atau memiliki sifat ketinggian."
+  examples?: string[];        // e.g. ["السَّمَاء", "السَّمَاوَات"]
+}
+
 export interface RootWord {
-  id: string;                 // e.g. "s-b-r"
-  rootArabic: string;         // e.g. "ص ب ر"
-  rootArabicJoined: string;   // e.g. "صبر"
-  rootLatin: string;          // e.g. "sabar"
-  titleIndo: string;          // e.g. "Sabar / Ketabahan / Menahan Diri"
-  titleEnglish: string;       // e.g. "Patience / Steadfastness / Endure"
+  id: string;                 // e.g. "s-m-w"
+  rootArabic: string;         // e.g. "س م و"
+  rootArabicJoined: string;   // e.g. "سمو"
+  rootLatin: string;          // e.g. "smw"
+  titleIndo: string;          // e.g. "Tinggi / Langit / Nama / Menamai"
+  titleEnglish: string;       // e.g. "High / Heaven / Name"
+  coreMeaning?: string;       // e.g. "Akar س م و berkaitan dengan gagasan tinggi..."
+  usagePatterns?: QuranicUsagePattern[]; // Contextual Quranic usage breakdown
+  contextualNote?: string;    // Contextual note on lexical connection vs actual verse meaning
   meaningsIndonesian: string[];
-  etymologyNote: string;      // E.g. Classical etymology "Kata sobaro secara etimologi merujuk pada batu yang sangat keras..."
+  etymologyNote: string;      // Summary explanation
   totalOccurrences: number;
   verbsCount: number;
   nounsCount: number;
