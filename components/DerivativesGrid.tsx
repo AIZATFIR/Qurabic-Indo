@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Layers, BookOpen, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { DerivativeWord } from '@/lib/types/morphology';
 
@@ -136,13 +137,22 @@ export default function DerivativesGrid({ verbs = [], nouns = [] }: DerivativesG
               {/* Bottom Actions & Collapsible Corpus Detail */}
               <div className="pt-2 border-t border-hairline space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <a
-                    href="#concordance"
-                    className="inline-flex items-center space-x-1 text-primary hover:underline font-semibold font-sans"
-                  >
-                    <span>Lihat {item.frequency} ayat</span>
-                    <ExternalLink className="w-3 h-3 ml-0.5" />
-                  </a>
+                  <div className="flex items-center space-x-2">
+                    <Link
+                      href={`/kata/${encodeURIComponent(item.arabic)}`}
+                      className="text-ink-primary hover:text-primary font-semibold font-sans hover:underline inline-flex items-center space-x-1"
+                    >
+                      <span>Detail Kata</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </Link>
+                    <span className="text-ink-mute">·</span>
+                    <a
+                      href="#concordance"
+                      className="text-primary hover:underline font-medium font-sans"
+                    >
+                      <span>{item.frequency} ayat</span>
+                    </a>
+                  </div>
 
                   <button
                     onClick={() => toggleCorpusDetail(item.id)}

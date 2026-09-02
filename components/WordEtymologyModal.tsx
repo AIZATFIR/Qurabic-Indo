@@ -211,32 +211,41 @@ export default function WordEtymologyModal({
             </div>
           </div>
 
-          {/* Root Link Banner */}
-          {displayRootLetters && (
-            <div className="pt-2 border-t border-hairline flex items-center justify-between text-xs font-sans">
-              <span className="text-ink-mute font-medium">Akar Kata:</span>
-              <div className="flex items-center space-x-2">
-                <span className="font-arabic text-base font-bold text-primary" dir="rtl">
-                  {displayRootLetters}
+          {/* Word Actions & Root Link Banner */}
+          <div className="pt-2 border-t border-hairline flex flex-wrap items-center justify-between gap-2 text-xs font-sans">
+            <div className="flex items-center space-x-2">
+              <span className="text-ink-mute font-medium">Akar:</span>
+              <span className="font-arabic text-base font-bold text-primary" dir="rtl">
+                {displayRootLetters || '-'}
+              </span>
+              {displayRootLatin && (
+                <span className="text-ink-mute font-medium">
+                  ({displayRootLatin})
                 </span>
-                {displayRootLatin && (
-                  <span className="text-ink-mute font-medium">
-                    ({displayRootLatin})
-                  </span>
-                )}
-                {root && (
-                  <Link
-                    href={`/akar/${root.id}`}
-                    onClick={onClose}
-                    className="text-primary hover:underline font-semibold ml-1 inline-flex items-center"
-                  >
-                    <span>Eksplorasi Akar</span>
-                    <ArrowRight className="w-3 h-3 ml-0.5" />
-                  </Link>
-                )}
-              </div>
+              )}
             </div>
-          )}
+
+            <div className="flex items-center space-x-2">
+              <Link
+                href={`/kata/${encodeURIComponent(wordArabic.trim())}`}
+                onClick={onClose}
+                className="px-3 py-1.5 rounded-full bg-primary hover:bg-primary-deep text-white text-xs font-semibold shadow-subtle transition-all inline-flex items-center space-x-1"
+              >
+                <span>Buka Detail Kata</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+              {root && (
+                <Link
+                  href={`/akar/${root.id}`}
+                  onClick={onClose}
+                  className="px-3 py-1.5 rounded-full bg-canvas-surface hover:bg-canvas-page border border-hairline text-ink-primary hover:text-primary text-xs font-semibold transition-all inline-flex items-center space-x-1"
+                >
+                  <span>Akar</span>
+                  <ExternalLink className="w-3 h-3" />
+                </Link>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* 2. Bentuk Kata & Peran Morfologis */}

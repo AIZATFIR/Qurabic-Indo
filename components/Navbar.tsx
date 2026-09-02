@@ -38,15 +38,18 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             
-            {/* Logo Branding */}
-            <div className="flex items-center space-x-3">
-              <Link href="/" className="flex items-center space-x-2 group">
+            {/* Logo Branding with Proper Breathing Space */}
+            <div className="flex items-center">
+              <Link href="/" className="flex items-center space-x-3 group py-1">
+                <div className="w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-subtle shrink-0">
+                  <BookOpen className="w-4 h-4" />
+                </div>
                 <div className="flex flex-col">
-                  <span className="font-sans font-semibold text-base text-ink-primary tracking-tight leading-none group-hover:text-primary transition-colors">
-                    Qurabic <span className="text-primary font-normal">(Indo)</span>
+                  <span className="font-sans font-bold text-base text-ink-primary tracking-tight leading-none group-hover:text-primary transition-colors">
+                    Qurabic <span className="text-primary font-normal text-xs">(Indo)</span>
                   </span>
                   <span className="text-[10px] text-ink-mute font-sans mt-0.5 tracking-wide">
-                    Corpus &amp; Morfologi
+                    Al-Qur&apos;an &amp; Morfologi
                   </span>
                 </div>
               </Link>

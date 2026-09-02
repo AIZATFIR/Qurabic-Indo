@@ -1,5 +1,6 @@
 import { RootWord, VerseOccurrence, WordSegment } from '../types/morphology';
 import { extractArabicRootLetters, findBestMatchingRoot, inferGrammarRole } from '../search/root-search';
+import { cleanGlossToIndonesian } from '../search/word-dictionary';
 
 // AlQuran Cloud Search API response types
 export interface ApiSearchMatch {
@@ -75,7 +76,8 @@ export async function fetchSurahWithWBW(surahNumber: number): Promise<FullAyahWB
       const parsedWords: WBWWord[] = rawWords.map((w: any) => {
         const arabic = w.text_uthmani || w.text || '';
         const transliteration = w.transliteration?.text || '';
-        const meaningIndo = w.translation?.text || '';
+        const rawMeaning = w.translation?.text || '';
+        const meaningIndo = cleanGlossToIndonesian(rawMeaning);
         const charType = (w.char_type_name === 'end' ? 'end' : 'word') as 'word' | 'end';
         const location = w.location || `${surahNumber}:${v.verse_number}:${w.position}`;
 
@@ -179,7 +181,8 @@ export async function fetchVerseWords(verseKey: string): Promise<WordSegment[]> 
       .filter((w: any) => w.char_type_name === 'word')
       .map((w: any, idx: number) => {
         const arabic = w.text_uthmani || w.text || '';
-        const meaningIndo = w.translation?.text || '';
+        const rawMeaning = w.translation?.text || '';
+        const meaningIndo = cleanGlossToIndonesian(rawMeaning);
         const grammar = inferGrammarRole(arabic, meaningIndo);
         const matchedRoot = findBestMatchingRoot(arabic, meaningIndo);
         const posCode: 'N' | 'V' | 'P' = grammar.posCategory === "Fi'il" ? 'V' : grammar.posCategory === 'Harf' ? 'P' : 'N';

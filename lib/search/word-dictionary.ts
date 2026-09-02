@@ -19,7 +19,87 @@ export interface WordDetailedInfo {
   sourceCitation: string;
 }
 
-// Deep Lexical & Etymological Knowledge Base for High-Frequency & Key Quranic Vocabulary
+// Common English-to-Indonesian gloss translations for upstream Word-by-Word data
+const ENGLISH_TO_INDO_GLOSS: Record<string, string> = {
+  'and': 'dan',
+  'or': 'atau',
+  'then': 'kemudian',
+  'in': 'di dalam',
+  'on': 'di atas',
+  'from': 'dari',
+  'to': 'kepada / ke',
+  'with': 'dengan',
+  'by': 'demi / dengan',
+  'not': 'tidak / bukan',
+  'no': 'tidak',
+  'yes': 'ya',
+  'indeed': 'sungguh / sesungguhnya',
+  'allah': 'Allah',
+  'god': 'Allah / Tuhan',
+  'lord': 'Tuhan Pemelihara',
+  'the most gracious': 'Maha Pengasih',
+  'the most merciful': 'Maha Penyayang',
+  'all praise': 'segala puji',
+  'praise': 'pujian',
+  'of the worlds': 'semesta alam',
+  'the master': 'Penguasa / Pemilik',
+  'day of judgment': 'Hari Pembalasan',
+  'you alone': 'hanya kepada-Mu',
+  'we worship': 'kami menyembah',
+  'we ask for help': 'kami memohon pertolongan',
+  'guide us': 'tunjukilah kami',
+  'the straight path': 'jalan yang lurus',
+  'the path of those': 'jalan orang-orang yang',
+  'you have bestowed favor': 'Engkau beri nikmat',
+  'not of those who earned anger': 'bukan jalan mereka yang dimurkai',
+  'nor of those who are astray': 'dan bukan pula jalan mereka yang sesat',
+  'they say': 'mereka berkata',
+  'he said': 'dia berkata',
+  'say': 'katakanlah',
+  'and they say': 'dan mereka berkata',
+  'and he pardons': 'dan Dia memaafkan',
+  'he pardons': 'Dia memaafkan',
+  'but he pardons': 'dan Dia memaafkan (sebagian besar)',
+  'fear': 'takut / rasa takut',
+  'patience': 'sabar / ketabahan',
+  'prayer': 'shalat',
+  'charity': 'zakat / sedekah',
+  'faith': 'iman / percaya',
+  'believers': 'orang-orang beriman',
+  'disbelievers': 'orang-orang kafir',
+  'book': 'kitab / Al-Qur\'an',
+  'truth': 'kebenaran',
+  'peace': 'kedamaian / keselamatan',
+  'forgiveness': 'ampunan / pemaafan'
+};
+
+export function cleanGlossToIndonesian(rawGloss?: string, fallbackMeaning?: string): string {
+  if (!rawGloss) return fallbackMeaning || 'Kata dalam Al-Qur\'an';
+  const trimmed = rawGloss.trim();
+  const lower = trimmed.toLowerCase();
+
+  // Direct map match
+  if (ENGLISH_TO_INDO_GLOSS[lower]) {
+    return ENGLISH_TO_INDO_GLOSS[lower];
+  }
+
+  // Check if string contains English words that should be translated
+  for (const [en, id] of Object.entries(ENGLISH_TO_INDO_GLOSS)) {
+    if (lower === en || lower === `(${en})` || lower === `"${en}"`) {
+      return id;
+    }
+  }
+
+  // If text is purely English characters without Indonesian, use fallback
+  const isEnglishOnly = /^[a-zA-Z\s.,'"()\-]+$/.test(trimmed) && !/^(dan|atau|dari|ke|di|pada|yang|mereka|kami|dia|aku|adalah|akan|telah|tidak|bukan|allah|rasul|ayat|surat|tuhan|maha|pengasih|penyayang|puji|segala|hari|jalan|lurus|nikmat|murka|sesat)/i.test(trimmed);
+  if (isEnglishOnly && fallbackMeaning) {
+    return fallbackMeaning;
+  }
+
+  return trimmed;
+}
+
+// Curated Word Definitions (100% Indonesian, Honest Attribution)
 const CURATED_WORD_DICTIONARY: Record<string, {
   rootLetters: string;
   rootLatin: string;
@@ -30,366 +110,133 @@ const CURATED_WORD_DICTIONARY: Record<string, {
   grammaticalRole: string;
   posTag: string;
   wazanOrForm?: string;
-  classicalCitation?: string;
   quranicNuances?: string[];
 }> = {
   'الحمد': {
     rootLetters: 'ح م د',
     rootLatin: 'hamada',
     rootSlug: 'h-m-d',
-    primaryMeaning: 'Segala puji dan sanjungan sempurna',
+    primaryMeaning: 'Segala puji dan sanjungan sempurna bagi Allah',
     meanings: [
       'Segala puji dan sanjungan sempurna bagi Allah semata',
-      'Pujian yang berpadu dengan mahabbah (cinta mendalam) dan ta\'zhim (pengagungan mutlak)',
+      'Pujian yang berpadu dengan cinta mendalam (mahabbah) dan pengagungan mutlak (ta\'zhim)',
       'Pengakuan atas kesempurnaan Dzat, Sifat, dan Perbuatan-Nya',
       'Pujian atas anugerah dan kenikmatan yang dilimpahkan dengan kehendak-Nya'
     ],
-    rootExplanation: 'Akar kata H-M-D (ح-م-د) dalam Lisan al-Arab merujuk pada sanjungan yang hanya ditujukan kepada pihak yang memiliki sifat-sifat mulia atas kehendak-Nya sendiri, berbeda dengan madah (pujian fisik) dan syukr (pujian atas nikmat yang diterima).',
-    grammaticalRole: 'Isim Ma\'rifah dengan Alif-Lam Istighraq (mencakup seluruh ragam pujian)',
+    rootExplanation: 'Akar kata ح م د merujuk pada sanjungan yang ditujukan kepada Dzat yang berbuat kebaikan atas kehendak dan kesempurnaan sifat-Nya sendiri.',
+    grammaticalRole: 'Isim Ma\'rifah dengan Alif-Lam (mencakup seluruh ragam pujian)',
     posTag: 'Isim',
-    wazanOrForm: 'Masdar (Fa\'l)',
-    classicalCitation: 'Ibn Faris (Maqayis al-Lughah): "Huruf ha, mim, dan dal adalah asal yang shahih yang menunjukkan kebalikan dari celaan (dzamm), yaitu sanjungan atas kebaikan."'
+    wazanOrForm: 'Masdar (Fa\'l)'
   },
   'رب': {
     rootLetters: 'ر ب ب',
     rootLatin: 'rabba',
     rootSlug: 'r-b-b',
-    primaryMeaning: 'Tuhan Pemelihara, Pencipta, dan Pendidik semesta alam',
+    primaryMeaning: 'Tuhan Pemelihara, Pencipta, dan Pengatur semesta alam',
     meanings: [
       'Tuhan Pemelihara, Pencipta, dan Pengatur seluruh alam semesta',
       'Al-Murabbi: Dzat yang menumbuhkembangkan makhluk-Nya tahap demi tahap menuju kesempurnaan',
-      'Al-Malik: Pemilik mutlak yang menguasai seluruh urusan makhluk',
-      'Al-Sayyid: Penguasa yang ditaati perintah-Nya dan ditaati ketetapan-Nya'
+      'Pemilik mutlak (Al-Malik) yang ditaati dan disembah dengan penuh ketundukan'
     ],
-    rootExplanation: 'Akar kata R-B-B merujuk pada tarbiyah (membimbing dan memelihara dari awal hingga tuntas) serta kepemilikan mutlak tanpa sekutu.',
-    grammaticalRole: 'Isim Mudhaf (Mudhaf ilaih: al-Alamin)',
+    rootExplanation: 'Akar kata ر ب ب mengandung makna kepemilikan, pemeliharaan berkelanjutan (tarbiyah), serta perbaikan keadaan ciptaan.',
+    grammaticalRole: 'Isim Mudhaf (diidhafahkan kepada al-\'Alamin)',
     posTag: 'Isim',
-    wazanOrForm: 'Sifah Musyabbahah / Isim Fa\'il',
-    classicalCitation: 'Ar-Raghib al-Ashfahani (Al-Mufradat): "Ar-Rabb pada asalnya adalah tarbiyah, yaitu mengembangkan sesuatu dari satu keadaan ke keadaan lain hingga mencapai batas kesempurnaannya."'
-  },
-  'العالمين': {
-    rootLetters: 'ع ل م',
-    rootLatin: '\'alima',
-    rootSlug: 'c-l-m',
-    primaryMeaning: 'Semesta alam (segala sesuatu selain Allah)',
-    meanings: [
-      'Semesta alam beserta seluruh ragam makhluk dan dimensinya',
-      'Seluruh ciptaan Allah: alam manusia, malaikat, jin, hewan, tumbuhan, dan kosmos',
-      'Setiap kelompok makhluk berakal yang memiliki keteraturan kehidupan'
-    ],
-    rootExplanation: 'Akar kata \'A-L-M (ع-ل-م) adalah tanda penunjuk (alam). Seluruh semesta dinamakan \'alam karena keberadaannya menjadi bukti dan tanda nyata akan adanya Sang Pencipta.',
-    grammaticalRole: 'Isim Jamak Mudzakkar Salim dalam posisi Majrur (dengan tanda ya)',
-    posTag: 'Isim',
-    wazanOrForm: 'Jamak \'Alam',
-    classicalCitation: 'Lisan al-Arab: "Al-\'Alamu adalah tanda yang membedakan sesuatu, dan seluruh alam adalah tanda keberadaan Allah."'
+    wazanOrForm: 'Sifat Musyabbahah / Isim'
   },
   'الرحمن': {
     rootLetters: 'ر ح م',
     rootLatin: 'rahima',
-    rootSlug: 'r-h-m',
-    primaryMeaning: 'Maha Pengasih (Pemilik rahmat maha luas bagi seluruh ciptaan)',
+    rootSlug: 'r-H-m',
+    primaryMeaning: 'Maha Pengasih dengan rahmat yang melimpah bagi seluruh makhluk',
     meanings: [
-      'Maha Pengasih yang rahmat-Nya meliputi langit, bumi, dan seluruh makhluk',
-      'Rahmat universal yang dinikmati semua ciptaan di dunia tanpa terkecuali',
-      'Sifat Dzat Allah yang penuh dengan kelembutan, ampunan, dan kelapangan'
+      'Maha Pengasih dengan kasih sayang yang meliputi seluruh alam semesta',
+      'Rahmat yang luas di dunia bagi orang beriman maupun orang kafir',
+      'Sifat kemurahan Allah yang terus-menerus mengalir bagi seluruh ciptaan-Nya'
     ],
-    rootExplanation: 'Berasal dari akar R-H-M (rahim ibu), yang melambangkan kelembutan, perlindungan total, dan kasih sayang yang mendalam. Wazan Fa\'lan (فَعْلَان) menunjukkan kepenuhan (al-imtila\') dan keluasan yang meluap-luap.',
-    grammaticalRole: 'Isim Alam / Sifat Allah Khusus (tidak boleh disematkan kepada makhluk)',
+    rootExplanation: 'Wazan Fa\'lan (فَعْلَان) menunjukkan kepenuhan dan kelimpahan rahmat yang tiada batas.',
+    grammaticalRole: 'Isim Alam / Sifat Allah SWT (Na\'at / Sifat bagi Lafzhul Jalalah)',
     posTag: 'Isim',
-    wazanOrForm: 'Wazan Fa\'lan (فَعْلَان)',
-    classicalCitation: 'Ibn Abbas r.a.: "Ar-Rahman adalah Dzat yang menyayangi seluruh makhluk di dunia, sedangkan Ar-Rahim khusus untuk orang-orang beriman di akhirat."'
+    wazanOrForm: 'Wazan Fa\'lan (Menunjukkan Kepenuhan)'
   },
   'الرحيم': {
     rootLetters: 'ر ح م',
     rootLatin: 'rahima',
-    rootSlug: 'r-h-m',
-    primaryMeaning: 'Maha Penyayang (Pemberi rahmat berkesinambungan bagi hamba beriman)',
+    rootSlug: 'r-H-m',
+    primaryMeaning: 'Maha Penyayang dengan kasih sayang khusus yang abadi',
     meanings: [
-      'Maha Penyayang yang melimpahkan rahmat kekal dan petunjuk bagi kaum beriman',
-      'Pemberi hidayah di dunia serta ampunan dan kenikmatan surga di akhirat',
-      'Kelanjutan dan keberlangsungan kasih sayang yang tidak pernah terputus'
+      'Maha Penyayang dengan rahmat khusus yang abadi bagi hamba-hamba-Nya yang beriman di akhirat',
+      'Kasih sayang yang menyertai ketaatan dan memberikan pahala keselamatan di surga',
+      'Perlindungan dan kelembutan Ilahi yang berkesinambungan'
     ],
-    rootExplanation: 'Wazan Fa\'il (فَعِيل) dalam bahasa Arab menunjukkan ketetapan (tsubut) dan pengulangan terus-menerus atas tersampaikannya rahmat kepada para hamba.',
-    grammaticalRole: 'Sifat Musyabbahah yang menunjukkan kesinambungan rahmat',
+    rootExplanation: 'Wazan Fa\'il (فَعِيل) menunjukkan sifat yang melekat tetap dan berkesinambungan bagi orang beriman.',
+    grammaticalRole: 'Sifat / Na\'at kedua bagi Lafzhul Jalalah',
     posTag: 'Isim',
-    wazanOrForm: 'Wazan Fa\'il (فَعِيل)',
-    classicalCitation: 'Imam Al-Ghazali: "Ar-Rahim adalah Dzat yang mencurahkan rahmat dan pertolongan tiada henti kepada mereka yang beriman."'
+    wazanOrForm: 'Wazan Fa\'il (Sifat Musyabbahah)'
   },
-  'مالك': {
-    rootLetters: 'م ل ك',
-    rootLatin: 'malaka',
-    rootSlug: 'm-l-k',
-    primaryMeaning: 'Pemilik dan Raja Mutlak',
+  'الصابرين': {
+    rootLetters: 'ص ب ر',
+    rootLatin: 'sabara',
+    rootSlug: 'S-b-r',
+    primaryMeaning: 'Orang-orang yang senantiasa bersabar dan teguh hati',
     meanings: [
-      'Pemilik tunggal dan Penguasa mutlak yang menguasai hari perhitungan',
-      'Penguasa yang mengatur seluruh urusan tanpa ada yang dapat menyanggah',
-      'Raja yang kekuasaan-Nya kekal abadi saat seluruh kekuasaan semu makhluk sirna'
+      'Orang-orang yang memiliki ketabahan dan daya tahan jiwa tingkat tinggi',
+      'Mereka yang menahan diri dari keluh kesah dan kemurkaan saat diuji kesulitan',
+      'Orang yang konsisten menjalankan ketaatan dan menjauhi maksiat'
     ],
-    rootExplanation: 'Akar kata M-L-K (م-ل-ك) mengandung makna pengikatan yang kuat, kekuasaan penuh untuk mengatur, dan kepemilikan hakiki.',
-    grammaticalRole: 'Isim Fa\'il (Pelaku kepemilikan/kerajaan)',
+    rootExplanation: 'Akar kata ص ب ر berkaitan dengan menahan dan mengikat diri pada jalan yang benar.',
+    grammaticalRole: 'Isim Fa\'il Jama\' Mudzakkar Salim dalam posisi Nashab / Jar',
     posTag: 'Isim',
-    wazanOrForm: 'Wazan Fa\'il (فَاعِل)'
-  },
-  'الدين': {
-    rootLetters: 'د ي ن',
-    rootLatin: 'dana',
-    rootSlug: 'd-y-n',
-    primaryMeaning: 'Pembalasan, Perhitungan, dan Ketundukan Agama',
-    meanings: [
-      'Hari Pembalasan dan Perhitungan (Yaumul Hisab wal Jaza\') atas segala amal perbuatan',
-      'Ketundukan, ketaatan, dan ketetapan syariat yang hakiki',
-      'Pembalasan yang adil dan sempurna tanpa kezaliman sedikit pun'
-    ],
-    rootExplanation: 'Akar kata D-Y-N berarti perhitungan timbal balik dan ketetapan hutang-piutang. Dinamai Yaumuddin karena setiap amal akan dibalas dengan balasan yang setimpal.',
-    grammaticalRole: 'Isim Mudhaf Ilaih dalam posisi Majrur',
-    posTag: 'Isim',
-    wazanOrForm: 'Masdar (Fi\'l)'
-  },
-  'إياك': {
-    rootLetters: 'أ ي ي',
-    rootLatin: 'iyya',
-    primaryMeaning: 'Hanya kepada-Mu semata (pengkhususan mutlak)',
-    meanings: [
-      'Hanya kepada-Mu semata kami menyembah dan memohon pertolongan',
-      'Pemberian takhshish (pengkhususan): mendahulukan objek untuk menegaskan tauhid',
-      'Penafian total terhadap segala bentuk peribadatan dan permohonan kepada selain Allah'
-    ],
-    rootExplanation: 'Dhamir Munfashil Nashab yang ditempatkan di awal kalimat (taqdim al-maf\'ul) untuk memberikan faedah al-hashr (pembatasan mutlak).',
-    grammaticalRole: 'Dhamir Munfashil dalam kedudukan Maf\'ul Bih Muqaddam (Objek yang didahulukan)',
-    posTag: 'Harf / Dhamir',
-    wazanOrForm: 'Dhamir Munfashil'
-  },
-  'نعبد': {
-    rootLetters: 'ع ب د',
-    rootLatin: '\'abada',
-    rootSlug: 'c-b-d',
-    primaryMeaning: 'Kami menyembah dan menghambakan diri sepenuhnya',
-    meanings: [
-      'Kami menyembah, menaati, dan menghambakan diri hanya kepada-Mu',
-      'Puncak ketundukan (ghayatul khudhu\') yang berpadu dengan puncak kecintaan (ghayatul hubb)',
-      'Menjalankan seluruh syariat dan perintah dengan penuh kerendahan hati'
-    ],
-    rootExplanation: 'Akar \'A-B-D (ع-ب-d) dalam bahasa Arab awalnya bermakna tariq mu\'abbad (jalan yang diratakan dan diinjak-injak hingga mudah dilalui). Hamba yang beribadah adalah jiwa yang merendahkan diri sepenuhnya di hadapan keagungan Allah.',
-    grammaticalRole: 'Fi\'il Mudhari\' Marfu\' dengan tanda dhammah (Pelaku: Nahnu / Kami)',
-    posTag: "Fi'il",
-    wazanOrForm: 'Fi\'il Mudhari\' Tsulatsi Mujarrad (Yaf\'ulu)'
-  },
-  'نستعين': {
-    rootLetters: 'ع و ن',
-    rootLatin: '\'awana',
-    rootSlug: 'c-w-n',
-    primaryMeaning: 'Kami memohon pertolongan dan daya kekuatan',
-    meanings: [
-      'Kami memohon pertolongan, kemudahan, dan taufik hanya kepada-Mu',
-      'Permohonan bantuan (isti\'anah) yang tidak disandarkan kepada makhluk, melainkan hanya kepada Allah',
-      'Pengakuan kelemahan diri dan kebutuhan mutlak akan pertolongan Ilahi'
-    ],
-    rootExplanation: 'Akar \'A-W-N (ع-و-ن) bermakna bantuan. Penambahan huruf Alif, Sin, dan Ta\' (Wazan Istaf\'ala) bermakna thalab (meminta/memohon bantuan dengan sungguh-sungguh).',
-    grammaticalRole: 'Fi\'il Mudhari\' Wazan Istaf\'ala (Pelaku: Nahnu)',
-    posTag: "Fi'il",
-    wazanOrForm: 'Form X (Istaf\'ala / Yastaf\'ilu)'
-  },
-  'اهدنا': {
-    rootLetters: 'ه د ي',
-    rootLatin: 'hada',
-    rootSlug: 'h-d-y',
-    primaryMeaning: 'Tunjukilah, bimbinglah, dan tetapkanlah kami di jalan kebenaran',
-    meanings: [
-      'Tunjukilah dan bimbinglah kami ke jalan yang lurus',
-      'Hidayatul Irsyad: Penjelasan jalan kebenaran agar terang benderang',
-      'Hidayatut Taufiq: Kemampuan dan ketetapan hati untuk menempuh kebenaran hingga istiqamah'
-    ],
-    rootExplanation: 'Akar kata H-D-Y (ه-د-ي) bermakna menuntun dengan penuh kelembutan (dilalah bi luthf). Bentuk perintah di sini bermakna do\'a dan permohonan dari hamba kepada Sang Pencipta.',
-    grammaticalRole: 'Fi\'il Amr (bermakna Do\'a) + Dhamir Mutakallim Na (Kami)',
-    posTag: "Fi'il",
-    wazanOrForm: 'Fi\'il Amr Tsulatsi Mu\'tal'
-  },
-  'الصراط': {
-    rootLetters: 'س ر ط',
-    rootLatin: 'sarata',
-    rootSlug: 's-r-t',
-    primaryMeaning: 'Jalan yang lurus, lapang, dan mengantarkan kepada tujuan',
-    meanings: [
-      'Jalan yang lurus, lapang, dan terang benderang',
-      'Jalan Islam, Al-Qur\'an, dan Sunnah yang mengantarkan langsung ke ridha Allah',
-      'Jalan yang tidak berkelok-kelok dan tidak memiliki persimpangan yang menyesatkan'
-    ],
-    rootExplanation: 'Akar S-R-T (atau Sh-R-T) bermakna menelan (saratuhu). Jalan dinamakan shirath karena kelapangan dan kemudahannya seolah-olah "menelan" para musafir yang melewatinya dengan aman dan lancar.',
-    grammaticalRole: 'Isim Maf\'ul Bih (Objek)',
-    posTag: 'Isim',
-    wazanOrForm: 'Wazan Fi\'al'
-  },
-  'المستقيم': {
-    rootLetters: 'ق و م',
-    rootLatin: 'qama',
-    rootSlug: 'q-w-m',
-    primaryMeaning: 'Yang lurus, teguh, dan tanpa kebengkokan sedikit pun',
-    meanings: [
-      'Yang lurus, kokoh, dan tanpa kebengkokan atau penyimpangan',
-      'Jalan yang tegak lurus mengantarkan langsung kepada ridha Ilahi',
-      'Ketetapan hati yang istiqamah di atas kebenaran'
-    ],
-    rootExplanation: 'Akar Q-W-M bermakna berdiri tegak. Penambahan huruf Ist- bermakna menuntut ketegakan yang sempurna tanpa cela.',
-    grammaticalRole: 'Sifat / Na\'at untuk Ash-Shirath',
-    posTag: 'Isim',
-    wazanOrForm: 'Isim Fa\'il Wazan Istaf\'ala (Mustaqim)'
-  },
-  'أنعمت': {
-    rootLetters: 'ن ع م',
-    rootLatin: 'na\'ima',
-    rootSlug: 'n-c-m',
-    primaryMeaning: 'Engkau telah anugerahkan nikmat dan kemuliaan',
-    meanings: [
-      'Engkau telah anugerahkan kenikmatan petunjuk dan keimanan',
-      'Pemberian nikmat iman, ilmu, taufik, dan keselamatan di dunia dan akhirat',
-      'Golongan para nabi, shiddiqin, syuhada, dan shalihin'
-    ],
-    rootExplanation: 'Akar N-\'A-M bermakna kelembutan, kebaikan, dan kesejahteraan hidup (na\'mah). Bentuk Form IV (An\'ama) menunjukkan tindakan melimpahkan nikmat yang agung.',
-    grammaticalRole: 'Fi\'il Madhi Form IV (Pelaku: Anta / Engkau)',
-    posTag: "Fi'il",
-    wazanOrForm: 'Form IV (Af\'ala / An\'ama)'
-  },
-  'المغضوب': {
-    rootLetters: 'غ ض ب',
-    rootLatin: 'ghadiba',
-    rootSlug: 'gh-d-b',
-    primaryMeaning: 'Mereka yang dimurkai karena mengetahui kebenaran namun menolaknya',
-    meanings: [
-      'Mereka yang dimurkai atas penolakan dan keingkaran terhadap kebenaran',
-      'Kaum yang mengetahui ilmu kebenaran namun sengaja menyelisihinya',
-      'Jiwa yang terhalang dari rahmat Allah akibat kedurhakaan'
-    ],
-    rootExplanation: 'Akar Gh-Dh-B (غ-ض-ب) bermakna kemarahan dan kemurkaan. Bentuk Isim Maf\'ul (Maghdhub) menunjukkan mereka yang terkena murka Allah.',
-    grammaticalRole: 'Isim Maf\'ul Majrur (dengan tanda ya/kasrah)',
-    posTag: 'Isim',
-    wazanOrForm: 'Isim Maf\'ul (Maf\'ul)'
-  },
-  'الضالين': {
-    rootLetters: 'ض ل ل',
-    rootLatin: 'dalla',
-    rootSlug: 'd-l-l',
-    primaryMeaning: 'Orang-orang yang tersesat dari jalan kebenaran',
-    meanings: [
-      'Mereka yang tersesat dan menyimpang dari jalan yang lurus',
-      'Kaum yang beramal tanpa petunjuk ilmu yang benar sehingga terjerumus dalam kesesatan',
-      'Jiwa yang kehilangan arah dan menjauhi cahaya wahyu'
-    ],
-    rootExplanation: 'Akar Dh-L-L (ض-ل-ل) bermakna lenyap, hilang arah, dan menyimpang dari jalan utama. Isim Fa\'il Jamak menunjukkan mereka yang berbuat kesesatan.',
-    grammaticalRole: 'Isim Fa\'il Jamak Mudzakkar Salim Majrur',
-    posTag: 'Isim',
-    wazanOrForm: 'Isim Fa\'il Jamak (Fa\'ilin)'
+    wazanOrForm: 'Isim Fa\'il (Bentuk Pelaku)'
   },
   'زجرة': {
     rootLetters: 'ز ج ر',
     rootLatin: 'zajara',
     rootSlug: 'z-j-r',
-    primaryMeaning: '(Akan berupa) satu teriakan / bentakan keras',
+    primaryMeaning: 'Bentakan keras, teriakan dahsyat, atau tiupan sangkakala',
     meanings: [
-      '(Akan berupa) satu teriakan / bentakan keras yang dahsyat',
-      'Tiupan sangkakala kedua (shaihah / nafkhah al-ba\'ts) yang membangkitkan seluruh manusia seketika',
-      'Hardikan dahsyat yang menghentikan dan menggerakkan segala sesuatu tanpa perlawanan',
-      'Suara menggelegar yang membelah keheningan alam kubur'
+      'Bentakan keras dan teriakan dahsyat yang mengejutkan jiwa',
+      'Tiupan sangkakala kedua yang membangkitkan manusia dari kubur seketika',
+      'Hardikan yang mencegah perbuatan munkar'
     ],
-    rootExplanation: 'Akar Z-J-R (ز-ج-ر) dalam Lisan al-Arab bermakna menolak atau mencegah sesuatu dengan suara keras/bentakan (mana\'ahu bi shautin murtafi\'). Disebutkan dalam Q.S. An-Nazi\'at: "Fa innama hiya zajratun wahidah" (Maka sesungguhnya pengembalian itu hanyalah dengan satu kali bentakan saja).',
-    grammaticalRole: 'Isim Marrah (menunjukkan peristiwa yang terjadi satu kali dengan dahsyat)',
+    rootExplanation: 'Akar kata ز ج ر berkaitan dengan bentakan atau suara keras (zajara) yang menggentarkan.',
+    grammaticalRole: 'Isim Masdar Mufrad Muannats (Isim Marrah / Satu Kali Bentakan)',
     posTag: 'Isim',
-    wazanOrForm: 'Isim Marrah Wazan Fa\'lah (فَعْلَة)',
-    classicalCitation: 'Al-Mufradat: "Az-Zajru adalah menghardik dengan suara yang menakutkan."'
+    wazanOrForm: 'Wazan Fa\'lah (Isim Marrah)'
   },
-  'صبر': {
-    rootLetters: 'ص ب ر',
-    rootLatin: 'sabara',
-    rootSlug: 's-b-r',
-    primaryMeaning: 'Sabar, menahan diri, dan ketabahan jiwa yang kokoh',
+  'يعفو': {
+    rootLetters: 'ع ف و',
+    rootLatin: '\'afawa',
+    rootSlug: 'E-f-w',
+    primaryMeaning: 'Memaafkan, mengampuni, dan menghapus bekas kesalahan',
     meanings: [
-      'Sabar, keteguhan hati, dan ketabahan jiwa menghadapi ujian',
-      'Menahan jiwa dari kegelisahan, menahan lisan dari keluhan, dan menahan raga dari maksiat',
-      'Kekokohan prinsip dalam ketaatan dan keridhaan atas ketetapan takdir'
+      'Memaafkan dan menghapus catatan kesalahan hingga bersih',
+      'Kerelaan hati untuk mengabaikan kesalahan sesama tanpa dendam',
+      'Kemurahan Allah dalam mengampuni dosa hamba-Nya'
     ],
-    rootExplanation: 'Akar S-B-R bermakna batu keras yang padat (shobarah) serta tanaman obat yang sangat pahit namun menyembuhkan. Sabar adalah kekokohan jiwa laksana batu karang yang tidak goyah diterpa badai ujian.',
-    grammaticalRole: 'Masdar Tsulatsi Mujarrad',
-    posTag: 'Isim',
-    wazanOrForm: 'Wazan Fa\'l'
-  },
-  'الصابرين': {
-    rootLetters: 'ص ب ر',
-    rootLatin: 'sabara',
-    rootSlug: 's-b-r',
-    primaryMeaning: 'Orang-orang yang senantiasa bersabar dan teguh hati',
-    meanings: [
-      'Kaum beriman yang senantiasa bersabar dan teguh pendirian',
-      'Hamba-hamba yang menahan diri dari kemaksiatan dan istiqamah dalam ketaatan',
-      'Mereka yang ridha atas ujian dan bertawakal sepenuhnya kepada Allah'
-    ],
-    rootExplanation: 'Akar S-B-R menunjukkan orang yang memiliki sifat kesabaran yang melekat kuat (Isim Fa\'il) secara terus-menerus.',
-    grammaticalRole: 'Isim Fa\'il Jamak Mudzakkar Salim dalam posisi Nashab atau Jarr',
-    posTag: 'Isim',
-    wazanOrForm: 'Isim Fa\'il Jamak (Fa\'ilin)'
-  },
-  'صلاة': {
-    rootLetters: 'ص ل و',
-    rootLatin: 'salat',
-    rootSlug: 's-l-w',
-    primaryMeaning: 'Ibadah Shalat, Doa, dan Sambungan Spiritual',
-    meanings: [
-      'Ibadah Shalat sebagai tiang agama dan penghubung hamba dengan Allah',
-      'Doa permohonan keberkahan, rahmat, dan ampunan',
-      'Hubungan spiritual langsung antara makhluk dengan Sang Khaliq'
-    ],
-    rootExplanation: 'Secara etimologi merujuk pada shalawain (dua urat punggung yang kokoh menyambungkan tulang). Shalat adalah urat nadi spiritual yang menyambungkan ruh hamba dengan rahmat Allah.',
-    grammaticalRole: 'Isim Mufrad Muannats',
-    posTag: 'Isim',
-    wazanOrForm: 'Isim Masdar'
-  },
-  'علم': {
-    rootLetters: 'ع ل م',
-    rootLatin: '\'alima',
-    rootSlug: 'c-l-m',
-    primaryMeaning: 'Ilmu, pengetahuan hakiki, dan pemahaman mendalam',
-    meanings: [
-      'Pengetahuan hakiki yang menyingkap kebenaran suatu perkara',
-      'Pemahaman yang jelas dan meyakinkan tanpa keraguan',
-      'Cahaya wahyu dan penalaran yang membimbing manusia kepada ketaatan'
-    ],
-    rootExplanation: 'Akar kata \'A-L-M bermakna tanda penunjuk (alam). Ilmu adalah penanda yang membedakan antara kebenaran dengan kebatilan.',
-    grammaticalRole: 'Masdar Tsulatsi Mujarrad',
-    posTag: 'Isim',
-    wazanOrForm: 'Masdar (Fi\'l)'
-  },
-  'كتب': {
-    rootLetters: 'ك ت ب',
-    rootLatin: 'kataba',
-    rootSlug: 'k-t-b',
-    primaryMeaning: 'Menulis, menetapkan, dan mewajibkan suatu hukum',
-    meanings: [
-      'Menulis dan mencatatkan hukum secara tertulis',
-      'Menetapkan dan mewajibkan suatu syariat (seperti kutiba \'alaikumush shiyam)',
-      'Ketetapan takdir di Lauhul Mahfuzh yang pasti terlaksana'
-    ],
-    rootExplanation: 'Akar K-T-B bermakna mengumpulkan dan menjahit dua potong kulit (kataba as-siqa\'). Menulis dinamakan kitabah karena mengumpulkan huruf-huruf menjadi kata dan kalimat yang bermakna.',
-    grammaticalRole: 'Fi\'il Madhi Tsulatsi Mujarrad',
+    rootExplanation: 'Akar kata ع ف و berkaitan dengan melenyapkan bekas tapak dan memberi kelapangan.',
+    grammaticalRole: 'Fi\'il Mudhari\' Marfu\'',
     posTag: "Fi'il",
-    wazanOrForm: 'Form I (Fa\'ala)'
+    wazanOrForm: 'Form I (Yaf\'ulu)'
   },
-  'تقوى': {
-    rootLetters: 'و ق ي',
-    rootLatin: 'waqaya',
-    rootSlug: 'w-q-y',
-    primaryMeaning: 'Ketakwaan, menjaga diri, dan membuat perisai dari azab',
+  'يقولون': {
+    rootLetters: 'ق و ل',
+    rootLatin: 'qala',
+    rootSlug: 'q-w-l',
+    primaryMeaning: 'Mereka berkata atau mengucapkan perkataan',
     meanings: [
-      'Menjaga diri dari murka Allah dengan menjalankan perintah-Nya dan menjauhi larangan-Nya',
-      'Membuat perisai pelindung (wiqayah) antara diri dengan kemaksiatan',
-      'Kewaspadaan hati dalam setiap langkah dan perbuatan'
+      'Tindakan berujar atau menyampaikan perkataan secara verbal',
+      'Pernyataan atau pengakuan lisan dalam percakapan'
     ],
-    rootExplanation: 'Akar W-Q-Y bermakna perisai pelindung (wiqayah). Taqwa adalah tameng spiritual yang menjaga jiwa dari bahaya api neraka.',
-    grammaticalRole: 'Isim Masdar Wazan Fa\'la',
-    posTag: 'Isim',
-    wazanOrForm: 'Isim Masdar'
+    rootExplanation: 'Akar kata ق و ل adalah poros kata utama dalam Al-Qur\'an untuk dialog dan penyampaian firman.',
+    grammaticalRole: 'Fi\'il Mudhari\' dengan Wawu Jama\'ah',
+    posTag: "Fi'il",
+    wazanOrForm: 'Form I (Yaf\'ulun)'
   }
 };
 
 /**
  * Returns a comprehensive, multi-layer dictionary breakdown for any Quran word.
+ * 100% Indonesian, honest attribution, no fabricated citations.
  */
 export function getWordDetailedExplanation(wordArabic: string, defaultMeaningIndo?: string): WordDetailedInfo {
   if (!wordArabic) {
@@ -397,13 +244,13 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
       wordArabic: '',
       rootLetters: '',
       rootLatin: '',
-      primaryMeaning: defaultMeaningIndo || 'Kata Al-Qur\'an',
-      meanings: [defaultMeaningIndo || 'Kata Al-Qur\'an'],
+      primaryMeaning: 'Kata Al-Qur\'an',
+      meanings: ['Kata Al-Qur\'an'],
       rootExplanation: 'Informasi etimologi kata Al-Qur\'an.',
       grammaticalRole: 'Morfologi Arab',
       posTag: 'Isim',
       isVerified: false,
-      sourceCitation: 'Quran.com API v4'
+      sourceCitation: 'Catatan Semantik Editorial (AI-assisted context)'
     };
   }
 
@@ -424,10 +271,9 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
         grammaticalRole: val.grammaticalRole,
         posTag: val.posTag,
         wazanOrForm: val.wazanOrForm,
-        classicalCitation: val.classicalCitation,
         quranicNuances: val.quranicNuances,
         isVerified: true,
-        sourceCitation: 'Kamus Leksikografi Bahasa Arab Klasik (Lisan al-Arab, Ibn Faris, & Raghib al-Isfahani)'
+        sourceCitation: 'Catatan Semantik Editorial (AI-assisted context)'
       };
     }
   }
@@ -438,32 +284,30 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
   const extractedRoot = matchedRoot ? matchedRoot.rootArabic : extractArabicRootLetters(wordArabic);
 
   if (matchedRoot) {
-    const primary = defaultMeaningIndo || matchedRoot.titleIndo;
+    const cleanedMeaning = cleanGlossToIndonesian(defaultMeaningIndo, matchedRoot.titleIndo);
     const additionalMeanings = matchedRoot.meaningsIndonesian.length > 0
       ? matchedRoot.meaningsIndonesian
-      : [primary];
+      : [cleanedMeaning];
 
     return {
       wordArabic,
       rootLetters: matchedRoot.rootArabic,
       rootSlug: matchedRoot.id,
       rootLatin: matchedRoot.rootLatin,
-      primaryMeaning: primary,
-      meanings: [primary, ...additionalMeanings.filter(m => m !== primary)],
-      rootExplanation: matchedRoot.etymologyNote || `Akar kata ${matchedRoot.rootArabic} (${matchedRoot.rootLatin}) memiliki ${matchedRoot.totalOccurrences} kemunculan morfologis dalam Al-Qur'an.`,
+      primaryMeaning: cleanedMeaning,
+      meanings: [cleanedMeaning, ...additionalMeanings.filter(m => m !== cleanedMeaning)],
+      rootExplanation: matchedRoot.coreMeaning || `Akar kata ${matchedRoot.rootArabic} (${matchedRoot.rootLatin}) memiliki ${matchedRoot.totalOccurrences} kemunculan morfologis dalam Al-Qur'an.`,
       grammaticalRole: grammar.posDetail,
       posTag: grammar.posCategory,
       wazanOrForm: grammar.wazanOrPattern,
       totalOccurrences: matchedRoot.totalOccurrences,
       isVerified: true,
-      sourceCitation: 'The Quranic Arabic Corpus v0.4 (Univ. of Leeds)'
+      sourceCitation: 'The Quranic Arabic Corpus v0.4 (Univ. of Leeds) & Catatan Editorial'
     };
   }
 
   // 3. Dynamic generic fallback (Transparent unindexed state)
-  const primaryFallback = defaultMeaningIndo && !defaultMeaningIndo.startsWith('Potongan kata')
-    ? defaultMeaningIndo
-    : 'Kata dalam Al-Qur\'an';
+  const primaryFallback = cleanGlossToIndonesian(defaultMeaningIndo, 'Kata dalam Al-Qur\'an');
 
   return {
     wordArabic,
@@ -472,13 +316,13 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
     primaryMeaning: primaryFallback,
     meanings: [
       primaryFallback,
-      `Bentuk ${grammar.posCategory} yang terdapat dalam susunan ayat Al-Qur'an`
+      `Bentuk ${grammar.posCategory} dalam susunan kalimat Al-Qur'an`
     ],
     rootExplanation: extractedRoot ? `Akar kata ${extractedRoot} terindeks dalam Quranic Arabic Corpus (1.642 akar kata).` : 'Analisis kata per ayat Al-Qur\'an.',
     grammaticalRole: grammar.posDetail,
     posTag: grammar.posCategory,
     wazanOrForm: grammar.wazanOrPattern,
     isVerified: false,
-    sourceCitation: 'The Quranic Arabic Corpus v0.4 & Mushaf Kemenag RI'
+    sourceCitation: 'The Quranic Arabic Corpus v0.4 (Univ. of Leeds) & Mushaf Kemenag RI'
   };
 }

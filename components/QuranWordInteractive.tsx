@@ -100,11 +100,11 @@ export default function QuranWordInteractive({
         className="inline-flex flex-col items-center justify-center px-1.5 py-1 rounded-2xl hover:bg-primary-subdued/80 hover:ring-2 hover:ring-primary/40 dark:hover:bg-slate-800 transition-all cursor-pointer select-none active:scale-95 text-center group my-1.5 mx-1"
         title="Klik untuk Bedah Akar Kata & Definisi"
       >
-        <span className="font-arabic text-inherit group-hover:text-primary transition-colors leading-normal" dir="rtl">
+        <span className="font-arabic text-inherit group-hover:text-primary transition-colors leading-[2.2] sm:leading-[2.4]" dir="rtl">
           {wordArabic}
         </span>
         {displayTransliteration && (
-          <span className="text-[11px] sm:text-xs font-sans text-ink-mute group-hover:text-primary transition-colors -mt-0.5 font-medium italic opacity-85">
+          <span className="text-[11px] sm:text-xs font-sans text-ink-mute group-hover:text-primary transition-colors mt-0.5 font-medium italic opacity-85">
             {displayTransliteration}
           </span>
         )}
