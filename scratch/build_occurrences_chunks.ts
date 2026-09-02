@@ -4,8 +4,9 @@ import { getQACAuthoritativeIndex } from '../lib/morphology/qac-parser';
 import { buckwalterToArabic } from '../lib/morphology/buckwalter';
 import { VerseOccurrence } from '../lib/types/morphology';
 import { NormalizedMorphologyRecord } from '../lib/morphology/types';
+import { SURAH_LIST } from '../lib/data/surah-list';
 
-console.log('⚡ GENERATING OCCURRENCE CHUNKS FOR 1,642 ROOTS...\n');
+console.log('⚡ GENERATING OCCURRENCE CHUNKS WITH OFFICIAL INDONESIAN SURAH NAMES (1,642 ROOTS)...\n');
 
 const cacheDir = path.join(process.cwd(), 'scratch/data_cache');
 const uthmaniPath = path.join(cacheDir, 'quran_uthmani.json');
@@ -29,6 +30,10 @@ const quranMap = new Map<string, QuranAyahData>();
 for (let sIdx = 0; sIdx < quranUthmani.length; sIdx++) {
   const sAr = quranUthmani[sIdx];
   const sId = quranIndo[sIdx];
+  const surahMeta = SURAH_LIST[sAr.number - 1];
+  const surahNameIndo = surahMeta?.nameIndo || sAr.englishName;
+  const surahNameArabic = surahMeta?.nameArabic || sAr.name;
+
   for (let aIdx = 0; aIdx < sAr.ayahs.length; aIdx++) {
     const aAr = sAr.ayahs[aIdx];
     const aId = sId.ayahs[aIdx];
@@ -45,8 +50,8 @@ for (let sIdx = 0; sIdx < quranUthmani.length; sIdx++) {
     quranMap.set(key, {
       surahNumber: sAr.number,
       ayahNumber: aAr.numberInSurah,
-      surahNameIndo: sAr.englishName,
-      surahNameArabic: sAr.name,
+      surahNameIndo,
+      surahNameArabic,
       textArabic: aAr.text,
       textIndo: aId.text,
       lexicalWords
@@ -100,16 +105,8 @@ allRootsBw.forEach((rootBw) => {
     });
   });
 
-  occurrences.sort((a, b) => {
-    if (a.surahNumber !== b.surahNumber) return a.surahNumber - b.surahNumber;
-    return a.ayahNumber - b.ayahNumber;
-  });
-
-  fs.writeFileSync(path.join(occurrencesDir, `${slugId}.json`), JSON.stringify(occurrences), 'utf8');
+  const filePath = path.join(occurrencesDir, `${slugId}.json`);
+  fs.writeFileSync(filePath, JSON.stringify(occurrences), 'utf8');
 });
 
-// Also create kh-w-f.json alias for pilot
-const xwfOccs = JSON.parse(fs.readFileSync(path.join(occurrencesDir, 'x-w-f.json'), 'utf8'));
-fs.writeFileSync(path.join(occurrencesDir, 'kh-w-f.json'), JSON.stringify(xwfOccs), 'utf8');
-
-console.log(`✅ Generated individual occurrence chunks in lib/data/occurrences/ for all 1,642 roots!`);
+console.log(`✅ Refreshed 1,642 occurrence chunks with official Indonesian surah names!`);
