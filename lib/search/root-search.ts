@@ -132,11 +132,20 @@ export function searchRoots(query: string): RootWord[] {
   });
 }
 
+import { isAuthoritativePilotRoot, getAuthoritativePilotRootWord } from '../morphology/morphology-service';
+
 export function getRootBySlug(slug: string): RootWord | undefined {
   if (!slug) return undefined;
   const cleanSlug = slug.toLowerCase().trim();
   const normalizedSlug = normalizePhoneticQuery(slug);
 
+  // 1. Authoritative QAC Pilot Resolver
+  if (isAuthoritativePilotRoot(cleanSlug) || isAuthoritativePilotRoot(normalizedSlug)) {
+    const authPilot = getAuthoritativePilotRootWord(cleanSlug) || getAuthoritativePilotRootWord(normalizedSlug);
+    if (authPilot) return authPilot;
+  }
+
+  // 2. Fallback to ROOT_DATABASE for non-pilot roots
   return ROOT_DATABASE.find(r => 
     r.id.toLowerCase() === cleanSlug || 
     r.rootLatin.toLowerCase() === cleanSlug ||
