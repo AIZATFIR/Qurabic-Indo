@@ -37,7 +37,7 @@ export default function EtymologyCard({
         <div className="p-5 sm:p-6 rounded-2xl bg-canvas-soft border border-hairline text-sm sm:text-base text-ink-secondary leading-relaxed font-sans space-y-2">
           <div className="flex items-center space-x-2 font-semibold text-ink-primary text-xs sm:text-sm">
             <BookMarked className="w-4 h-4 text-primary" />
-            <span>Kajian Kamus Klasik (Lisan al-&apos;Arab &amp; Mu&apos;jam Maqayis al-Lughah):</span>
+            <span>Catatan Semantik Kontekstual (Editorial):</span>
           </div>
           <p className="italic text-ink-primary leading-relaxed font-normal">&ldquo;{etymologyNote}&rdquo;</p>
         </div>
@@ -60,11 +60,11 @@ export default function EtymologyCard({
         </div>
       </div>
 
-      {/* Subtle Source Attribution */}
+      {/* Transparent Editorial Provenance Attribution */}
       <div className="pt-2 flex justify-end">
         <span className="inline-flex items-center space-x-1.5 text-xs text-ink-mute font-sans">
           <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-          <span>Sumber: Lisan al-&apos;Arab (Ibn Manzhur) &amp; Mu&apos;jam Maqayis al-Lughah (Ibn Faris)</span>
+          <span>Catatan makna editorial (AI-assisted context). Morfologi &amp; konkordansi resmi: QAC v0.4 (Univ. of Leeds).</span>
         </span>
       </div>
     </div>
