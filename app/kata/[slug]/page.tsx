@@ -2,36 +2,50 @@ import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getCanonicalWordDetail } from '@/lib/morphology/canonical-service';
-import { ArrowLeft, BookOpen, Layers, ExternalLink, ShieldCheck, Hash, GitCommit, Compass } from 'lucide-react';
+import { ArrowLeft, BookOpen, Layers, ExternalLink, ShieldCheck, Hash, GitCommit, Compass, Sparkles } from 'lucide-react';
 import { SURAH_LIST } from '@/lib/data/surah-list';
 
 interface PageProps {
   params: {
     slug: string;
   };
+  searchParams?: {
+    surah?: string;
+    ayah?: string;
+    wordIndex?: string;
+  };
 }
 
 export const dynamicParams = true;
 
-export default function WordDetailPage({ params }: PageProps) {
+export default function WordDetailPage({ params, searchParams }: PageProps) {
   const rawSlug = decodeURIComponent(params.slug).trim();
   if (!rawSlug) notFound();
 
-  // 1. Resolve Word Detail using Single Canonical Service
-  const wordModel = getCanonicalWordDetail(rawSlug);
+  const surahNumber = searchParams?.surah ? parseInt(searchParams.surah, 10) : undefined;
+  const ayahNumber = searchParams?.ayah ? parseInt(searchParams.ayah, 10) : undefined;
+  const wordIndex = searchParams?.wordIndex ? parseInt(searchParams.wordIndex, 10) : undefined;
+
+  // 1. Resolve Word Detail using Single Canonical Service with exact coordinate context when available
+  const wordModel = getCanonicalWordDetail(rawSlug, {
+    surahNumber,
+    ayahNumber,
+    wordIndex
+  });
   if (!wordModel) notFound();
 
   const isParticle = wordModel.morphology.isParticle;
   const rootArabic = wordModel.lexical.rootArabic;
   const rootSlug = wordModel.lexical.rootSlug;
   const lemmaArabic = wordModel.lexical.lemmaArabic;
+  const lexicon = wordModel.lexicon;
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 font-sans">
       {/* Top Header Navigation */}
       <div className="flex items-center justify-between">
         <Link
-          href="/baca"
+          href={surahNumber && ayahNumber ? `/baca?surah=${surahNumber}&ayah=${ayahNumber}` : '/baca'}
           className="inline-flex items-center space-x-2 text-xs sm:text-sm text-ink-mute hover:text-primary transition-colors font-medium font-sans"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -194,7 +208,59 @@ export default function WordDetailPage({ params }: PageProps) {
         )}
       </section>
 
-      {/* 3. Relasi Konkordansi Ayat Relevan */}
+      {/* 3. Makna Leksikal & Definisi Kamus Klasik (Lane's Arabic-English Lexicon) */}
+      {!isParticle && (
+        <section className="p-6 sm:p-8 bg-canvas-surface border border-hairline rounded-3xl shadow-subtle space-y-4">
+          <div className="flex items-center justify-between border-b border-hairline pb-3">
+            <h2 className="text-lg font-semibold text-ink-primary font-sans flex items-center space-x-2">
+              <BookOpen className="w-4 h-4 text-primary" />
+              <span>Makna Leksikal Klasik (Lane&apos;s Lexicon)</span>
+            </h2>
+            {lexicon?.matchedForm && (
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary-subdued text-primary font-semibold">
+                {lexicon.matchedForm}
+              </span>
+            )}
+          </div>
+
+          {lexicon?.hasLexicalData && lexicon.senses.length > 0 ? (
+            <div className="space-y-4">
+              <div className="space-y-3">
+                {lexicon.senses.map((sense, idx) => (
+                  <div
+                    key={idx}
+                    className="p-4 rounded-2xl bg-canvas-soft border border-hairline space-y-1.5"
+                  >
+                    <div className="flex items-center justify-between text-xs text-ink-mute">
+                      <span className="font-semibold text-primary">Sense {idx + 1}</span>
+                      <span>Book I, Part {sense.citation.volume}, p. {sense.citation.page}</span>
+                    </div>
+                    <p className="text-sm sm:text-base text-ink-secondary leading-relaxed font-serif italic">
+                      &ldquo;{sense.text}&rdquo;
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="p-3.5 bg-canvas-surface rounded-2xl border border-hairline text-xs text-ink-mute flex flex-wrap items-center justify-between gap-2">
+                <span><strong>Otoritas Sumber:</strong> Edward William Lane, <em>An Arabic-English Lexicon</em> (Perseus Digital Library &amp; Alpheios Project)</span>
+                <span>Lisensi Digital: CC BY-SA 3.0</span>
+              </div>
+            </div>
+          ) : (
+            <div className="p-6 bg-canvas-soft rounded-2xl border border-hairline text-center space-y-1">
+              <p className="text-sm text-ink-mute italic">
+                Makna leksikal dari kamus klasik belum terindeks untuk kata ini.
+              </p>
+              <p className="text-xs text-ink-mute">
+                Qurabic hanya menyajikan kutipan leksikografi asli yang terverifikasi dan tidak membuat definisi sintetis.
+              </p>
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* 4. Relasi Konkordansi Ayat Relevan */}
       {!isParticle && wordModel.relatedOccurrences.length > 0 && (
         <section className="p-6 sm:p-8 bg-canvas-surface border border-hairline rounded-3xl shadow-subtle space-y-4">
           <div className="flex items-center justify-between border-b border-hairline pb-3">
@@ -248,7 +314,7 @@ export default function WordDetailPage({ params }: PageProps) {
         </section>
       )}
 
-      {/* 4. Advanced Corpus Data (Collapsible / Transparent) */}
+      {/* 5. Advanced Corpus Data & Provenance Manifest */}
       <section className="p-6 bg-canvas-surface border border-hairline rounded-3xl shadow-subtle space-y-3 text-xs font-mono">
         <div className="flex items-center space-x-2 text-ink-primary font-semibold pb-2 border-b border-hairline">
           <ShieldCheck className="w-4 h-4 text-primary" />
@@ -256,7 +322,7 @@ export default function WordDetailPage({ params }: PageProps) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-ink-secondary">
-          <div><span className="text-ink-mute">Sumber Otoritatif:</span> The Quranic Arabic Corpus v0.4 (Univ. of Leeds)</div>
+          <div><span className="text-ink-mute">Morfologi &amp; Sintaksis:</span> The Quranic Arabic Corpus v0.4 (Univ. of Leeds)</div>
           <div><span className="text-ink-mute">Terjemahan Resmi:</span> Lajnah Pentashihan Mushaf Al-Qur&apos;an (Kemenag RI)</div>
           {wordModel.identity.coordinate && (
             <div><span className="text-ink-mute">Koordinat Korpus:</span> {wordModel.identity.coordinate}</div>

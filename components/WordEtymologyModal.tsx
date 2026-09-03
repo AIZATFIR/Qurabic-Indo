@@ -257,7 +257,7 @@ export default function WordEtymologyModal({
 
             <div className="flex items-center space-x-2">
               <Link
-                href={`/kata/${encodeURIComponent(wordArabic.trim())}`}
+                href={`/kata/${encodeURIComponent(wordArabic.trim())}${surahNumber && ayahNumber ? `?surah=${surahNumber}&ayah=${ayahNumber}&wordIndex=${wordIndex || 1}` : ''}`}
                 onClick={onClose}
                 className="px-3.5 py-1.5 rounded-full bg-primary hover:bg-primary-deep text-white text-xs font-semibold shadow-subtle transition-all inline-flex items-center space-x-1.5"
               >
@@ -278,7 +278,41 @@ export default function WordEtymologyModal({
           </div>
         </div>
 
-        {/* 2. Bentuk Kata & Peran Morfologis */}
+        {/* 2. Makna Leksikal Klasik (Lane's Arabic-English Lexicon) */}
+        {!isParticle && wordModel.lexicon && (
+          <div className="p-4 sm:p-5 rounded-2xl bg-canvas-surface border border-hairline space-y-2.5 text-xs sm:text-sm font-sans text-left" dir="ltr">
+            <div className="flex items-center justify-between font-semibold text-ink-primary border-b border-hairline pb-2">
+              <span className="flex items-center space-x-1.5">
+                <BookOpen className="w-4 h-4 text-primary" />
+                <span>Makna Leksikal (Lane&apos;s Lexicon)</span>
+              </span>
+              {wordModel.lexicon.matchedForm && (
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary-subdued text-primary font-medium">
+                  {wordModel.lexicon.matchedForm}
+                </span>
+              )}
+            </div>
+
+            {wordModel.lexicon.hasLexicalData && wordModel.lexicon.senses.length > 0 ? (
+              <div className="space-y-2 pt-1">
+                {wordModel.lexicon.senses.slice(0, 2).map((s: any, idx: number) => (
+                  <p key={idx} className="text-xs sm:text-sm text-ink-secondary leading-relaxed font-serif italic">
+                    &ldquo;{s.text}&rdquo;
+                  </p>
+                ))}
+                <div className="pt-2 border-t border-hairline text-[11px] text-ink-mute flex items-center justify-between">
+                  <span>Edward William Lane, An Arabic-English Lexicon · Book I, Part {wordModel.lexicon.volume}, p. {wordModel.lexicon.page}</span>
+                </div>
+              </div>
+            ) : (
+              <p className="text-xs text-ink-mute italic py-1">
+                Makna leksikal klasik belum terindeks untuk kata ini.
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* 3. Bentuk Kata & Peran Morfologis */}
         <div className="p-4 sm:p-5 rounded-2xl bg-canvas-surface border border-hairline space-y-2 text-xs sm:text-sm font-sans text-left" dir="ltr">
           <div className="flex items-center space-x-2 font-semibold text-ink-primary">
             <Layers className="w-4 h-4 text-primary" />
@@ -297,7 +331,7 @@ export default function WordEtymologyModal({
           </div>
         </div>
 
-        {/* 3. Konteks Ayat & Terjemahan Kemenag RI */}
+        {/* 4. Konteks Ayat & Terjemahan Kemenag RI */}
         {ayahArabic && (
           <div className="p-5 rounded-2xl bg-canvas-soft border border-hairline space-y-3 font-sans">
             <div className="flex items-center justify-between border-b border-hairline pb-2">

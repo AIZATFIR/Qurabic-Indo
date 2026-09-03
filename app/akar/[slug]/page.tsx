@@ -8,7 +8,7 @@ import DerivativesGrid from '@/components/DerivativesGrid';
 import AyahConcordance from '@/components/AyahConcordance';
 import MorphologyDistribution from '@/components/MorphologyDistribution';
 import Link from 'next/link';
-import { ArrowLeft, BookOpen, Layers, ShieldCheck, Database, Radio, Sparkles, BarChart3 } from 'lucide-react';
+import { ArrowLeft, BookOpen, Layers, ShieldCheck, Database, Radio, Sparkles, BarChart3, BookMarked } from 'lucide-react';
 
 export function generateStaticParams() {
   // Prerender top 200 high-frequency roots at build time; dynamicParams = true handles all 1,642 roots seamlessly
@@ -43,7 +43,7 @@ export default async function RootDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const { statistics, occurrences, verbs, nouns } = rootModel;
+  const { statistics, occurrences, verbs, nouns, lexicon } = rootModel;
   const totalForms = (verbs?.length || 0) + (nouns?.length || 0);
 
   // Representative examples: Pick first 2-3 occurrences
@@ -64,10 +64,10 @@ export default async function RootDetailPage({ params }: PageProps) {
         {/* Quick Section Anchor Navigation */}
         <div className="flex items-center space-x-2 text-xs font-sans">
           <a
-            href="#makna"
+            href="#leksikon"
             className="px-3 py-1.5 rounded-full bg-canvas-surface border border-hairline hover:border-primary text-ink-secondary hover:text-primary transition-all shadow-subtle"
           >
-            Makna &amp; Konteks
+            Leksikon Lane
           </a>
           <a
             href="#distribusi"
@@ -148,18 +148,91 @@ export default async function RootDetailPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* 2. Makna & Konteks Section (Tadabbur-Grade Insight) */}
-      {rootModel.coreMeaning && !rootModel.coreMeaning.startsWith('Akar kata ') && (
-        <section id="makna" className="scroll-mt-24">
-          <EtymologyCard
-            rootArabic={rootModel.rootArabic}
-            rootLatin={rootModel.rootLatin}
-            coreMeaning={rootModel.coreMeaning}
-            contextualNote={rootModel.contextualNote}
-            meaningsIndonesian={rootModel.meaningsIndonesian}
-          />
-        </section>
-      )}
+      {/* 2. Leksikon Klasik (Lane's Arabic-English Lexicon) */}
+      <section id="leksikon" className="scroll-mt-24 p-6 sm:p-8 bg-canvas-surface border border-hairline rounded-3xl shadow-subtle space-y-6">
+        <div className="flex items-center justify-between border-b border-hairline pb-3">
+          <h2 className="text-lg sm:text-xl font-semibold text-ink-primary font-sans flex items-center space-x-2">
+            <BookMarked className="w-5 h-5 text-primary" />
+            <span>Kajian Leksikografi Klasik (Lane&apos;s Lexicon)</span>
+          </h2>
+          {lexicon && (
+            <span className="text-xs text-ink-mute font-medium">
+              Book I, Part {lexicon.volume}, p. {lexicon.page}
+            </span>
+          )}
+        </div>
+
+        {lexicon && lexicon.entries.length > 0 ? (
+          <div className="space-y-6">
+            {lexicon.overview && (
+              <div className="p-4 rounded-2xl bg-canvas-soft border border-hairline space-y-1">
+                <span className="text-xs font-semibold text-primary uppercase tracking-wider block">Ikhtisar Akar Leksikal:</span>
+                <p className="text-sm text-ink-secondary leading-relaxed font-serif italic">
+                  &ldquo;{lexicon.overview}&rdquo;
+                </p>
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <span className="text-xs font-semibold text-ink-primary uppercase tracking-wider block">
+                Entri Leksikon Berdasarkan Wazan &amp; Bentuk Kata ({lexicon.entries.length} Entri Terindeks):
+              </span>
+
+              <div className="grid grid-cols-1 gap-4">
+                {lexicon.entries.map((entry, eIdx) => (
+                  <div
+                    key={eIdx}
+                    className="p-5 rounded-2xl bg-canvas-soft border border-hairline hover:border-primary/40 transition-all space-y-3"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-hairline pb-2.5">
+                      <div className="flex items-center space-x-3">
+                        <span className="font-arabic text-xl font-bold text-primary" dir="rtl">
+                          {entry.headwordArabic}
+                        </span>
+                        {entry.itype && (
+                          <span className="px-2.5 py-0.5 rounded-full bg-primary-subdued text-primary text-xs font-semibold">
+                            Form {entry.itype}
+                          </span>
+                        )}
+                        {entry.pos && (
+                          <span className="px-2 py-0.5 rounded-full bg-canvas-surface border border-hairline text-ink-secondary text-[11px]">
+                            {entry.pos}
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-xs text-ink-mute">
+                        Book I, Part {entry.volume}, p. {entry.page}
+                      </span>
+                    </div>
+
+                    <div className="space-y-2">
+                      {entry.senses.map((sense, sIdx) => (
+                        <div key={sIdx} className="text-xs sm:text-sm text-ink-secondary font-serif leading-relaxed italic pl-2 border-l-2 border-primary/30">
+                          {sense.text}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-3.5 bg-canvas-surface rounded-2xl border border-hairline text-xs text-ink-mute flex flex-wrap items-center justify-between gap-2">
+              <span><strong>Otoritas Sumber:</strong> {lexicon.sourceCitation}</span>
+              <span>Lisensi Digital: CC BY-SA 3.0</span>
+            </div>
+          </div>
+        ) : (
+          <div className="p-6 bg-canvas-soft rounded-2xl border border-hairline text-center space-y-1">
+            <p className="text-sm text-ink-mute italic">
+              Entri kamus klasik belum terindeks untuk akar ini.
+            </p>
+            <p className="text-xs text-ink-mute">
+              Qurabic menyajikan data leksikon otentik secara transparan dan tidak mengarang definisi.
+            </p>
+          </div>
+        )}
+      </section>
 
       {/* 3. Distribusi Morfologi & Frekuensi Korpus */}
       <section id="distribusi" className="scroll-mt-24">
