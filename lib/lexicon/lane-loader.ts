@@ -29,15 +29,23 @@ function loadChunk(chunkFilename: string): LaneEntryRecord[] | null {
 
   if (typeof window === 'undefined') {
     try {
-      const req = typeof __non_webpack_require__ !== 'undefined' ? __non_webpack_require__ : require;
-      const fs = req('fs');
-      const path = req('path');
-      const chunkPath = path.join(process.cwd(), 'lib', 'lexicon', 'data', 'chunks', chunkFilename);
-      if (fs.existsSync(chunkPath)) {
-        const raw = fs.readFileSync(chunkPath, 'utf-8');
-        const parsed = JSON.parse(raw) as LaneEntryRecord[];
-        CHUNK_CACHE.set(chunkFilename, parsed);
-        return parsed;
+      const getModule = (name: string) => {
+        try {
+          return Function('return require')()(name);
+        } catch {
+          return null;
+        }
+      };
+      const fs = getModule('fs');
+      const path = getModule('path');
+      if (fs && path) {
+        const chunkPath = path.join(process.cwd(), 'lib', 'lexicon', 'data', 'chunks', chunkFilename);
+        if (fs.existsSync(chunkPath)) {
+          const raw = fs.readFileSync(chunkPath, 'utf-8');
+          const parsed = JSON.parse(raw) as LaneEntryRecord[];
+          CHUNK_CACHE.set(chunkFilename, parsed);
+          return parsed;
+        }
       }
     } catch (err) {
       console.warn(`Could not load Lane chunk ${chunkFilename} on server:`, err);
