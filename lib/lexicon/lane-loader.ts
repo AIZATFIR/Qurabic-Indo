@@ -16,12 +16,6 @@ function normalizeArabicKey(text: string): string {
   return t.trim();
 }
 
-/**
- * Server-safe on-demand chunk loader.
- * Invariants:
- * 1. Never bundles 70MB dictionary into client JavaScript bundles.
- * 2. On server (SSR / API / Tests), loads modular chunk on-demand and caches in memory.
- */
 function loadChunk(chunkFilename: string): LaneEntryRecord[] | null {
   if (CHUNK_CACHE.has(chunkFilename)) {
     return CHUNK_CACHE.get(chunkFilename)!;
@@ -33,11 +27,17 @@ function loadChunk(chunkFilename: string): LaneEntryRecord[] | null {
         try {
           return Function('return require')()(name);
         } catch {
-          return null;
+          try {
+            return eval('require')(name);
+          } catch {
+            return null;
+          }
         }
       };
+
       const fs = getModule('fs');
       const path = getModule('path');
+
       if (fs && path) {
         const chunkPath = path.join(process.cwd(), 'lib', 'lexicon', 'data', 'chunks', chunkFilename);
         if (fs.existsSync(chunkPath)) {

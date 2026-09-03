@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCanonicalWordDetail } from '@/lib/morphology/canonical-service';
+import { getWordStudy } from '@/lib/morphology/word-study-service';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -14,11 +15,17 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Missing word or location parameter' }, { status: 400 });
   }
 
-  const detail = getCanonicalWordDetail(targetInput, {
+  const context = {
     surahNumber,
     ayahNumber,
     wordIndex
-  });
+  };
 
-  return NextResponse.json(detail);
+  const detail = getCanonicalWordDetail(targetInput, context);
+  const study = getWordStudy(targetInput, context);
+
+  return NextResponse.json({
+    ...detail,
+    study
+  });
 }

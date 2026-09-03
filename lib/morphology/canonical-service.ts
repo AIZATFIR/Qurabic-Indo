@@ -172,18 +172,20 @@ function mapQACFeaturesToIndo(tag: string, rawFeatures: string): {
   };
 }
 
+export interface CanonicalWordContext {
+  surahNumber?: number;
+  ayahNumber?: number;
+  wordIndex?: number;
+  ayahArabic?: string;
+  ayahIndo?: string;
+}
+
 /**
  * Resolves a single word token or coordinate into a complete canonical WordDetailModel
  */
 export function getCanonicalWordDetail(
   tokenOrLocation: string,
-  context?: {
-    surahNumber?: number;
-    ayahNumber?: number;
-    wordIndex?: number;
-    ayahArabic?: string;
-    ayahIndo?: string;
-  }
+  context?: CanonicalWordContext
 ): WordDetailModel {
   const cleanInput = tokenOrLocation.trim();
   const cleanArabic = stripArabicHarakat(cleanInput);
