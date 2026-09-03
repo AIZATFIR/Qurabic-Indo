@@ -143,10 +143,10 @@ export default function WordEtymologyModal({
     <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-6 overflow-y-auto bg-black/60 backdrop-blur-sm animate-in fade-in duration-150 overscroll-contain">
       <div className="fixed inset-0" onClick={onClose} />
 
-      <div className="relative w-full max-w-xl sm:max-w-2xl max-h-[88vh] my-auto overflow-y-auto overscroll-contain bg-canvas-surface text-ink-primary border border-hairline rounded-3xl shadow-hover z-10 p-5 sm:p-8 space-y-5 animate-in zoom-in-95 duration-150 font-sans">
+      <div className="relative w-full max-w-xl sm:max-w-2xl max-h-[88vh] my-auto overflow-y-auto overscroll-contain bg-canvas-surface text-ink-primary border border-hairline rounded-3xl shadow-hover z-10 p-5 sm:p-8 space-y-5 animate-in zoom-in-95 duration-150 font-sans text-left" dir="ltr">
         
         {/* Top Header Bar */}
-        <div className="flex items-center justify-between border-b border-hairline pb-3.5">
+        <div className="flex items-center justify-between border-b border-hairline pb-3.5" dir="ltr">
           <div className="flex items-center space-x-2">
             <span className="px-2.5 py-1 rounded-lg bg-primary-subdued text-primary text-xs font-semibold font-sans">
               {displayPosTag} {wazanOrForm ? `· ${wazanOrForm}` : ''}
@@ -182,7 +182,7 @@ export default function WordEtymologyModal({
         </div>
 
         {/* 1. Main Word Header Card */}
-        <div className="p-5 sm:p-6 rounded-3xl bg-canvas-soft border border-hairline space-y-3.5 text-center font-sans">
+        <div className="p-5 sm:p-6 rounded-3xl bg-canvas-soft border border-hairline space-y-3.5 text-center font-sans" dir="ltr">
           {/* Arabic Text Display */}
           <div className="py-1" dir="rtl">
             <span
@@ -206,8 +206,8 @@ export default function WordEtymologyModal({
           </h3>
 
           {/* Word Actions & Root Link Banner */}
-          <div className="pt-2 border-t border-hairline flex flex-wrap items-center justify-between gap-2 text-xs font-sans">
-            <div className="flex items-center space-x-2">
+          <div className="pt-2 border-t border-hairline flex flex-wrap items-center justify-between gap-2 text-xs font-sans" dir="ltr">
+            <div className="flex items-center space-x-2 text-left">
               <span className="text-ink-mute font-medium">Akar:</span>
               {isParticle || !displayRootLetters ? (
                 <span className="text-ink-mute italic">
@@ -244,18 +244,18 @@ export default function WordEtymologyModal({
         </div>
 
         {/* 2. Bentuk Kata & Peran Morfologis */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-canvas-surface border border-hairline space-y-2 text-xs sm:text-sm font-sans">
+        <div className="p-4 sm:p-5 rounded-2xl bg-canvas-surface border border-hairline space-y-2 text-xs sm:text-sm font-sans text-left" dir="ltr">
           <div className="flex items-center space-x-2 font-semibold text-ink-primary">
             <Layers className="w-4 h-4 text-primary" />
             <span>Bentuk Kata &amp; Peran Morfologi</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
-            <div className="p-2.5 bg-canvas-soft rounded-xl border border-hairline">
+            <div className="p-2.5 bg-canvas-soft rounded-xl border border-hairline text-left">
               <span className="text-ink-mute block text-[11px]">Kategori Gramatikal:</span>
               <span className="font-semibold text-ink-primary">{displayGrammar}</span>
             </div>
-            <div className="p-2.5 bg-canvas-soft rounded-xl border border-hairline">
+            <div className="p-2.5 bg-canvas-soft rounded-xl border border-hairline text-left">
               <span className="text-ink-mute block text-[11px]">Wazan / Pola:</span>
               <span className="font-semibold text-ink-primary">{wazanOrForm || (isParticle ? 'Mabni (Tetap)' : 'Bentuk Leksikal')}</span>
             </div>

@@ -112,6 +112,35 @@ export const CURATED_WORD_DICTIONARY: Record<string, {
   wazanOrForm?: string;
   quranicNuances?: string[];
 }> = {
+  'بسم': {
+    rootLetters: 'س م و',
+    rootLatin: 'samā',
+    rootSlug: 's-m-w',
+    primaryMeaning: 'Dengan menyebut nama Allah',
+    meanings: [
+      'Memulai suatu perbuatan dengan menyebut dan memohon keberkahan nama Allah',
+      'Pengakuan ketergantungan mutlak hamba kepada kekuasaan dan keagungan nama-Nya',
+      'Merupakan gabungan partikel jar (bi) dan kata benda (ism)'
+    ],
+    rootExplanation: 'Akar kata س م و berkaitan dengan ketinggian, keluhuran, dan tanda pengenal (nama yang ditinggikan).',
+    grammaticalRole: 'Jar wa Majrur (Harf Jar bi + Ism majrur)',
+    posTag: 'Isim',
+    wazanOrForm: 'Ism Majrur'
+  },
+  'اسم': {
+    rootLetters: 'س م و',
+    rootLatin: 'samā',
+    rootSlug: 's-m-w',
+    primaryMeaning: 'Nama / Tanda pengenal yang mulia',
+    meanings: [
+      'Sebutan atau tanda pengenal suatu Dzat atau hakikat',
+      'Berasal dari akar kata yang berarti keluhuran dan ketinggian'
+    ],
+    rootExplanation: 'Akar kata س م و bermakna keluhuran dan tanda pengenal.',
+    grammaticalRole: 'Isim',
+    posTag: 'Isim',
+    wazanOrForm: 'Bentuk Isim Asal'
+  },
   'الحمد': {
     rootLetters: 'ح م د',
     rootLatin: 'hamada',
