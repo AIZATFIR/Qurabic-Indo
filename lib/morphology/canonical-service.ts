@@ -1,0 +1,427 @@
+import { getQACAuthoritativeIndex } from './qac-parser';
+import { ROOT_DATABASE } from '../data/roots';
+import { getRootSemanticProfile } from '../data/root-semantics';
+import { stripArabicHarakat, isQuranicParticle, findBestMatchingRoot } from '../search/root-search';
+import { buckwalterToArabic } from './buckwalter';
+import { getRootOccurrencesFromChunk } from './morphology-service';
+import { CURATED_WORD_DICTIONARY } from '../search/word-dictionary';
+import { VerseOccurrence, DerivativeWord } from '../types/morphology';
+
+export interface WordDetailModel {
+  identity: {
+    coordinate?: string;
+    arabic: string;
+    transliteration?: string;
+    cleanArabic: string;
+  };
+  lexical: {
+    lemma?: string;
+    lemmaArabic?: string;
+    root?: string;
+    rootArabic?: string;
+    rootSlug?: string;
+    coreMeaning?: string;
+  };
+  morphology: {
+    pos: 'Isim' | "Fi'il" | 'Harf';
+    posLabelIndo: string;
+    verbType?: 'Madhi' | "Mudhari'" | 'Amr';
+    verbForm?: string;
+    nounType?: "Isim Fa'il" | "Isim Maf'ul" | 'Masdar' | 'Nomina';
+    wazanOrForm?: string;
+    grammaticalRole: string;
+    rawTag?: string;
+    rawFeatures?: string;
+    isParticle: boolean;
+  };
+  translation: {
+    primaryMeaning: string;
+    meanings: string[];
+    sourceCitation: string;
+  };
+  context?: {
+    surahNumber?: number;
+    ayahNumber?: number;
+    wordIndex?: number;
+    ayahArabic?: string;
+    ayahIndo?: string;
+  };
+  corpus: {
+    source: string;
+    version: string;
+    buckwalter?: string;
+  };
+  relatedOccurrences: VerseOccurrence[];
+  totalRootOccurrences: number;
+}
+
+export interface RootDistributionStats {
+  totalOccurrences: number;
+  uniqueAyahs: number;
+  uniqueSurahs: number;
+  uniqueLemmas: number;
+  uniqueForms: number;
+  verbsCount: number;
+  nounsCount: number;
+  posDistribution: Array<{ pos: string; labelIndo: string; count: number }>;
+  lemmaDistribution: Array<{ lemmaArabic: string; lemmaBw: string; pos: string; count: number }>;
+  formDistribution: Array<{ formArabic: string; formBw: string; pos: string; count: number }>;
+  surahDistribution: Array<{ surahNumber: number; count: number }>;
+}
+
+export interface RootDetailModel {
+  id: string;
+  rootArabic: string;
+  rootArabicJoined: string;
+  rootLatin: string;
+  titleIndo: string;
+  coreMeaning: string;
+  contextualNote?: string;
+  meaningsIndonesian: string[];
+  statistics: RootDistributionStats;
+  verbs: DerivativeWord[];
+  nouns: DerivativeWord[];
+  occurrences: VerseOccurrence[];
+}
+
+/**
+ * Maps QAC POS and features to deterministic Indonesian grammatical categories
+ */
+function mapQACFeaturesToIndo(tag: string, rawFeatures: string): {
+  pos: 'Isim' | "Fi'il" | 'Harf';
+  posLabelIndo: string;
+  verbType?: 'Madhi' | "Mudhari'" | 'Amr';
+  verbForm?: string;
+  nounType?: "Isim Fa'il" | "Isim Maf'ul" | 'Masdar' | 'Nomina';
+  wazanOrForm?: string;
+  grammaticalRole: string;
+} {
+  const isPerf = rawFeatures.includes('PERF');
+  const isImpf = rawFeatures.includes('IMPF');
+  const isImpv = rawFeatures.includes('IMPV');
+  const isActPcpl = rawFeatures.includes('ACT|PCPL');
+  const isPassPcpl = rawFeatures.includes('PASS|PCPL');
+  const isVn = rawFeatures.includes('VN');
+  
+  const formMatch = rawFeatures.match(/\((I|II|III|IV|V|VI|VII|VIII|IX|X)\)/);
+  const verbForm = formMatch ? `Form ${formMatch[1]}` : undefined;
+
+  if (tag === 'V' || rawFeatures.includes('POS:V')) {
+    const vType = isPerf ? 'Madhi' : isImpf ? "Mudhari'" : isImpv ? 'Amr' : undefined;
+    const formLabel = verbForm ? ` ${verbForm}` : ' Form I (Mujarrad)';
+    return {
+      pos: "Fi'il",
+      posLabelIndo: `Verba / Fi'il (${vType || 'Kata Kerja'})`,
+      verbType: vType,
+      verbForm: verbForm || 'Form I',
+      wazanOrForm: `Fi'il ${vType || ''}${formLabel}`.trim(),
+      grammaticalRole: `Fi'il ${vType || 'Kata Kerja'}${formLabel}`.trim()
+    };
+  }
+
+  if (tag === 'N' || tag === 'PN' || tag === 'ADJ' || rawFeatures.includes('POS:N') || rawFeatures.includes('POS:ADJ')) {
+    let nType: "Isim Fa'il" | "Isim Maf'ul" | 'Masdar' | 'Nomina' = 'Nomina';
+    let role = 'Isim (Nomina / Kata Benda)';
+    let wazan: string | undefined;
+
+    if (isActPcpl) {
+      nType = "Isim Fa'il";
+      role = "Isim Fa'il (Pelaku / Partisipel Aktif)";
+      wazan = "Wazan Isim Fa'il";
+    } else if (isPassPcpl) {
+      nType = "Isim Maf'ul";
+      role = "Isim Maf'ul (Objek / Partisipel Pasif)";
+      wazan = "Wazan Isim Maf'ul";
+    } else if (isVn) {
+      nType = 'Masdar';
+      role = 'Isim Masdar (Kata Benda Verbal / Aksi)';
+      wazan = 'Masdar (Verbal Noun)';
+    } else if (tag === 'ADJ' || rawFeatures.includes('POS:ADJ')) {
+      role = 'Isim Sifat / Adjektiva';
+      wazan = 'Shifah Musyabbahah';
+    }
+
+    return {
+      pos: 'Isim',
+      posLabelIndo: `Nomina / Isim (${nType})`,
+      nounType: nType,
+      wazanOrForm: wazan,
+      grammaticalRole: role
+    };
+  }
+
+  // Harf / Particle
+  let particleRole = 'Harf / Partikel (Kata Tugas)';
+  if (tag === 'P' || rawFeatures.includes('POS:P')) particleRole = 'Harf Jarr (Preposisi)';
+  else if (tag === 'CONJ' || rawFeatures.includes('POS:CONJ')) particleRole = 'Harf Athaf (Kata Hubung / Konjungsi)';
+  else if (tag === 'SUB' || rawFeatures.includes('POS:SUB')) particleRole = 'Harf Syarat / Subordinating Conjunction';
+  else if (tag === 'NEG' || rawFeatures.includes('POS:NEG')) particleRole = 'Harf Nafi (Partikel Negasi)';
+  else if (tag === 'RES' || rawFeatures.includes('POS:RES')) particleRole = 'Harf Istitsna (Partikel Pengecualian)';
+  else if (tag === 'DET' || rawFeatures.includes('POS:DET')) particleRole = 'Alif Lam Ma\'rifah (Determiner)';
+
+  return {
+    pos: 'Harf',
+    posLabelIndo: 'Partikel / Harf',
+    wazanOrForm: 'Mabni (Tetap)',
+    grammaticalRole: particleRole
+  };
+}
+
+/**
+ * Resolves a single word token or coordinate into a complete canonical WordDetailModel
+ */
+export function getCanonicalWordDetail(
+  tokenOrLocation: string,
+  context?: {
+    surahNumber?: number;
+    ayahNumber?: number;
+    wordIndex?: number;
+    ayahArabic?: string;
+    ayahIndo?: string;
+  }
+): WordDetailModel {
+  const cleanInput = tokenOrLocation.trim();
+  const cleanArabic = stripArabicHarakat(cleanInput);
+  const qacIndex = getQACAuthoritativeIndex();
+
+  // 1. Resolve QAC Record:
+  // First check direct location coordinate (e.g. "1:1:3")
+  let qacRecords = qacIndex.recordsByWordLocation.get(cleanInput);
+
+  // If not direct location, check if location provided in context
+  if (!qacRecords && context?.surahNumber && context?.ayahNumber && context?.wordIndex) {
+    const locKey = `${context.surahNumber}:${context.ayahNumber}:${context.wordIndex}`;
+    qacRecords = qacIndex.recordsByWordLocation.get(locKey);
+  }
+
+  // If still not found, search in authoritative recordsByToken index
+  if (!qacRecords) {
+    qacRecords = qacIndex.recordsByToken.get(cleanArabic);
+  }
+
+  // 2. Identify Stem Segment & Extracted Features
+  const stemRecord = qacRecords
+    ? qacRecords.find(r => r.root || r.pos === 'V' || r.pos === 'N' || r.pos === 'ADJ') || qacRecords[0]
+    : undefined;
+
+  let rootBw = stemRecord?.root;
+  let lemmaBw = stemRecord?.lemma;
+  let tag = stemRecord?.tag || (isQuranicParticle(cleanArabic) ? 'P' : 'N');
+  let rawFeatures = stemRecord?.rawFeatures || '';
+
+  // 3. Resolve Root in ROOT_DATABASE
+  const rBw = rootBw;
+  let matchedRoot = rBw
+    ? ROOT_DATABASE.find(r => r.id === rBw || r.id.replace(/-/g, '') === rBw.toLowerCase())
+    : undefined;
+
+  if (!matchedRoot && !isQuranicParticle(cleanArabic)) {
+    matchedRoot = findBestMatchingRoot(cleanInput);
+    if (matchedRoot && !rootBw) {
+      rootBw = matchedRoot.id.replace(/-/g, '');
+    }
+  }
+
+  const isParticle = !matchedRoot && (isQuranicParticle(cleanArabic) || tag === 'P' || tag === 'CONJ' || tag === 'SUB' || tag === 'NEG' || tag === 'T' || tag === 'REM');
+
+  // 4. Morphological Analysis
+  const morphInfo = isParticle
+    ? {
+        pos: 'Harf' as const,
+        posLabelIndo: 'Partikel / Harf (Kata Tugas)',
+        wazanOrForm: 'Mabni (Tetap)',
+        grammaticalRole: 'Harf / Partikel dalam Kaidah Nahwu',
+        isParticle: true
+      }
+    : mapQACFeaturesToIndo(tag, rawFeatures);
+
+  // 5. Semantic & Lexical Resolution
+  const curatedDict = CURATED_WORD_DICTIONARY[cleanArabic];
+  const semanticProfile = matchedRoot ? getRootSemanticProfile(matchedRoot.id) : null;
+
+  let primaryMeaning = curatedDict?.primaryMeaning ||
+    (isParticle
+      ? 'Partikel / kata tugas dalam susunan gramatikal Al-Qur\'an'
+      : semanticProfile?.coreMeaning || matchedRoot?.coreMeaning || 'Kosakata terindeks dalam Al-Qur\'an');
+
+  let meanings = curatedDict?.meanings ||
+    (isParticle
+      ? [
+          'Partikel / kata tugas (Harf) yang menghubungkan makna antar-kata dalam ayat',
+          'Memiliki hukum i\'rab Mabni (bentuk harakat akhir tetap)'
+        ]
+      : semanticProfile?.meaningsIndonesian || matchedRoot?.meaningsIndonesian || [primaryMeaning]);
+
+  // Occurrences
+  const occurrences = matchedRoot
+    ? (matchedRoot.occurrences && matchedRoot.occurrences.length > 0
+        ? matchedRoot.occurrences
+        : getRootOccurrencesFromChunk(matchedRoot.id))
+    : [];
+
+  return {
+    identity: {
+      coordinate: stemRecord ? stemRecord.wordLocationKey : (context?.surahNumber ? `${context.surahNumber}:${context.ayahNumber}:${context.wordIndex || 1}` : undefined),
+      arabic: cleanInput,
+      cleanArabic,
+      transliteration: curatedDict?.rootLatin || matchedRoot?.rootLatin || undefined
+    },
+    lexical: {
+      lemma: lemmaBw,
+      lemmaArabic: lemmaBw ? buckwalterToArabic(lemmaBw) : undefined,
+      root: isParticle ? undefined : rootBw,
+      rootArabic: isParticle ? undefined : (matchedRoot?.rootArabic || (rootBw ? buckwalterToArabic(rootBw).split('').join(' ') : undefined)),
+      rootSlug: isParticle ? undefined : matchedRoot?.id,
+      coreMeaning: curatedDict?.rootExplanation || semanticProfile?.coreMeaning || matchedRoot?.coreMeaning
+    },
+    morphology: {
+      ...morphInfo,
+      wazanOrForm: curatedDict?.wazanOrForm || morphInfo.wazanOrForm,
+      grammaticalRole: curatedDict?.grammaticalRole || morphInfo.grammaticalRole,
+      rawTag: stemRecord?.rawTag,
+      rawFeatures: stemRecord?.rawFeatures,
+      isParticle
+    },
+    translation: {
+      primaryMeaning,
+      meanings,
+      sourceCitation: 'The Quranic Arabic Corpus v0.4 (University of Leeds) & Mushaf Kemenag RI'
+    },
+    context: context ? {
+      surahNumber: context.surahNumber,
+      ayahNumber: context.ayahNumber,
+      wordIndex: context.wordIndex,
+      ayahArabic: context.ayahArabic,
+      ayahIndo: context.ayahIndo
+    } : undefined,
+    corpus: {
+      source: 'The Quranic Arabic Corpus',
+      version: 'v0.4',
+      buckwalter: stemRecord?.form
+    },
+    relatedOccurrences: occurrences.slice(0, 8),
+    totalRootOccurrences: matchedRoot?.totalOccurrences || occurrences.length
+  };
+}
+
+/**
+ * Computes complete canonical RootDetailModel with deterministic distribution statistics
+ */
+export function getCanonicalRootDetail(slug: string): RootDetailModel | null {
+  if (!slug) return null;
+  const cleanSlug = slug.toLowerCase().trim();
+  const qacIndex = getQACAuthoritativeIndex();
+
+  // Find root in ROOT_DATABASE
+  const matchedRoot = ROOT_DATABASE.find(r => 
+    r.id.toLowerCase() === cleanSlug ||
+    r.id.replace(/-/g, '') === cleanSlug.replace(/-/g, '') ||
+    r.rootLatin.toLowerCase() === cleanSlug
+  );
+
+  if (!matchedRoot) return null;
+
+  const rootBw = matchedRoot.id.replace(/-/g, '');
+  const qacRecords = qacIndex.recordsByRoot.get(rootBw) || [];
+
+  // Occurrences
+  const occurrences = matchedRoot.occurrences && matchedRoot.occurrences.length > 0
+    ? matchedRoot.occurrences
+    : getRootOccurrencesFromChunk(matchedRoot.id) || [];
+
+  // Calculate deterministic statistics
+  const uniqueAyahsSet = new Set<string>();
+  const uniqueSurahsSet = new Set<number>();
+  const lemmaCountMap = new Map<string, { count: number; pos: string }>();
+  const formCountMap = new Map<string, { count: number; pos: string }>();
+  const surahCountMap = new Map<number, number>();
+  const posCountMap = new Map<string, number>();
+
+  let verbsCount = 0;
+  let nounsCount = 0;
+
+  for (const rec of qacRecords) {
+    uniqueAyahsSet.add(rec.ayahLocationKey);
+    uniqueSurahsSet.add(rec.surah);
+
+    // Lemma distribution
+    if (rec.lemma) {
+      const current = lemmaCountMap.get(rec.lemma) || { count: 0, pos: rec.pos };
+      current.count++;
+      lemmaCountMap.set(rec.lemma, current);
+    }
+
+    // Form distribution
+    if (rec.form) {
+      const current = formCountMap.get(rec.form) || { count: 0, pos: rec.pos };
+      current.count++;
+      formCountMap.set(rec.form, current);
+    }
+
+    // Surah distribution
+    surahCountMap.set(rec.surah, (surahCountMap.get(rec.surah) || 0) + 1);
+
+    // POS distribution
+    if (rec.pos === 'V') verbsCount++;
+    else nounsCount++;
+    posCountMap.set(rec.pos, (posCountMap.get(rec.pos) || 0) + 1);
+  }
+
+  // Build sorted distributions
+  const lemmaDistribution = Array.from(lemmaCountMap.entries())
+    .map(([lemBw, data]) => ({
+      lemmaBw: lemBw,
+      lemmaArabic: buckwalterToArabic(lemBw),
+      pos: data.pos,
+      count: data.count
+    }))
+    .sort((a, b) => b.count - a.count);
+
+  const formDistribution = Array.from(formCountMap.entries())
+    .map(([fBw, data]) => ({
+      formBw: fBw,
+      formArabic: buckwalterToArabic(fBw),
+      pos: data.pos,
+      count: data.count
+    }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 15);
+
+  const surahDistribution = Array.from(surahCountMap.entries())
+    .map(([surahNumber, count]) => ({ surahNumber, count }))
+    .sort((a, b) => b.count - a.count);
+
+  const posDistribution = [
+    { pos: 'V', labelIndo: 'Verba (Fi\'il)', count: verbsCount },
+    { pos: 'N', labelIndo: 'Nomina (Isim & Masdar)', count: nounsCount }
+  ].filter(p => p.count > 0);
+
+  const semanticProfile = getRootSemanticProfile(matchedRoot.id);
+
+  return {
+    id: matchedRoot.id,
+    rootArabic: matchedRoot.rootArabic,
+    rootArabicJoined: matchedRoot.rootArabicJoined,
+    rootLatin: matchedRoot.rootLatin,
+    titleIndo: semanticProfile?.titleIndo || matchedRoot.titleIndo || `Akar Kata ${matchedRoot.rootArabic}`,
+    coreMeaning: semanticProfile?.coreMeaning || matchedRoot.coreMeaning || 'Makna leksikal terindeks dalam Al-Qur\'an.',
+    contextualNote: semanticProfile?.contextualNote || matchedRoot.contextualNote,
+    meaningsIndonesian: semanticProfile?.meaningsIndonesian || matchedRoot.meaningsIndonesian || [matchedRoot.coreMeaning],
+    statistics: {
+      totalOccurrences: qacRecords.length || matchedRoot.totalOccurrences || occurrences.length,
+      uniqueAyahs: uniqueAyahsSet.size || occurrences.length,
+      uniqueSurahs: uniqueSurahsSet.size,
+      uniqueLemmas: lemmaDistribution.length,
+      uniqueForms: formCountMap.size,
+      verbsCount: verbsCount || matchedRoot.verbsCount || matchedRoot.verbs.length,
+      nounsCount: nounsCount || matchedRoot.nounsCount || matchedRoot.nouns.length,
+      posDistribution,
+      lemmaDistribution,
+      formDistribution,
+      surahDistribution
+    },
+    verbs: matchedRoot.verbs || [],
+    nouns: matchedRoot.nouns || [],
+    occurrences
+  };
+}

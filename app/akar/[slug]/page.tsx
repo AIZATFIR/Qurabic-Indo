@@ -1,13 +1,14 @@
 import React from 'react';
 import { ROOT_DATABASE } from '@/lib/data/roots';
-import { getRootBySlug } from '@/lib/search/root-search';
+import { getCanonicalRootDetail } from '@/lib/morphology/canonical-service';
 import { fetchLiveRoot } from '@/lib/api/quran-corpus-api';
 import { notFound } from 'next/navigation';
 import EtymologyCard from '@/components/EtymologyCard';
 import DerivativesGrid from '@/components/DerivativesGrid';
 import AyahConcordance from '@/components/AyahConcordance';
+import MorphologyDistribution from '@/components/MorphologyDistribution';
 import Link from 'next/link';
-import { ArrowLeft, BookOpen, Layers, ShieldCheck, Database, Radio, Sparkles } from 'lucide-react';
+import { ArrowLeft, BookOpen, Layers, ShieldCheck, Database, Radio, Sparkles, BarChart3 } from 'lucide-react';
 
 export function generateStaticParams() {
   // Prerender top 200 high-frequency roots at build time; dynamicParams = true handles all 1,642 roots seamlessly
@@ -26,24 +27,27 @@ interface PageProps {
 }
 
 export default async function RootDetailPage({ params }: PageProps) {
-  let root = getRootBySlug(params.slug);
+  let rootModel = getCanonicalRootDetail(params.slug);
   let isLiveFetched = false;
 
-  // Real-time Live API Fallback if root is not pre-seeded in static database
-  if (!root) {
-    root = (await fetchLiveRoot(params.slug)) || undefined;
-    isLiveFetched = true;
+  // Real-time Live API Fallback if root is not in static bundle
+  if (!rootModel) {
+    const liveRoot = await fetchLiveRoot(params.slug);
+    if (liveRoot) {
+      rootModel = getCanonicalRootDetail(liveRoot.id);
+      isLiveFetched = true;
+    }
   }
 
-  if (!root) {
+  if (!rootModel) {
     notFound();
   }
 
-  const occurrencesCount = root.occurrences?.length || 0;
-  const totalForms = (root.verbs?.length || 0) + (root.nouns?.length || 0);
+  const { statistics, occurrences, verbs, nouns } = rootModel;
+  const totalForms = (verbs?.length || 0) + (nouns?.length || 0);
 
   // Representative examples: Pick first 2-3 occurrences
-  const exampleOccurrences = (root.occurrences || []).slice(0, 3);
+  const exampleOccurrences = (occurrences || []).slice(0, 3);
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10 font-sans">
@@ -66,22 +70,22 @@ export default async function RootDetailPage({ params }: PageProps) {
             Makna &amp; Konteks
           </a>
           <a
+            href="#distribusi"
+            className="px-3 py-1.5 rounded-full bg-canvas-surface border border-hairline hover:border-primary text-ink-secondary hover:text-primary transition-all shadow-subtle hidden sm:inline-flex"
+          >
+            Distribusi ({statistics.uniqueLemmas} Lemma)
+          </a>
+          <a
             href="#bentuk"
             className="px-3 py-1.5 rounded-full bg-canvas-surface border border-hairline hover:border-primary text-ink-secondary hover:text-primary transition-all shadow-subtle"
           >
             Bentuk ({totalForms})
           </a>
           <a
-            href="#contoh"
-            className="px-3 py-1.5 rounded-full bg-canvas-surface border border-hairline hover:border-primary text-ink-secondary hover:text-primary transition-all shadow-subtle hidden sm:inline-flex"
-          >
-            Contoh Ayat
-          </a>
-          <a
             href="#concordance"
             className="px-3 py-1.5 rounded-full bg-canvas-surface border border-hairline hover:border-primary text-ink-secondary hover:text-primary transition-all shadow-subtle"
           >
-            Konkordansi ({occurrencesCount})
+            Konkordansi ({statistics.totalOccurrences})
           </a>
         </div>
       </div>
@@ -94,20 +98,22 @@ export default async function RootDetailPage({ params }: PageProps) {
             className="font-arabic text-6xl sm:text-7xl lg:text-8xl font-bold text-primary tracking-wide block leading-[1.8]"
             dir="rtl"
           >
-            {root.rootArabic}
+            {rootModel.rootArabic}
           </span>
         </div>
 
         {/* Latin Transliteration */}
         <h1 className="text-2xl sm:text-3xl font-light text-ink-primary tracking-tight font-sans">
-          {root.rootLatin}
+          {rootModel.rootLatin}
         </h1>
 
-        {/* Compact Statistics Header */}
-        <p className="text-sm sm:text-base text-ink-mute font-sans">
-          <strong className="text-ink-primary font-semibold">{root.totalOccurrences.toLocaleString('id-ID')}</strong> kemunculan ·{' '}
-          <strong className="text-ink-primary font-semibold">{occurrencesCount.toLocaleString('id-ID')}</strong> ayat ·{' '}
-          <strong className="text-ink-primary font-semibold">{totalForms}</strong> bentuk
+        {/* Deterministic Statistics Header */}
+        <p className="text-sm sm:text-base text-ink-mute font-sans max-w-2xl mx-auto">
+          <strong className="text-ink-primary font-semibold">{statistics.totalOccurrences.toLocaleString('id-ID')}</strong> kemunculan ·{' '}
+          <strong className="text-ink-primary font-semibold">{statistics.uniqueAyahs.toLocaleString('id-ID')}</strong> ayat ·{' '}
+          <strong className="text-ink-primary font-semibold">{statistics.uniqueSurahs}</strong> surah ·{' '}
+          <strong className="text-ink-primary font-semibold">{statistics.uniqueLemmas}</strong> lemma ·{' '}
+          <strong className="text-ink-primary font-semibold">{statistics.uniqueForms}</strong> bentuk
           {isLiveFetched && (
             <span className="inline-flex items-center space-x-1 ml-2 text-xs text-primary font-medium">
               <Radio className="w-3 h-3 animate-pulse" />
@@ -123,7 +129,14 @@ export default async function RootDetailPage({ params }: PageProps) {
             className="px-6 py-2.5 rounded-full bg-primary hover:bg-primary-deep text-white text-xs sm:text-sm font-semibold transition-all shadow-subtle flex items-center space-x-1.5"
           >
             <BookOpen className="w-4 h-4" />
-            <span>Baca Ayat ({occurrencesCount.toLocaleString('id-ID')})</span>
+            <span>Baca Ayat ({statistics.uniqueAyahs.toLocaleString('id-ID')})</span>
+          </a>
+          <a
+            href="#distribusi"
+            className="px-6 py-2.5 rounded-full bg-canvas-soft hover:bg-canvas-page border border-hairline text-ink-secondary hover:text-primary text-xs sm:text-sm font-semibold transition-all flex items-center space-x-1.5"
+          >
+            <BarChart3 className="w-4 h-4" />
+            <span>Lihat Distribusi ({statistics.uniqueLemmas} Lemma)</span>
           </a>
           <a
             href="#bentuk"
@@ -138,22 +151,25 @@ export default async function RootDetailPage({ params }: PageProps) {
       {/* 2. Makna & Konteks Section (Tadabbur-Grade Insight) */}
       <section id="makna" className="scroll-mt-24">
         <EtymologyCard
-          rootArabic={root.rootArabic}
-          rootLatin={root.rootLatin}
-          coreMeaning={root.coreMeaning}
-          usagePatterns={root.usagePatterns}
-          contextualNote={root.contextualNote}
-          etymologyNote={root.etymologyNote}
-          meaningsIndonesian={root.meaningsIndonesian}
+          rootArabic={rootModel.rootArabic}
+          rootLatin={rootModel.rootLatin}
+          coreMeaning={rootModel.coreMeaning}
+          contextualNote={rootModel.contextualNote}
+          meaningsIndonesian={rootModel.meaningsIndonesian}
         />
       </section>
 
-      {/* 3. Bentuk dalam Al-Qur'an (Morphology Forms) */}
-      <section id="bentuk" className="scroll-mt-24">
-        <DerivativesGrid verbs={root.verbs} nouns={root.nouns} />
+      {/* 3. Distribusi Morfologi & Frekuensi Korpus */}
+      <section id="distribusi" className="scroll-mt-24">
+        <MorphologyDistribution statistics={statistics} rootArabic={rootModel.rootArabic} />
       </section>
 
-      {/* 4. Contoh Ayat (Representative Quranic Usage Examples) */}
+      {/* 4. Bentuk dalam Al-Qur'an (Morphology Forms) */}
+      <section id="bentuk" className="scroll-mt-24">
+        <DerivativesGrid verbs={verbs} nouns={nouns} />
+      </section>
+
+      {/* 5. Contoh Ayat (Representative Quranic Usage Examples) */}
       {exampleOccurrences.length > 0 && (
         <section id="contoh" className="scroll-mt-24 space-y-4">
           <div className="border-b border-hairline pb-2.5">
@@ -162,60 +178,60 @@ export default async function RootDetailPage({ params }: PageProps) {
               <span>Contoh Penggunaan Ayat</span>
             </h2>
             <p className="text-xs sm:text-sm text-ink-mute mt-0.5 font-sans">
-              Cuplikan ayat representatif yang memuat kata dari akar <strong className="text-primary font-arabic text-sm" dir="rtl">{root.rootArabic}</strong>
+              Cuplikan ayat representatif yang memuat kata dari akar <strong className="text-primary font-arabic text-sm" dir="rtl">{rootModel.rootArabic}</strong>
             </p>
           </div>
           <AyahConcordance
             occurrences={exampleOccurrences}
-            rootArabic={root.rootArabic}
-            rootLatin={root.rootLatin}
+            rootArabic={rootModel.rootArabic}
+            rootLatin={rootModel.rootLatin}
             isExampleSection={true}
           />
         </section>
       )}
 
-      {/* 5. Konkordansi Lengkap */}
+      {/* 6. Konkordansi Lengkap */}
       <section id="concordance" className="scroll-mt-24 space-y-4">
         <div className="border-b border-hairline pb-2.5">
           <h2 className="text-xl sm:text-2xl font-light text-ink-primary tracking-tight flex items-center space-x-2 font-sans">
             <BookOpen className="w-5 h-5 text-primary" />
-            <span>Konkordansi Lengkap ({occurrencesCount.toLocaleString('id-ID')} Ayat)</span>
+            <span>Konkordansi Lengkap ({occurrences.length.toLocaleString('id-ID')} Ayat)</span>
           </h2>
           <p className="text-xs sm:text-sm text-ink-mute mt-0.5 font-sans">
-            Daftar seluruh ayat Al-Qur&apos;an yang memuat turunan kata dari akar <strong className="text-primary font-arabic text-sm" dir="rtl">{root.rootArabic}</strong>
+            Daftar seluruh ayat Al-Qur&apos;an yang memuat turunan kata dari akar <strong className="text-primary font-arabic text-sm" dir="rtl">{rootModel.rootArabic}</strong>
           </p>
         </div>
         <AyahConcordance
-          occurrences={root.occurrences}
-          rootArabic={root.rootArabic}
-          rootLatin={root.rootLatin}
+          occurrences={occurrences}
+          rootArabic={rootModel.rootArabic}
+          rootLatin={rootModel.rootLatin}
         />
       </section>
 
-      {/* 6. Analisis Corpus (Depth on Demand - Bottom Collapsed Section) */}
+      {/* 7. Analisis Corpus (Depth on Demand - Bottom Collapsed Section) */}
       <section className="pt-6 border-t border-hairline">
         <div className="p-6 sm:p-7 rounded-3xl bg-canvas-soft border border-hairline space-y-4 text-xs sm:text-sm font-sans">
           <div className="flex items-center space-x-2 text-ink-primary font-semibold">
             <Database className="w-4 h-4 text-primary" />
-            <span>Analisis Corpus &amp; Metadata QAC v0.4</span>
+            <span>Analisis Korpus &amp; Otoritas QAC v0.4</span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-ink-secondary">
             <div className="p-3 bg-canvas-surface rounded-2xl border border-hairline">
-              <span className="text-ink-mute block text-[11px]">Total Segmen:</span>
-              <span className="text-base font-semibold text-ink-primary">{root.totalOccurrences.toLocaleString('id-ID')}</span>
+              <span className="text-ink-mute block text-[11px]">Total Segmen Korpus:</span>
+              <span className="text-base font-semibold text-ink-primary">{statistics.totalOccurrences.toLocaleString('id-ID')}</span>
             </div>
             <div className="p-3 bg-canvas-surface rounded-2xl border border-hairline">
               <span className="text-ink-mute block text-[11px]">Segmen Verba (Fi&apos;il):</span>
-              <span className="text-base font-semibold text-ink-primary">{root.verbsCount.toLocaleString('id-ID')}</span>
+              <span className="text-base font-semibold text-ink-primary">{statistics.verbsCount.toLocaleString('id-ID')}</span>
             </div>
             <div className="p-3 bg-canvas-surface rounded-2xl border border-hairline">
               <span className="text-ink-mute block text-[11px]">Segmen Nomina (Isim):</span>
-              <span className="text-base font-semibold text-ink-primary">{root.nounsCount.toLocaleString('id-ID')}</span>
+              <span className="text-base font-semibold text-ink-primary">{statistics.nounsCount.toLocaleString('id-ID')}</span>
             </div>
             <div className="p-3 bg-canvas-surface rounded-2xl border border-hairline">
               <span className="text-ink-mute block text-[11px]">Total Ayat Unik:</span>
-              <span className="text-base font-semibold text-ink-primary">{occurrencesCount.toLocaleString('id-ID')}</span>
+              <span className="text-base font-semibold text-ink-primary">{statistics.uniqueAyahs.toLocaleString('id-ID')}</span>
             </div>
           </div>
 
@@ -224,7 +240,7 @@ export default async function RootDetailPage({ params }: PageProps) {
               <ShieldCheck className="w-3.5 h-3.5 text-primary" />
               <span>Otoritas Korpus: The Quranic Arabic Corpus v0.4 (University of Leeds)</span>
             </span>
-            <span>Teks &amp; Terjemahan: LPMQ / Kementerian Agama RI</span>
+            <span>Teks &amp; Terjemahan: Lajnah Pentashihan Mushaf Al-Qur&apos;an (LPMQ) / Kementerian Agama RI</span>
           </div>
         </div>
       </section>

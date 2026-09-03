@@ -3,9 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { X, BookOpen, Volume2, ArrowRight, Layers, ChevronDown, ChevronUp, ExternalLink, ShieldCheck } from 'lucide-react';
-import { searchRoots, findBestMatchingRoot, stripArabicHarakat } from '@/lib/search/root-search';
-import { getWordDetailedExplanation } from '@/lib/search/word-dictionary';
-import { RootWord } from '@/lib/types/morphology';
+import { getCanonicalWordDetail } from '@/lib/morphology/canonical-service';
+import { stripArabicHarakat } from '@/lib/search/root-search';
 
 interface WordEtymologyModalProps {
   isOpen: boolean;
@@ -18,12 +17,12 @@ interface WordEtymologyModalProps {
   matchedRootSlug?: string;
   rootLetters?: string;
   audioUrl?: string;
-  ayahArabic?: string;
-  ayahIndo?: string;
   surahNumber?: number;
   ayahNumber?: number;
-  surahNameIndo?: string;
   wordIndex?: number;
+  surahNameIndo?: string;
+  ayahArabic?: string;
+  ayahIndo?: string;
 }
 
 export default function WordEtymologyModal({
@@ -32,17 +31,13 @@ export default function WordEtymologyModal({
   wordArabic,
   transliteration,
   meaningIndo,
-  posTag,
-  posDetail,
-  matchedRootSlug,
-  rootLetters,
   audioUrl,
-  ayahArabic,
-  ayahIndo,
   surahNumber,
   ayahNumber,
-  surahNameIndo,
   wordIndex,
+  surahNameIndo,
+  ayahArabic,
+  ayahIndo,
 }: WordEtymologyModalProps) {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isCorpusOpen, setIsCorpusOpen] = useState(false);
@@ -72,26 +67,23 @@ export default function WordEtymologyModal({
 
   if (!isOpen) return null;
 
-  // 1. Get dictionary & root details
-  const wordDetail = getWordDetailedExplanation(wordArabic, meaningIndo);
+  // 1. Single Canonical Word Detail Resolver
+  const wordModel = getCanonicalWordDetail(wordArabic, {
+    surahNumber,
+    ayahNumber,
+    wordIndex,
+    ayahArabic,
+    ayahIndo
+  });
 
-  // 2. Resolve Root Word from local database if available
-  let root: RootWord | undefined;
-  const slugToSearch = matchedRootSlug || wordDetail.rootSlug;
-  if (slugToSearch) {
-    const searchRes = searchRoots(slugToSearch);
-    root = searchRes[0];
-  }
-  if (!root && wordArabic) {
-    root = findBestMatchingRoot(wordArabic, meaningIndo);
-  }
-
-  const isParticle = wordDetail.posTag === 'Harf' || posTag === 'Harf';
-  const displayRootLetters = isParticle ? '' : (root?.rootArabic || wordDetail.rootLetters || rootLetters);
-  const displayRootLatin = isParticle ? '' : (root?.rootLatin || wordDetail.rootLatin);
-  const displayPosTag = wordDetail.posTag || posTag || 'Isim';
-  const displayGrammar = wordDetail.grammaticalRole || posDetail || (isParticle ? 'Harf / Partikel (Kaidah Nahwu)' : 'Isim (Kata Benda / Istilah)');
-  const primaryMeaningClean = wordDetail.primaryMeaning || meaningIndo || 'Kosakata Al-Qur\'an';
+  const isParticle = wordModel.morphology.isParticle;
+  const displayPosTag = wordModel.morphology.pos;
+  const displayGrammar = wordModel.morphology.grammaticalRole;
+  const wazanOrForm = wordModel.morphology.wazanOrForm;
+  const displayRootLetters = wordModel.lexical.rootArabic;
+  const rootSlug = wordModel.lexical.rootSlug;
+  const lemmaArabic = wordModel.lexical.lemmaArabic;
+  const primaryMeaningClean = wordModel.translation.primaryMeaning || meaningIndo || 'Kosakata Al-Qur\'an';
 
   // Audio Playback
   const handlePlayAudio = () => {
@@ -119,7 +111,7 @@ export default function WordEtymologyModal({
     });
   };
 
-  // Helper to highlight active word in ayah Arabic context
+  // Safe highlighted ayah context
   const renderHighlightedAyah = () => {
     if (!ayahArabic) return null;
     const words = ayahArabic.split(' ');
@@ -157,7 +149,7 @@ export default function WordEtymologyModal({
         <div className="flex items-center justify-between border-b border-hairline pb-3.5">
           <div className="flex items-center space-x-2">
             <span className="px-2.5 py-1 rounded-lg bg-primary-subdued text-primary text-xs font-semibold font-sans">
-              {displayPosTag} {wordDetail.wazanOrForm ? `· ${wordDetail.wazanOrForm}` : ''}
+              {displayPosTag} {wazanOrForm ? `· ${wazanOrForm}` : ''}
             </span>
             {surahNameIndo && (
               <span className="text-xs text-ink-mute font-sans font-medium">
@@ -179,38 +171,39 @@ export default function WordEtymologyModal({
             >
               <Volume2 className="w-4 h-4" />
             </button>
-
             <button
               onClick={onClose}
-              className="p-1.5 rounded-full text-ink-mute hover:text-ink-primary hover:bg-canvas-soft transition-colors"
+              className="p-2 rounded-xl bg-canvas-soft hover:bg-canvas-page text-ink-secondary hover:text-ink-primary transition-colors"
               title="Tutup (ESC)"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* 1. Main Word Display & Meaning */}
-        <div className="p-5 sm:p-6 rounded-2xl bg-canvas-soft border border-hairline space-y-3">
-          <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <p className="text-lg sm:text-xl font-bold text-ink-primary font-sans leading-snug">
-                {primaryMeaningClean}
-              </p>
-              {transliteration && (
-                <p className="text-xs sm:text-sm text-ink-mute font-medium font-sans italic mt-0.5">
-                  {transliteration}
-                </p>
-              )}
-            </div>
-
-            {/* Arabic Word Display */}
-            <div className="text-right py-1" dir="rtl">
-              <span className="font-arabic text-4xl sm:text-5xl font-bold text-ink-primary block leading-[2.0]" dir="rtl">
-                {wordArabic}
-              </span>
-            </div>
+        {/* 1. Main Word Header Card */}
+        <div className="p-5 sm:p-6 rounded-3xl bg-canvas-soft border border-hairline space-y-3.5 text-center font-sans">
+          {/* Arabic Text Display */}
+          <div className="py-1" dir="rtl">
+            <span
+              className="font-arabic text-5xl sm:text-6xl font-bold text-primary tracking-wide block leading-[2.2] sm:leading-[2.4]"
+              dir="rtl"
+            >
+              {wordArabic}
+            </span>
           </div>
+
+          {/* Transliteration */}
+          {transliteration && (
+            <span className="text-xs sm:text-sm font-medium text-ink-mute font-sans tracking-wide block">
+              — {transliteration} —
+            </span>
+          )}
+
+          {/* Indonesian Primary Meaning */}
+          <h3 className="text-lg sm:text-xl font-bold text-ink-primary tracking-tight font-sans">
+            &ldquo;{primaryMeaningClean}&rdquo;
+          </h3>
 
           {/* Word Actions & Root Link Banner */}
           <div className="pt-2 border-t border-hairline flex flex-wrap items-center justify-between gap-2 text-xs font-sans">
@@ -221,16 +214,9 @@ export default function WordEtymologyModal({
                   Tidak memiliki akar (Partikel / Harf)
                 </span>
               ) : (
-                <>
-                  <span className="font-arabic text-base font-bold text-primary" dir="rtl">
-                    {displayRootLetters}
-                  </span>
-                  {displayRootLatin && (
-                    <span className="text-ink-mute font-medium">
-                      ({displayRootLatin})
-                    </span>
-                  )}
-                </>
+                <span className="font-arabic text-base font-bold text-primary" dir="rtl">
+                  {displayRootLetters}
+                </span>
               )}
             </div>
 
@@ -243,9 +229,9 @@ export default function WordEtymologyModal({
                 <span>Buka Detail Kata</span>
                 <ArrowRight aria-hidden="true" className="w-3 h-3" />
               </Link>
-              {root && (
+              {rootSlug && !isParticle && (
                 <Link
-                  href={`/akar/${root.id}`}
+                  href={`/akar/${rootSlug}`}
                   onClick={onClose}
                   className="px-3.5 py-1.5 rounded-full bg-canvas-surface hover:bg-canvas-page border border-hairline text-ink-primary hover:text-primary text-xs font-semibold transition-all inline-flex items-center space-x-1.5"
                 >
@@ -267,11 +253,11 @@ export default function WordEtymologyModal({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
             <div className="p-2.5 bg-canvas-soft rounded-xl border border-hairline">
               <span className="text-ink-mute block text-[11px]">Kategori Gramatikal:</span>
-              <span className="font-semibold text-ink-primary">{displayGrammar || displayPosTag}</span>
+              <span className="font-semibold text-ink-primary">{displayGrammar}</span>
             </div>
             <div className="p-2.5 bg-canvas-soft rounded-xl border border-hairline">
               <span className="text-ink-mute block text-[11px]">Wazan / Pola:</span>
-              <span className="font-semibold text-ink-primary">{wordDetail.wazanOrForm || (isParticle ? 'Mabni (Tetap)' : 'Bentuk Leksikal')}</span>
+              <span className="font-semibold text-ink-primary">{wazanOrForm || (isParticle ? 'Mabni (Tetap)' : 'Bentuk Leksikal')}</span>
             </div>
           </div>
         </div>
@@ -291,7 +277,7 @@ export default function WordEtymologyModal({
                   className="text-xs text-primary hover:underline font-semibold inline-flex items-center space-x-1"
                 >
                   <span>Buka di Mushaf</span>
-                  <ExternalLink className="w-3 h-3" />
+                  <ExternalLink aria-hidden="true" className="w-3 h-3" />
                 </Link>
               )}
             </div>
@@ -328,7 +314,9 @@ export default function WordEtymologyModal({
             <div className="p-4 bg-canvas-soft rounded-2xl border border-hairline text-xs font-mono space-y-1.5 mt-2 animate-in fade-in duration-150">
               <div className="flex justify-between">
                 <span className="text-ink-mute">Lemma:</span>
-                <span className="text-ink-primary">{isParticle ? '-' : (wordDetail.rootLatin || '-')}</span>
+                <span className="text-ink-primary">
+                  {lemmaArabic ? `${lemmaArabic} ` : ''}({wordModel.lexical.lemma || '-'})
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-ink-mute">Root:</span>
@@ -342,6 +330,12 @@ export default function WordEtymologyModal({
                 <div className="flex justify-between">
                   <span className="text-ink-mute">QAC Coordinate:</span>
                   <span className="text-ink-primary">{surahNumber}:{ayahNumber}:{wordIndex || 1}</span>
+                </div>
+              )}
+              {wordModel.corpus.buckwalter && (
+                <div className="flex justify-between">
+                  <span className="text-ink-mute">Buckwalter Stem:</span>
+                  <span className="text-ink-primary">{wordModel.corpus.buckwalter}</span>
                 </div>
               )}
             </div>

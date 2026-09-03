@@ -159,7 +159,7 @@ export default function DerivativesGrid({ verbs = [], nouns = [] }: DerivativesG
                     className="text-ink-mute hover:text-ink-primary inline-flex items-center space-x-1 font-medium font-sans"
                   >
                     <span>Detail Corpus</span>
-                    {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                    {isExpanded ? <ChevronUp aria-hidden="true" className="w-3 h-3" /> : <ChevronDown aria-hidden="true" className="w-3 h-3" />}
                   </button>
                 </div>
 

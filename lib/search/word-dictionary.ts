@@ -100,7 +100,7 @@ export function cleanGlossToIndonesian(rawGloss?: string, fallbackMeaning?: stri
 }
 
 // Curated Word Definitions (100% Indonesian, Honest Attribution)
-const CURATED_WORD_DICTIONARY: Record<string, {
+export const CURATED_WORD_DICTIONARY: Record<string, {
   rootLetters: string;
   rootLatin: string;
   rootSlug?: string;

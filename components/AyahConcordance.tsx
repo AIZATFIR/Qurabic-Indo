@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { VerseOccurrence, WordSegment } from '@/lib/types/morphology';
 import { fetchVerseWords } from '@/lib/api/quran-corpus-api';
+import { stripArabicHarakat } from '@/lib/search/root-search';
 import WordByWordViewer from './WordByWordViewer';
 import WordEtymologyModal from './WordEtymologyModal';
-import { Copy, Check, BookOpen, ChevronDown, ChevronUp, ExternalLink, ArrowDown, Sparkles, ShieldCheck } from 'lucide-react';
+import { Copy, Check, BookOpen, ChevronDown, ChevronUp, ExternalLink, ArrowDown, ShieldCheck, Filter } from 'lucide-react';
 
 interface AyahConcordanceProps {
   occurrences: VerseOccurrence[];
@@ -29,6 +30,7 @@ export default function AyahConcordance({
   const [segmentsMap, setSegmentsMap] = useState<Record<string, WordSegment[]>>({});
   const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({});
   const [visibleCount, setVisibleCount] = useState<number>(isExampleSection ? 3 : INITIAL_VISIBLE_COUNT);
+  const [selectedSurahFilter, setSelectedSurahFilter] = useState<number | 'all'>('all');
   
   // Word Detail Modal state
   const [selectedWordForModal, setSelectedWordForModal] = useState<{
@@ -43,6 +45,26 @@ export default function AyahConcordance({
     meaningIndo?: string;
   } | null>(null);
 
+  // Extract unique surahs for filtering
+  const availableSurahs = useMemo(() => {
+    const map = new Map<number, { number: number; nameIndo: string; count: number }>();
+    for (const occ of occurrences) {
+      const existing = map.get(occ.surahNumber) || {
+        number: occ.surahNumber,
+        nameIndo: occ.surahNameIndo || `Surah ${occ.surahNumber}`,
+        count: 0
+      };
+      existing.count++;
+      map.set(occ.surahNumber, existing);
+    }
+    return Array.from(map.values()).sort((a, b) => a.number - b.number);
+  }, [occurrences]);
+
+  const filteredOccurrences = useMemo(() => {
+    if (selectedSurahFilter === 'all') return occurrences;
+    return occurrences.filter(o => o.surahNumber === selectedSurahFilter);
+  }, [occurrences, selectedSurahFilter]);
+
   if (!occurrences || occurrences.length === 0) {
     return (
       <div className="p-8 text-center bg-canvas-surface border border-hairline rounded-2xl text-ink-mute font-sans shadow-subtle">
@@ -51,8 +73,8 @@ export default function AyahConcordance({
     );
   }
 
-  const displayedOccurrences = occurrences.slice(0, visibleCount);
-  const hasMore = !isExampleSection && visibleCount < occurrences.length;
+  const displayedOccurrences = filteredOccurrences.slice(0, visibleCount);
+  const hasMore = !isExampleSection && visibleCount < filteredOccurrences.length;
 
   const toggleInterlinear = async (item: VerseOccurrence, key: string) => {
     if (openInterlinearId === key) {
@@ -96,14 +118,14 @@ export default function AyahConcordance({
   };
 
   const handleLoadMore = () => {
-    setVisibleCount((prev) => Math.min(prev + 10, occurrences.length));
+    setVisibleCount((prev) => Math.min(prev + 10, filteredOccurrences.length));
   };
 
   const handleShowAll = () => {
-    setVisibleCount(occurrences.length);
+    setVisibleCount(filteredOccurrences.length);
   };
 
-  // Helper to render verse with subtle target word highlight
+  // Helper to render verse with exact target word highlight
   const renderHighlightedVerse = (verseText: string, targetWord?: string) => {
     if (!targetWord) {
       return (
@@ -113,21 +135,20 @@ export default function AyahConcordance({
       );
     }
 
-    const cleanTarget = targetWord.replace(/[ًٌٍَُِّْٰٓ]/g, '');
+    const cleanTarget = stripArabicHarakat(targetWord);
     const tokens = verseText.split(' ');
 
     return (
       <p className="font-arabic text-2xl sm:text-3xl text-ink-primary leading-[2.6] sm:leading-[2.8] tracking-wide" dir="rtl">
         {tokens.map((tok, idx) => {
-          const cleanTok = tok.replace(/[ًٌٍَُِّْٰٓ]/g, '');
-          const isMatch = cleanTok === cleanTarget || cleanTok.includes(cleanTarget) || cleanTarget.includes(cleanTok);
+          const cleanTok = stripArabicHarakat(tok);
+          const isTarget = cleanTok === cleanTarget;
 
-          if (isMatch) {
+          if (isTarget) {
             return (
               <span
                 key={idx}
-                className="inline-block px-1.5 py-0.5 mx-1 rounded-xl bg-primary-subdued text-primary font-bold border border-primary/20"
-                dir="rtl"
+                className="inline-block px-1.5 py-0.5 mx-0.5 rounded-lg bg-primary-subdued text-primary font-bold transition-colors"
               >
                 {tok}
               </span>
@@ -141,114 +162,92 @@ export default function AyahConcordance({
 
   return (
     <div className="space-y-6 font-sans">
-      {/* Header Count Summary (Only in full concordance section) */}
-      {!isExampleSection && (
-        <div className="flex items-center justify-between text-xs text-ink-mute pb-3 border-b border-hairline">
-          <span>
-            Menampilkan <strong className="text-ink-primary font-semibold">{displayedOccurrences.length}</strong> dari{' '}
-            <strong className="text-ink-primary font-semibold">{occurrences.length}</strong> ayat kemunculan otentik
-          </span>
-          {hasMore && (
-            <button
-              onClick={handleShowAll}
-              className="text-primary hover:underline font-medium text-xs transition-colors"
+      {/* Surah Filter Bar (When multiple surahs exist & not in example section) */}
+      {!isExampleSection && availableSurahs.length > 1 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-canvas-surface border border-hairline rounded-2xl shadow-subtle text-xs font-sans">
+          <div className="flex items-center space-x-2 text-ink-secondary">
+            <Filter aria-hidden="true" className="w-3.5 h-3.5 text-primary" />
+            <span className="font-semibold text-ink-primary">Filter Berdasarkan Surah:</span>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <select
+              value={selectedSurahFilter}
+              onChange={(e) => {
+                const val = e.target.value === 'all' ? 'all' : parseInt(e.target.value, 10);
+                setSelectedSurahFilter(val);
+                setVisibleCount(INITIAL_VISIBLE_COUNT);
+              }}
+              className="px-3 py-1.5 rounded-xl bg-canvas-soft border border-hairline text-ink-primary text-xs font-medium focus:outline-none focus:ring-1 focus:ring-primary"
             >
-              Buka Seluruh ({occurrences.length}) Ayat
-            </button>
-          )}
+              <option value="all">Semua Surah ({occurrences.length} Ayat)</option>
+              {availableSurahs.map((s) => (
+                <option key={s.number} value={s.number}>
+                  Q.S. {s.nameIndo} [{s.number}] — {s.count} ayat
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       )}
 
-      {/* List of Verified Verses */}
-      <div className="space-y-5">
+      {/* Occurrences List */}
+      <div className="space-y-4">
         {displayedOccurrences.map((item, idx) => {
-          const itemKey = `${item.surahNumber}-${item.ayahNumber}-${idx}`;
+          const itemKey = `${item.surahNumber}:${item.ayahNumber}_${idx}`;
           const isInterlinearOpen = openInterlinearId === itemKey;
-          const isCorpusExpanded = expandedCorpusIds[itemKey] || false;
+          const isCorpusExpanded = !!expandedCorpusIds[itemKey];
           const isCopied = copiedKey === itemKey;
-          const isLoadingSegments = loadingMap[itemKey];
           const activeSegments = segmentsMap[itemKey] || item.wordSegments;
-
-          // Extract word index from location key if present (e.g. "58:8:26" -> 26)
-          const wordIdx = item.wordLocation ? parseInt(item.wordLocation.split(':')[2], 10) : undefined;
+          const isLoadingSegments = loadingMap[itemKey];
 
           return (
             <div
               key={itemKey}
-              className="p-6 sm:p-8 bg-canvas-surface border border-hairline rounded-3xl shadow-subtle hover:border-primary/30 transition-all space-y-4"
+              className="p-5 sm:p-7 rounded-3xl bg-canvas-surface border border-hairline hover:border-hairline-hover shadow-subtle transition-all space-y-4"
             >
-              {/* Header Badge & Action Buttons */}
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline pb-3.5">
-                <div className="flex items-center space-x-3">
-                  <span className="w-8 h-8 rounded-xl bg-primary-subdued text-primary font-semibold text-xs flex items-center justify-center font-sans">
-                    {idx + 1}
+              {/* Header Bar */}
+              <div className="flex items-center justify-between border-b border-hairline pb-3.5 font-sans">
+                <div className="flex items-center space-x-2.5">
+                  <span className="px-3 py-1 rounded-full bg-primary-subdued text-primary font-semibold text-xs">
+                    Q.S. {item.surahNameIndo} [{item.surahNumber}]:{item.ayahNumber}
                   </span>
-                  <div>
-                    <h4 className="font-semibold text-ink-primary text-sm sm:text-base font-sans">
-                      Q.S. {item.surahNameIndo} [{item.surahNumber}]: {item.ayahNumber}
-                    </h4>
-                    {item.matchedWordArabic && (
-                      <div className="flex items-center space-x-2 text-xs text-ink-mute font-sans mt-0.5">
-                        <span>Target:</span>
-                        <strong className="text-primary font-arabic text-sm font-bold" dir="rtl">
-                          {item.matchedWordArabic}
-                        </strong>
-                        <span>·</span>
-                        <span>Akar: <strong className="font-arabic font-semibold" dir="rtl">{rootArabic}</strong> ({rootLatin})</span>
-                      </div>
-                    )}
-                  </div>
+                  {item.matchedWordArabic && (
+                    <span className="text-xs text-ink-mute hidden sm:inline-flex items-center space-x-1">
+                      <span>Bentuk:</span>
+                      <strong className="font-arabic text-sm text-primary" dir="rtl">{item.matchedWordArabic}</strong>
+                    </span>
+                  )}
                 </div>
 
-                {/* Action Button Group */}
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center space-x-1 sm:space-x-2">
                   <button
-                    onClick={() =>
-                      setSelectedWordForModal({
-                        wordArabic: item.matchedWordArabic || item.verseArabic.split(' ')[0],
-                        surahNumber: item.surahNumber,
-                        ayahNumber: item.ayahNumber,
-                        surahNameIndo: item.surahNameIndo,
-                        ayahArabic: item.verseArabic,
-                        ayahIndo: item.verseIndo,
-                        wordIndex: wordIdx,
-                        rootLetters: rootArabic,
-                        meaningIndo: item.matchedWordIndo,
-                      })
-                    }
-                    className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-primary hover:bg-primary-deep text-white text-xs font-semibold shadow-subtle transition-all font-sans"
+                    onClick={() => handleCopyVerse(item, itemKey)}
+                    className="p-2 rounded-xl bg-canvas-soft hover:bg-canvas-page text-ink-secondary hover:text-ink-primary transition-colors text-xs"
+                    title="Salin Ayat &amp; Terjemahan"
                   >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Buka Detail Kata</span>
+                    {isCopied ? <Check aria-hidden="true" className="w-3.5 h-3.5 text-success" /> : <Copy aria-hidden="true" className="w-3.5 h-3.5" />}
                   </button>
 
                   <Link
                     href={`/baca?surah=${item.surahNumber}&ayah=${item.ayahNumber}`}
-                    className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-full bg-canvas-soft hover:bg-canvas-page border border-hairline text-xs font-medium text-ink-secondary hover:text-primary transition-all font-sans"
+                    className="px-3 py-1.5 rounded-full bg-canvas-soft hover:bg-canvas-page border border-hairline text-ink-secondary hover:text-primary text-xs font-semibold transition-all inline-flex items-center space-x-1"
+                    title="Buka dalam Mushaf Lengkap"
                   >
-                    <span>Buka di Mushaf</span>
-                    <ExternalLink className="w-3 h-3 text-ink-mute" />
+                    <span>Baca di Mushaf</span>
+                    <ExternalLink aria-hidden="true" className="w-3 h-3" />
                   </Link>
 
                   <button
-                    onClick={() => handleCopyVerse(item, itemKey)}
-                    className={`inline-flex items-center space-x-1 px-3 py-1.5 rounded-full text-xs font-medium transition-all font-sans ${
-                      isCopied
-                        ? 'bg-emerald-100 text-emerald-700 border border-emerald-300'
-                        : 'bg-canvas-soft hover:bg-primary-fixed border border-hairline text-ink-secondary'
+                    onClick={() => toggleInterlinear(item, itemKey)}
+                    className={`px-3 py-1.5 rounded-full border text-xs font-semibold transition-all inline-flex items-center space-x-1 ${
+                      isInterlinearOpen
+                        ? 'bg-primary text-white border-primary shadow-subtle'
+                        : 'bg-canvas-soft hover:bg-canvas-page border-hairline text-ink-secondary hover:text-primary'
                     }`}
                   >
-                    {isCopied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 text-ink-mute" />}
-                    <span>{isCopied ? 'Tersalin' : 'Salin'}</span>
-                  </button>
-
-                  <button
-                    onClick={() => toggleInterlinear(item, itemKey)}
-                    className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-full bg-canvas-soft hover:bg-canvas-page border border-hairline text-xs font-medium text-ink-secondary transition-all font-sans"
-                  >
-                    <BookOpen className="w-3 h-3" />
                     <span>{isInterlinearOpen ? 'Tutup Per Kata' : 'Per Kata'}</span>
-                    {isInterlinearOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                    {isInterlinearOpen ? <ChevronUp aria-hidden="true" className="w-3 h-3" /> : <ChevronDown aria-hidden="true" className="w-3 h-3" />}
                   </button>
                 </div>
               </div>
@@ -285,14 +284,14 @@ export default function AyahConcordance({
               )}
 
               {/* Collapsed Detail Corpus (QAC v0.4) */}
-              <div className="pt-1 flex items-center justify-between text-xs text-ink-mute">
+              <div className="pt-1 flex items-center justify-between text-xs text-ink-mute font-sans">
                 <button
                   onClick={() => toggleCorpusDetail(itemKey)}
                   className="inline-flex items-center space-x-1 hover:text-ink-primary transition-colors font-medium"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+                  <ShieldCheck aria-hidden="true" className="w-3.5 h-3.5 text-primary" />
                   <span>Detail Corpus ({item.wordLocation || `${item.surahNumber}:${item.ayahNumber}`})</span>
-                  {isCorpusExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                  {isCorpusExpanded ? <ChevronUp aria-hidden="true" className="w-3 h-3" /> : <ChevronDown aria-hidden="true" className="w-3 h-3" />}
                 </button>
 
                 {isCorpusExpanded && (
@@ -330,14 +329,14 @@ export default function AyahConcordance({
             onClick={handleLoadMore}
             className="w-full sm:w-auto px-6 py-3 rounded-full bg-canvas-surface hover:bg-canvas-soft border border-hairline text-ink-primary text-xs sm:text-sm font-semibold shadow-subtle transition-all flex items-center justify-center space-x-2"
           >
-            <ArrowDown className="w-4 h-4 text-primary" />
+            <ArrowDown aria-hidden="true" className="w-4 h-4 text-primary" />
             <span>Tampilkan 10 Ayat Lagi</span>
           </button>
           <button
             onClick={handleShowAll}
             className="w-full sm:w-auto px-6 py-3 rounded-full bg-primary hover:bg-primary-deep text-white text-xs sm:text-sm font-semibold shadow-subtle transition-all"
           >
-            Tampilkan Seluruh ({occurrences.length}) Ayat
+            Tampilkan Seluruh ({filteredOccurrences.length}) Ayat
           </button>
         </div>
       )}

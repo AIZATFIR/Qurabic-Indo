@@ -441,7 +441,16 @@ export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
 /**
  * Returns a rich, context-aware semantic profile for any Quranic root.
  */
-export function getRootSemanticProfile(rootBw: string, rootArabic: string, totalOccurrences: number, verbsCount: number, nounsCount: number): RootSemanticProfile {
+export function getRootSemanticProfile(rootBw: string, rootArabic?: string, totalOccurrences?: number, verbsCount?: number, nounsCount?: number): RootSemanticProfile {
+  if (!rootBw) {
+    return {
+      titleIndo: 'Akar Kata',
+      coreMeaning: 'Catatan semantik belum tersedia.',
+      usagePatterns: [],
+      meaningsIndonesian: ['Turunan akar kata dalam Al-Qur\'an']
+    };
+  }
+
   const normalizedId = rootBw.replace(/\s+/g, '-').split('').join('-');
   const directId = rootBw.split('').join('-');
 
@@ -449,7 +458,7 @@ export function getRootSemanticProfile(rootBw: string, rootArabic: string, total
   if (CURATED_ROOT_SEMANTICS[normalizedId]) return CURATED_ROOT_SEMANTICS[normalizedId];
   if (CURATED_ROOT_SEMANTICS[directId]) return CURATED_ROOT_SEMANTICS[directId];
 
-  const rootArJoined = rootArabic.replace(/\s+/g, '');
+  const rootArJoined = rootArabic ? rootArabic.replace(/\s+/g, '') : rootBw;
   
   return {
     titleIndo: `Akar Kata ${rootArJoined}`,

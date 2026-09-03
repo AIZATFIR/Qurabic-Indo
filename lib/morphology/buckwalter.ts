@@ -25,11 +25,11 @@ export const ARABIC_TO_BUCKWALTER_MAP: Record<string, string> = Object.entries(
  */
 export function buckwalterToArabic(bw: string): string {
   if (!bw) return '';
-  // Strip QAC bracket markers if any
-  const cleanBw = bw.replace(/[\[\]]/g, '');
+  // Strip QAC bracket markers and special annotation flags if any
+  const cleanBw = bw.replace(/[\[\]@#:;]/g, '');
   return cleanBw
     .split('')
-    .map((c) => BUCKWALTER_TO_ARABIC_MAP[c] || c)
+    .map((c) => BUCKWALTER_TO_ARABIC_MAP[c] || (/[a-zA-Z0-9]/.test(c) ? c : ''))
     .join('');
 }
 
