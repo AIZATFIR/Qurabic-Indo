@@ -123,9 +123,13 @@ export default function WordDetailPage({ params }: PageProps) {
 
           <div className="p-4 bg-canvas-soft rounded-2xl border border-hairline space-y-1">
             <span className="text-xs text-ink-mute block font-medium">Akar Kata (Triliteral Root):</span>
-            {isParticle || !rootArabic ? (
+            {isParticle ? (
               <span className="text-ink-secondary text-sm italic">
-                Partikel / Harf (Tidak memiliki akar triliteral)
+                Partikel / Harf (Tidak memiliki akar kata)
+              </span>
+            ) : !rootArabic ? (
+              <span className="text-ink-secondary text-sm italic">
+                Data akar tidak terindeks untuk kata ini
               </span>
             ) : (
               <div className="flex items-center space-x-2">

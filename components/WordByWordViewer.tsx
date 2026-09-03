@@ -106,16 +106,35 @@ export default function WordByWordViewer({ segments }: WordByWordViewerProps) {
       </div>
 
       {/* Bedah Akar Kata Popover Drawer Modal */}
-      {selectedWord && (
-        <WordEtymologyModal
-          isOpen={!!selectedWord}
-          onClose={() => setSelectedWord(null)}
-          wordArabic={selectedWord.arabic}
-          transliteration={selectedWord.transliteration}
-          meaningIndo={selectedWord.meaningIndo}
-          posTag={selectedWord.posTag}
-        />
-      )}
+      {selectedWord && (() => {
+        let surahNumber: number | undefined;
+        let ayahNumber: number | undefined;
+        let wordIndex: number | undefined;
+
+        if (selectedWord.wordLocation) {
+          const parts = selectedWord.wordLocation.split(':');
+          if (parts.length >= 3) {
+            surahNumber = parseInt(parts[0], 10);
+            ayahNumber = parseInt(parts[1], 10);
+            wordIndex = parseInt(parts[2], 10);
+          }
+        }
+
+        return (
+          <WordEtymologyModal
+            isOpen={!!selectedWord}
+            onClose={() => setSelectedWord(null)}
+            wordArabic={selectedWord.arabic}
+            transliteration={selectedWord.transliteration}
+            meaningIndo={selectedWord.meaningIndo}
+            posTag={selectedWord.posTag}
+            rootLetters={selectedWord.rootArabic}
+            surahNumber={surahNumber}
+            ayahNumber={ayahNumber}
+            wordIndex={wordIndex || selectedWord.wordIndex}
+          />
+        );
+      })()}
     </>
   );
 }

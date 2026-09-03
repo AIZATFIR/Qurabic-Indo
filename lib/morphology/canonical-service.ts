@@ -185,8 +185,14 @@ export function getCanonicalWordDetail(
   const qacIndex = getQACAuthoritativeIndex();
 
   // 1. Resolve QAC Record:
-  // First check direct location coordinate (e.g. "1:1:3")
+  // First check direct location coordinate (e.g. "10:24:9" or "10:24:9:2")
   let qacRecords = qacIndex.recordsByWordLocation.get(cleanInput);
+
+  if (!qacRecords && cleanInput.split(':').length === 4) {
+    const parts = cleanInput.split(':');
+    const wordLoc = `${parts[0]}:${parts[1]}:${parts[2]}`;
+    qacRecords = qacIndex.recordsByWordLocation.get(wordLoc);
+  }
 
   // If not direct location, check if location provided in context
   if (!qacRecords && context?.surahNumber && context?.ayahNumber && context?.wordIndex) {
@@ -209,24 +215,25 @@ export function getCanonicalWordDetail(
   let tag = stemRecord?.tag || (isQuranicParticle(cleanArabic) ? 'P' : 'N');
   let rawFeatures = stemRecord?.rawFeatures || '';
 
-  // 3. Resolve Root in ROOT_DATABASE
+  // 3. Resolve Root in ROOT_DATABASE (Strict, case-preserving Buckwalter matching)
   const isParticleInput = isQuranicParticle(cleanArabic);
-  const rBw = rootBw;
-  let matchedRoot = (rBw && !isParticleInput)
-    ? ROOT_DATABASE.find(r => r.id === rBw || r.id.replace(/-/g, '') === rBw.toLowerCase())
+  let matchedRoot = (rootBw && !isParticleInput)
+    ? ROOT_DATABASE.find(r => r.id.replace(/-/g, '') === rootBw || r.id === rootBw)
     : undefined;
 
   if (!matchedRoot && !isParticleInput) {
     const curatedDict = CURATED_WORD_DICTIONARY[cleanArabic];
-    if (curatedDict?.rootSlug) {
-      matchedRoot = ROOT_DATABASE.find(r => r.id === curatedDict.rootSlug || r.id.replace(/-/g, '') === curatedDict.rootSlug?.replace(/-/g, ''));
+    const rSlug = curatedDict?.rootSlug;
+    if (rSlug) {
+      matchedRoot = ROOT_DATABASE.find(r => r.id === rSlug || r.id.replace(/-/g, '') === rSlug.replace(/-/g, ''));
       if (matchedRoot && !rootBw) {
         rootBw = matchedRoot.id.replace(/-/g, '');
       }
     }
   }
 
-  if (!matchedRoot && !isParticleInput) {
+  // Fallback to fuzzy search ONLY if no authoritative QAC stem was found and word is not a particle
+  if (!matchedRoot && !isParticleInput && !stemRecord) {
     matchedRoot = findBestMatchingRoot(cleanInput);
     if (matchedRoot && !rootBw) {
       rootBw = matchedRoot.id.replace(/-/g, '');
@@ -245,7 +252,13 @@ export function getCanonicalWordDetail(
         grammaticalRole: 'Harf / Partikel dalam Kaidah Nahwu',
         isParticle: true
       }
-    : mapQACFeaturesToIndo(tag, rawFeatures);
+    : (stemRecord ? mapQACFeaturesToIndo(tag, rawFeatures) : {
+        pos: 'Isim' as const,
+        posLabelIndo: 'Kosakata Terindeks',
+        wazanOrForm: 'Bentuk Leksikal Standar',
+        grammaticalRole: 'Analisis morfologi terhubung melalui indeks Al-Qur\'an',
+        isParticle: false
+      });
 
   // 5. Semantic & Lexical Resolution
   const curatedDict = CURATED_WORD_DICTIONARY[cleanArabic];
@@ -321,18 +334,21 @@ export function getCanonicalWordDetail(
  */
 export function getCanonicalRootDetail(slug: string): RootDetailModel | null {
   if (!slug) return null;
-  const cleanSlug = slug.toLowerCase().trim();
+  const cleanSlug = slug.trim();
   const qacIndex = getQACAuthoritativeIndex();
 
-  // Find root in ROOT_DATABASE
+  // Find root in ROOT_DATABASE (case-preserving match first, then case-insensitive fallback)
   const matchedRoot = ROOT_DATABASE.find(r => 
-    r.id.toLowerCase() === cleanSlug ||
+    r.id === cleanSlug ||
     r.id.replace(/-/g, '') === cleanSlug.replace(/-/g, '') ||
-    r.rootLatin.toLowerCase() === cleanSlug
+    r.id.toLowerCase() === cleanSlug.toLowerCase() ||
+    r.id.replace(/-/g, '').toLowerCase() === cleanSlug.replace(/-/g, '').toLowerCase() ||
+    r.rootLatin.toLowerCase() === cleanSlug.toLowerCase()
   );
 
   if (!matchedRoot) return null;
 
+  // Exact case-sensitive Buckwalter root key for QAC recordsByRoot
   const rootBw = matchedRoot.id.replace(/-/g, '');
   const qacRecords = qacIndex.recordsByRoot.get(rootBw) || [];
 

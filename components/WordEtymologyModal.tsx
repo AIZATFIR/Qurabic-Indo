@@ -41,6 +41,35 @@ export default function WordEtymologyModal({
 }: WordEtymologyModalProps) {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isCorpusOpen, setIsCorpusOpen] = useState(false);
+  const [asyncModel, setAsyncModel] = useState<any>(null);
+
+  // Fetch authoritative server-side CanonicalWordDetail when modal opens
+  useEffect(() => {
+    if (!isOpen || !wordArabic) return;
+    let isMounted = true;
+
+    const locParam = (surahNumber && ayahNumber && wordIndex) ? `${surahNumber}:${ayahNumber}:${wordIndex}` : '';
+    const query = new URLSearchParams({
+      word: wordArabic,
+      location: locParam,
+      surah: surahNumber ? String(surahNumber) : '',
+      ayah: ayahNumber ? String(ayahNumber) : '',
+      wordIndex: wordIndex ? String(wordIndex) : ''
+    });
+
+    fetch(`/api/word-detail?${query.toString()}`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (isMounted && data && !data.error) {
+          setAsyncModel(data);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isOpen, wordArabic, surahNumber, ayahNumber, wordIndex]);
 
   // Body scroll lock & ESC keyboard dismissal
   useEffect(() => {
@@ -67,8 +96,8 @@ export default function WordEtymologyModal({
 
   if (!isOpen) return null;
 
-  // 1. Single Canonical Word Detail Resolver
-  const wordModel = getCanonicalWordDetail(wordArabic, {
+  // 1. Single Canonical Word Detail Resolver (Async authoritative server model prioritized)
+  const wordModel = asyncModel || getCanonicalWordDetail(wordArabic, {
     surahNumber,
     ayahNumber,
     wordIndex,
@@ -140,50 +169,52 @@ export default function WordEtymologyModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-6 overflow-y-auto bg-black/60 backdrop-blur-sm animate-in fade-in duration-150 overscroll-contain">
-      <div className="fixed inset-0" onClick={onClose} />
-
-      <div className="relative w-full max-w-xl sm:max-w-2xl max-h-[88vh] my-auto overflow-y-auto overscroll-contain bg-canvas-surface text-ink-primary border border-hairline rounded-3xl shadow-hover z-10 p-5 sm:p-8 space-y-5 animate-in zoom-in-95 duration-150 font-sans text-left" dir="ltr">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-ink-primary/40 backdrop-blur-sm animate-fade-in font-sans" dir="ltr">
+      <div
+        className="relative w-full max-w-lg max-h-[92vh] overflow-y-auto bg-canvas-surface border border-hairline rounded-3xl shadow-float p-5 sm:p-7 space-y-6 animate-scale-up font-sans text-left"
+        dir="ltr"
+        onClick={(e) => e.stopPropagation()}
+      >
         
-        {/* Top Header Bar */}
+        {/* Top Floating Control Bar */}
         <div className="flex items-center justify-between border-b border-hairline pb-3.5" dir="ltr">
-          <div className="flex items-center space-x-2">
-            <span className="px-2.5 py-1 rounded-lg bg-primary-subdued text-primary text-xs font-semibold font-sans">
-              {displayPosTag} {wazanOrForm ? `· ${wazanOrForm}` : ''}
+          <div className="flex items-center space-x-2 text-left">
+            <span className="text-xs font-bold uppercase tracking-wider text-primary font-sans">
+              Analisis Morfologi Kata
             </span>
-            {surahNameIndo && (
-              <span className="text-xs text-ink-mute font-sans font-medium">
-                Q.S. {surahNameIndo} [{surahNumber}]:{ayahNumber}
-              </span>
-            )}
+            <span className="text-[11px] font-sans px-2.5 py-0.5 rounded-full bg-primary-subdued text-primary font-semibold">
+              {displayPosTag}
+            </span>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1.5">
+            {/* Audio Pronunciation Button */}
             <button
               onClick={handlePlayAudio}
               disabled={isPlayingAudio}
-              className={`p-2 rounded-xl transition-all ${
+              title="Dengarkan pengucapan kata"
+              className={`p-2 rounded-full transition-all border border-hairline ${
                 isPlayingAudio
-                  ? 'bg-primary text-white scale-105 shadow-subtle'
-                  : 'bg-canvas-soft hover:bg-primary-fixed text-ink-secondary'
+                  ? 'bg-primary text-white scale-105 shadow-subtle animate-pulse'
+                  : 'bg-canvas-soft hover:bg-canvas-page text-ink-secondary hover:text-primary'
               }`}
-              title="Dengarkan pelafalan kata"
             >
-              <Volume2 className="w-4 h-4" />
+              <Volume2 aria-hidden="true" className="w-4 h-4" />
             </button>
+
+            {/* Close Button */}
             <button
               onClick={onClose}
-              className="p-2 rounded-xl bg-canvas-soft hover:bg-canvas-page text-ink-secondary hover:text-ink-primary transition-colors"
+              className="p-2 rounded-full hover:bg-canvas-soft text-ink-mute hover:text-ink-primary transition-colors border border-hairline"
               title="Tutup (ESC)"
             >
-              <X className="w-4 h-4" />
+              <X aria-hidden="true" className="w-4 h-4" />
             </button>
           </div>
         </div>
 
         {/* 1. Main Word Header Card */}
         <div className="p-5 sm:p-6 rounded-3xl bg-canvas-soft border border-hairline space-y-3.5 text-center font-sans" dir="ltr">
-          {/* Arabic Text Display */}
           <div className="py-1" dir="rtl">
             <span
               className="font-arabic text-5xl sm:text-6xl font-bold text-primary tracking-wide block leading-[2.2] sm:leading-[2.4]"
@@ -193,14 +224,12 @@ export default function WordEtymologyModal({
             </span>
           </div>
 
-          {/* Transliteration */}
           {transliteration && (
             <span className="text-xs sm:text-sm font-medium text-ink-mute font-sans tracking-wide block">
               — {transliteration} —
             </span>
           )}
 
-          {/* Indonesian Primary Meaning */}
           <h3 className="text-lg sm:text-xl font-bold text-ink-primary tracking-tight font-sans">
             &ldquo;{primaryMeaningClean}&rdquo;
           </h3>
@@ -209,13 +238,17 @@ export default function WordEtymologyModal({
           <div className="pt-2 border-t border-hairline flex flex-wrap items-center justify-between gap-2 text-xs font-sans" dir="ltr">
             <div className="flex items-center space-x-2 text-left">
               <span className="text-ink-mute font-medium">Akar:</span>
-              {isParticle || !displayRootLetters ? (
+              {isParticle ? (
                 <span className="text-ink-mute italic">
-                  Tidak memiliki akar (Partikel / Harf)
+                  Partikel / Harf (Tidak memiliki akar kata)
                 </span>
-              ) : (
+              ) : displayRootLetters ? (
                 <span className="font-arabic text-base font-bold text-primary" dir="rtl">
                   {displayRootLetters}
+                </span>
+              ) : (
+                <span className="text-ink-mute italic">
+                  Data akar tidak terindeks
                 </span>
               )}
             </div>

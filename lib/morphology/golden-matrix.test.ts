@@ -93,6 +93,49 @@ describe('PRD Finalization — Golden Runtime Test Matrix', () => {
     assert.strictEqual(detail.lexical.root, undefined);
   });
 
+  it('Case 11: Token فَٱخْتَلَطَ must resolve to Fi\'il Madhi Form VIII / Root xlT (خ ل ط)', () => {
+    const detail = getCanonicalWordDetail('فَٱخْتَلَطَ');
+    assert.strictEqual(detail.morphology.pos, "Fi'il");
+    assert.strictEqual(detail.lexical.root, 'xlT');
+    assert.strictEqual(detail.lexical.rootArabic, 'خ ل ط');
+    assert.strictEqual(detail.lexical.rootSlug, 'x-l-T');
+    assert.strictEqual(detail.morphology.verbForm, 'Form VIII');
+  });
+
+  it('Case 12: Token قَبْلِهِۦ at 2:25:24 must resolve to Isim / Root qbl (ق ب ل) / Lemma qabol', () => {
+    const detail = getCanonicalWordDetail('قَبْلِهِۦ', { surahNumber: 2, ayahNumber: 25, wordIndex: 24 });
+    assert.strictEqual(detail.morphology.pos, 'Isim');
+    assert.strictEqual(detail.lexical.root, 'qbl');
+    assert.strictEqual(detail.lexical.rootArabic, 'ق ب ل');
+    assert.strictEqual(detail.lexical.lemma, 'qabol');
+    assert.strictEqual(detail.lexical.lemmaArabic, 'قَبْل');
+    assert.strictEqual(detail.lexical.rootSlug, 'q-b-l');
+  });
+
+  it('Case 13: Root s-b-r (ص ب ر) must resolve exact QAC statistics (103 occurrences, 93 ayahs, 45 surahs)', () => {
+    const sbr = getCanonicalRootDetail('s-b-r');
+    assert.ok(sbr, 'Root s-b-r must exist');
+    assert.strictEqual(sbr.statistics.totalOccurrences, 103);
+    assert.strictEqual(sbr.statistics.uniqueAyahs, 93);
+    assert.strictEqual(sbr.statistics.uniqueSurahs, 45);
+    assert.strictEqual(sbr.statistics.uniqueLemmas, 8);
+    assert.strictEqual(sbr.statistics.uniqueForms, 24);
+  });
+
+  it('Case 14: All 1,642 roots in ROOT_DATABASE map 1-to-1 to QAC records with preserved Buckwalter case', () => {
+    const sbr = getCanonicalRootDetail('s-b-r');
+    const xlt = getCanonicalRootDetail('x-l-T');
+    const hmd = getCanonicalRootDetail('h-m-d');
+    const alh = getCanonicalRootDetail('A-l-h');
+    const elm = getCanonicalRootDetail('E-l-m');
+
+    assert.ok(sbr && sbr.statistics.totalOccurrences === 103, 's-b-r must have 103 occurrences');
+    assert.ok(xlt && xlt.statistics.totalOccurrences > 0, 'x-l-T must have occurrences');
+    assert.ok(hmd && hmd.statistics.totalOccurrences === 63, 'h-m-d must have 63 occurrences');
+    assert.ok(alh && alh.statistics.totalOccurrences === 2851, 'A-l-h must have 2851 occurrences');
+    assert.ok(elm && elm.statistics.totalOccurrences === 854, 'E-l-m must have 854 occurrences');
+  });
+
   it('Concordance Isolation: Root l-w-m contains 0 occurrences of particle فَلَمَّا', () => {
     const lwmRoot = getRootBySlug('l-w-m');
     assert.ok(lwmRoot, 'Root l-w-m must exist in database');
