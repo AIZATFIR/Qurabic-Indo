@@ -29,7 +29,7 @@ describe('P3 — Full Classical Lexicon Coverage & Preposition/Lemma Resolution'
     assert.ok(wordDetail.lexicon);
     assert.strictEqual(wordDetail.lexicon.hasLexicalData, true);
     assert.strictEqual(wordDetail.lexicon.volume, 5);
-    assert.strictEqual(wordDetail.lexicon.page, 2125);
+    assert.strictEqual(wordDetail.lexicon.page, 2144);
     assert.ok(wordDetail.lexicon.senses.length > 0);
   });
 

@@ -284,13 +284,28 @@ export default function WordEtymologyModal({
             <div className="flex items-center justify-between font-semibold text-ink-primary border-b border-hairline pb-2">
               <span className="flex items-center space-x-1.5">
                 <BookOpen className="w-4 h-4 text-primary" />
-                <span>Makna Leksikal (Lane&apos;s Lexicon)</span>
-              </span>
-              {wordModel.lexicon.matchedForm && (
-                <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary-subdued text-primary font-medium">
-                  {wordModel.lexicon.matchedForm}
+                <span>
+                  {wordModel.lexicon.isRootEntry
+                    ? "Makna Berdasarkan Akar Kata (Lane's Lexicon)"
+                    : "Definisi Leksikal Kata (Lane's Lexicon)"}
                 </span>
-              )}
+              </span>
+              <div className="flex items-center space-x-1.5">
+                {wordModel.lexicon.isRootEntry ? (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-canvas-soft border border-hairline text-ink-secondary font-medium">
+                    Entri Akar
+                  </span>
+                ) : (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary-subdued text-primary font-semibold">
+                    Definisi Lemma
+                  </span>
+                )}
+                {wordModel.lexicon.matchedForm && (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary-subdued text-primary font-semibold">
+                    {wordModel.lexicon.matchedForm}
+                  </span>
+                )}
+              </div>
             </div>
 
             {wordModel.lexicon.hasLexicalData && wordModel.lexicon.senses.length > 0 ? (

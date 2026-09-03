@@ -220,10 +220,15 @@ export function getCanonicalWordDetail(
   let tag = stemRecord?.tag || (isQuranicParticle(cleanArabic) ? 'P' : 'N');
   let rawFeatures = stemRecord?.rawFeatures || '';
 
-  // 3. Resolve Root in ROOT_DATABASE (Strict, case-preserving Buckwalter matching)
+  // 3. Resolve Root in ROOT_DATABASE (Strict, authentic root matching)
   const isParticleInput = isQuranicParticle(cleanArabic);
+  const rootAr = rootBw ? buckwalterToArabic(rootBw) : undefined;
   let matchedRoot = (rootBw && !isParticleInput)
-    ? ROOT_DATABASE.find(r => r.id.replace(/-/g, '') === rootBw || r.id === rootBw)
+    ? ROOT_DATABASE.find(r => 
+        (rootAr && (r.rootArabic === rootAr || r.rootArabicJoined === rootAr.replace(/\s+/g, ''))) ||
+        (rootBw && r.id.replace(/-/g, '').toLowerCase() === rootBw.toLowerCase()) ||
+        r.id === rootBw
+      )
     : undefined;
 
   if (!matchedRoot && !isParticleInput) {
@@ -317,10 +322,11 @@ export function getCanonicalWordDetail(
 
   // 6. Lexicon Resolution (Lane's Arabic-English Lexicon)
   let lexiconResult: LexicalLookupResult;
-  const lemmaArabic = lemmaBw ? buckwalterToArabic(lemmaBw) : undefined;
+  const cleanLemmaBw = lemmaBw ? lemmaBw.replace(/[{`~]/g, '') : undefined;
+  const lemmaArabic = cleanLemmaBw ? buckwalterToArabic(cleanLemmaBw) : undefined;
 
   // Step 1: Direct Lemma / Preposition / Headword match in Lane
-  const laneLemma = getLaneLemmaRecord(lemmaBw, lemmaArabic || cleanInput || cleanArabic);
+  const laneLemma = getLaneLemmaRecord(cleanLemmaBw, lemmaArabic || cleanInput || cleanArabic);
 
   if (laneLemma && laneLemma.senses && laneLemma.senses.length > 0) {
     lexiconResult = {
@@ -331,6 +337,10 @@ export function getCanonicalWordDetail(
       matchedLemmaArabic: laneLemma.headwordArabic,
       matchedLemmaBw: laneLemma.headwordBw,
       matchedForm: laneLemma.itype ? `Form ${laneLemma.itype}` : undefined,
+      definition: laneLemma.definition || laneLemma.senses[0]?.text,
+      sourceDefinition: laneLemma.sourceDefinition,
+      translationMethod: 'classical_source',
+      isRootEntry: false,
       senses: laneLemma.senses,
       volume: laneLemma.volume,
       page: laneLemma.page,
@@ -351,6 +361,10 @@ export function getCanonicalWordDetail(
         matchedLemmaArabic: laneEntry.headwordArabic,
         matchedLemmaBw: laneEntry.headwordBw,
         matchedForm: laneEntry.itype ? `Form ${laneEntry.itype}` : undefined,
+        definition: laneEntry.definition || laneEntry.senses[0]?.text,
+        sourceDefinition: laneEntry.sourceDefinition,
+        translationMethod: 'classical_source',
+        isRootEntry: true,
         senses: laneEntry.senses,
         volume: laneEntry.volume,
         page: laneEntry.page,
@@ -549,3 +563,6 @@ export function getCanonicalRootDetail(slug: string): RootDetailModel | null {
     lexicon: getLaneRootRecord(rootBw)
   };
 }
+
+export const resolveCanonicalWordDetail = getCanonicalWordDetail;
+

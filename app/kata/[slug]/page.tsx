@@ -113,13 +113,28 @@ export default function WordDetailPage({ params, searchParams }: PageProps) {
           <div className="flex items-center justify-between border-b border-hairline pb-3">
             <h2 className="text-lg font-semibold text-ink-primary font-sans flex items-center space-x-2">
               <BookOpen className="w-4 h-4 text-primary" />
-              <span>Makna Leksikal Klasik (Lane&apos;s Lexicon)</span>
-            </h2>
-            {lexicon?.matchedForm && (
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary-subdued text-primary font-semibold">
-                {lexicon.matchedForm}
+              <span>
+                {lexicon?.isRootEntry
+                  ? "Makna Berdasarkan Akar Kata (Lane's Lexicon)"
+                  : "Definisi Leksikal Kata (Lane's Lexicon)"}
               </span>
-            )}
+            </h2>
+            <div className="flex items-center space-x-2">
+              {lexicon?.isRootEntry ? (
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-canvas-soft border border-hairline text-ink-secondary font-medium">
+                  Entri Akar
+                </span>
+              ) : (
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary-subdued text-primary font-semibold">
+                  Definisi Lemma
+                </span>
+              )}
+              {lexicon?.matchedForm && (
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary-subdued text-primary font-semibold">
+                  {lexicon.matchedForm}
+                </span>
+              )}
+            </div>
           </div>
 
           {lexicon?.hasLexicalData && lexicon.senses.length > 0 ? (

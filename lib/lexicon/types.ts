@@ -24,12 +24,18 @@ export interface LaneEntryRecord {
   rootBw: string;
   headwordArabic: string;
   headwordBw: string;
+  bareword?: string;
   itype?: string; // Form 1-10
   pos?: string;
   volume: number;
   page: number;
+  definition?: string;
+  sourceDefinition?: string;
+  indonesianDefinition?: string;
+  translationMethod?: 'classical_source' | 'derived';
   senses: LexicalSense[];
   rawSourceText?: string;
+  isRootEntry?: boolean;
 }
 
 export interface LaneRootLexicon {
@@ -50,6 +56,11 @@ export interface LexicalLookupResult {
   matchedLemmaArabic?: string;
   matchedLemmaBw?: string;
   matchedForm?: string;
+  definition?: string;
+  sourceDefinition?: string;
+  indonesianDefinition?: string;
+  translationMethod?: 'classical_source' | 'derived';
+  isRootEntry?: boolean;
   senses: LexicalSense[];
   volume?: number;
   page?: number;

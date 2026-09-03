@@ -30,3 +30,8 @@ next-env.d.ts
 .DS_Store
 .vscode
 .idea
+
+# Raw Lexicon Large SQLite Cache
+data/lexicon/lane/raw/*.sqlite*
+data/lexicon/lane/raw/*.zip
+
