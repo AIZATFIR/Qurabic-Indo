@@ -126,4 +126,32 @@ describe('Qurabic Lexical Ingestion Layer (Lane\'s Lexicon & QAC Join)', () => {
     assert.strictEqual(detail.lexicon.message, 'Makna leksikal belum tersedia.');
     assert.strictEqual(detail.lexicon.senses.length, 0);
   });
+
+  it('Case 8: CanonicalService integration delivers verified Lane Lexicon directly in CanonicalWordDetail and CanonicalRootDetail', async () => {
+    const { getCanonicalWordDetail, getCanonicalRootDetail } = await import('../morphology/canonical-service');
+    
+    // Word Detail Integration
+    const wordDetail = getCanonicalWordDetail('نَسْتَعِينُ', {
+      surahNumber: 1,
+      ayahNumber: 5,
+      wordIndex: 4
+    });
+    assert.ok(wordDetail.lexicon);
+    assert.strictEqual(wordDetail.lexicon.hasLexicalData, true);
+    assert.strictEqual(wordDetail.lexicon.volume, 5);
+    assert.strictEqual(wordDetail.lexicon.page, 2202);
+    assert.strictEqual(wordDetail.lexicon.matchedForm, 'Form 10');
+
+    // Root Detail Integration with multiple senses & forms
+    const rootDetail = getCanonicalRootDetail('Sbr');
+    assert.ok(rootDetail);
+    assert.ok(rootDetail.lexicon);
+    assert.strictEqual(rootDetail.lexicon.rootArabic, 'ص ب ر');
+    assert.strictEqual(rootDetail.lexicon.volume, 4);
+    assert.strictEqual(rootDetail.lexicon.page, 1643);
+    assert.strictEqual(rootDetail.lexicon.entries.length, 4); // Form 1, Form 8, Noun, Adjective
+    assert.ok(rootDetail.lexicon.entries.some(e => e.itype === '1'));
+    assert.ok(rootDetail.lexicon.entries.some(e => e.itype === '8'));
+    assert.ok(rootDetail.lexicon.entries.some(e => e.pos === 'N'));
+  });
 });
