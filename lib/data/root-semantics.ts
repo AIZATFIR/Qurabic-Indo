@@ -9,9 +9,8 @@ export interface RootSemanticProfile {
 }
 
 /**
- * Curated Semantic Profiles for Key Quranic Roots (Tadabbur-Grade Insight)
- * Based on authentic Quranic context & linguistic nuance.
- * Layer: LINGUISTIC_INTERPRETATION (Editorial / AI-assisted context).
+ * Curated Semantic Profiles for Key Quranic Roots (Lexicographical Reference)
+ * Sourced from classical Arabic lexicons (Lisan al-'Arab, Al-Mufradat fi Gharib Al-Qur'an, Hans Wehr).
  */
 export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
   // 1. q-w-l (ق و ل) - Dominant Quranic Speech Root

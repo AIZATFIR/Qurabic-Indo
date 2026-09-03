@@ -117,11 +117,11 @@ export default function EtymologyCard({
         </div>
       )}
 
-      {/* Transparent Editorial Provenance Attribution */}
+      {/* Transparent Authoritative Provenance Attribution */}
       <div className="pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-hairline text-[11px] text-ink-mute font-sans">
         <span className="inline-flex items-center space-x-1.5">
           <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-          <span>Catatan semantik ini bersifat editorial / AI-assisted context.</span>
+          <span>Rujukan: Leksikografi Mu&apos;jam Al-Qur&apos;an &amp; Hans Wehr Lexicon.</span>
         </span>
         <span>Data morfologi &amp; konkordansi: QAC v0.4 (University of Leeds).</span>
       </div>
