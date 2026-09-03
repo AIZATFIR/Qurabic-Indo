@@ -68,10 +68,12 @@ export default function WordDetailPage({ params }: PageProps) {
           </span>
         )}
 
-        {/* Primary Indonesian Meaning */}
-        <h1 className="text-2xl sm:text-3xl font-bold text-ink-primary tracking-tight font-sans max-w-2xl mx-auto">
-          &ldquo;{wordModel.translation.primaryMeaning}&rdquo;
-        </h1>
+        {/* Primary Indonesian Meaning (Only if available) */}
+        {wordModel.translation.primaryMeaning && (
+          <h1 className="text-xl sm:text-2xl font-semibold text-ink-primary tracking-tight font-sans max-w-2xl mx-auto">
+            &ldquo;{wordModel.translation.primaryMeaning}&rdquo;
+          </h1>
+        )}
 
         {/* Morphological Role Badges */}
         <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
@@ -92,7 +94,7 @@ export default function WordDetailPage({ params }: PageProps) {
       </section>
 
       {/* 2. Detail Morfologi & Struktur Gramatikal */}
-      <section className="p-6 sm:p-8 bg-canvas-surface border border-hairline rounded-3xl shadow-subtle space-y-5">
+      <section className="p-6 sm:p-8 bg-canvas-surface border border-hairline rounded-3xl shadow-subtle space-y-6">
         <h2 className="text-lg font-semibold text-ink-primary font-sans flex items-center space-x-2 border-b border-hairline pb-3">
           <Layers className="w-4 h-4 text-primary" />
           <span>Analisis Morfologi &amp; Struktur Kata</span>
@@ -107,17 +109,20 @@ export default function WordDetailPage({ params }: PageProps) {
           <div className="p-4 bg-canvas-soft rounded-2xl border border-hairline space-y-1">
             <span className="text-xs text-ink-mute block font-medium">Wazan / Bentuk Sharaf:</span>
             <span className="text-ink-primary font-semibold text-base">
-              {wordModel.morphology.wazanOrForm || (isParticle ? 'Mabni (Tetap)' : 'Bentuk Leksikal Standar')}
+              {wordModel.morphology.wazanOrForm || (isParticle ? 'Mabni (Tetap)' : '—')}
             </span>
           </div>
 
           <div className="p-4 bg-canvas-soft rounded-2xl border border-hairline space-y-1">
             <span className="text-xs text-ink-mute block font-medium">Lemma (Leksikal Dasar):</span>
-            <span className="text-ink-primary font-semibold text-base">
+            <span className="text-ink-primary font-semibold text-base flex items-center space-x-2">
               {lemmaArabic ? (
-                <span className="font-arabic text-lg font-bold text-primary mr-2" dir="rtl">{lemmaArabic}</span>
+                <span className="font-arabic text-lg font-bold text-primary mr-1" dir="rtl">{lemmaArabic}</span>
               ) : null}
-              <span className="text-xs text-ink-mute">({wordModel.lexical.lemma || '-'})</span>
+              {wordModel.lexical.lemma && (
+                <span className="text-xs text-ink-mute font-mono">({wordModel.lexical.lemma})</span>
+              )}
+              {!lemmaArabic && !wordModel.lexical.lemma && <span>—</span>}
             </span>
           </div>
 
@@ -129,7 +134,7 @@ export default function WordDetailPage({ params }: PageProps) {
               </span>
             ) : !rootArabic ? (
               <span className="text-ink-secondary text-sm italic">
-                Data akar tidak terindeks untuk kata ini
+                —
               </span>
             ) : (
               <div className="flex items-center space-x-2">
@@ -148,20 +153,43 @@ export default function WordDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Multi-layer Meanings */}
-        {wordModel.translation.meanings && wordModel.translation.meanings.length > 0 && (
-          <div className="space-y-2 pt-2 border-t border-hairline">
-            <span className="text-xs font-semibold text-ink-primary uppercase tracking-wider block">
-              Cakupan Makna &amp; Karakteristik Penggunaan:
-            </span>
-            <ul className="space-y-2 text-sm text-ink-secondary">
-              {wordModel.translation.meanings.map((m, idx) => (
-                <li key={idx} className="flex items-start space-x-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                  <span className="leading-relaxed">{m}</span>
-                </li>
+        {/* Related Words from Same Root (Kata Terkait dari Akar yang Sama) */}
+        {!isParticle && wordModel.relatedLemmas && wordModel.relatedLemmas.length > 0 && (
+          <div className="space-y-3 pt-3 border-t border-hairline">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-ink-primary uppercase tracking-wider block">
+                Kata-Kata Terkait dari Akar <span className="font-arabic text-primary text-sm font-bold" dir="rtl">{rootArabic}</span>:
+              </span>
+              {rootSlug && (
+                <Link
+                  href={`/akar/${rootSlug}#distribusi`}
+                  className="text-xs text-primary hover:underline font-semibold inline-flex items-center space-x-1"
+                >
+                  <span>Lihat Semua Bentuk</span>
+                  <ExternalLink className="w-3 h-3" />
+                </Link>
+              )}
+            </div>
+
+            <div className="flex flex-wrap gap-2 pt-1">
+              {wordModel.relatedLemmas.map((lem, idx) => (
+                <Link
+                  key={idx}
+                  href={`/kata/${encodeURIComponent(lem.lemmaArabic)}`}
+                  className="px-3 py-1.5 rounded-xl bg-canvas-soft hover:bg-primary-subdued border border-hairline hover:border-primary/40 transition-all flex items-center space-x-2 group"
+                >
+                  <span className="font-arabic text-base font-bold text-ink-primary group-hover:text-primary transition-colors" dir="rtl">
+                    {lem.lemmaArabic}
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] bg-canvas-surface border border-hairline text-ink-secondary">
+                    {lem.pos}
+                  </span>
+                  <span className="text-xs font-semibold text-primary">
+                    {lem.count}x
+                  </span>
+                </Link>
               ))}
-            </ul>
+            </div>
           </div>
         )}
       </section>

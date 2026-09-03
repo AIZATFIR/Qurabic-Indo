@@ -70,10 +70,10 @@ export default function MorphologyDistribution({ statistics, rootArabic }: Morph
                       <span className="w-5 h-5 rounded-full bg-primary-subdued text-primary font-bold flex items-center justify-center text-[10px]">
                         {idx + 1}
                       </span>
-                      <span className="font-arabic text-base font-bold text-primary" dir="rtl">
+                      <span className="font-arabic text-lg font-bold text-primary mr-1" dir="rtl">
                         {lem.lemmaArabic}
                       </span>
-                      <span className="text-[11px] text-ink-mute">
+                      <span className="text-[10px] text-ink-mute font-mono hidden sm:inline">
                         ({lem.lemmaBw})
                       </span>
                     </div>
@@ -110,10 +110,10 @@ export default function MorphologyDistribution({ statistics, rootArabic }: Morph
                     className="p-3 rounded-2xl bg-canvas-soft border border-hairline flex items-center justify-between hover:border-primary/40 transition-colors text-xs"
                   >
                     <div className="flex items-center space-x-2.5">
-                      <span className="font-arabic text-base font-bold text-ink-primary" dir="rtl">
+                      <span className="font-arabic text-lg font-bold text-ink-primary mr-1" dir="rtl">
                         {f.formArabic}
                       </span>
-                      <span className="text-[11px] text-ink-mute">
+                      <span className="text-[10px] text-ink-mute font-mono hidden sm:inline">
                         ({f.formBw})
                       </span>
                     </div>

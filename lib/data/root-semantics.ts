@@ -439,34 +439,24 @@ export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
 };
 
 /**
- * Returns a rich, context-aware semantic profile for any Quranic root.
+ * Returns a rich, context-aware semantic profile for key Quranic roots, or null if uncurated.
  */
-export function getRootSemanticProfile(rootBw: string, rootArabic?: string, totalOccurrences?: number, verbsCount?: number, nounsCount?: number): RootSemanticProfile {
-  if (!rootBw) {
-    return {
-      titleIndo: 'Akar Kata',
-      coreMeaning: 'Catatan semantik belum tersedia.',
-      usagePatterns: [],
-      meaningsIndonesian: ['Turunan akar kata dalam Al-Qur\'an']
-    };
+export function getRootSemanticProfile(rootBw: string, rootArabic?: string): RootSemanticProfile | null {
+  if (!rootBw) return null;
+
+  const cleanBw = rootBw.trim();
+  const normalizedId = cleanBw.replace(/-/g, '');
+  const dashedId = cleanBw.includes('-') ? cleanBw : cleanBw.split('').join('-');
+
+  if (CURATED_ROOT_SEMANTICS[cleanBw]) return CURATED_ROOT_SEMANTICS[cleanBw];
+  if (CURATED_ROOT_SEMANTICS[dashedId]) return CURATED_ROOT_SEMANTICS[dashedId];
+
+  // Search case-insensitively across curated keys
+  for (const [k, v] of Object.entries(CURATED_ROOT_SEMANTICS)) {
+    if (k.replace(/-/g, '').toLowerCase() === normalizedId.toLowerCase()) {
+      return v;
+    }
   }
 
-  const normalizedId = rootBw.replace(/\s+/g, '-').split('').join('-');
-  const directId = rootBw.split('').join('-');
-
-  if (CURATED_ROOT_SEMANTICS[rootBw]) return CURATED_ROOT_SEMANTICS[rootBw];
-  if (CURATED_ROOT_SEMANTICS[normalizedId]) return CURATED_ROOT_SEMANTICS[normalizedId];
-  if (CURATED_ROOT_SEMANTICS[directId]) return CURATED_ROOT_SEMANTICS[directId];
-
-  const rootArJoined = rootArabic ? rootArabic.replace(/\s+/g, '') : rootBw;
-  
-  return {
-    titleIndo: `Akar Kata ${rootArJoined}`,
-    coreMeaning: `Catatan semantik belum tersedia untuk akar kata ini. Silakan telaah bentuk turunan dan konkordansi ayat di bawah.`,
-    usagePatterns: [],
-    contextualNote: undefined,
-    meaningsIndonesian: [
-      `Turunan akar ${rootArJoined} dalam konteks ayat Al-Qur'an`
-    ]
-  };
+  return null;
 }

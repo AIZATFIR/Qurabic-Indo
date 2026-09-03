@@ -52,6 +52,7 @@ export interface WordDetailModel {
     buckwalter?: string;
   };
   relatedOccurrences: VerseOccurrence[];
+  relatedLemmas?: Array<{ lemmaArabic: string; lemmaBw: string; pos: string; count: number }>;
   totalRootOccurrences: number;
 }
 
@@ -264,10 +265,16 @@ export function getCanonicalWordDetail(
   const curatedDict = CURATED_WORD_DICTIONARY[cleanArabic];
   const semanticProfile = matchedRoot ? getRootSemanticProfile(matchedRoot.id) : null;
 
-  let primaryMeaning = curatedDict?.primaryMeaning ||
-    (isParticle
-      ? 'Partikel / kata tugas dalam susunan gramatikal Al-Qur\'an'
-      : semanticProfile?.coreMeaning || matchedRoot?.coreMeaning || 'Kosakata terindeks dalam Al-Qur\'an');
+  let primaryMeaning = curatedDict?.primaryMeaning;
+  if (!primaryMeaning) {
+    if (semanticProfile?.coreMeaning) {
+      primaryMeaning = semanticProfile.coreMeaning;
+    } else if (matchedRoot?.titleIndo && !matchedRoot.titleIndo.startsWith('Konsep & Turunan') && !matchedRoot.titleIndo.startsWith('Akar Kata')) {
+      primaryMeaning = matchedRoot.titleIndo;
+    } else if (isParticle) {
+      primaryMeaning = 'Partikel / kata tugas (Harf)';
+    }
+  }
 
   let meanings = curatedDict?.meanings ||
     (isParticle
@@ -275,7 +282,7 @@ export function getCanonicalWordDetail(
           'Partikel / kata tugas (Harf) yang menghubungkan makna antar-kata dalam ayat',
           'Memiliki hukum i\'rab Mabni (bentuk harakat akhir tetap)'
         ]
-      : semanticProfile?.meaningsIndonesian || matchedRoot?.meaningsIndonesian || [primaryMeaning]);
+      : (semanticProfile?.meaningsIndonesian || (primaryMeaning ? [primaryMeaning] : [])));
 
   // Occurrences
   const occurrences = matchedRoot
@@ -283,6 +290,26 @@ export function getCanonicalWordDetail(
         ? matchedRoot.occurrences
         : getRootOccurrencesFromChunk(matchedRoot.id))
     : [];
+
+  // Compute related lemmas from the same root
+  const rootRecords = (rootBw && !isParticle) ? (qacIndex.recordsByRoot.get(rootBw) || []) : [];
+  const lemmaMap = new Map<string, { lemmaArabic: string; lemmaBw: string; pos: string; count: number }>();
+  for (const rec of rootRecords) {
+    if (rec.lemma) {
+      const existing = lemmaMap.get(rec.lemma);
+      if (existing) {
+        existing.count++;
+      } else {
+        lemmaMap.set(rec.lemma, {
+          lemmaBw: rec.lemma,
+          lemmaArabic: rec.lemmaArabic || buckwalterToArabic(rec.lemma),
+          pos: rec.pos === 'V' ? "Fi'il" : 'Isim',
+          count: 1
+        });
+      }
+    }
+  }
+  const relatedLemmas = Array.from(lemmaMap.values()).sort((a, b) => b.count - a.count).slice(0, 8);
 
   return {
     identity: {
@@ -308,7 +335,7 @@ export function getCanonicalWordDetail(
       isParticle
     },
     translation: {
-      primaryMeaning,
+      primaryMeaning: primaryMeaning || '',
       meanings,
       sourceCitation: 'The Quranic Arabic Corpus v0.4 (University of Leeds) & Mushaf Kemenag RI'
     },
@@ -325,6 +352,7 @@ export function getCanonicalWordDetail(
       buckwalter: stemRecord?.form
     },
     relatedOccurrences: occurrences.slice(0, 8),
+    relatedLemmas,
     totalRootOccurrences: matchedRoot?.totalOccurrences || occurrences.length
   };
 }

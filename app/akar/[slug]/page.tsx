@@ -149,15 +149,17 @@ export default async function RootDetailPage({ params }: PageProps) {
       </section>
 
       {/* 2. Makna & Konteks Section (Tadabbur-Grade Insight) */}
-      <section id="makna" className="scroll-mt-24">
-        <EtymologyCard
-          rootArabic={rootModel.rootArabic}
-          rootLatin={rootModel.rootLatin}
-          coreMeaning={rootModel.coreMeaning}
-          contextualNote={rootModel.contextualNote}
-          meaningsIndonesian={rootModel.meaningsIndonesian}
-        />
-      </section>
+      {rootModel.coreMeaning && !rootModel.coreMeaning.startsWith('Akar kata ') && (
+        <section id="makna" className="scroll-mt-24">
+          <EtymologyCard
+            rootArabic={rootModel.rootArabic}
+            rootLatin={rootModel.rootLatin}
+            coreMeaning={rootModel.coreMeaning}
+            contextualNote={rootModel.contextualNote}
+            meaningsIndonesian={rootModel.meaningsIndonesian}
+          />
+        </section>
+      )}
 
       {/* 3. Distribusi Morfologi & Frekuensi Korpus */}
       <section id="distribusi" className="scroll-mt-24">

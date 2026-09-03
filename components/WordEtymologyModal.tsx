@@ -230,9 +230,11 @@ export default function WordEtymologyModal({
             </span>
           )}
 
-          <h3 className="text-lg sm:text-xl font-bold text-ink-primary tracking-tight font-sans">
-            &ldquo;{primaryMeaningClean}&rdquo;
-          </h3>
+          {primaryMeaningClean && (
+            <h3 className="text-lg sm:text-xl font-bold text-ink-primary tracking-tight font-sans">
+              &ldquo;{primaryMeaningClean}&rdquo;
+            </h3>
+          )}
 
           {/* Word Actions & Root Link Banner */}
           <div className="pt-2 border-t border-hairline flex flex-wrap items-center justify-between gap-2 text-xs font-sans" dir="ltr">
@@ -247,8 +249,8 @@ export default function WordEtymologyModal({
                   {displayRootLetters}
                 </span>
               ) : (
-                <span className="text-ink-mute italic">
-                  Data akar tidak terindeks
+                <span className="text-ink-mute">
+                  —
                 </span>
               )}
             </div>
@@ -290,7 +292,7 @@ export default function WordEtymologyModal({
             </div>
             <div className="p-2.5 bg-canvas-soft rounded-xl border border-hairline text-left">
               <span className="text-ink-mute block text-[11px]">Wazan / Pola:</span>
-              <span className="font-semibold text-ink-primary">{wazanOrForm || (isParticle ? 'Mabni (Tetap)' : 'Bentuk Leksikal')}</span>
+              <span className="font-semibold text-ink-primary">{wazanOrForm || (isParticle ? 'Mabni (Tetap)' : '—')}</span>
             </div>
           </div>
         </div>
