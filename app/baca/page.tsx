@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import {
   BookOpen,
@@ -25,8 +26,15 @@ import { SURAH_LIST, getSurahByNumber } from '@/lib/data/surah-list';
 import { useTheme } from '@/lib/context/ThemeContext';
 import { useQuranAudio } from '@/lib/hooks/useQuranAudio';
 
-export default function BacaQuranPage() {
-  const [selectedSurah, setSelectedSurah] = useState<number>(1);
+function BacaQuranPageContent() {
+  const searchParams = useSearchParams();
+  const surahQuery = searchParams.get('surah');
+  const ayahQuery = searchParams.get('ayah');
+
+  const initialSurah = surahQuery ? parseInt(surahQuery, 10) : 1;
+  const [selectedSurah, setSelectedSurah] = useState<number>(
+    initialSurah >= 1 && initialSurah <= 114 ? initialSurah : 1
+  );
   const [isSurahModalOpen, setIsSurahModalOpen] = useState(false);
   const { theme, setTheme, options } = useTheme();
   const [fontSize, setFontSize] = useState<'sm' | 'md' | 'lg' | 'xl'>('lg');
@@ -43,6 +51,16 @@ export default function BacaQuranPage() {
     totalAyahs: currentSurahMeta.ayahsCount,
     autoScroll: true,
   });
+
+  // Sync with URL query parameters
+  useEffect(() => {
+    if (surahQuery) {
+      const sNum = parseInt(surahQuery, 10);
+      if (sNum >= 1 && sNum <= 114 && sNum !== selectedSurah) {
+        setSelectedSurah(sNum);
+      }
+    }
+  }, [surahQuery]);
 
   // Fetch selected Surah with real Word-by-Word (WBW) data
   useEffect(() => {
@@ -61,6 +79,26 @@ export default function BacaQuranPage() {
     loadSurahData();
   }, [selectedSurah]);
 
+  // Handle URL Ayah auto-scroll and highlight
+  useEffect(() => {
+    if (!loading && ayahQuery && ayahs.length > 0) {
+      const targetAyah = parseInt(ayahQuery, 10);
+      if (targetAyah >= 1) {
+        const timer = setTimeout(() => {
+          const el = document.getElementById(`ayah-${targetAyah}`);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.classList.add('ring-2', 'ring-primary', 'bg-primary-subdued/30');
+            setTimeout(() => {
+              el.classList.remove('ring-2', 'ring-primary', 'bg-primary-subdued/30');
+            }, 3500);
+          }
+        }, 300);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [loading, ayahQuery, ayahs]);
+
   // Handle Surah & target Ayah selection from Search Modal
   const handleSelectSurah = (surahNum: number, targetAyah?: number) => {
     setSelectedSurah(surahNum);
@@ -69,6 +107,10 @@ export default function BacaQuranPage() {
         const el = document.getElementById(`ayah-${targetAyah}`);
         if (el) {
           el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.classList.add('ring-2', 'ring-primary', 'bg-primary-subdued/30');
+          setTimeout(() => {
+            el.classList.remove('ring-2', 'ring-primary', 'bg-primary-subdued/30');
+          }, 3500);
         }
       }, 500);
     }
@@ -148,54 +190,51 @@ export default function BacaQuranPage() {
 
           {/* RIGHT SIDE: Theme Selector, Font Size Controls & Translation Toggle */}
           <div className="flex flex-wrap items-center space-x-2 text-xs ml-auto">
-            
-            {/* 1. Theme Toggle Tabs */}
-            <div className="flex items-center p-0.5 rounded-lg border border-hairline bg-canvas-soft">
-              {options.map((opt) => (
-                <button
-                  key={opt.id}
-                  onClick={() => setTheme(opt.id)}
-                  className={`px-2 py-1 rounded-md text-[11px] font-sans transition-all ${
-                    theme === opt.id
-                      ? 'bg-canvas-surface text-primary font-bold shadow-subtle'
-                      : 'text-ink-mute hover:text-ink-primary'
-                  }`}
-                  title={`Tema ${opt.label}`}
-                >
-                  {opt.shortLabel}
-                </button>
-              ))}
-            </div>
-
-            {/* 2. Font Size Scaling */}
-            <div className="flex items-center space-x-0.5 p-0.5 rounded-lg border border-hairline bg-canvas-soft">
-              {(['sm', 'md', 'lg', 'xl'] as const).map((sz) => (
-                <button
-                  key={sz}
-                  onClick={() => setFontSize(sz)}
-                  className={`px-2 py-1 rounded text-[10px] font-sans font-bold transition-all ${
-                    fontSize === sz
-                      ? 'bg-primary text-white shadow-subtle'
-                      : 'text-ink-mute hover:text-ink-primary'
-                  }`}
-                  title={`Ukuran Huruf ${sz.toUpperCase()}`}
-                >
-                  {sz.toUpperCase()}
-                </button>
-              ))}
-            </div>
-
-            {/* 3. Translation Toggle Button */}
+            {/* Translation Toggle */}
             <button
               onClick={() => setShowTranslation(!showTranslation)}
-              className={`px-3 py-1.5 rounded-lg border text-[11px] font-medium transition-all font-sans ${
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
                 showTranslation
-                  ? 'bg-primary text-white border-primary shadow-subtle'
-                  : 'bg-canvas-surface border-hairline text-ink-secondary'
+                  ? 'bg-primary-subdued text-primary font-semibold'
+                  : 'text-ink-mute hover:bg-canvas-soft'
               }`}
+              title="Sembunyikan / Tampilkan Terjemahan Kemenag"
             >
               Terjemahan
             </button>
+
+            {/* Font Size Adjusters */}
+            <div className="flex items-center bg-canvas-soft border border-hairline rounded-lg p-0.5">
+              {(['sm', 'md', 'lg', 'xl'] as const).map((size) => (
+                <button
+                  key={size}
+                  onClick={() => setFontSize(size)}
+                  className={`px-2 py-1 rounded text-[11px] font-medium transition-colors ${
+                    fontSize === size
+                      ? 'bg-canvas-surface text-primary shadow-subtle font-bold'
+                      : 'text-ink-mute hover:text-ink-primary'
+                  }`}
+                >
+                  {size.toUpperCase()}
+                </button>
+              ))}
+            </div>
+
+            {/* Theme Selectors */}
+            <div className="flex items-center space-x-1 bg-canvas-soft border border-hairline rounded-lg p-0.5">
+              {options.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setTheme(t.id)}
+                  className={`w-5 h-5 rounded-md transition-all flex items-center justify-center ${
+                    theme === t.id ? 'ring-2 ring-primary ring-offset-1 scale-105' : 'opacity-60 hover:opacity-100'
+                  }`}
+                  style={{ backgroundColor: t.bgHex }}
+                  title={`Tema: ${t.label}`}
+                  aria-label={`Pilih Tema ${t.label}`}
+                />
+              ))}
+            </div>
           </div>
 
         </div>
@@ -338,6 +377,7 @@ export default function BacaQuranPage() {
                             ayahIndo={ayah.textIndo}
                             surahNumber={currentSurahMeta.number}
                             ayahNumber={ayah.ayahNumber}
+                            wordIndex={word.position || (wIdx + 1)}
                             surahNameIndo={currentSurahMeta.nameIndo}
                           />
                         );
@@ -359,6 +399,29 @@ export default function BacaQuranPage() {
           )}
         </div>
 
+        {/* Bottom Surah Navigation (Prev & Next) */}
+        <div className="flex items-center justify-between pt-4">
+          {selectedSurah > 1 ? (
+            <button
+              onClick={() => handleSelectSurah(selectedSurah - 1)}
+              className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl border border-hairline bg-canvas-surface hover:border-primary text-xs font-semibold text-ink-primary hover:text-primary transition-all shadow-subtle font-sans"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              <span>Surah Sebelumnya ({selectedSurah - 1}. {SURAH_LIST[selectedSurah - 2]?.nameIndo})</span>
+            </button>
+          ) : <div />}
+
+          {selectedSurah < 114 ? (
+            <button
+              onClick={() => handleSelectSurah(selectedSurah + 1)}
+              className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl border border-hairline bg-canvas-surface hover:border-primary text-xs font-semibold text-ink-primary hover:text-primary transition-all shadow-subtle font-sans"
+            >
+              <span>Surah Berikutnya ({selectedSurah + 1}. {SURAH_LIST[selectedSurah]?.nameIndo})</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          ) : <div />}
+        </div>
+
       </main>
 
       {/* Floating Minimalist Audio Player */}
@@ -377,5 +440,17 @@ export default function BacaQuranPage() {
         onSelectSurah={handleSelectSurah}
       />
     </div>
+  );
+}
+
+export default function BacaQuranPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center p-12 bg-canvas">
+        <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <BacaQuranPageContent />
+    </Suspense>
   );
 }

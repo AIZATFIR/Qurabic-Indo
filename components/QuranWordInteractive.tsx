@@ -16,7 +16,9 @@ interface QuranWordInteractiveProps {
   ayahIndo?: string;
   surahNumber?: number;
   ayahNumber?: number;
+  wordIndex?: number;
   surahNameIndo?: string;
+  mode?: 'stacked' | 'inline';
 }
 
 export function getArabicWordTransliteration(arabic: string): string {
@@ -85,7 +87,9 @@ export default function QuranWordInteractive({
   ayahIndo,
   surahNumber,
   ayahNumber,
+  wordIndex,
   surahNameIndo,
+  mode = 'stacked',
 }: QuranWordInteractiveProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -95,20 +99,33 @@ export default function QuranWordInteractive({
 
   return (
     <>
-      <span
-        onClick={() => setIsModalOpen(true)}
-        className="inline-flex flex-col items-center justify-center px-1.5 py-1 rounded-2xl hover:bg-primary-subdued/80 hover:ring-2 hover:ring-primary/40 dark:hover:bg-slate-800 transition-all cursor-pointer select-none active:scale-95 text-center group my-1.5 mx-1"
-        title="Klik untuk Bedah Akar Kata & Definisi"
-      >
-        <span className="font-arabic text-inherit group-hover:text-primary transition-colors leading-[2.2] sm:leading-[2.4]" dir="rtl">
-          {wordArabic}
-        </span>
-        {displayTransliteration && (
-          <span className="text-[11px] sm:text-xs font-sans text-ink-mute group-hover:text-primary transition-colors mt-0.5 font-medium italic opacity-85">
-            {displayTransliteration}
+      {mode === 'inline' ? (
+        <span
+          onClick={() => setIsModalOpen(true)}
+          className="inline-block px-1.5 py-0.5 my-1 mx-0.5 rounded-xl hover:bg-primary-subdued hover:text-primary transition-all cursor-pointer select-none active:scale-95 group font-arabic"
+          title="Klik untuk Bedah Akar Kata & Definisi"
+          dir="rtl"
+        >
+          <span className="font-arabic text-inherit group-hover:text-primary transition-colors" dir="rtl">
+            {wordArabic}
           </span>
-        )}
-      </span>
+        </span>
+      ) : (
+        <span
+          onClick={() => setIsModalOpen(true)}
+          className="inline-flex flex-col items-center justify-center px-1.5 py-1 rounded-2xl hover:bg-primary-subdued/80 hover:ring-2 hover:ring-primary/40 dark:hover:bg-slate-800 transition-all cursor-pointer select-none active:scale-95 text-center group my-1.5 mx-1"
+          title="Klik untuk Bedah Akar Kata & Definisi"
+        >
+          <span className="font-arabic text-inherit group-hover:text-primary transition-colors leading-[2.2] sm:leading-[2.4]" dir="rtl">
+            {wordArabic}
+          </span>
+          {displayTransliteration && (
+            <span className="text-[11px] sm:text-xs font-sans text-ink-mute group-hover:text-primary transition-colors mt-0.5 font-medium italic opacity-85">
+              {displayTransliteration}
+            </span>
+          )}
+        </span>
+      )}
 
       <WordEtymologyModal
         isOpen={isModalOpen}
@@ -125,6 +142,7 @@ export default function QuranWordInteractive({
         ayahIndo={ayahIndo}
         surahNumber={surahNumber}
         ayahNumber={ayahNumber}
+        wordIndex={wordIndex}
         surahNameIndo={surahNameIndo}
       />
     </>
