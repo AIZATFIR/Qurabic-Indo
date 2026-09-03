@@ -4,17 +4,22 @@
  * Invariant: Zero AI-generated definitions or fabricated dictionary citations.
  */
 
-export interface LaneSense {
+export interface LexicalSenseCitation {
+  volume: number;
+  page: number;
+  entryId: string;
+  itype?: string;
+}
+
+export interface LexicalSense {
   senseIndex: number;
-  definition: string;
-  formOrWazan?: string;
-  headwordArabic?: string;
-  volume?: number;
-  page?: number;
+  text: string;
+  source: "Lane's Arabic-English Lexicon";
+  citation: LexicalSenseCitation;
 }
 
 export interface LaneEntryRecord {
-  sourceRecordId: string;
+  entryId: string;
   rootArabic: string;
   rootBw: string;
   headwordArabic: string;
@@ -23,7 +28,7 @@ export interface LaneEntryRecord {
   pos?: string;
   volume: number;
   page: number;
-  senses: string[];
+  senses: LexicalSense[];
   rawSourceText?: string;
 }
 
@@ -45,7 +50,7 @@ export interface LexicalLookupResult {
   matchedLemmaArabic?: string;
   matchedLemmaBw?: string;
   matchedForm?: string;
-  senses: string[];
+  senses: LexicalSense[];
   volume?: number;
   page?: number;
   sourceCitation: string;
