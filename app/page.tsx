@@ -215,7 +215,7 @@ export default function HomePage() {
                 Kajian Etimologi Klasik
               </h2>
               <p className="text-sm text-ink-mute mt-1 font-sans">
-                Wawasan etimologis mendalam dari Lisan al-&apos;Arab &amp; Mu&apos;jam Maqayis al-Lughah.
+                Kajian leksikal mendalam dari Leksikon Klasik (Lane&apos;s Arabic-English Lexicon) &amp; The Quranic Arabic Corpus.
               </p>
             </div>
             <Link

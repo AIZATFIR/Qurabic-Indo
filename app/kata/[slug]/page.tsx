@@ -107,108 +107,7 @@ export default function WordDetailPage({ params, searchParams }: PageProps) {
         </div>
       </section>
 
-      {/* 2. Detail Morfologi & Struktur Gramatikal */}
-      <section className="p-6 sm:p-8 bg-canvas-surface border border-hairline rounded-3xl shadow-subtle space-y-6">
-        <h2 className="text-lg font-semibold text-ink-primary font-sans flex items-center space-x-2 border-b border-hairline pb-3">
-          <Layers className="w-4 h-4 text-primary" />
-          <span>Analisis Morfologi &amp; Struktur Kata</span>
-        </h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-sans">
-          <div className="p-4 bg-canvas-soft rounded-2xl border border-hairline space-y-1">
-            <span className="text-xs text-ink-mute block font-medium">Kategori Gramatikal (POS):</span>
-            <span className="text-ink-primary font-semibold text-base">{wordModel.morphology.grammaticalRole}</span>
-          </div>
-
-          <div className="p-4 bg-canvas-soft rounded-2xl border border-hairline space-y-1">
-            <span className="text-xs text-ink-mute block font-medium">Wazan / Bentuk Sharaf:</span>
-            <span className="text-ink-primary font-semibold text-base">
-              {wordModel.morphology.wazanOrForm || (isParticle ? 'Mabni (Tetap)' : '—')}
-            </span>
-          </div>
-
-          <div className="p-4 bg-canvas-soft rounded-2xl border border-hairline space-y-1">
-            <span className="text-xs text-ink-mute block font-medium">Lemma (Leksikal Dasar):</span>
-            <span className="text-ink-primary font-semibold text-base flex items-center space-x-2">
-              {lemmaArabic ? (
-                <span className="font-arabic text-lg font-bold text-primary mr-1" dir="rtl">{lemmaArabic}</span>
-              ) : null}
-              {wordModel.lexical.lemma && (
-                <span className="text-xs text-ink-mute font-mono">({wordModel.lexical.lemma})</span>
-              )}
-              {!lemmaArabic && !wordModel.lexical.lemma && <span>—</span>}
-            </span>
-          </div>
-
-          <div className="p-4 bg-canvas-soft rounded-2xl border border-hairline space-y-1">
-            <span className="text-xs text-ink-mute block font-medium">Akar Kata (Triliteral Root):</span>
-            {isParticle ? (
-              <span className="text-ink-secondary text-sm italic">
-                Partikel / Harf (Tidak memiliki akar kata)
-              </span>
-            ) : !rootArabic ? (
-              <span className="text-ink-secondary text-sm italic">
-                —
-              </span>
-            ) : (
-              <div className="flex items-center space-x-2">
-                <span className="font-arabic text-lg font-bold text-primary" dir="rtl">{rootArabic}</span>
-                {rootSlug && (
-                  <Link
-                    href={`/akar/${rootSlug}`}
-                    className="text-xs text-primary hover:underline font-semibold inline-flex items-center space-x-0.5"
-                  >
-                    <span>Detail Akar</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </Link>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Related Words from Same Root (Kata Terkait dari Akar yang Sama) */}
-        {!isParticle && wordModel.relatedLemmas && wordModel.relatedLemmas.length > 0 && (
-          <div className="space-y-3 pt-3 border-t border-hairline">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-ink-primary uppercase tracking-wider block">
-                Kata-Kata Terkait dari Akar <span className="font-arabic text-primary text-sm font-bold" dir="rtl">{rootArabic}</span>:
-              </span>
-              {rootSlug && (
-                <Link
-                  href={`/akar/${rootSlug}#distribusi`}
-                  className="text-xs text-primary hover:underline font-semibold inline-flex items-center space-x-1"
-                >
-                  <span>Lihat Semua Bentuk</span>
-                  <ExternalLink className="w-3 h-3" />
-                </Link>
-              )}
-            </div>
-
-            <div className="flex flex-wrap gap-2 pt-1">
-              {wordModel.relatedLemmas.map((lem, idx) => (
-                <Link
-                  key={idx}
-                  href={`/kata/${encodeURIComponent(lem.lemmaArabic)}`}
-                  className="px-3 py-1.5 rounded-xl bg-canvas-soft hover:bg-primary-subdued border border-hairline hover:border-primary/40 transition-all flex items-center space-x-2 group"
-                >
-                  <span className="font-arabic text-base font-bold text-ink-primary group-hover:text-primary transition-colors" dir="rtl">
-                    {lem.lemmaArabic}
-                  </span>
-                  <span className="px-1.5 py-0.5 rounded text-[10px] bg-canvas-surface border border-hairline text-ink-secondary">
-                    {lem.pos}
-                  </span>
-                  <span className="text-xs font-semibold text-primary">
-                    {lem.count}x
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* 3. Makna Leksikal & Definisi Kamus Klasik (Lane's Arabic-English Lexicon) */}
+      {/* 2. Makna Leksikal Klasik (Lane's Arabic-English Lexicon) */}
       {(lexicon?.hasLexicalData || !isParticle) && (
         <section className="p-6 sm:p-8 bg-canvas-surface border border-hairline rounded-3xl shadow-subtle space-y-4">
           <div className="flex items-center justify-between border-b border-hairline pb-3">
@@ -260,7 +159,7 @@ export default function WordDetailPage({ params, searchParams }: PageProps) {
         </section>
       )}
 
-      {/* 4. Relasi Konkordansi Ayat Relevan */}
+      {/* 3. Contoh Konkordansi Ayat dalam Mushaf */}
       {!isParticle && wordModel.relatedOccurrences.length > 0 && (
         <section className="p-6 sm:p-8 bg-canvas-surface border border-hairline rounded-3xl shadow-subtle space-y-4">
           <div className="flex items-center justify-between border-b border-hairline pb-3">
@@ -314,30 +213,140 @@ export default function WordDetailPage({ params, searchParams }: PageProps) {
         </section>
       )}
 
-      {/* 5. Advanced Corpus Data & Provenance Manifest */}
-      <section className="p-6 bg-canvas-surface border border-hairline rounded-3xl shadow-subtle space-y-3 text-xs font-mono">
-        <div className="flex items-center space-x-2 text-ink-primary font-semibold pb-2 border-b border-hairline">
-          <ShieldCheck className="w-4 h-4 text-primary" />
-          <span className="font-sans text-sm">Otoritas Data &amp; Bukti Korpus (QAC v0.4)</span>
-        </div>
+      {/* 4. Progressive Disclosure: Analisis Morfologi Detail & Data Korpus QAC */}
+      <details className="group p-6 bg-canvas-surface border border-hairline rounded-3xl shadow-subtle space-y-4">
+        <summary className="cursor-pointer font-semibold text-ink-primary font-sans flex items-center justify-between select-none list-none">
+          <div className="flex items-center space-x-2">
+            <Layers className="w-4 h-4 text-primary" />
+            <span>Mode Lanjutan: Analisis Morfologi &amp; Otoritas QAC</span>
+          </div>
+          <span className="text-xs font-normal text-ink-mute group-open:hidden">
+            (Klik untuk membuka data teknis)
+          </span>
+          <span className="text-xs font-normal text-ink-mute hidden group-open:inline">
+            (Tutup)
+          </span>
+        </summary>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-ink-secondary">
-          <div><span className="text-ink-mute">Morfologi &amp; Sintaksis:</span> The Quranic Arabic Corpus v0.4 (Univ. of Leeds)</div>
-          <div><span className="text-ink-mute">Terjemahan Resmi:</span> Lajnah Pentashihan Mushaf Al-Qur&apos;an (Kemenag RI)</div>
-          {wordModel.identity.coordinate && (
-            <div><span className="text-ink-mute">Koordinat Korpus:</span> {wordModel.identity.coordinate}</div>
+        <div className="pt-4 space-y-6 border-t border-hairline mt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-sans">
+            <div className="p-4 bg-canvas-soft rounded-2xl border border-hairline space-y-1">
+              <span className="text-xs text-ink-mute block font-medium">Kategori Gramatikal (POS):</span>
+              <span className="text-ink-primary font-semibold text-base">{wordModel.morphology.grammaticalRole}</span>
+            </div>
+
+            <div className="p-4 bg-canvas-soft rounded-2xl border border-hairline space-y-1">
+              <span className="text-xs text-ink-mute block font-medium">Wazan / Bentuk Sharaf:</span>
+              <span className="text-ink-primary font-semibold text-base">
+                {wordModel.morphology.wazanOrForm || (isParticle ? 'Mabni (Tetap)' : '—')}
+              </span>
+            </div>
+
+            <div className="p-4 bg-canvas-soft rounded-2xl border border-hairline space-y-1">
+              <span className="text-xs text-ink-mute block font-medium">Lemma (Leksikal Dasar):</span>
+              <span className="text-ink-primary font-semibold text-base flex items-center space-x-2">
+                {lemmaArabic ? (
+                  <span className="font-arabic text-lg font-bold text-primary mr-1" dir="rtl">{lemmaArabic}</span>
+                ) : null}
+                {wordModel.lexical.lemma && (
+                  <span className="text-xs text-ink-mute font-mono">({wordModel.lexical.lemma})</span>
+                )}
+                {!lemmaArabic && !wordModel.lexical.lemma && <span>—</span>}
+              </span>
+            </div>
+
+            <div className="p-4 bg-canvas-soft rounded-2xl border border-hairline space-y-1">
+              <span className="text-xs text-ink-mute block font-medium">Akar Kata (Triliteral Root):</span>
+              {isParticle ? (
+                <span className="text-ink-secondary text-sm italic">
+                  Partikel / Harf (Tidak memiliki akar kata)
+                </span>
+              ) : !rootArabic ? (
+                <span className="text-ink-secondary text-sm italic">
+                  —
+                </span>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <span className="font-arabic text-lg font-bold text-primary" dir="rtl">{rootArabic}</span>
+                  {rootSlug && (
+                    <Link
+                      href={`/akar/${rootSlug}`}
+                      className="text-xs text-primary hover:underline font-semibold inline-flex items-center space-x-0.5"
+                    >
+                      <span>Detail Akar</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </Link>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Related Words from Same Root */}
+          {!isParticle && wordModel.relatedLemmas && wordModel.relatedLemmas.length > 0 && (
+            <div className="space-y-3 pt-3 border-t border-hairline">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-ink-primary uppercase tracking-wider block">
+                  Kata-Kata Terkait dari Akar <span className="font-arabic text-primary text-sm font-bold" dir="rtl">{rootArabic}</span>:
+                </span>
+                {rootSlug && (
+                  <Link
+                    href={`/akar/${rootSlug}#distribusi`}
+                    className="text-xs text-primary hover:underline font-semibold inline-flex items-center space-x-1"
+                  >
+                    <span>Lihat Semua Bentuk</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </Link>
+                )}
+              </div>
+
+              <div className="flex flex-wrap gap-2 pt-1">
+                {wordModel.relatedLemmas.map((lem, idx) => (
+                  <Link
+                    key={idx}
+                    href={`/kata/${encodeURIComponent(lem.lemmaArabic)}`}
+                    className="px-3 py-1.5 rounded-xl bg-canvas-soft hover:bg-primary-subdued border border-hairline hover:border-primary/40 transition-all flex items-center space-x-2 group"
+                  >
+                    <span className="font-arabic text-base font-bold text-ink-primary group-hover:text-primary transition-colors" dir="rtl">
+                      {lem.lemmaArabic}
+                    </span>
+                    <span className="px-1.5 py-0.5 rounded text-[10px] bg-canvas-surface border border-hairline text-ink-secondary">
+                      {lem.pos}
+                    </span>
+                    <span className="text-xs font-semibold text-primary">
+                      {lem.count}x
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
           )}
-          {wordModel.corpus.buckwalter && (
-            <div><span className="text-ink-mute">Transliterasi Buckwalter:</span> {wordModel.corpus.buckwalter}</div>
-          )}
-          {wordModel.morphology.rawTag && (
-            <div><span className="text-ink-mute">Tag POS Mentah:</span> {wordModel.morphology.rawTag}</div>
-          )}
-          {wordModel.morphology.rawFeatures && (
-            <div className="col-span-full"><span className="text-ink-mute">Fitur Morfologis:</span> {wordModel.morphology.rawFeatures}</div>
-          )}
+
+          {/* Technical Provenance Card */}
+          <div className="p-4 bg-canvas-soft rounded-2xl border border-hairline text-xs font-mono space-y-2 text-ink-secondary">
+            <div className="flex items-center space-x-1.5 text-ink-primary font-semibold font-sans pb-1 border-b border-hairline">
+              <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+              <span>Otoritas Korpus &amp; Meta-Data Morfologi</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
+              <div><span className="text-ink-mute">Otoritas Morfologi:</span> The Quranic Arabic Corpus v0.4 (Univ. of Leeds)</div>
+              <div><span className="text-ink-mute">Terjemahan:</span> Kemenag RI</div>
+              {wordModel.identity.coordinate && (
+                <div><span className="text-ink-mute">Koordinat QAC:</span> {wordModel.identity.coordinate}</div>
+              )}
+              {wordModel.corpus.buckwalter && (
+                <div><span className="text-ink-mute">Buckwalter:</span> {wordModel.corpus.buckwalter}</div>
+              )}
+              {wordModel.morphology.rawTag && (
+                <div><span className="text-ink-mute">Tag POS:</span> {wordModel.morphology.rawTag}</div>
+              )}
+              {wordModel.morphology.rawFeatures && (
+                <div className="col-span-full"><span className="text-ink-mute">Fitur Segmental:</span> {wordModel.morphology.rawFeatures}</div>
+              )}
+            </div>
+          </div>
         </div>
-      </section>
+      </details>
     </div>
   );
 }

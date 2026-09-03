@@ -153,7 +153,7 @@ export default async function RootDetailPage({ params }: PageProps) {
         <div className="flex items-center justify-between border-b border-hairline pb-3">
           <h2 className="text-lg sm:text-xl font-semibold text-ink-primary font-sans flex items-center space-x-2">
             <BookMarked className="w-5 h-5 text-primary" />
-            <span>Kajian Leksikografi Klasik (Lane&apos;s Lexicon)</span>
+            <span>Leksikon Klasik (Lane&apos;s Lexicon)</span>
           </h2>
           {lexicon && (
             <span className="text-xs text-ink-mute font-medium">

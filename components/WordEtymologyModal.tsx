@@ -279,7 +279,7 @@ export default function WordEtymologyModal({
         </div>
 
         {/* 2. Makna Leksikal Klasik (Lane's Arabic-English Lexicon) */}
-        {!isParticle && wordModel.lexicon && (
+        {(wordModel.lexicon?.hasLexicalData || !isParticle) && wordModel.lexicon && (
           <div className="p-4 sm:p-5 rounded-2xl bg-canvas-surface border border-hairline space-y-2.5 text-xs sm:text-sm font-sans text-left" dir="ltr">
             <div className="flex items-center justify-between font-semibold text-ink-primary border-b border-hairline pb-2">
               <span className="flex items-center space-x-1.5">
