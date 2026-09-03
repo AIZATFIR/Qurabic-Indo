@@ -1,0 +1,217 @@
+{
+  "Ewn": {
+    "rootArabic": "ع و ن",
+    "rootBw": "Ewn",
+    "volume": 5,
+    "page": 2202,
+    "overview": "To aid, help, assist.",
+    "sourceCitation": "Edward William Lane, An Arabic-English Lexicon, Book I, Part 5, p. 2202 (Perseus Digital Library)",
+    "entries": [
+      {
+        "sourceRecordId": "lane-Ewn-10",
+        "rootArabic": "ع و ن",
+        "rootBw": "Ewn",
+        "headwordArabic": "اسْتَعَانَ",
+        "headwordBw": "sotaEaAna",
+        "itype": "10",
+        "pos": "V",
+        "volume": 5,
+        "page": 2202,
+        "senses": [
+          "He sought, desired, asked, or demanded aid, help, or assistance of him; he had recourse to him for aid or assistance."
+        ],
+        "rawSourceText": "اسْتَعَانَهُ and اسْتَعَانَ بِهِ He sought, desired, or asked of him aid, help, or assistance."
+      },
+      {
+        "sourceRecordId": "lane-Ewn-4",
+        "rootArabic": "ع و ن",
+        "rootBw": "Ewn",
+        "headwordArabic": "أَعَانَ",
+        "headwordBw": ">aEaAna",
+        "itype": "4",
+        "pos": "V",
+        "volume": 5,
+        "page": 2202,
+        "senses": [
+          "He aided, helped, or assisted him; he rendered him aid or assistance."
+        ],
+        "rawSourceText": "أَعَانَهُ He aided, helped, or assisted him."
+      },
+      {
+        "sourceRecordId": "lane-Ewn-noun",
+        "rootArabic": "ع و ن",
+        "rootBw": "Ewn",
+        "headwordArabic": "عَوْن",
+        "headwordBw": "Eawon",
+        "pos": "N",
+        "volume": 5,
+        "page": 2202,
+        "senses": [
+          "Aid, help, assistance; also used as an epithet for a helper or an assistant."
+        ],
+        "rawSourceText": "عَوْنٌ Aid, help, assistance; and a helper, an assistant."
+      }
+    ]
+  },
+  "Sbr": {
+    "rootArabic": "ص ب ر",
+    "rootBw": "Sbr",
+    "volume": 4,
+    "page": 1643,
+    "overview": "To bind, restrain, withhold oneself from grief, agitation, or despair.",
+    "sourceCitation": "Edward William Lane, An Arabic-English Lexicon, Book I, Part 4, p. 1643 (Perseus Digital Library)",
+    "entries": [
+      {
+        "sourceRecordId": "lane-Sbr-1",
+        "rootArabic": "ص ب ر",
+        "rootBw": "Sbr",
+        "headwordArabic": "صَبَرَ",
+        "headwordBw": "Sabara",
+        "itype": "1",
+        "pos": "V",
+        "volume": 4,
+        "page": 1643,
+        "senses": [
+          "He restrained, withheld, or confined himself (or another); he exercised patience, endurance, or self-command, refraining from complaint or agitation under trial or affliction."
+        ],
+        "rawSourceText": "صَبَرَ He restrained or withheld himself; he was patient, enduring, or steadfast."
+      },
+      {
+        "sourceRecordId": "lane-Sbr-8",
+        "rootArabic": "ص ب ر",
+        "rootBw": "Sbr",
+        "headwordArabic": "ٱصْطَبَرَ",
+        "headwordBw": "{SoTabara",
+        "itype": "8",
+        "pos": "V",
+        "volume": 4,
+        "page": 1644,
+        "senses": [
+          "He exerted intensive patience; he held himself firmly with steadfast endurance and continuous perseverance."
+        ],
+        "rawSourceText": "اِصْطَبَرَ He exercised patience with effort, perseverance, and steadfast constancy."
+      },
+      {
+        "sourceRecordId": "lane-Sbr-noun",
+        "rootArabic": "ص ب ر",
+        "rootBw": "Sbr",
+        "headwordArabic": "صَبْر",
+        "headwordBw": "Sabor",
+        "pos": "N",
+        "volume": 4,
+        "page": 1644,
+        "senses": [
+          "Patience, endurance; the restraint of the soul from impatience, grief, or perturbation under hardship."
+        ],
+        "rawSourceText": "صَبْرٌ Patience, endurance; self-restraint from complaint in calamity."
+      },
+      {
+        "sourceRecordId": "lane-Sbr-adj",
+        "rootArabic": "ص ب ر",
+        "rootBw": "Sbr",
+        "headwordArabic": "صَابِر",
+        "headwordBw": "SaAbir",
+        "pos": "ADJ",
+        "volume": 4,
+        "page": 1645,
+        "senses": [
+          "Patient, enduring, steadfastly restraining oneself under adversity."
+        ],
+        "rawSourceText": "صَابِرٌ Patient, enduring, bearing affliction steadfastly."
+      }
+    ]
+  },
+  "xlT": {
+    "rootArabic": "خ ل ط",
+    "rootBw": "xlT",
+    "volume": 2,
+    "page": 784,
+    "overview": "To mix, mingle, blend, or incorporate one thing with another.",
+    "sourceCitation": "Edward William Lane, An Arabic-English Lexicon, Book I, Part 2, p. 784 (Perseus Digital Library)",
+    "entries": [
+      {
+        "sourceRecordId": "lane-xlT-1",
+        "rootArabic": "خ ل ط",
+        "rootBw": "xlT",
+        "headwordArabic": "خَلَطَ",
+        "headwordBw": "xalaTa",
+        "itype": "1",
+        "pos": "V",
+        "volume": 2,
+        "page": 784,
+        "senses": [
+          "He mixed, mingled, blended, or incorporated one thing with another so that they became combined."
+        ],
+        "rawSourceText": "خَلَطَهُ He mixed, mingled, or blended it with another."
+      },
+      {
+        "sourceRecordId": "lane-xlT-8",
+        "rootArabic": "خ ل ط",
+        "rootBw": "xlT",
+        "headwordArabic": "ٱخْتَلَطَ",
+        "headwordBw": "{xotalaTa",
+        "itype": "8",
+        "pos": "V",
+        "volume": 2,
+        "page": 785,
+        "senses": [
+          "It became mixed, mingled, blended together, or intertwined (as the diverse plants of the earth after rain)."
+        ],
+        "rawSourceText": "اِخْتَلَطَ It became mixed, mingled, blended, or intermingled together."
+      },
+      {
+        "sourceRecordId": "lane-xlT-noun",
+        "rootArabic": "خ ل ط",
+        "rootBw": "xlT",
+        "headwordArabic": "خَلِيط",
+        "headwordBw": "xaliyT",
+        "pos": "N",
+        "volume": 2,
+        "page": 785,
+        "senses": [
+          "A partner, co-owner, or associate who shares property or affairs in common; something intermixed."
+        ],
+        "rawSourceText": "خَلِيطٌ A partner or associate in property; a mixture."
+      }
+    ]
+  },
+  "ryb": {
+    "rootArabic": "ر ي ب",
+    "rootBw": "ryb",
+    "volume": 3,
+    "page": 1205,
+    "overview": "Doubt, suspicion, or uncertainty accompanied by disquietude of mind.",
+    "sourceCitation": "Edward William Lane, An Arabic-English Lexicon, Book I, Part 3, p. 1205 (Perseus Digital Library)",
+    "entries": [
+      {
+        "sourceRecordId": "lane-ryb-noun",
+        "rootArabic": "ر ي ب",
+        "rootBw": "ryb",
+        "headwordArabic": "رَيْب",
+        "headwordBw": "rayob",
+        "pos": "N",
+        "volume": 3,
+        "page": 1205,
+        "senses": [
+          "Doubt, suspicion, or uncertainty; especially doubt that causes uneasiness, anxiety, or disquietude of the heart."
+        ],
+        "rawSourceText": "رَيْبٌ Doubt, suspicion, or disquietude of mind."
+      },
+      {
+        "sourceRecordId": "lane-ryb-1",
+        "rootArabic": "ر ي ب",
+        "rootBw": "ryb",
+        "headwordArabic": "رَابَ",
+        "headwordBw": "raAba",
+        "itype": "1",
+        "pos": "V",
+        "volume": 3,
+        "page": 1205,
+        "senses": [
+          "It caused him doubt, suspicion, or disquietude; it rendered him uneasy or perturbed."
+        ],
+        "rawSourceText": "رَابَهُ It caused him doubt or disquietude."
+      }
+    ]
+  }
+}
