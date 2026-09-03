@@ -1,10 +1,25 @@
 import { LaneRootLexicon, LaneEntryRecord } from './types';
 import manifestData from './data/manifest.json';
+import { buckwalterToArabic } from '../morphology/buckwalter';
 
 declare const __non_webpack_require__: any;
 
+export interface LaneChunkPayload {
+  roots: Record<string, LaneRootLexicon>;
+  lemmas: Record<string, LaneEntryRecord>;
+}
+
 const MANIFEST: Record<string, string> = manifestData as Record<string, string>;
-const CHUNK_CACHE: Map<string, Record<string, LaneRootLexicon>> = new Map();
+const CHUNK_CACHE: Map<string, LaneChunkPayload> = new Map();
+
+function normalizeArabicKey(text: string): string {
+  if (!text) return '';
+  let t = text.replace(/[\u0610-\u061A\u0640\u064B-\u065F\u0670\u06D6-\u06ED]/g, '');
+  t = t.replace(/[أإآٱٲٳ]/g, 'ا');
+  t = t.replace(/[ىئ]/g, 'ي');
+  t = t.replace(/ة/g, 'ه');
+  return t.trim();
+}
 
 /**
  * Server-safe on-demand chunk loader.
@@ -12,26 +27,24 @@ const CHUNK_CACHE: Map<string, Record<string, LaneRootLexicon>> = new Map();
  * 1. Never bundles 70MB dictionary into client JavaScript bundles.
  * 2. On server (SSR / API / Tests), loads modular chunk on-demand and caches in memory.
  */
-function loadChunk(chunkName: string): Record<string, LaneRootLexicon> | null {
+function loadChunk(chunkName: string): LaneChunkPayload | null {
   if (CHUNK_CACHE.has(chunkName)) {
     return CHUNK_CACHE.get(chunkName)!;
   }
 
   if (typeof window === 'undefined') {
     try {
-      // Use dynamic server require to avoid client webpack bundle bloat
       const req = typeof __non_webpack_require__ !== 'undefined' ? __non_webpack_require__ : require;
       const fs = req('fs');
       const path = req('path');
       const chunkPath = path.join(process.cwd(), 'lib', 'lexicon', 'data', 'chunks', `${chunkName}.json`);
       if (fs.existsSync(chunkPath)) {
         const raw = fs.readFileSync(chunkPath, 'utf-8');
-        const parsed = JSON.parse(raw);
+        const parsed = JSON.parse(raw) as LaneChunkPayload;
         CHUNK_CACHE.set(chunkName, parsed);
         return parsed;
       }
     } catch (err) {
-      // In case of dynamic load issue on server, fallback gracefully
       console.warn(`Could not load Lane chunk ${chunkName} on server:`, err);
     }
   }
@@ -66,6 +79,50 @@ function getRootKeyVariants(rootBw: string): string[] {
 }
 
 /**
+ * Retrieves direct Lemma / Headword entry from Lane (supports particles, prepositions, and specific lemmas)
+ */
+export function getLaneLemmaRecord(lemmaBw?: string, lemmaArabic?: string): LaneEntryRecord | null {
+  if (!lemmaBw && !lemmaArabic) return null;
+
+  // 1. Try normalized Arabic lemma
+  const arCandidates: string[] = [];
+  if (lemmaArabic) {
+    arCandidates.push(normalizeArabicKey(lemmaArabic));
+  }
+  if (lemmaBw) {
+    const arFromBw = buckwalterToArabic(lemmaBw);
+    arCandidates.push(normalizeArabicKey(arFromBw));
+  }
+
+  for (const ar of arCandidates) {
+    if (!ar) continue;
+    const manifestKey = `lem_${ar}`;
+    const chunkName = MANIFEST[manifestKey];
+    if (chunkName) {
+      const chunk = loadChunk(chunkName);
+      if (chunk && chunk.lemmas && chunk.lemmas[ar]) {
+        return chunk.lemmas[ar];
+      }
+    }
+  }
+
+  // 2. Try Buckwalter clean stem
+  if (lemmaBw) {
+    const cleanBw = lemmaBw.replace(/[{`~]/g, '');
+    const manifestKey = `lem_${cleanBw}`;
+    const chunkName = MANIFEST[manifestKey];
+    if (chunkName) {
+      const chunk = loadChunk(chunkName);
+      if (chunk && chunk.lemmas && chunk.lemmas[cleanBw]) {
+        return chunk.lemmas[cleanBw];
+      }
+    }
+  }
+
+  return null;
+}
+
+/**
  * Retrieves the raw verified Lane Lexicon record for a given Buckwalter root
  * @param rootBw Case-sensitive Buckwalter root identifier (e.g. "Ewn", "Sbr", "xlT", "ryb", "Dmm", "hdy")
  */
@@ -77,8 +134,8 @@ export function getLaneRootRecord(rootBw: string): LaneRootLexicon | null {
     const chunkName = MANIFEST[cand];
     if (chunkName) {
       const chunk = loadChunk(chunkName);
-      if (chunk && chunk[cand]) {
-        return chunk[cand];
+      if (chunk && chunk.roots && chunk.roots[cand]) {
+        return chunk.roots[cand];
       }
     }
   }

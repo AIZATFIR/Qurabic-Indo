@@ -209,7 +209,7 @@ export default function WordDetailPage({ params, searchParams }: PageProps) {
       </section>
 
       {/* 3. Makna Leksikal & Definisi Kamus Klasik (Lane's Arabic-English Lexicon) */}
-      {!isParticle && (
+      {(lexicon?.hasLexicalData || !isParticle) && (
         <section className="p-6 sm:p-8 bg-canvas-surface border border-hairline rounded-3xl shadow-subtle space-y-4">
           <div className="flex items-center justify-between border-b border-hairline pb-3">
             <h2 className="text-lg font-semibold text-ink-primary font-sans flex items-center space-x-2">

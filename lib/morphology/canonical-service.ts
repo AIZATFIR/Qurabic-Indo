@@ -6,7 +6,7 @@ import { buckwalterToArabic } from './buckwalter';
 import { getRootOccurrencesFromChunk } from './morphology-service';
 import { CURATED_WORD_DICTIONARY } from '../search/word-dictionary';
 import { VerseOccurrence, DerivativeWord } from '../types/morphology';
-import { getLaneRootRecord, getLaneEntryForLemma } from '../lexicon/lane-loader';
+import { getLaneRootRecord, getLaneEntryForLemma, getLaneLemmaRecord } from '../lexicon/lane-loader';
 import { LexicalLookupResult, LaneRootLexicon } from '../lexicon/types';
 
 export interface WordDetailModel {
@@ -317,20 +317,32 @@ export function getCanonicalWordDetail(
 
   // 6. Lexicon Resolution (Lane's Arabic-English Lexicon)
   let lexiconResult: LexicalLookupResult;
-  if (isParticle || !rootBw) {
+  const lemmaArabic = lemmaBw ? buckwalterToArabic(lemmaBw) : undefined;
+
+  // Step 1: Direct Lemma / Preposition / Headword match in Lane
+  const laneLemma = getLaneLemmaRecord(lemmaBw, lemmaArabic || cleanInput || cleanArabic);
+
+  if (laneLemma && laneLemma.senses && laneLemma.senses.length > 0) {
     lexiconResult = {
-      hasLexicalData: false,
-      source: 'The Quranic Arabic Corpus v0.4',
-      sourceCitation: 'The Quranic Arabic Corpus v0.4 (University of Leeds)',
-      senses: [],
-      message: 'Partikel / Harf (Tidak memiliki akar kata)'
+      hasLexicalData: true,
+      source: "Lane's Arabic-English Lexicon",
+      rootArabic: laneLemma.rootArabic || (rootBw ? buckwalterToArabic(rootBw) : undefined),
+      rootBw: laneLemma.rootBw || rootBw,
+      matchedLemmaArabic: laneLemma.headwordArabic,
+      matchedLemmaBw: laneLemma.headwordBw,
+      matchedForm: laneLemma.itype ? `Form ${laneLemma.itype}` : undefined,
+      senses: laneLemma.senses,
+      volume: laneLemma.volume,
+      page: laneLemma.page,
+      sourceCitation: `Edward William Lane, An Arabic-English Lexicon · Book I, Part ${laneLemma.volume}, p. ${laneLemma.page}`
     };
-  } else {
+  } else if (rootBw && !isParticle) {
+    // Step 2: Root & Form Match
     const laneRoot = getLaneRootRecord(rootBw);
     const verbForm = ('verbForm' in morphInfo ? morphInfo.verbForm : undefined) || morphInfo.wazanOrForm;
     const laneEntry = laneRoot ? getLaneEntryForLemma(rootBw, lemmaBw, verbForm, morphInfo.pos === "Fi'il" ? 'V' : 'N') : null;
 
-    if (laneRoot && laneEntry) {
+    if (laneRoot && laneEntry && laneEntry.senses && laneEntry.senses.length > 0) {
       lexiconResult = {
         hasLexicalData: true,
         source: "Lane's Arabic-English Lexicon",
@@ -355,6 +367,14 @@ export function getCanonicalWordDetail(
         message: 'Makna leksikal belum tersedia.'
       };
     }
+  } else {
+    lexiconResult = {
+      hasLexicalData: false,
+      source: 'The Quranic Arabic Corpus v0.4',
+      sourceCitation: 'The Quranic Arabic Corpus v0.4 (University of Leeds)',
+      senses: [],
+      message: isParticle ? 'Partikel / Harf (Tidak memiliki entri kamus terpisah)' : 'Makna leksikal belum tersedia.'
+    };
   }
 
   return {
