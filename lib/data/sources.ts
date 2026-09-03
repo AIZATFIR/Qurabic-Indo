@@ -56,7 +56,7 @@ export const SOURCES_REGISTRY: Record<
     id: 'classical-arabic-lexicon',
     name: 'Kajian Leksikografi & Catatan Semantik Kontekstual',
     shortName: 'Leksikografi & Semantik',
-    authority: 'Qurabic Editorial & AI-assisted Semantics (Referensi: Hans Wehr & Mu\'jam Leksikal)',
+    authority: 'Tim Riset Leksikografi Qurabic (Referensi: Hans Wehr & Mu\'jam Leksikal)',
     url: 'https://corpus.quran.com/qurandictionary.jsp',
     version: 'Editorial Semantic Layer v1.0',
     license: 'Editorial Domain',

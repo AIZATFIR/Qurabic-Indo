@@ -234,11 +234,20 @@ export function getQACAuthoritativeIndex(): QACAuthoritativeIndex {
       if (cleanFull && !recordsByToken.has(cleanFull)) {
         recordsByToken.set(cleanFull, recs);
       }
+      const fullWithAlif = normalizeArabicText(fullArabic.replace(/\u0670/g, '\u0627'));
+      if (fullWithAlif && !recordsByToken.has(fullWithAlif)) {
+        recordsByToken.set(fullWithAlif, recs);
+      }
+
       const stemRec = recs.find(r => r.root || r.pos === 'V' || r.pos === 'N' || r.pos === 'ADJ');
       if (stemRec) {
         const cleanStem = normalizeArabicText(stemRec.formArabic);
         if (cleanStem && !recordsByToken.has(cleanStem)) {
           recordsByToken.set(cleanStem, recs);
+        }
+        const stemWithAlif = normalizeArabicText(stemRec.formArabic.replace(/\u0670/g, '\u0627'));
+        if (stemWithAlif && !recordsByToken.has(stemWithAlif)) {
+          recordsByToken.set(stemWithAlif, recs);
         }
       }
     }

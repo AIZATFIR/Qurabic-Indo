@@ -210,19 +210,31 @@ export function getCanonicalWordDetail(
   let rawFeatures = stemRecord?.rawFeatures || '';
 
   // 3. Resolve Root in ROOT_DATABASE
+  const isParticleInput = isQuranicParticle(cleanArabic);
   const rBw = rootBw;
-  let matchedRoot = rBw
+  let matchedRoot = (rBw && !isParticleInput)
     ? ROOT_DATABASE.find(r => r.id === rBw || r.id.replace(/-/g, '') === rBw.toLowerCase())
     : undefined;
 
-  if (!matchedRoot && !isQuranicParticle(cleanArabic)) {
+  if (!matchedRoot && !isParticleInput) {
+    const curatedDict = CURATED_WORD_DICTIONARY[cleanArabic];
+    if (curatedDict?.rootSlug) {
+      matchedRoot = ROOT_DATABASE.find(r => r.id === curatedDict.rootSlug || r.id.replace(/-/g, '') === curatedDict.rootSlug?.replace(/-/g, ''));
+      if (matchedRoot && !rootBw) {
+        rootBw = matchedRoot.id.replace(/-/g, '');
+      }
+    }
+  }
+
+  if (!matchedRoot && !isParticleInput) {
     matchedRoot = findBestMatchingRoot(cleanInput);
     if (matchedRoot && !rootBw) {
       rootBw = matchedRoot.id.replace(/-/g, '');
     }
   }
 
-  const isParticle = !matchedRoot && (isQuranicParticle(cleanArabic) || tag === 'P' || tag === 'CONJ' || tag === 'SUB' || tag === 'NEG' || tag === 'T' || tag === 'REM');
+  const particleTags = ['P', 'CONJ', 'SUB', 'NEG', 'T', 'REM', 'AVR', 'EXP', 'ANS', 'INC', 'AMD', 'INTG', 'EXL', 'VOC', 'SUP', 'CERT', 'RET', 'PRP', 'SUR', 'ACC', 'RES', 'EQ', 'INT', 'CAUS'];
+  const isParticle = isParticleInput || (!matchedRoot && particleTags.includes(tag));
 
   // 4. Morphological Analysis
   const morphInfo = isParticle

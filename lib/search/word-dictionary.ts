@@ -279,7 +279,7 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
       grammaticalRole: 'Morfologi Arab',
       posTag: 'Isim',
       isVerified: false,
-      sourceCitation: 'Catatan Semantik Editorial (AI-assisted context)'
+      sourceCitation: 'Catatan Semantik Editorial Qurabic'
     };
   }
 
