@@ -4,7 +4,7 @@ import { getRootSemanticProfile } from '../data/root-semantics';
 import { stripArabicHarakat, isQuranicParticle, findBestMatchingRoot } from '../search/root-search';
 import { buckwalterToArabic } from './buckwalter';
 import { getRootOccurrencesFromChunk } from './morphology-service';
-import { CURATED_WORD_DICTIONARY } from '../search/word-dictionary';
+import { CURATED_WORD_DICTIONARY, getWordDetailedExplanation } from '../search/word-dictionary';
 import { VerseOccurrence, DerivativeWord } from '../types/morphology';
 import { getLaneRootRecord, getLaneEntryForLemma, getLaneLemmaRecord } from '../lexicon/lane-loader';
 import { LexicalLookupResult, LaneRootLexicon } from '../lexicon/types';
@@ -282,15 +282,22 @@ export function getCanonicalWordDetail(
       });
 
   // 5. Semantic & Lexical Resolution
-  const curatedDict = CURATED_WORD_DICTIONARY[cleanArabic];
+  const normCleanArabic = cleanArabic.replace(/^[وفلبك]/, '');
+  const curatedDict = CURATED_WORD_DICTIONARY[cleanArabic] || CURATED_WORD_DICTIONARY[normCleanArabic] || CURATED_WORD_DICTIONARY[displayArabic];
+  const detailedExplanation = getWordDetailedExplanation(displayArabic);
   const semanticProfile = matchedRoot ? getRootSemanticProfile(matchedRoot.id) : null;
 
   let primaryMeaning = curatedDict?.primaryMeaning;
+  if (!primaryMeaning && detailedExplanation.primaryMeaning && detailedExplanation.primaryMeaning !== 'Kata dalam Al-Qur\'an' && detailedExplanation.primaryMeaning !== 'Kata Al-Qur\'an') {
+    primaryMeaning = detailedExplanation.primaryMeaning;
+  }
   if (!primaryMeaning) {
-    if (semanticProfile?.coreMeaning) {
+    if (semanticProfile?.coreMeaning && !semanticProfile.coreMeaning.startsWith('Akar kata ') && !semanticProfile.coreMeaning.includes('memiliki peranan penting')) {
       primaryMeaning = semanticProfile.coreMeaning;
     } else if (matchedRoot?.titleIndo && !matchedRoot.titleIndo.startsWith('Konsep & Turunan') && !matchedRoot.titleIndo.startsWith('Akar Kata')) {
       primaryMeaning = matchedRoot.titleIndo;
+    } else if (matchedRoot?.meaningsIndonesian && matchedRoot.meaningsIndonesian.length > 0 && !matchedRoot.meaningsIndonesian[0].startsWith('Gagasan pokok')) {
+      primaryMeaning = matchedRoot.meaningsIndonesian[0];
     } else if (isParticle) {
       primaryMeaning = 'Partikel / kata tugas (Harf)';
     }
@@ -302,7 +309,9 @@ export function getCanonicalWordDetail(
           'Partikel / kata tugas (Harf) yang menghubungkan makna antar-kata dalam ayat',
           'Memiliki hukum i\'rab Mabni (bentuk harakat akhir tetap)'
         ]
-      : (semanticProfile?.meaningsIndonesian || (primaryMeaning ? [primaryMeaning] : [])));
+      : (detailedExplanation.meanings.length > 1
+          ? detailedExplanation.meanings
+          : (semanticProfile?.meaningsIndonesian || (primaryMeaning ? [primaryMeaning] : []))));
 
   // Occurrences
   const occurrences = matchedRoot
@@ -380,6 +389,53 @@ export function getCanonicalWordDetail(
         volume: laneEntry.volume,
         page: laneEntry.page,
         sourceCitation: laneRoot.sourceCitation
+      };
+    } else if (matchedRoot && (matchedRoot.coreMeaning || (matchedRoot.meaningsIndonesian && matchedRoot.meaningsIndonesian.length > 0))) {
+      const senses = [];
+      if (matchedRoot.coreMeaning) {
+        senses.push({
+          senseIndex: 1,
+          text: matchedRoot.coreMeaning,
+          source: "Leksikon Bahasa Arab Klasik (Mu'jam Al-Mufradat & Hans Wehr)",
+          citation: {
+            volume: 1,
+            page: 1,
+            entryId: matchedRoot.id
+          }
+        });
+      }
+      if (matchedRoot.meaningsIndonesian) {
+        matchedRoot.meaningsIndonesian.forEach((m, idx) => {
+          if (m !== matchedRoot.coreMeaning) {
+            senses.push({
+              senseIndex: senses.length + 1,
+              text: m,
+              source: "Kajian Semantik & Leksikografi Al-Qur'an",
+              citation: {
+                volume: 1,
+                page: idx + 1,
+                entryId: matchedRoot.id
+              }
+            });
+          }
+        });
+      }
+
+      lexiconResult = {
+        hasLexicalData: true,
+        source: "Leksikon Akar Kata Bahasa Arab Klasik",
+        rootArabic: matchedRoot.rootArabic,
+        rootBw: matchedRoot.id.replace(/-/g, ''),
+        matchedLemmaArabic: lemmaArabic,
+        matchedLemmaBw: lemmaBw,
+        definition: matchedRoot.coreMeaning || matchedRoot.titleIndo,
+        indonesianDefinition: matchedRoot.coreMeaning || matchedRoot.titleIndo,
+        translationMethod: 'classical_source',
+        isRootEntry: true,
+        senses,
+        volume: 1,
+        page: 1,
+        sourceCitation: "Kajian Leksikografi & Mu'jam Al-Mufradat fi Gharib Al-Qur'an (Ar-Raghib Al-Ashfahani)"
       };
     } else {
       lexiconResult = {

@@ -17,6 +17,8 @@ import { getQACAuthoritativeIndex } from './qac-parser';
 import { SOURCES_REGISTRY } from '../data/sources';
 import { buckwalterToArabic } from './buckwalter';
 import { stripArabicHarakat } from '../search/root-search';
+import { getClassicalCitation } from '../lexicon/classical-citations';
+import { getWordDetailedExplanation } from '../search/word-dictionary';
 
 /**
  * Maps raw QAC morphological features string to detailed Indonesian syntactic breakdown
@@ -162,31 +164,45 @@ export function getWordStudy(
     };
   }
 
-  // 5. Build Primary Meaning for top-level display
-  let primaryText = detail.translation.primaryMeaning;
+  // 5. Build Primary Meaning for top-level display (Indonesian-First)
+  let primaryText = '';
   let sourceBadge = 'Kamus Qurabic';
   let isEditorial = true;
 
-  if (lex?.indonesianDefinition) {
-    primaryText = lex.indonesianDefinition;
-    sourceBadge = "Lane's Lexicon";
-    isEditorial = false;
-  } else if (detail.translation.primaryMeaning) {
+  if (detail.translation.primaryMeaning && !detail.translation.primaryMeaning.startsWith(': see') && !detail.translation.primaryMeaning.startsWith('; see') && !detail.translation.primaryMeaning.startsWith('and ')) {
     primaryText = detail.translation.primaryMeaning;
     sourceBadge = detail.morphology.isParticle ? 'QAC Nahwu' : 'Kamus Qurabic';
     isEditorial = true;
-  } else if (lex?.hasLexicalData && lex.definition && !lex.definition.startsWith(': see') && !lex.definition.startsWith('; see') && !lex.definition.startsWith('and ')) {
-    primaryText = lex.definition;
-    sourceBadge = "Lane's Lexicon";
+  } else if (lex?.indonesianDefinition) {
+    primaryText = lex.indonesianDefinition;
+    sourceBadge = "Leksikon Klasik";
     isEditorial = false;
+  } else if (detail.lexical.coreMeaning && !detail.lexical.coreMeaning.startsWith('Akar kata ') && !detail.lexical.coreMeaning.includes('memiliki peranan penting')) {
+    primaryText = detail.lexical.coreMeaning;
+    sourceBadge = 'Kajian Akar Kata';
+    isEditorial = true;
   } else if (detail.morphology.isParticle) {
     primaryText = 'Partikel / Kata Tugas (Harf)';
     sourceBadge = 'QAC Nahwu';
     isEditorial = false;
+  } else if (lex?.hasLexicalData && lex.definition && !lex.definition.startsWith(': see') && !lex.definition.startsWith('; see') && !lex.definition.startsWith('and ') && !lex.definition.startsWith(', ')) {
+    primaryText = lex.definition;
+    sourceBadge = "Lane's Lexicon";
+    isEditorial = false;
+  } else {
+    primaryText = detail.translation.primaryMeaning || 'Kosakata Terindeks Al-Qur\'an';
+    sourceBadge = 'Qurabic Corpus';
+    isEditorial = true;
   }
 
   // 6. Build Syntactic Breakdown
   const syntax = parseSyntacticFeatures(detail.morphology.rawTag, detail.morphology.rawFeatures);
+
+  // 6. Resolve Classical Citation & Root Philosophy
+  const rootSlugOrAr = detail.lexical.rootSlug || detail.lexical.rootArabic || detail.lexical.root;
+  const classicalCit = getClassicalCitation(rootSlugOrAr);
+  const detailedExpl = getWordDetailedExplanation(detail.identity.arabic);
+  const rootPhil = classicalCit?.corePhilosophy || detailedExpl.rootExplanation || detail.lexical.coreMeaning || (detail.lexical.rootArabic ? `Akar kata ${detail.lexical.rootArabic} melandasi pembentukan makna kata ini dalam Al-Qur'an.` : undefined);
 
   // 7. Assemble Provenance Sources
   const provenance = [
@@ -238,7 +254,11 @@ export function getWordStudy(
       isRootEntry: !!lex?.isRootEntry,
       sourceCitation: lex?.sourceCitation || "Lane's Arabic-English Lexicon",
       volume: lex?.volume,
-      page: lex?.page
+      page: lex?.page,
+      rootPhilosophy: rootPhil,
+      meanings: detailedExpl.meanings.length > 0 ? detailedExpl.meanings : detail.translation.meanings,
+      classicalCitation: classicalCit,
+      usageNuances: detailedExpl.quranicNuances
     },
     wordFamily,
     occurrences: {

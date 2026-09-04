@@ -206,6 +206,19 @@ export interface WordStudyViewModel {
     sourceCitation: string;
     volume?: number;
     page?: number;
+    rootPhilosophy?: string;
+    meanings?: string[];
+    classicalCitation?: {
+      book: string;
+      bookArabic?: string;
+      author: string;
+      authorArabic?: string;
+      volumePage?: string;
+      originalArabic?: string;
+      indonesianQuote: string;
+      corePhilosophy?: string;
+    };
+    usageNuances?: string[];
   };
   wordFamily: WordFamilyItem[];
   occurrences: {
