@@ -18,7 +18,7 @@ import { SOURCES_REGISTRY } from '../data/sources';
 import { buckwalterToArabic } from './buckwalter';
 import { stripArabicHarakat } from '../search/root-search';
 import { getClassicalCitation } from '../lexicon/classical-citations';
-import { getWordDetailedExplanation } from '../search/word-dictionary';
+import { getWordDetailedExplanation, CURATED_WORD_DICTIONARY } from '../search/word-dictionary';
 
 /**
  * Maps raw QAC morphological features string to detailed Indonesian syntactic breakdown
@@ -123,11 +123,16 @@ export function getWordStudy(
       .slice(0, 12);
 
     for (const item of sortedItems) {
+      const cleanAr = stripArabicHarakat(item.arabic);
+      const curated = CURATED_WORD_DICTIONARY[cleanAr] || CURATED_WORD_DICTIONARY[item.arabic];
+      const meaning = curated?.primaryMeaning || (detail.lexical.coreMeaning ? `${item.pos === "Fi'il" ? 'Bentuk kerja' : 'Bentuk benda'} akar ${detail.lexical.rootArabic || ''}`.trim() : undefined);
+
       wordFamily.push({
         arabic: item.arabic,
         buckwalter: item.bw,
         lemmaArabic: item.lemmaAr,
         pos: item.pos,
+        meaningIndo: meaning,
         count: item.count,
         sampleCoordinate: item.sampleLoc
       });

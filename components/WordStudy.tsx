@@ -189,7 +189,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
           <div className="p-3 rounded-2xl bg-canvas-soft border border-hairline space-y-0.5 text-center sm:text-left">
             <span className="text-[10px] text-ink-mute font-semibold uppercase tracking-wider block flex items-center justify-center sm:justify-start space-x-1">
               <Layers className="w-3 h-3 text-primary hidden sm:inline" />
-              <span>Wazan / Pola</span>
+              <span>Wazan (Pola Bentuk)</span>
             </span>
             <span className="text-xs sm:text-sm font-bold text-ink-primary block truncate">
               {morphology.wazanOrForm || 'Bentuk Baku'}
@@ -331,11 +331,6 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                     : 'Karakter Leksikal Kata'}
                 </span>
               </h3>
-              {classicalCit && (
-                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-primary-subdued text-primary font-semibold">
-                  Rujukan Klasik
-                </span>
-              )}
             </div>
 
             {classicalCit ? (
@@ -421,11 +416,18 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                   <Link
                     key={idx}
                     href={`/kata/${encodeURIComponent(item.arabic)}`}
-                    className="p-3.5 rounded-2xl bg-canvas-soft hover:bg-canvas-page border border-hairline hover:border-primary/40 transition-all text-center space-y-1.5 group"
+                    className="p-3.5 rounded-2xl bg-canvas-soft hover:bg-canvas-page border border-hairline hover:border-primary/40 transition-all text-center space-y-1.5 group flex flex-col justify-between"
                   >
-                    <span className="font-arabic text-xl font-bold text-ink-primary group-hover:text-primary transition-colors block leading-relaxed" dir="rtl">
-                      {item.arabic}
-                    </span>
+                    <div className="space-y-1">
+                      <span className="font-arabic text-xl font-bold text-ink-primary group-hover:text-primary transition-colors block leading-relaxed" dir="rtl">
+                        {item.arabic}
+                      </span>
+                      {item.meaningIndo && (
+                        <p className="text-[11px] text-ink-secondary group-hover:text-primary transition-colors line-clamp-1 italic">
+                          {item.meaningIndo}
+                        </p>
+                      )}
+                    </div>
                     <div className="flex items-center justify-between text-[11px] text-ink-mute pt-1 border-t border-hairline/60">
                       <span>{item.pos}</span>
                       <span className="font-bold text-primary">{item.count}×</span>

@@ -37,10 +37,17 @@ export interface FullAyahWBW {
   words: WBWWord[];
 }
 
+// In-Memory cache for high-performance reading mode & zero redundant network latency
+export const SURAH_WBW_CACHE = new Map<number, FullAyahWBW[]>();
+
 /**
  * Fetches full surah with exact word-by-word (WBW) data from Quran.com API v4
  */
 export async function fetchSurahWithWBW(surahNumber: number): Promise<FullAyahWBW[]> {
+  if (SURAH_WBW_CACHE.has(surahNumber)) {
+    return SURAH_WBW_CACHE.get(surahNumber)!;
+  }
+
   try {
     const page1Res = await fetch(
       `https://api.quran.com/api/v4/verses/by_chapter/${surahNumber}?language=id&words=true&word_fields=text_uthmani,transliteration,translation,location&translations=33&per_page=50&page=1`,
@@ -69,7 +76,7 @@ export async function fetchSurahWithWBW(surahNumber: number): Promise<FullAyahWB
     }
 
     // Format all verses and enrich each word with roots and grammar
-    return allVerses.map((v: any) => {
+    const formatted: FullAyahWBW[] = allVerses.map((v: any) => {
       const translationIndo = v.translations?.[0]?.text?.replace(/<sup.*?<\/sup>/g, '') || '';
       const rawWords = v.words || [];
 
@@ -117,6 +124,9 @@ export async function fetchSurahWithWBW(surahNumber: number): Promise<FullAyahWB
         words: parsedWords
       };
     });
+
+    SURAH_WBW_CACHE.set(surahNumber, formatted);
+    return formatted;
   } catch (err) {
     console.warn('Fallback to AlQuran Cloud API:', err);
     // Fallback using AlQuran Cloud
@@ -132,7 +142,7 @@ export async function fetchSurahWithWBW(surahNumber: number): Promise<FullAyahWB
     const arAyahs = arJson.data.ayahs || [];
     const idAyahs = idJson.data.ayahs || [];
 
-    return arAyahs.map((ar: any, idx: number) => {
+    const fallbackFormatted: FullAyahWBW[] = arAyahs.map((ar: any, idx: number) => {
       const wordsRaw = ar.text.split(' ');
       const parsedWords: WBWWord[] = wordsRaw.map((w: string, wIdx: number) => {
         const matchedRoot = findBestMatchingRoot(w);
@@ -160,6 +170,9 @@ export async function fetchSurahWithWBW(surahNumber: number): Promise<FullAyahWB
         words: parsedWords
       };
     });
+
+    SURAH_WBW_CACHE.set(surahNumber, fallbackFormatted);
+    return fallbackFormatted;
   }
 }
 

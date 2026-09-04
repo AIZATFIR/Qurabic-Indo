@@ -152,6 +152,7 @@ export interface WordFamilyItem {
   pos: 'Isim' | "Fi'il" | 'Harf';
   posDetail?: string;
   wazanOrForm?: string;
+  meaningIndo?: string;
   count: number;
   sampleCoordinate?: string;
 }

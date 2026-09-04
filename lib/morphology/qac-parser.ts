@@ -239,8 +239,16 @@ export function getQACAuthoritativeIndex(): QACAuthoritativeIndex {
         recordsByToken.set(fullWithAlif, recs);
       }
 
+      // Exact vowelled form index for high-precision morphology matching
+      if (fullArabic && !recordsByToken.has(fullArabic)) {
+        recordsByToken.set(fullArabic, recs);
+      }
+
       const stemRec = recs.find(r => r.root || r.pos === 'V' || r.pos === 'N' || r.pos === 'ADJ');
       if (stemRec) {
+        if (stemRec.formArabic && !recordsByToken.has(stemRec.formArabic)) {
+          recordsByToken.set(stemRec.formArabic, recs);
+        }
         const cleanStem = normalizeArabicText(stemRec.formArabic);
         if (cleanStem && !recordsByToken.has(cleanStem)) {
           recordsByToken.set(cleanStem, recs);

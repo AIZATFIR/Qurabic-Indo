@@ -19,10 +19,16 @@ export const QURANIC_PARTICLES = new Set([
   'ثم', 'حتي', 'الي', 'علي', 'في', 'من', 'عن', 'مع', 'كلا', 'اذا', 'اذ',
   'فاذا', 'واذ', 'كيف', 'اين', 'متي', 'اني', 'اي', 'ايها', 'يا', 'بل', 'لو', 'لولا',
   'لوما', 'لكن', 'لكنما', 'انما', 'كانما', 'حيث', 'حيثما', 'منذ', 'مذ', 'لدن', 'لدي',
-  'عسي', 'ليس', 'بلي', 'نعم', 'اجل', 'اي', 'ها', 'هاهنا', 'هاذا', 'هذا', 'هذه', 'هؤلاء', 'ذلك',
-  'تلك', 'اولئك', 'الذي', 'التي', 'الذين', 'اللاتي', 'اللواتي', 'اللائي', 'او', 'ام',
+  'عسي', 'ليس', 'بلي', 'نعم', 'اجل', 'اي', 'ها', 'هاهنا', 'او', 'ام',
   'و', 'ف', 'ب', 'ك', 'ل', 'لن', 'لم', 'قد', 'لقد', 'سوف', 'س', 'هل', 'فهل', 'وهل',
   'لعل', 'فلعل', 'ولعل', 'كي', 'لكي', 'لكيلا',
+  'وعن', 'فعن', 'وفي', 'ففي', 'ومن', 'فمن', 'والي', 'فالي', 'وعلي', 'فعلي', 'ومع', 'فمع'
+]);
+
+// Real multi-letter prefixed particles attested in Quran
+export const PREFIXED_QURANIC_PARTICLES = new Set([
+  'فلما', 'ولما', 'فما', 'وما', 'فلا', 'ولا', 'فان', 'وان', 'فالا', 'والا',
+  'فاذا', 'واذ', 'فهل', 'وهل', 'فلعل', 'ولعل', 'ولقد', 'فقد',
   'وعن', 'فعن', 'وفي', 'ففي', 'ومن', 'فمن', 'والي', 'فالي', 'وعلي', 'فعلي', 'ومع', 'فمع'
 ]);
 
@@ -30,11 +36,7 @@ export function isQuranicParticle(text: string): boolean {
   if (!text) return false;
   const clean = stripArabicHarakat(text);
   if (QURANIC_PARTICLES.has(clean)) return true;
-  // Strip single-letter prefixes (wa-, fa-, bi-, li-, ka-)
-  if (clean.length > 2 && /^[وفبلك]/.test(clean)) {
-    const remainder = clean.substring(1);
-    if (QURANIC_PARTICLES.has(remainder)) return true;
-  }
+  if (PREFIXED_QURANIC_PARTICLES.has(clean)) return true;
   return false;
 }
 
@@ -213,6 +215,12 @@ export function findBestMatchingRoot(wordArabic: string, meaningIndo?: string): 
   return undefined;
 }
 
+const DEMONSTRATIVES_AND_RELATIVES = new Set([
+  'هاذا', 'هذا', 'هذه', 'هؤلاء', 'ذلك', 'تلك', 'اولئك', 'ذانك', 'تانك',
+  'الذي', 'التي', 'الذين', 'اللاتي', 'اللواتي', 'اللائي', 'اللذان', 'اللتان',
+  'كالذي', 'والذي', 'والذين', 'فالذين', 'كالذين'
+]);
+
 /**
  * Infers grammatical Part of Speech (POS) strictly.
  * Recognizes Harf/Particles accurately and prevents fake Isim classification.
@@ -222,51 +230,65 @@ export function inferGrammarRole(wordArabic: string, meaningIndo?: string): {
   posDetail: string;
   wazanOrPattern?: string;
 } {
+  const clean = stripArabicHarakat(wordArabic);
+
+  // 1. Demonstratives (Asma'ul Isyarah) & Relatives (Asma'ul Maushul) -> ISIM MABNI
+  if (DEMONSTRATIVES_AND_RELATIVES.has(clean) || DEMONSTRATIVES_AND_RELATIVES.has(clean.replace(/^[وفلك]/, ''))) {
+    const isRel = clean.includes('الذي') || clean.includes('التي') || clean.includes('الذين');
+    return {
+      posCategory: 'Isim',
+      posDetail: isRel ? 'Isim Maushul (Kata Benda Penghubung)' : 'Isim Isyarah (Kata Benda Penunjuk)',
+      wazanOrPattern: 'Isim Mabni (Bentuk Tetap)'
+    };
+  }
+
+  // 2. Pure Quranic Particles (Harf)
   if (isQuranicParticle(wordArabic)) {
     return {
       posCategory: 'Harf',
-      posDetail: 'Harf / Partikel (Kaidah Nahwu)',
+      posDetail: 'Harf (Kata Tugas)',
       wazanOrPattern: 'Mabni (Tetap)'
     };
   }
 
-  const clean = stripArabicHarakat(wordArabic);
-
-  if (clean.length <= 2 && !['رب', 'اب', 'يد', 'دم', 'اخ', 'فم'].includes(clean)) {
+  if (clean.length <= 2 && !['رب', 'اب', 'يد', 'دم', 'اخ', 'فم', 'قل', 'قم', 'خل', 'عد'].includes(clean)) {
     return {
       posCategory: 'Harf',
-      posDetail: 'Harf / Partikel (Kaidah Nahwu)',
+      posDetail: 'Harf (Kata Tugas)',
       wazanOrPattern: 'Mabni (Tetap)'
     };
   }
 
-  // Verb checks
+  // 3. Verb checks (Fi'il)
   if (
     clean.startsWith('ي') || clean.startsWith('ت') || clean.startsWith('ن') ||
-    clean.startsWith('است') || clean.endsWith('وا') || clean.endsWith('تم')
+    clean.startsWith('است') || clean.startsWith('ان') || clean.startsWith('اخ') ||
+    clean.endsWith('وا') || clean.endsWith('تم') || clean.endsWith('نا') ||
+    clean.startsWith('اهْدِ') || clean.startsWith('اقْرَأْ') || clean.startsWith('قُلْ') ||
+    clean === 'كتب' || clean === 'كلم' || clean === 'جيء' || clean === 'قال' || clean === 'نزل'
   ) {
     if (clean.startsWith('ي') || clean.startsWith('ت') || clean.startsWith('ن')) {
       return {
         posCategory: "Fi'il",
-        posDetail: "Fi'il Mudhari' (Sedang / Akan Datang)",
+        posDetail: "Fi'il Mudhari' (Kata Kerja Sedang / Akan Datang)",
         wazanOrPattern: undefined
       };
     }
-    if (clean.startsWith('اهْدِ') || clean.startsWith('اقْرَأْ') || clean.startsWith('قُلْ')) {
+    if (clean.startsWith('اهْدِ') || clean.startsWith('اقْرَأْ') || clean.startsWith('قُلْ') || clean.startsWith('توكل')) {
       return {
         posCategory: "Fi'il",
-        posDetail: "Fi'il Amr (Perintah)",
+        posDetail: "Fi'il Amr (Kata Kerja Perintah)",
         wazanOrPattern: undefined
       };
     }
     return {
       posCategory: "Fi'il",
-      posDetail: "Fi'il (Kata Kerja)",
+      posDetail: "Fi'il Madhi (Kata Kerja Bentuk Lampau / Selesai)",
       wazanOrPattern: undefined
     };
   }
 
-  // Noun / Isim checks
+  // 4. Noun checks (Isim)
   if (clean.startsWith('ال') || clean.endsWith('ون') || clean.endsWith('ين') || clean.endsWith('ات') || clean.endsWith('ة')) {
     if (clean.startsWith('الم') || clean.startsWith('م')) {
       return {
@@ -277,14 +299,14 @@ export function inferGrammarRole(wordArabic: string, meaningIndo?: string): {
     }
     return {
       posCategory: 'Isim',
-      posDetail: 'Isim (Kata Benda / Sifat)',
+      posDetail: 'Isim (Kata Benda / Nomina)',
       wazanOrPattern: undefined
     };
   }
 
   return {
     posCategory: 'Isim',
-    posDetail: 'Isim (Kata Benda / Istilah)',
+    posDetail: 'Isim (Kata Benda / Nomina)',
     wazanOrPattern: undefined
   };
 }

@@ -1,0 +1,3498 @@
+{
+  "total": 102,
+  "pass": 102,
+  "partial": 0,
+  "fail": 0,
+  "results": [
+    {
+      "id": "case-001",
+      "input": "19:31:2",
+      "category": "core",
+      "description": "Coordinate 19:31:2 (mubārakā)",
+      "identity": {
+        "cleanArabic": "مباركا",
+        "displayArabic": "مُبَارَكًا",
+        "transliteration": "baraka"
+      },
+      "qac": {
+        "root": "brk",
+        "lemma": "mubaArak",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 1, p. 194",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Orang yang diberkahi / pembawa limpahan kebaikan di mana pun berada",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Isim Maf'ul Form III (Mufā'al)",
+        "wordFamilyCount": 10,
+        "occurrencesCount": 32,
+        "hasClassicalCitation": true,
+        "classicalBook": "Maqāyīs al-Lughah"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-002",
+      "input": "مُبَارَكًا",
+      "category": "core",
+      "description": "Isolated token mubārakā",
+      "identity": {
+        "cleanArabic": "مباركا",
+        "displayArabic": "مُبَارَكًا",
+        "transliteration": "baraka"
+      },
+      "qac": {
+        "root": "brk",
+        "lemma": "mubaArak",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 1, p. 194",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Orang yang diberkahi / pembawa limpahan kebaikan di mana pun berada",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Isim Maf'ul Form III (Mufā'al)",
+        "wordFamilyCount": 10,
+        "occurrencesCount": 32,
+        "hasClassicalCitation": true,
+        "classicalBook": "Maqāyīs al-Lughah"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-003",
+      "input": "38:11:6",
+      "category": "core",
+      "description": "Coordinate 38:11:6 (al-ahzāb)",
+      "identity": {
+        "cleanArabic": "الاحزاب",
+        "displayArabic": "ٱلْأَحْزَابِ",
+        "transliteration": "hazaba"
+      },
+      "qac": {
+        "root": "Hzb",
+        "lemma": "Hizob",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 2, p. 559",
+        "isRootEntry": false,
+        "sensesCount": 2,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Golongan-golongan / kelompok koalisi pasukan yang bersatu",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Jamak Taksir (Af'āl)",
+        "wordFamilyCount": 3,
+        "occurrencesCount": 20,
+        "hasClassicalCitation": true,
+        "classicalBook": "Al-Mufradāt fī Gharīb al-Qur'an"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-004",
+      "input": "ٱلْأَحْزَابِ",
+      "category": "core",
+      "description": "Isolated token al-ahzāb",
+      "identity": {
+        "cleanArabic": "الاحزاب",
+        "displayArabic": "ٱلْأَحْزَابِ",
+        "transliteration": "hazaba"
+      },
+      "qac": {
+        "root": "Hzb",
+        "lemma": "Hizob",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 2, p. 559",
+        "isRootEntry": false,
+        "sensesCount": 2,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Golongan-golongan / kelompok koalisi pasukan yang bersatu",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Jamak Taksir (Af'āl)",
+        "wordFamilyCount": 3,
+        "occurrencesCount": 20,
+        "hasClassicalCitation": true,
+        "classicalBook": "Al-Mufradāt fī Gharīb al-Qur'an"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-005",
+      "input": "1:1:1",
+      "category": "core",
+      "description": "Coordinate 1:1:1 (bismi)",
+      "identity": {
+        "cleanArabic": "بسم",
+        "displayArabic": "بِسْمِ",
+        "transliteration": "samā"
+      },
+      "qac": {
+        "root": "smw",
+        "lemma": "{som",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 4, p. 1434",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Dengan menyebut nama Allah",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Ism Majrur",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 381,
+        "hasClassicalCitation": true,
+        "classicalBook": "Maqāyīs al-Lughah"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-006",
+      "input": "1:1:2",
+      "category": "core",
+      "description": "Coordinate 1:1:2 (Allāh)",
+      "identity": {
+        "cleanArabic": "الله",
+        "displayArabic": "ٱللَّهِ",
+        "transliteration": "alaha"
+      },
+      "qac": {
+        "root": "Alh",
+        "lemma": "{ll~ah",
+        "pos": "Isim",
+        "rawTag": "PN",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 1, p. 82",
+        "isRootEntry": true,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Allah, Dzat Yang Maha Esa dan Satu-satunya yang berhak disembah",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Lafzhul Jalālah",
+        "wordFamilyCount": 9,
+        "occurrencesCount": 2851,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-007",
+      "input": "1:1:3",
+      "category": "core",
+      "description": "Coordinate 1:1:3 (ar-Rahmān)",
+      "identity": {
+        "cleanArabic": "الرحمن",
+        "displayArabic": "ٱلرَّحْمَٰنِ",
+        "transliteration": "rahima"
+      },
+      "qac": {
+        "root": "rHm",
+        "lemma": "r~aHoma`n",
+        "pos": "Isim",
+        "rawTag": "ADJ",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 3, p. 1055",
+        "isRootEntry": true,
+        "sensesCount": 4,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Maha Pengasih dengan rahmat yang melimpah bagi seluruh makhluk",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Wazan Fa'lan (Menunjukkan Kepenuhan)",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 339,
+        "hasClassicalCitation": true,
+        "classicalBook": "Al-Mufradāt fī Gharīb al-Qur'an"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-008",
+      "input": "1:1:4",
+      "category": "core",
+      "description": "Coordinate 1:1:4 (ar-Rahīm)",
+      "identity": {
+        "cleanArabic": "الرحيم",
+        "displayArabic": "ٱلرَّحِيمِ",
+        "transliteration": "rahima"
+      },
+      "qac": {
+        "root": "rHm",
+        "lemma": "r~aHiym",
+        "pos": "Isim",
+        "rawTag": "ADJ",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 3, p. 1057",
+        "isRootEntry": false,
+        "sensesCount": 2,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Maha Penyayang dengan kasih sayang khusus yang abadi",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Wazan Fa'il (Sifat Musyabbahah)",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 339,
+        "hasClassicalCitation": true,
+        "classicalBook": "Al-Mufradāt fī Gharīb al-Qur'an"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-009",
+      "input": "1:2:1",
+      "category": "core",
+      "description": "Coordinate 1:2:1 (al-hamdu)",
+      "identity": {
+        "cleanArabic": "الحمد",
+        "displayArabic": "ٱلْحَمْدُ",
+        "transliteration": "hamada"
+      },
+      "qac": {
+        "root": "Hmd",
+        "lemma": "Hamod",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 2, p. 639",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Segala puji dan sanjungan sempurna bagi Allah",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Masdar (Fa'l)",
+        "wordFamilyCount": 6,
+        "occurrencesCount": 63,
+        "hasClassicalCitation": true,
+        "classicalBook": "Maqāyīs al-Lughah"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-010",
+      "input": "1:2:3",
+      "category": "core",
+      "description": "Coordinate 1:2:3 (rabbi)",
+      "identity": {
+        "cleanArabic": "رب",
+        "displayArabic": "رَبِّ",
+        "transliteration": "rabba"
+      },
+      "qac": {
+        "root": "rbb",
+        "lemma": "rab~",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 3, p. 1003",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Tuhan Pemelihara, Pencipta, dan Pengatur semesta alam",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Sifat Musyabbahah / Isim",
+        "wordFamilyCount": 8,
+        "occurrencesCount": 980,
+        "hasClassicalCitation": true,
+        "classicalBook": "Al-Mufradāt fī Gharīb al-Qur'an"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-011",
+      "input": "1:2:4",
+      "category": "core",
+      "description": "Coordinate 1:2:4 (al-ālamin)",
+      "identity": {
+        "cleanArabic": "العلمين",
+        "displayArabic": "ٱلْعَٰلَمِينَ",
+        "transliteration": "Elm"
+      },
+      "qac": {
+        "root": "Elm",
+        "lemma": "Ea`lamiyn",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 5, p. 2139",
+        "isRootEntry": true,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Akar ع ل م berkaitan dengan tersingkapnya hakikat sesuatu sehingga jelas diketahui, tanda pengenal (alam), serta pengetahuan yang mendalam yang membedakan sesuatu dari keraguan.",
+        "sourceBadge": "Kamus Qurabic",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 854,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-012",
+      "input": "1:4:1",
+      "category": "core",
+      "description": "Coordinate 1:4:1 (Māliki)",
+      "identity": {
+        "cleanArabic": "ملك",
+        "displayArabic": "مَٰلِكِ",
+        "transliteration": "mlk"
+      },
+      "qac": {
+        "root": "mlk",
+        "lemma": "ma`lik",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 3023",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Konsep & Turunan Akar ملك",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Wazan Isim Fa'il (Pelaku)",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 206,
+        "hasClassicalCitation": true,
+        "classicalBook": "Al-Mufradāt fī Gharīb al-Qur'an"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-013",
+      "input": "1:5:2",
+      "category": "core",
+      "description": "Coordinate 1:5:2 (na'budu)",
+      "identity": {
+        "cleanArabic": "نعبد",
+        "displayArabic": "نَعْبُدُ",
+        "transliteration": "'abada"
+      },
+      "qac": {
+        "root": "Ebd",
+        "lemma": "Eabada",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 5, p. 1935",
+        "isRootEntry": false,
+        "sensesCount": 4,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kami menyembah, beribadah, dan tunduk patuh",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Form I (Naf'ulu)",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 275,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-014",
+      "input": "1:5:4",
+      "category": "core",
+      "description": "Coordinate 1:5:4 (nasta'īn)",
+      "identity": {
+        "cleanArabic": "نستعين",
+        "displayArabic": "نَسْتَعِينُ",
+        "transliteration": "'āwana"
+      },
+      "qac": {
+        "root": "Ewn",
+        "lemma": "{sotaEiynu",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 5, p. 2203",
+        "isRootEntry": true,
+        "sensesCount": 2,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kami memohon pertolongan dan perlindungan",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Form X (Nasta'īlu)",
+        "wordFamilyCount": 7,
+        "occurrencesCount": 11,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-015",
+      "input": "1:6:1",
+      "category": "core",
+      "description": "Coordinate 1:6:1 (ihdinā)",
+      "identity": {
+        "cleanArabic": "اهدنا",
+        "displayArabic": "ٱهْدِنَا",
+        "transliteration": "hadā"
+      },
+      "qac": {
+        "root": "hdy",
+        "lemma": "hadaY",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 3042",
+        "isRootEntry": false,
+        "sensesCount": 3,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Tunjukilah kami dan bimbinglah kami",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Fi'il Amr",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 316,
+        "hasClassicalCitation": true,
+        "classicalBook": "Maqāyīs al-Lughah"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-016",
+      "input": "1:6:2",
+      "category": "core",
+      "description": "Coordinate 1:6:2 (as-sirāt)",
+      "identity": {
+        "cleanArabic": "الصرط",
+        "displayArabic": "ٱلصِّرَٰطَ",
+        "transliteration": "SrT"
+      },
+      "qac": {
+        "root": "SrT",
+        "lemma": "Sira`T",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 4, p. 1678",
+        "isRootEntry": true,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "A long sword: a dial.",
+        "sourceBadge": "Lane's Lexicon",
+        "wordFamilyCount": 2,
+        "occurrencesCount": 45,
+        "hasClassicalCitation": true,
+        "classicalBook": "Maqāyīs al-Lughah"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-017",
+      "input": "1:6:3",
+      "category": "core",
+      "description": "Coordinate 1:6:3 (al-mustaqīm)",
+      "identity": {
+        "cleanArabic": "المستقيم",
+        "displayArabic": "ٱلْمُسْتَقِيمَ",
+        "transliteration": "qāma"
+      },
+      "qac": {
+        "root": "qwm",
+        "lemma": "m~usotaqiym",
+        "pos": "Isim",
+        "rawTag": "ADJ",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 2995",
+        "isRootEntry": true,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Yang tegak lurus, kokoh, dan tidak menyimpang",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Isim Fa'il Form X",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 660,
+        "hasClassicalCitation": true,
+        "classicalBook": "Al-Mufradāt fī Gharīb al-Qur'an"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-018",
+      "input": "2:153:10",
+      "category": "core",
+      "description": "Coordinate 2:153:10 (as-sābirīn)",
+      "identity": {
+        "cleanArabic": "الصبرين",
+        "displayArabic": "ٱلصَّٰبِرِينَ",
+        "transliteration": "Sbr"
+      },
+      "qac": {
+        "root": "Sbr",
+        "lemma": "SaAbir",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 4, p. 1646",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Akar ص ب ر berkaitan dengan gagasan menahan, mengikat, atau membatasi diri. Dalam konteks Qur'ani, sabar adalah keteguhan jiwa dalam memegang ketaatan, menahan diri dari dorongan hawa nafsu, serta ketabahan saat menghadapi cobaan dan takdir yang berat.",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Wazan Isim Fa'il (Pelaku)",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 103,
+        "hasClassicalCitation": true,
+        "classicalBook": "Maqāyīs al-Lughah"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-019",
+      "input": "الصَّابِرِينَ",
+      "category": "core",
+      "description": "Isolated token as-sābirīn",
+      "identity": {
+        "cleanArabic": "الصابرين",
+        "displayArabic": "الصَّابِرِينَ",
+        "transliteration": "sabara"
+      },
+      "qac": {
+        "root": "Sbr",
+        "lemma": "SaAbir",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 4, p. 1646",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Orang-orang yang senantiasa bersabar dan teguh hati",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Isim Fa'il (Bentuk Pelaku)",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 103,
+        "hasClassicalCitation": true,
+        "classicalBook": "Maqāyīs al-Lughah"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-020",
+      "input": "عِندِنَا",
+      "category": "core",
+      "description": "Adverbial noun + pronoun 'indanā (Isim Zharf)",
+      "identity": {
+        "cleanArabic": "عندنا",
+        "displayArabic": "عِندِنَا",
+        "transliteration": "End"
+      },
+      "qac": {
+        "root": "End",
+        "lemma": "Eind",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 5, p. 2171",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": ": and Eanoda : see the next paragraph.",
+        "sourceBadge": "Lane's Lexicon",
+        "wordFamilyCount": 3,
+        "occurrencesCount": 201,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-021",
+      "input": "فَلَمَّآ",
+      "category": "particle",
+      "description": "Temporal conjunction falammā",
+      "identity": {
+        "cleanArabic": "فلما",
+        "displayArabic": "فَلَمَّآ"
+      },
+      "qac": {
+        "pos": "Harf",
+        "rawTag": "REM",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": false,
+        "source": "The Quranic Arabic Corpus v0.4 (University of Leeds)",
+        "isRootEntry": false,
+        "sensesCount": 0,
+        "hasIndonesianDefinition": false
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-022",
+      "input": "إِلَىٰ",
+      "category": "particle",
+      "description": "Preposition ilā",
+      "identity": {
+        "cleanArabic": "الي",
+        "displayArabic": "إِلَىٰ"
+      },
+      "qac": {
+        "lemma": "<ilaY`",
+        "pos": "Harf",
+        "rawTag": "P",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 1, p. 86",
+        "isRootEntry": false,
+        "sensesCount": 2,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-023",
+      "input": "عَلَىٰ",
+      "category": "particle",
+      "description": "Preposition 'alā",
+      "identity": {
+        "cleanArabic": "علي",
+        "displayArabic": "عَلَىٰ"
+      },
+      "qac": {
+        "lemma": "EalaY`",
+        "pos": "Harf",
+        "rawTag": "P",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 5, p. 2144",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-024",
+      "input": "فِي",
+      "category": "particle",
+      "description": "Preposition fī",
+      "identity": {
+        "cleanArabic": "في",
+        "displayArabic": "فِي"
+      },
+      "qac": {
+        "lemma": "fiY",
+        "pos": "Harf",
+        "rawTag": "P",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 6, p. 2467",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-025",
+      "input": "مِنْ",
+      "category": "particle",
+      "description": "Preposition min",
+      "identity": {
+        "cleanArabic": "من",
+        "displayArabic": "مِنْ"
+      },
+      "qac": {
+        "lemma": "min",
+        "pos": "Harf",
+        "rawTag": "P",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 3024",
+        "isRootEntry": false,
+        "sensesCount": 3,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-026",
+      "input": "عَنْ",
+      "category": "particle",
+      "description": "Preposition 'an",
+      "identity": {
+        "cleanArabic": "عن",
+        "displayArabic": "عَنْ"
+      },
+      "qac": {
+        "lemma": "Ean",
+        "pos": "Harf",
+        "rawTag": "P",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 5, p. 2163",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-027",
+      "input": "مَا",
+      "category": "particle",
+      "description": "Relative / Negative particle mā",
+      "identity": {
+        "cleanArabic": "ما",
+        "displayArabic": "مَا"
+      },
+      "qac": {
+        "lemma": "maA",
+        "pos": "Harf",
+        "rawTag": "REL",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 3016",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-028",
+      "input": "لَا",
+      "category": "particle",
+      "description": "Negative particle lā",
+      "identity": {
+        "cleanArabic": "لا",
+        "displayArabic": "لَا"
+      },
+      "qac": {
+        "lemma": "laA",
+        "pos": "Harf",
+        "rawTag": "NEG",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 3007",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-029",
+      "input": "إِنَّ",
+      "category": "particle",
+      "description": "Accusative particle inna",
+      "identity": {
+        "cleanArabic": "ان",
+        "displayArabic": "إِنَّ"
+      },
+      "qac": {
+        "lemma": "<in~",
+        "pos": "Harf",
+        "rawTag": "ACC",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 1, p. 103",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-030",
+      "input": "أَنَّ",
+      "category": "particle",
+      "description": "Subordinating particle anna",
+      "identity": {
+        "cleanArabic": "ان",
+        "displayArabic": "أَنَّ"
+      },
+      "qac": {
+        "lemma": ">an~",
+        "pos": "Harf",
+        "rawTag": "ACC",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 1, p. 103",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-031",
+      "input": "كَلَّا",
+      "category": "particle",
+      "description": "Deterrence particle kallā",
+      "identity": {
+        "cleanArabic": "كلا",
+        "displayArabic": "كَلَّا"
+      },
+      "qac": {
+        "lemma": "kal~aA",
+        "pos": "Harf",
+        "rawTag": "AVR",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 3003",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-032",
+      "input": "بَلْ",
+      "category": "particle",
+      "description": "Retraction particle bal",
+      "identity": {
+        "cleanArabic": "بل",
+        "displayArabic": "بَلْ"
+      },
+      "qac": {
+        "lemma": "bal",
+        "pos": "Harf",
+        "rawTag": "RET",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 1, p. 244",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-033",
+      "input": "ثُمَّ",
+      "category": "particle",
+      "description": "Conjunction thumma",
+      "identity": {
+        "cleanArabic": "ثم",
+        "displayArabic": "ثُمَّ"
+      },
+      "qac": {
+        "lemma": "vum~",
+        "pos": "Harf",
+        "rawTag": "CONJ",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 1, p. 351",
+        "isRootEntry": false,
+        "sensesCount": 2,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-034",
+      "input": "حَتَّىٰ",
+      "category": "particle",
+      "description": "Preposition / Conjunction hattā",
+      "identity": {
+        "cleanArabic": "حتي",
+        "displayArabic": "حَتَّىٰ"
+      },
+      "qac": {
+        "lemma": "Hat~aY`",
+        "pos": "Harf",
+        "rawTag": "P",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 2, p. 510",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-035",
+      "input": "أَوْ",
+      "category": "particle",
+      "description": "Conjunction aw",
+      "identity": {
+        "cleanArabic": "او",
+        "displayArabic": "أَوْ"
+      },
+      "qac": {
+        "lemma": ">aw",
+        "pos": "Harf",
+        "rawTag": "CONJ",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 1, p. 123",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-036",
+      "input": "لَمْ",
+      "category": "particle",
+      "description": "Negative jussive particle lam",
+      "identity": {
+        "cleanArabic": "لم",
+        "displayArabic": "لَمْ"
+      },
+      "qac": {
+        "lemma": "lam",
+        "pos": "Harf",
+        "rawTag": "NEG",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 3013",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-037",
+      "input": "لَنْ",
+      "category": "particle",
+      "description": "Negative subjunctive particle lan",
+      "identity": {
+        "cleanArabic": "لن",
+        "displayArabic": "لَنْ"
+      },
+      "qac": {
+        "lemma": "lan",
+        "pos": "Harf",
+        "rawTag": "NEG",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": false,
+        "source": "The Quranic Arabic Corpus v0.4 (University of Leeds)",
+        "isRootEntry": false,
+        "sensesCount": 0,
+        "hasIndonesianDefinition": false
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-038",
+      "input": "إِذَا",
+      "category": "particle",
+      "description": "Temporal / Condition idhā",
+      "identity": {
+        "cleanArabic": "اذا",
+        "displayArabic": "إِذَا"
+      },
+      "qac": {
+        "lemma": "<i*aA",
+        "pos": "Harf",
+        "rawTag": "T",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 1, p. 41",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-039",
+      "input": "إِذْ",
+      "category": "particle",
+      "description": "Temporal particle idh",
+      "identity": {
+        "cleanArabic": "اذ",
+        "displayArabic": "إِذْ"
+      },
+      "qac": {
+        "lemma": "<i*",
+        "pos": "Harf",
+        "rawTag": "T",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 1, p. 39",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-040",
+      "input": "هَلْ",
+      "category": "particle",
+      "description": "Interrogative hal",
+      "identity": {
+        "cleanArabic": "هل",
+        "displayArabic": "هَلْ"
+      },
+      "qac": {
+        "lemma": "hal",
+        "pos": "Harf",
+        "rawTag": "INTG",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 3044",
+        "isRootEntry": false,
+        "sensesCount": 4,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-041",
+      "input": "إِبْرَاهِيمَ",
+      "category": "proper_noun",
+      "description": "Proper Noun Ibrāhīm",
+      "identity": {
+        "cleanArabic": "ابراهيم",
+        "displayArabic": "إِبْرَاهِيمَ"
+      },
+      "qac": {
+        "lemma": "<iboraAhiym",
+        "pos": "Isim",
+        "rawTag": "PN",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": false,
+        "source": "The Quranic Arabic Corpus v0.4 (University of Leeds)",
+        "isRootEntry": false,
+        "sensesCount": 0,
+        "hasIndonesianDefinition": false
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-042",
+      "input": "مُوسَىٰ",
+      "category": "proper_noun",
+      "description": "Proper Noun Mūsā",
+      "identity": {
+        "cleanArabic": "موسي",
+        "displayArabic": "مُوسَىٰ"
+      },
+      "qac": {
+        "lemma": "muwsaY`",
+        "pos": "Isim",
+        "rawTag": "PN",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 7, p. 2744",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "[ A razor; ] a certain instrument of iron, (M, Msb, TA,) with which one shaves: (Lth, L, K, TA:) of the measure fuEolaY , (Ks, M, Msb, K,) from Almawosu , [inf. n. of maAsa ,] so that the m is a...",
+        "sourceBadge": "Lane's Lexicon",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-043",
+      "input": "عِيسَى",
+      "category": "proper_noun",
+      "description": "Proper Noun 'Īsā",
+      "identity": {
+        "cleanArabic": "عيسي",
+        "displayArabic": "عِيسَى"
+      },
+      "qac": {
+        "lemma": "EiysaY",
+        "pos": "Isim",
+        "rawTag": "PN",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": false,
+        "source": "The Quranic Arabic Corpus v0.4 (University of Leeds)",
+        "isRootEntry": false,
+        "sensesCount": 0,
+        "hasIndonesianDefinition": false
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-044",
+      "input": "مَرْيَمَ",
+      "category": "proper_noun",
+      "description": "Proper Noun Maryam",
+      "identity": {
+        "cleanArabic": "مريم",
+        "displayArabic": "مَرْيَمَ"
+      },
+      "qac": {
+        "lemma": "maroyam",
+        "pos": "Isim",
+        "rawTag": "PN",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 3, p. 1204",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "A woman who loves the discourse of men, but does not act vitiously or immorally, or commit adultery or fornication.",
+        "sourceBadge": "Lane's Lexicon",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-045",
+      "input": "جِبْرِيلَ",
+      "category": "proper_noun",
+      "description": "Proper Noun Jibrīl",
+      "identity": {
+        "cleanArabic": "جبريل",
+        "displayArabic": "جِبْرِيلَ"
+      },
+      "qac": {
+        "pos": "Isim",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 2, p. 374",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wazanOrForm": "Bentuk Leksikal Standar",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-046",
+      "input": "مِيكَالَ",
+      "category": "proper_noun",
+      "description": "Proper Noun Mīkāl",
+      "identity": {
+        "cleanArabic": "ميكال",
+        "displayArabic": "مِيكَالَ"
+      },
+      "qac": {
+        "pos": "Isim",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 1, p. 73",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "A spoon: (K:) because one eats with it.",
+        "sourceBadge": "Lane's Lexicon",
+        "wazanOrForm": "Bentuk Leksikal Standar",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-047",
+      "input": "فِرْعَوْنَ",
+      "category": "proper_noun",
+      "description": "Proper Noun Fir'awn",
+      "identity": {
+        "cleanArabic": "فرعون",
+        "displayArabic": "فِرْعَوْنَ"
+      },
+      "qac": {
+        "lemma": "firoEawon",
+        "pos": "Isim",
+        "rawTag": "PN",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 6, p. 2380",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-048",
+      "input": "قَارُونَ",
+      "category": "proper_noun",
+      "description": "Proper Noun Qārūn",
+      "identity": {
+        "cleanArabic": "قارون",
+        "displayArabic": "قَارُونَ"
+      },
+      "qac": {
+        "lemma": "qa`ruwn",
+        "pos": "Isim",
+        "rawTag": "PN",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": false,
+        "source": "The Quranic Arabic Corpus v0.4 (University of Leeds)",
+        "isRootEntry": false,
+        "sensesCount": 0,
+        "hasIndonesianDefinition": false
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-049",
+      "input": "هَامَانَ",
+      "category": "proper_noun",
+      "description": "Proper Noun Hāmān",
+      "identity": {
+        "cleanArabic": "هامان",
+        "displayArabic": "هَامَانَ"
+      },
+      "qac": {
+        "pos": "Isim",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": false,
+        "source": "The Quranic Arabic Corpus v0.4 (University of Leeds)",
+        "isRootEntry": false,
+        "sensesCount": 0,
+        "hasIndonesianDefinition": false
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wazanOrForm": "Bentuk Leksikal Standar",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-050",
+      "input": "يُوسُفُ",
+      "category": "proper_noun",
+      "description": "Proper Noun Yūsuf",
+      "identity": {
+        "cleanArabic": "يوسف",
+        "displayArabic": "يُوسُفُ"
+      },
+      "qac": {
+        "lemma": "yuwsuf",
+        "pos": "Isim",
+        "rawTag": "PN",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": false,
+        "source": "The Quranic Arabic Corpus v0.4 (University of Leeds)",
+        "isRootEntry": false,
+        "sensesCount": 0,
+        "hasIndonesianDefinition": false
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-051",
+      "input": "كَتَبَ",
+      "category": "verb_form",
+      "description": "Form I Verb kataba (k-t-b)",
+      "identity": {
+        "cleanArabic": "كتب",
+        "displayArabic": "كَتَبَ",
+        "transliteration": "ktb"
+      },
+      "qac": {
+        "root": "ktb",
+        "lemma": "kataba",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 7, p. 2590",
+        "isRootEntry": false,
+        "sensesCount": 3,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Konsep & Turunan Akar كتب",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Fi'il Madhi Form I (Mujarrad)",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 319,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-052",
+      "input": "يَعْلَمُونَ",
+      "category": "verb_form",
+      "description": "Form I Imperfect ya'lamūn (E-l-m)",
+      "identity": {
+        "cleanArabic": "يعلمون",
+        "displayArabic": "يَعْلَمُونَ",
+        "transliteration": "Elm"
+      },
+      "qac": {
+        "root": "Elm",
+        "lemma": "Ealima",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 5, p. 2140",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Akar ع ل م berkaitan dengan tersingkapnya hakikat sesuatu sehingga jelas diketahui, tanda pengenal (alam), serta pengetahuan yang mendalam yang membedakan sesuatu dari keraguan.",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Fi'il Mudhari' Form I (Mujarrad)",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 854,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-053",
+      "input": "قَالَ",
+      "category": "verb_form",
+      "description": "Form I Hollow qāla (q-w-l)",
+      "identity": {
+        "cleanArabic": "قال",
+        "displayArabic": "قَالَ",
+        "transliteration": "qwl"
+      },
+      "qac": {
+        "root": "qwl",
+        "lemma": "qaAla",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 2997",
+        "isRootEntry": false,
+        "sensesCount": 2,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Berkata / Mengucapkan / Perkataan / Qaul",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Fi'il Madhi Form I (Mujarrad)",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 1722,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-054",
+      "input": "يَقُولُونَ",
+      "category": "verb_form",
+      "description": "Form I Imperfect yaqūlūn (q-w-l)",
+      "identity": {
+        "cleanArabic": "يقولون",
+        "displayArabic": "يَقُولُونَ",
+        "transliteration": "qala"
+      },
+      "qac": {
+        "root": "qwl",
+        "lemma": "qaAla",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 2997",
+        "isRootEntry": false,
+        "sensesCount": 2,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Mereka berkata atau mengucapkan perkataan",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Form I (Yaf'ulun)",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 1722,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-055",
+      "input": "نَزَّلَ",
+      "category": "verb_form",
+      "description": "Form II Verb nazzala (n-z-l)",
+      "identity": {
+        "cleanArabic": "نزل",
+        "displayArabic": "نَزَّلَ",
+        "transliteration": "nzl"
+      },
+      "qac": {
+        "root": "nzl",
+        "lemma": "naz~ala",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 3031",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Konsep & Turunan Akar نزل",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Fi'il Madhi Form II",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 293,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-056",
+      "input": "يُسَبِّحُونَ",
+      "category": "verb_form",
+      "description": "Form II Imperfect yusabbihūn (s-b-H)",
+      "identity": {
+        "cleanArabic": "يسبحون",
+        "displayArabic": "يُسَبِّحُونَ",
+        "transliteration": "sbH"
+      },
+      "qac": {
+        "root": "sbH",
+        "lemma": "sab~aHa",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 4, p. 1289",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wazanOrForm": "Fi'il Mudhari' Form II",
+        "wordFamilyCount": 11,
+        "occurrencesCount": 92,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-057",
+      "input": "كَلَّمَ",
+      "category": "verb_form",
+      "description": "Form II Verb kallama (k-l-m)",
+      "identity": {
+        "cleanArabic": "كلم",
+        "displayArabic": "كَلَّمَ",
+        "transliteration": "klm"
+      },
+      "qac": {
+        "root": "klm",
+        "lemma": "kal~ama",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 3003",
+        "isRootEntry": true,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Konsep & Turunan Akar كلم",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Fi'il Madhi Form II",
+        "wordFamilyCount": 10,
+        "occurrencesCount": 75,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-058",
+      "input": "جَـٰهَدُوا۟",
+      "category": "verb_form",
+      "description": "Form III Verb jāhadū (j-h-d)",
+      "identity": {
+        "cleanArabic": "جهدوا",
+        "displayArabic": "جَـٰهَدُوا۟",
+        "transliteration": "jhd"
+      },
+      "qac": {
+        "root": "jhd",
+        "lemma": "ja`hada",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 2, p. 473",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wazanOrForm": "Fi'il Madhi Form III",
+        "wordFamilyCount": 8,
+        "occurrencesCount": 41,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-059",
+      "input": "يُخَـٰدِعُونَ",
+      "category": "verb_form",
+      "description": "Form III Imperfect yukhādi'ūn (kh-d-E)",
+      "identity": {
+        "cleanArabic": "يخدعون",
+        "displayArabic": "يُخَـٰدِعُونَ",
+        "transliteration": "xdE"
+      },
+      "qac": {
+        "root": "xdE",
+        "lemma": "yuxa`diEu",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 2, p. 709",
+        "isRootEntry": true,
+        "sensesCount": 3,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wazanOrForm": "Fi'il Mudhari' Form III",
+        "wordFamilyCount": 2,
+        "occurrencesCount": 5,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-060",
+      "input": "بَارَكْنَا",
+      "category": "verb_form",
+      "description": "Form III Verb bāraknā (b-r-k)",
+      "identity": {
+        "cleanArabic": "باركنا",
+        "displayArabic": "بَارَكْنَا",
+        "transliteration": "brk"
+      },
+      "qac": {
+        "root": "brk",
+        "lemma": "ba`raka",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 1, p. 193",
+        "isRootEntry": false,
+        "sensesCount": 4,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wazanOrForm": "Fi'il Madhi Form III",
+        "wordFamilyCount": 10,
+        "occurrencesCount": 32,
+        "hasClassicalCitation": true,
+        "classicalBook": "Maqāyīs al-Lughah"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-061",
+      "input": "أَنْزَلَ",
+      "category": "verb_form",
+      "description": "Form IV Verb anzala (n-z-l)",
+      "identity": {
+        "cleanArabic": "انزل",
+        "displayArabic": "أَنْزَلَ",
+        "transliteration": "nzl"
+      },
+      "qac": {
+        "root": "nzl",
+        "lemma": ">anzala",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 3031",
+        "isRootEntry": true,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Konsep & Turunan Akar نزل",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Fi'il Madhi Form IV",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 293,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-062",
+      "input": "أَرْسَلْنَا",
+      "category": "verb_form",
+      "description": "Form IV Verb arsalnā (r-s-l)",
+      "identity": {
+        "cleanArabic": "ارسلنا",
+        "displayArabic": "أَرْسَلْنَا",
+        "transliteration": "rsl"
+      },
+      "qac": {
+        "root": "rsl",
+        "lemma": ">arosala",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 3, p. 1081",
+        "isRootEntry": true,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "signifies The act of sending.",
+        "sourceBadge": "Lane's Lexicon",
+        "wazanOrForm": "Fi'il Madhi Form IV",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 513,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-063",
+      "input": "يُؤْمِنُونَ",
+      "category": "verb_form",
+      "description": "Form IV Imperfect yu'minūn (A-m-n)",
+      "identity": {
+        "cleanArabic": "يؤمنون",
+        "displayArabic": "يُؤْمِنُونَ",
+        "transliteration": "Amn"
+      },
+      "qac": {
+        "root": "Amn",
+        "lemma": "'aAmana",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 1, p. 100",
+        "isRootEntry": true,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Akar أ م ن berkaitan dengan rasa aman dari marabahaya, ketenangan jiwa dari ketakutan, serta kepercayaan penuh dalam membenarkan kebenaran wahyu Allah (iman).",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Fi'il Mudhari' Form IV",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 879,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-064",
+      "input": "تَوَكَّلْ",
+      "category": "verb_form",
+      "description": "Form V Imperative tawakkal (w-k-l)",
+      "identity": {
+        "cleanArabic": "توكل",
+        "displayArabic": "تَوَكَّلْ",
+        "transliteration": "wkl"
+      },
+      "qac": {
+        "root": "wkl",
+        "lemma": "tawak~alo",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 3059",
+        "isRootEntry": true,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Konsep & Turunan Akar وكل",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Fi'il Amr Form V",
+        "wordFamilyCount": 8,
+        "occurrencesCount": 70,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-065",
+      "input": "يَتَفَكَّرُونَ",
+      "category": "verb_form",
+      "description": "Form V Imperfect yatafakkarūn (f-k-r)",
+      "identity": {
+        "cleanArabic": "يتفكرون",
+        "displayArabic": "يَتَفَكَّرُونَ",
+        "transliteration": "fkr"
+      },
+      "qac": {
+        "root": "fkr",
+        "lemma": "yatafak~aru",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 6, p. 2431",
+        "isRootEntry": true,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wazanOrForm": "Fi'il Mudhari' Form V",
+        "wordFamilyCount": 3,
+        "occurrencesCount": 18,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-066",
+      "input": "تَقَبَّلَ",
+      "category": "verb_form",
+      "description": "Form V Verb taqabbala (q-b-l)",
+      "identity": {
+        "cleanArabic": "تقبل",
+        "displayArabic": "تَقَبَّلَ",
+        "transliteration": "qbl"
+      },
+      "qac": {
+        "root": "qbl",
+        "lemma": "taqab~ala",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 2983",
+        "isRootEntry": true,
+        "sensesCount": 4,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Konsep & Turunan Akar قبل",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Fi'il Madhi Form V",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 294,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-067",
+      "input": "تَعَاوَنُوا۟",
+      "category": "verb_form",
+      "description": "Form VI Imperative ta'āwanū (E-w-n)",
+      "identity": {
+        "cleanArabic": "تعاونوا",
+        "displayArabic": "تَعَاوَنُوا۟",
+        "transliteration": "Ewn"
+      },
+      "qac": {
+        "root": "Ewn",
+        "lemma": "taEaAwanu",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 5, p. 2203",
+        "isRootEntry": true,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "signifies baEoDuhumo baEoDFA ↓ A^aEaAna , (S, Msb, K,) They aided, helped, or assisted, one another;",
+        "sourceBadge": "Lane's Lexicon",
+        "wazanOrForm": "Fi'il Mudhari' Form VI",
+        "wordFamilyCount": 7,
+        "occurrencesCount": 11,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-068",
+      "input": "تَبَـٰرَكَ",
+      "category": "verb_form",
+      "description": "Form VI Verb tabāraka (b-r-k)",
+      "identity": {
+        "cleanArabic": "تبرك",
+        "displayArabic": "تَبَـٰرَكَ",
+        "transliteration": "brk"
+      },
+      "qac": {
+        "root": "brk",
+        "lemma": "tabaAraka",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 1, p. 193",
+        "isRootEntry": false,
+        "sensesCount": 2,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wazanOrForm": "Fi'il Madhi Form VI",
+        "wordFamilyCount": 10,
+        "occurrencesCount": 32,
+        "hasClassicalCitation": true,
+        "classicalBook": "Maqāyīs al-Lughah"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-069",
+      "input": "انفَطَرَتْ",
+      "category": "verb_form",
+      "description": "Form VII Verb infatarat (f-T-r)",
+      "identity": {
+        "cleanArabic": "انفطرت",
+        "displayArabic": "انفَطَرَتْ",
+        "transliteration": "ftr"
+      },
+      "qac": {
+        "root": "fTr",
+        "lemma": "{nfaTarato",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 6, p. 2416",
+        "isRootEntry": true,
+        "sensesCount": 2,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Konsep & Turunan Akar فطر",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Fi'il Madhi Form VII",
+        "wordFamilyCount": 7,
+        "occurrencesCount": 3,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-070",
+      "input": "انقَلَبُوا۟",
+      "category": "verb_form",
+      "description": "Form VII Verb inqalabū (q-l-b)",
+      "identity": {
+        "cleanArabic": "انقلبوا",
+        "displayArabic": "انقَلَبُوا۟",
+        "transliteration": "qlb"
+      },
+      "qac": {
+        "root": "qlb",
+        "lemma": "{nqalaba",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 7, p. 2552",
+        "isRootEntry": true,
+        "sensesCount": 3,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wazanOrForm": "Fi'il Madhi Form VII",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 168,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-071",
+      "input": "ٱخْتَلَفُوا۟",
+      "category": "verb_form",
+      "description": "Form VIII Verb ikhtalafū (kh-l-f)",
+      "identity": {
+        "cleanArabic": "اختلفوا",
+        "displayArabic": "ٱخْتَلَفُوا۟",
+        "transliteration": "xlf"
+      },
+      "qac": {
+        "root": "xlf",
+        "lemma": "{xotalafa",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 2, p. 793",
+        "isRootEntry": true,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "signifies The following reciprocally;",
+        "sourceBadge": "Lane's Lexicon",
+        "wazanOrForm": "Fi'il Madhi Form VIII",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 127,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-072",
+      "input": "ٱهْتَدَىٰ",
+      "category": "verb_form",
+      "description": "Form VIII Verb ihtadā (h-d-y)",
+      "identity": {
+        "cleanArabic": "اهتدي",
+        "displayArabic": "ٱهْتَدَىٰ",
+        "transliteration": "hdy"
+      },
+      "qac": {
+        "root": "hdy",
+        "lemma": "{hotadaY`",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 3042",
+        "isRootEntry": true,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Konsep & Turunan Akar هدي",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Fi'il Madhi Form VIII",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 316,
+        "hasClassicalCitation": true,
+        "classicalBook": "Maqāyīs al-Lughah"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-073",
+      "input": "ٱسْتَمَعَ",
+      "category": "verb_form",
+      "description": "Form VIII Verb istama'a (s-m-E)",
+      "identity": {
+        "cleanArabic": "استمع",
+        "displayArabic": "ٱسْتَمَعَ",
+        "transliteration": "smE"
+      },
+      "qac": {
+        "root": "smE",
+        "lemma": "{sotamaEa",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 4, p. 1427",
+        "isRootEntry": true,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Konsep & Turunan Akar سمع",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Fi'il Madhi Form VIII",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 185,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-074",
+      "input": "ٱسْتَغْفَرَ",
+      "category": "verb_form",
+      "description": "Form X Verb istaghfara (gh-f-r)",
+      "identity": {
+        "cleanArabic": "استغفر",
+        "displayArabic": "ٱسْتَغْفَرَ",
+        "transliteration": "gfr"
+      },
+      "qac": {
+        "root": "gfr",
+        "lemma": "{sotagofara",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 6, p. 2273",
+        "isRootEntry": true,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Konsep & Turunan Akar غفر",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Fi'il Madhi Form X",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 234,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-075",
+      "input": "يَسْتَبْشِرُونَ",
+      "category": "verb_form",
+      "description": "Form X Imperfect yastabshirūn (b-sh-r)",
+      "identity": {
+        "cleanArabic": "يستبشرون",
+        "displayArabic": "يَسْتَبْشِرُونَ",
+        "transliteration": "b$r"
+      },
+      "qac": {
+        "root": "b$r",
+        "lemma": "yasotabo$iru",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 1, p. 207",
+        "isRootEntry": true,
+        "sensesCount": 3,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "-A2- Astb$rhu He demanded of him a reward for an annunciation of joyful tidings.",
+        "sourceBadge": "Lane's Lexicon",
+        "wazanOrForm": "Fi'il Mudhari' Form X",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 123,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-076",
+      "input": "جَنَّـٰتٍ",
+      "category": "noun",
+      "description": "Feminine Plural jannāt (j-n-n)",
+      "identity": {
+        "cleanArabic": "جنت",
+        "displayArabic": "جَنَّـٰتٍ",
+        "transliteration": "jnn"
+      },
+      "qac": {
+        "root": "jnn",
+        "lemma": "jan~ap",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 2, p. 462",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wordFamilyCount": 10,
+        "occurrencesCount": 201,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-077",
+      "input": "أَنْهَـٰرٍ",
+      "category": "noun",
+      "description": "Broken Plural anhār (n-h-r)",
+      "identity": {
+        "cleanArabic": "انهر",
+        "displayArabic": "أَنْهَـٰرٍ",
+        "transliteration": "nhr"
+      },
+      "qac": {
+        "root": "nhr",
+        "lemma": "nahar",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 2858",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wordFamilyCount": 7,
+        "occurrencesCount": 113,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-078",
+      "input": "سَمَـٰوَٰتٍ",
+      "category": "noun",
+      "description": "Plural samāwāt (s-m-w)",
+      "identity": {
+        "cleanArabic": "سموت",
+        "displayArabic": "سَمَـٰوَٰتٍ",
+        "transliteration": "smw"
+      },
+      "qac": {
+        "root": "smw",
+        "lemma": "samaA^'",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 4, p. 1435",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Akar س م و berkaitan dengan gagasan tinggi, menjulang, atau berada di atas. Dari akar yang sama berkembang penggunaan yang berkaitan dengan nama/penamaan (ism), karena nama mengangkat dan meninggikan penyebutan suatu entitas sehingga dikenal dan dibedakan dari yang lain.",
+        "sourceBadge": "Kamus Qurabic",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 381,
+        "hasClassicalCitation": true,
+        "classicalBook": "Maqāyīs al-Lughah"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-079",
+      "input": "أَبْصَـٰرِهِمْ",
+      "category": "noun",
+      "description": "Noun + Pronoun absārihim (b-S-r)",
+      "identity": {
+        "cleanArabic": "ابصرهم",
+        "displayArabic": "أَبْصَـٰرِهِمْ",
+        "transliteration": "bSr"
+      },
+      "qac": {
+        "root": "bSr",
+        "lemma": "baSar",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 1, p. 210",
+        "isRootEntry": false,
+        "sensesCount": 3,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 148,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-080",
+      "input": "قُلُوبِهِمْ",
+      "category": "noun",
+      "description": "Noun + Pronoun qulūbihim (q-l-b)",
+      "identity": {
+        "cleanArabic": "قلوبهم",
+        "displayArabic": "قُلُوبِهِمْ",
+        "transliteration": "qlb"
+      },
+      "qac": {
+        "root": "qlb",
+        "lemma": "qalob",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 7, p. 2553",
+        "isRootEntry": false,
+        "sensesCount": 3,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "see 1, first quarter, in four places. You say, qal~abotuhu biyadiY [ I turned it over and over with my hand ], inf. n. taqoliybN . (S.) [And hence several other significations mentioned above.] See,...",
+        "sourceBadge": "Lane's Lexicon",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 168,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-081",
+      "input": "أَمْوَٰلُكُمْ",
+      "category": "noun",
+      "description": "Noun + Pronoun amwālukum (m-w-l)",
+      "identity": {
+        "cleanArabic": "امولكم",
+        "displayArabic": "أَمْوَٰلُكُمْ",
+        "transliteration": "mwl"
+      },
+      "qac": {
+        "root": "mwl",
+        "lemma": "maAl",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 3026",
+        "isRootEntry": false,
+        "sensesCount": 4,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Whatever one possesses: (K:) property;",
+        "sourceBadge": "Lane's Lexicon",
+        "wordFamilyCount": 4,
+        "occurrencesCount": 86,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-082",
+      "input": "أَوْلَـٰدُكُمْ",
+      "category": "noun",
+      "description": "Noun + Pronoun awlādukum (w-l-d)",
+      "identity": {
+        "cleanArabic": "اولدكم",
+        "displayArabic": "أَوْلَـٰدُكُمْ",
+        "transliteration": "wld"
+      },
+      "qac": {
+        "root": "wld",
+        "lemma": "walad",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 2966",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 102,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-083",
+      "input": "زَجْرَةٌ",
+      "category": "noun",
+      "description": "Noun of instance zajrah (z-j-r)",
+      "identity": {
+        "cleanArabic": "زجرة",
+        "displayArabic": "زَجْرَةٌ",
+        "transliteration": "zajara"
+      },
+      "qac": {
+        "root": "zjr",
+        "lemma": "zajorap",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 3, p. 1216",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Bentakan keras, teriakan dahsyat, atau tiupan sangkakala",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Wazan Fa'lah (Isim Marrah)",
+        "wordFamilyCount": 5,
+        "occurrencesCount": 6,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-084",
+      "input": "تَقْوَىٰ",
+      "category": "noun",
+      "description": "Masdar taqwā (w-q-y)",
+      "identity": {
+        "cleanArabic": "تقوي",
+        "displayArabic": "تَقْوَىٰ",
+        "transliteration": "wqy"
+      },
+      "qac": {
+        "root": "wqy",
+        "lemma": "taqowaY",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 2997",
+        "isRootEntry": false,
+        "sensesCount": 2,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Takwa / Menjaga Diri / Perlindungan / Membentengi",
+        "sourceBadge": "Kamus Qurabic",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 258,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-085",
+      "input": "حِكْمَةٌ",
+      "category": "noun",
+      "description": "Noun hikmah (H-k-m)",
+      "identity": {
+        "cleanArabic": "حكمة",
+        "displayArabic": "حِكْمَةٌ",
+        "transliteration": "Hkm"
+      },
+      "qac": {
+        "root": "Hkm",
+        "lemma": "Hikomap",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 2, p. 616",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Konsep & Turunan Akar حكم",
+        "sourceBadge": "Kamus Qurabic",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 210,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-086",
+      "input": "نُورٌ",
+      "category": "noun",
+      "description": "Noun nūr (n-w-r)",
+      "identity": {
+        "cleanArabic": "نور",
+        "displayArabic": "نُورٌ",
+        "transliteration": "nwr"
+      },
+      "qac": {
+        "root": "nwr",
+        "lemma": "nuwr",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 2864",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Konsep & Turunan Akar نور",
+        "sourceBadge": "Kamus Qurabic",
+        "wordFamilyCount": 6,
+        "occurrencesCount": 194,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-087",
+      "input": "ظُلُمَـٰتٍ",
+      "category": "noun",
+      "description": "Plural zulumāt (z-l-m)",
+      "identity": {
+        "cleanArabic": "ظلمت",
+        "displayArabic": "ظُلُمَـٰتٍ",
+        "transliteration": "Zlm"
+      },
+      "qac": {
+        "root": "Zlm",
+        "lemma": "Zuluma`t",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 5, p. 1921",
+        "isRootEntry": true,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Konsep & Turunan Akar ظلم",
+        "sourceBadge": "Kamus Qurabic",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 315,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-088",
+      "input": "سَلَـٰمٌ",
+      "category": "noun",
+      "description": "Noun salām (s-l-m)",
+      "identity": {
+        "cleanArabic": "سلم",
+        "displayArabic": "سَلَـٰمٌ",
+        "transliteration": "slm"
+      },
+      "qac": {
+        "root": "slm",
+        "lemma": "s~ilom",
+        "pos": "Isim",
+        "rawTag": "PN",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 4, p. 1412",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Konsep & Turunan Akar سلم",
+        "sourceBadge": "Kamus Qurabic",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 140,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-089",
+      "input": "شَيْطَـٰنٍ",
+      "category": "noun",
+      "description": "Noun shaytān (sh-t-n)",
+      "identity": {
+        "cleanArabic": "شيطن",
+        "displayArabic": "شَيْطَـٰنٍ",
+        "transliteration": "$Tn"
+      },
+      "qac": {
+        "root": "$Tn",
+        "lemma": "$ayoTa`n",
+        "pos": "Isim",
+        "rawTag": "PN",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 4, p. 1552",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Konsep & Turunan Akar شطن",
+        "sourceBadge": "Kamus Qurabic",
+        "wordFamilyCount": 3,
+        "occurrencesCount": 88,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-090",
+      "input": "خَوْفٍ",
+      "category": "noun",
+      "description": "Masdar khawf (kh-w-f)",
+      "identity": {
+        "cleanArabic": "خوف",
+        "displayArabic": "خَوْفٍ",
+        "transliteration": "xwf"
+      },
+      "qac": {
+        "root": "xwf",
+        "lemma": "xawof",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 2, p. 824",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Rasa Takut / Kekhawatiran / Kewaspadaan / Khauf",
+        "sourceBadge": "Kamus Qurabic",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 124,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-091",
+      "input": "هَـٰذَا",
+      "category": "orthography",
+      "description": "Demonstrative hādhā",
+      "identity": {
+        "cleanArabic": "هذا",
+        "displayArabic": "هَـٰذَا"
+      },
+      "qac": {
+        "lemma": "ha`*aA",
+        "pos": "Isim",
+        "rawTag": "DEM",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 2887",
+        "isRootEntry": false,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wazanOrForm": "Isim Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-092",
+      "input": "ذَٰلِكَ",
+      "category": "orthography",
+      "description": "Demonstrative dhālika",
+      "identity": {
+        "cleanArabic": "ذلك",
+        "displayArabic": "ذَٰلِكَ"
+      },
+      "qac": {
+        "lemma": "*a`lik",
+        "pos": "Isim",
+        "rawTag": "DEM",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 3, p. 975",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wazanOrForm": "Isim Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-093",
+      "input": "وَٱلَّذِينَ",
+      "category": "orthography",
+      "description": "Conjunction + Relative pronoun walladhīna",
+      "identity": {
+        "cleanArabic": "والذين",
+        "displayArabic": "وَٱلَّذِينَ"
+      },
+      "qac": {
+        "lemma": "{l~a*iY",
+        "pos": "Isim",
+        "rawTag": "REL",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": false,
+        "source": "The Quranic Arabic Corpus v0.4 (University of Leeds)",
+        "isRootEntry": false,
+        "sensesCount": 0,
+        "hasIndonesianDefinition": false
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wazanOrForm": "Isim Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-094",
+      "input": "فَبِمَا",
+      "category": "orthography",
+      "description": "Prefixed particle fabimā",
+      "identity": {
+        "cleanArabic": "فبما",
+        "displayArabic": "فَبِمَا"
+      },
+      "qac": {
+        "pos": "Harf",
+        "rawTag": "P",
+        "isParticle": true
+      },
+      "lexicon": {
+        "hasLexicalData": false,
+        "source": "The Quranic Arabic Corpus v0.4 (University of Leeds)",
+        "isRootEntry": false,
+        "sensesCount": 0,
+        "hasIndonesianDefinition": false
+      },
+      "wordStudy": {
+        "primaryMeaning": "Partikel / kata tugas (Harf)",
+        "sourceBadge": "QAC Nahwu",
+        "wazanOrForm": "Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-095",
+      "input": "بِٱلْحَقِّ",
+      "category": "orthography",
+      "description": "Preposition + Noun bil-haqqi (H-q-q)",
+      "identity": {
+        "cleanArabic": "بالحق",
+        "displayArabic": "بِٱلْحَقِّ",
+        "transliteration": "Hqq"
+      },
+      "qac": {
+        "root": "Hqq",
+        "lemma": "Haq~",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 2, p. 613",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Having a complaint of his Haqow .",
+        "sourceBadge": "Lane's Lexicon",
+        "wordFamilyCount": 8,
+        "occurrencesCount": 287,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-096",
+      "input": "لِلْمُتَّقِينَ",
+      "category": "orthography",
+      "description": "Preposition + Active participle lil-muttaqīn (w-q-y)",
+      "identity": {
+        "cleanArabic": "للمتقين",
+        "displayArabic": "لِلْمُتَّقِينَ",
+        "transliteration": "wqy"
+      },
+      "qac": {
+        "root": "wqy",
+        "lemma": "mut~aqiyn",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 3059",
+        "isRootEntry": true,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Akar و ق ي berkaitan dengan gagasan menjaga, melindungi, atau membuat benteng/tameng pelindung (wiqayah) dari bahaya. Dari akar ini lahir istilah Taqwa: membentengi diri dari kemurkaan dan azab Allah dengan menjalankan perintah-Nya dan menjauhi larangan-Nya.",
+        "sourceBadge": "Kamus Qurabic",
+        "wazanOrForm": "Wazan Isim Fa'il (Pelaku)",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 258,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-097",
+      "input": "كَٱلَّذِي",
+      "category": "orthography",
+      "description": "Preposition + Relative kalladhī",
+      "identity": {
+        "cleanArabic": "كالذي",
+        "displayArabic": "كَٱلَّذِي"
+      },
+      "qac": {
+        "lemma": "{l~a*iY",
+        "pos": "Isim",
+        "rawTag": "REL",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": false,
+        "source": "The Quranic Arabic Corpus v0.4 (University of Leeds)",
+        "isRootEntry": false,
+        "sensesCount": 0,
+        "hasIndonesianDefinition": false
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wazanOrForm": "Isim Mabni (Tetap)",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-098",
+      "input": "رَبَّنَا",
+      "category": "orthography",
+      "description": "Vocative / Noun + Pronoun rabbanā (r-b-b)",
+      "identity": {
+        "cleanArabic": "ربنا",
+        "displayArabic": "رَبَّنَا",
+        "transliteration": "rbb"
+      },
+      "qac": {
+        "root": "rbb",
+        "lemma": "rab~",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 3, p. 1003",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wordFamilyCount": 8,
+        "occurrencesCount": 980,
+        "hasClassicalCitation": true,
+        "classicalBook": "Al-Mufradāt fī Gharīb al-Qur'an"
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-099",
+      "input": "أَنزَلْنَـٰهُ",
+      "category": "orthography",
+      "description": "Verb + Suffix pronoun anzalnāhu (n-z-l)",
+      "identity": {
+        "cleanArabic": "انزلنه",
+        "displayArabic": "أَنزَلْنَـٰهُ",
+        "transliteration": "nzl"
+      },
+      "qac": {
+        "root": "nzl",
+        "lemma": ">anzala",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 3031",
+        "isRootEntry": true,
+        "sensesCount": 5,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Her (a camel's) milk descended [ into her udder ]: opposed to A^aqolaSato .",
+        "sourceBadge": "Lane's Lexicon",
+        "wazanOrForm": "Fi'il Madhi Form IV",
+        "wordFamilyCount": 12,
+        "occurrencesCount": 293,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-100",
+      "input": "أَنُلْزِمُكُمُوهَا",
+      "category": "orthography",
+      "description": "Complex sentence word (11:28:13)",
+      "identity": {
+        "cleanArabic": "انلزمكموها",
+        "displayArabic": "أَنُلْزِمُكُمُوهَا",
+        "transliteration": "lzm"
+      },
+      "qac": {
+        "root": "lzm",
+        "lemma": ">alozama",
+        "pos": "Fi'il",
+        "rawTag": "V",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Edward William Lane, An Arabic-English Lexicon · Book I, Part 8, p. 3010",
+        "isRootEntry": false,
+        "sensesCount": 1,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "as syn. with A^aqonaY in the prov. xalaAw^uka A^aqonaY liHayaAy^ika means Most preservative: see that prov. in art. xlw , and see qaniYa AlHayaA='a , and lazima $ayoy^FA .",
+        "sourceBadge": "Lane's Lexicon",
+        "wazanOrForm": "Fi'il Mudhari' Form IV",
+        "wordFamilyCount": 3,
+        "occurrencesCount": 5,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-101",
+      "input": "جِيٓءَ",
+      "category": "orthography",
+      "description": "Passive hollow verb with complex hamza jī'a (j-y-A)",
+      "identity": {
+        "cleanArabic": "جيء",
+        "displayArabic": "جِيٓءَ"
+      },
+      "qac": {
+        "pos": "Fi'il",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": false,
+        "source": "The Quranic Arabic Corpus v0.4 (University of Leeds)",
+        "isRootEntry": false,
+        "sensesCount": 0,
+        "hasIndonesianDefinition": false
+      },
+      "wordStudy": {
+        "primaryMeaning": "Kosakata Terindeks Al-Qur'an",
+        "sourceBadge": "Qurabic Corpus",
+        "wazanOrForm": "Fi'il Madhi",
+        "wordFamilyCount": 0,
+        "occurrencesCount": 0,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    },
+    {
+      "id": "case-102",
+      "input": "ٱمْرُؤٌا۟",
+      "category": "orthography",
+      "description": "Noun with final waw orthography imru'un (m-r-A)",
+      "identity": {
+        "cleanArabic": "امرؤا",
+        "displayArabic": "ٱمْرُؤٌا۟",
+        "transliteration": "mrA"
+      },
+      "qac": {
+        "root": "mrA",
+        "lemma": "{moru&NA",
+        "pos": "Isim",
+        "rawTag": "N",
+        "isParticle": false
+      },
+      "lexicon": {
+        "hasLexicalData": true,
+        "source": "Kajian Leksikografi & Mu'jam Al-Mufradat fi Gharib Al-Qur'an (Ar-Raghib Al-Ashfahani)",
+        "isRootEntry": true,
+        "sensesCount": 3,
+        "hasIndonesianDefinition": true
+      },
+      "wordStudy": {
+        "primaryMeaning": "Konsep & Turunan Akar مرا",
+        "sourceBadge": "Kamus Qurabic",
+        "wordFamilyCount": 9,
+        "occurrencesCount": 38,
+        "hasClassicalCitation": false
+      },
+      "inconsistencies": [],
+      "status": "PASS"
+    }
+  ],
+  "summary": {
+    "identity": 0,
+    "rootDisagreement": 0,
+    "lemmaIssue": 0,
+    "lexiconMissing": 0,
+    "morphologyMismatch": 0,
+    "translationGeneric": 0,
+    "fabricatedCitation": 0
+  }
+}

@@ -1,7 +1,7 @@
 import { getQACAuthoritativeIndex } from './qac-parser';
 import { ROOT_DATABASE } from '../data/roots';
 import { getRootSemanticProfile } from '../data/root-semantics';
-import { stripArabicHarakat, isQuranicParticle, findBestMatchingRoot } from '../search/root-search';
+import { stripArabicHarakat, isQuranicParticle, findBestMatchingRoot, inferGrammarRole } from '../search/root-search';
 import { buckwalterToArabic } from './buckwalter';
 import { getRootOccurrencesFromChunk } from './morphology-service';
 import { CURATED_WORD_DICTIONARY, getWordDetailedExplanation } from '../search/word-dictionary';
@@ -124,31 +124,58 @@ function mapQACFeaturesToIndo(tag: string, rawFeatures: string): {
     };
   }
 
+  if (tag === 'DEM' || rawFeatures.includes('POS:DEM')) {
+    return {
+      pos: 'Isim',
+      posLabelIndo: 'Isim Isyarah (Kata Tunjuk)',
+      wazanOrForm: 'Isim Mabni (Tetap)',
+      grammaticalRole: 'Isim Isyarah (Kata Benda Penunjuk / Demonstratif)'
+    };
+  }
+
+  if (tag === 'REL' || rawFeatures.includes('POS:REL')) {
+    return {
+      pos: 'Isim',
+      posLabelIndo: 'Isim Maushul (Kata Sambung)',
+      wazanOrForm: 'Isim Mabni (Tetap)',
+      grammaticalRole: 'Isim Maushul (Kata Benda Penghubung / Relatif)'
+    };
+  }
+
+  if (tag === 'PRON' || rawFeatures.includes('POS:PRON')) {
+    return {
+      pos: 'Isim',
+      posLabelIndo: 'Isim Dhamir (Kata Ganti)',
+      wazanOrForm: 'Dhamir Mabni',
+      grammaticalRole: 'Dhamir (Kata Ganti Orang)'
+    };
+  }
+
   if (tag === 'N' || tag === 'PN' || tag === 'ADJ' || rawFeatures.includes('POS:N') || rawFeatures.includes('POS:ADJ')) {
     let nType: "Isim Fa'il" | "Isim Maf'ul" | 'Masdar' | 'Nomina' = 'Nomina';
-    let role = 'Isim (Nomina / Kata Benda)';
+    let role = 'Isim (Kata Benda / Nomina)';
     let wazan: string | undefined;
 
     if (isActPcpl) {
       nType = "Isim Fa'il";
-      role = "Isim Fa'il (Pelaku / Partisipel Aktif)";
-      wazan = "Wazan Isim Fa'il";
+      role = "Isim Fa'il (Subjek / Pelaku)";
+      wazan = "Wazan Isim Fa'il (Pelaku)";
     } else if (isPassPcpl) {
       nType = "Isim Maf'ul";
-      role = "Isim Maf'ul (Objek / Partisipel Pasif)";
-      wazan = "Wazan Isim Maf'ul";
+      role = "Isim Maf'ul (Objek / Penerima)";
+      wazan = "Wazan Isim Maf'ul (Objek)";
     } else if (isVn) {
       nType = 'Masdar';
-      role = 'Isim Masdar (Kata Benda Verbal / Aksi)';
+      role = 'Masdar (Kata Benda Aksi / Kata Asal)';
       wazan = 'Masdar (Verbal Noun)';
     } else if (tag === 'ADJ' || rawFeatures.includes('POS:ADJ')) {
-      role = 'Isim Sifat / Adjektiva';
+      role = 'Isim Sifat (Kata Sifat / Adjektiva)';
       wazan = 'Shifah Musyabbahah';
     }
 
     return {
       pos: 'Isim',
-      posLabelIndo: `Nomina / Isim (${nType})`,
+      posLabelIndo: `Isim (${nType === 'Nomina' ? 'Kata Benda' : nType})`,
       nounType: nType,
       wazanOrForm: wazan,
       grammaticalRole: role
@@ -157,16 +184,16 @@ function mapQACFeaturesToIndo(tag: string, rawFeatures: string): {
 
   // Harf / Particle
   let particleRole = 'Harf / Partikel (Kata Tugas)';
-  if (tag === 'P' || rawFeatures.includes('POS:P')) particleRole = 'Harf Jarr (Preposisi)';
+  if (tag === 'P' || rawFeatures.includes('POS:P')) particleRole = 'Harf Jarr (Kata Depan / Preposisi)';
   else if (tag === 'CONJ' || rawFeatures.includes('POS:CONJ')) particleRole = 'Harf Athaf (Kata Hubung / Konjungsi)';
-  else if (tag === 'SUB' || rawFeatures.includes('POS:SUB')) particleRole = 'Harf Syarat / Subordinating Conjunction';
-  else if (tag === 'NEG' || rawFeatures.includes('POS:NEG')) particleRole = 'Harf Nafi (Partikel Negasi)';
-  else if (tag === 'RES' || rawFeatures.includes('POS:RES')) particleRole = 'Harf Istitsna (Partikel Pengecualian)';
-  else if (tag === 'DET' || rawFeatures.includes('POS:DET')) particleRole = 'Alif Lam Ma\'rifah (Determiner)';
+  else if (tag === 'SUB' || rawFeatures.includes('POS:SUB')) particleRole = 'Harf Syarat (Kata Hubung Bersyarat)';
+  else if (tag === 'NEG' || rawFeatures.includes('POS:NEG')) particleRole = 'Harf Nafi (Kata Penyangkal / Negasi)';
+  else if (tag === 'RES' || rawFeatures.includes('POS:RES')) particleRole = 'Harf Istitsna (Kata Pengecualian)';
+  else if (tag === 'DET' || rawFeatures.includes('POS:DET')) particleRole = 'Alif Lam Ma\'rifah (Penentu / Determiner)';
 
   return {
     pos: 'Harf',
-    posLabelIndo: 'Partikel / Harf',
+    posLabelIndo: 'Harf (Kata Tugas)',
     wazanOrForm: 'Mabni (Tetap)',
     grammaticalRole: particleRole
   };
@@ -207,13 +234,9 @@ export function getCanonicalWordDetail(
     qacRecords = qacIndex.recordsByWordLocation.get(locKey);
   }
 
-  const cleanArabic = isCoordinate && qacRecords && qacRecords.length > 0
-    ? stripArabicHarakat(qacRecords.map(r => r.formArabic).join(''))
-    : stripArabicHarakat(cleanInput);
-
-  // If still not found, search in authoritative recordsByToken index
+  // If still not resolved, lookup by surface form
   if (!qacRecords) {
-    qacRecords = qacIndex.recordsByToken.get(cleanArabic);
+    qacRecords = qacIndex.recordsByToken.get(cleanInput) || qacIndex.recordsByToken.get(stripArabicHarakat(cleanInput));
   }
 
   // Determine true display Arabic word
@@ -221,14 +244,24 @@ export function getCanonicalWordDetail(
     ? qacRecords.map(r => r.formArabic).join('')
     : cleanInput;
 
+  const cleanArabic = isCoordinate && qacRecords && qacRecords.length > 0
+    ? stripArabicHarakat(displayArabic)
+    : stripArabicHarakat(cleanInput);
+
   // 2. Identify Stem Segment & Extracted Features
+  const inferredRole = inferGrammarRole(cleanArabic);
   const stemRecord = qacRecords
-    ? qacRecords.find(r => r.root || r.pos === 'V' || r.pos === 'N' || r.pos === 'ADJ') || qacRecords[0]
+    ? (qacRecords.find(r => r.formArabic === cleanInput) ||
+       (inferredRole.posCategory === "Fi'il" ? qacRecords.find(r => r.pos === 'V' || r.tag === 'V') : undefined) ||
+       qacRecords.find(r => r.root || r.pos === 'V' || r.pos === 'N' || r.pos === 'ADJ' || r.tag === 'REL' || r.tag === 'DEM') ||
+       qacRecords.find(r => r.pos === 'P') ||
+       qacRecords.find(r => r.tag === 'PRON') ||
+       qacRecords[0])
     : undefined;
 
   let rootBw = stemRecord?.root;
   let lemmaBw = stemRecord?.lemma;
-  let tag = stemRecord?.tag || (isQuranicParticle(cleanArabic) ? 'P' : 'N');
+  let tag = stemRecord?.tag || (isQuranicParticle(cleanArabic) ? 'P' : (inferredRole.posCategory === "Fi'il" ? 'V' : (inferredRole.posDetail.includes('Isyarah') ? 'DEM' : (inferredRole.posDetail.includes('Maushul') ? 'REL' : 'N'))));
   let rawFeatures = stemRecord?.rawFeatures || '';
 
   // 3. Resolve Root in ROOT_DATABASE (Strict, authentic root matching)
@@ -268,18 +301,24 @@ export function getCanonicalWordDetail(
   const morphInfo = isParticle
     ? {
         pos: 'Harf' as const,
-        posLabelIndo: 'Partikel / Harf (Kata Tugas)',
+        posLabelIndo: 'Harf (Kata Tugas)',
         wazanOrForm: 'Mabni (Tetap)',
-        grammaticalRole: 'Harf / Partikel dalam Kaidah Nahwu',
+        grammaticalRole: 'Harf / Kata Tugas dalam Kaidah Nahwu',
         isParticle: true
       }
-    : (stemRecord ? mapQACFeaturesToIndo(tag, rawFeatures) : {
-        pos: 'Isim' as const,
-        posLabelIndo: 'Kosakata Terindeks',
-        wazanOrForm: 'Bentuk Leksikal Standar',
-        grammaticalRole: 'Analisis morfologi terhubung melalui indeks Al-Qur\'an',
+    : (stemRecord ? mapQACFeaturesToIndo(tag, rawFeatures) : (tag === 'DEM' || tag === 'REL' ? mapQACFeaturesToIndo(tag, '') : (inferredRole.posCategory === "Fi'il" ? {
+        pos: "Fi'il" as const,
+        posLabelIndo: "Fi'il (Kata Kerja)",
+        wazanOrForm: inferredRole.posDetail.includes('Madhi') ? "Fi'il Madhi" : (inferredRole.posDetail.includes('Amr') ? "Fi'il Amr" : "Fi'il Mudhari'"),
+        grammaticalRole: inferredRole.posDetail,
         isParticle: false
-      });
+      } : {
+        pos: 'Isim' as const,
+        posLabelIndo: 'Isim (Kata Benda / Nomina)',
+        wazanOrForm: 'Bentuk Leksikal Standar',
+        grammaticalRole: inferredRole.posDetail || 'Kosakata Terindeks Al-Qur\'an',
+        isParticle: false
+      })));
 
   // 5. Semantic & Lexical Resolution
   const normCleanArabic = cleanArabic.replace(/^[وفلبك]/, '');
