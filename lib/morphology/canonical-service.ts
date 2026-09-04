@@ -188,14 +188,14 @@ export function getCanonicalWordDetail(
   context?: CanonicalWordContext
 ): WordDetailModel {
   const cleanInput = tokenOrLocation.trim();
-  const cleanArabic = stripArabicHarakat(cleanInput);
+  const isCoordinate = cleanInput.includes(':') && /^\d+:\d+(:\d+)?(:\d+)?$/.test(cleanInput);
   const qacIndex = getQACAuthoritativeIndex();
 
   // 1. Resolve QAC Record:
   // First check direct location coordinate (e.g. "10:24:9" or "10:24:9:2")
-  let qacRecords = qacIndex.recordsByWordLocation.get(cleanInput);
+  let qacRecords = isCoordinate ? qacIndex.recordsByWordLocation.get(cleanInput) : undefined;
 
-  if (!qacRecords && cleanInput.split(':').length === 4) {
+  if (isCoordinate && !qacRecords && cleanInput.split(':').length === 4) {
     const parts = cleanInput.split(':');
     const wordLoc = `${parts[0]}:${parts[1]}:${parts[2]}`;
     qacRecords = qacIndex.recordsByWordLocation.get(wordLoc);
@@ -207,10 +207,19 @@ export function getCanonicalWordDetail(
     qacRecords = qacIndex.recordsByWordLocation.get(locKey);
   }
 
+  const cleanArabic = isCoordinate && qacRecords && qacRecords.length > 0
+    ? stripArabicHarakat(qacRecords.map(r => r.formArabic).join(''))
+    : stripArabicHarakat(cleanInput);
+
   // If still not found, search in authoritative recordsByToken index
   if (!qacRecords) {
     qacRecords = qacIndex.recordsByToken.get(cleanArabic);
   }
+
+  // Determine true display Arabic word
+  const displayArabic = isCoordinate && qacRecords && qacRecords.length > 0
+    ? qacRecords.map(r => r.formArabic).join('')
+    : cleanInput;
 
   // 2. Identify Stem Segment & Extracted Features
   const stemRecord = qacRecords
@@ -395,8 +404,8 @@ export function getCanonicalWordDetail(
 
   return {
     identity: {
-      coordinate: stemRecord ? stemRecord.wordLocationKey : (context?.surahNumber ? `${context.surahNumber}:${context.ayahNumber}:${context.wordIndex || 1}` : undefined),
-      arabic: cleanInput,
+      coordinate: stemRecord ? stemRecord.wordLocationKey : (context?.surahNumber ? `${context.surahNumber}:${context.ayahNumber}:${context.wordIndex || 1}` : (isCoordinate ? cleanInput : undefined)),
+      arabic: displayArabic,
       cleanArabic,
       transliteration: curatedDict?.rootLatin || matchedRoot?.rootLatin || undefined
     },

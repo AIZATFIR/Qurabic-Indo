@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   const ayahNumber = searchParams.get('ayah') ? parseInt(searchParams.get('ayah')!, 10) : undefined;
   const wordIndex = searchParams.get('wordIndex') ? parseInt(searchParams.get('wordIndex')!, 10) : undefined;
 
-  const targetInput = location || word;
+  const targetInput = word || location;
   if (!targetInput) {
     return NextResponse.json({ error: 'Missing word or location parameter' }, { status: 400 });
   }

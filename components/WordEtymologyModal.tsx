@@ -29,6 +29,8 @@ export default function WordEtymologyModal({
   isOpen,
   onClose,
   wordArabic,
+  transliteration,
+  meaningIndo,
   surahNumber,
   ayahNumber,
   wordIndex,
@@ -36,6 +38,11 @@ export default function WordEtymologyModal({
   ayahIndo,
 }: WordEtymologyModalProps) {
   const [asyncStudy, setAsyncStudy] = useState<WordStudyViewModel | null>(null);
+
+  // Reset asyncStudy when wordArabic changes or modal closes
+  useEffect(() => {
+    setAsyncStudy(null);
+  }, [isOpen, wordArabic]);
 
   // Fetch authoritative server-side WordStudy when modal opens
   useEffect(() => {
@@ -88,14 +95,34 @@ export default function WordEtymologyModal({
 
   if (!isOpen) return null;
 
-  // Resolve study model
-  const study = asyncStudy || getWordStudy(wordArabic, {
+  // Resolve base study model
+  const initialStudy = getWordStudy(wordArabic, {
     surahNumber,
     ayahNumber,
     wordIndex,
     ayahArabic,
     ayahIndo
   });
+
+  const baseStudy = asyncStudy ? { ...asyncStudy } : { ...initialStudy };
+
+  // Invariant: Ensure Arabic text is always the genuine Arabic word, never a coordinate or number
+  if (!baseStudy.identity.arabic || baseStudy.identity.arabic.includes(':') || /^\d+$/.test(baseStudy.identity.arabic)) {
+    baseStudy.identity.arabic = wordArabic;
+  }
+
+  // If transliteration provided from reader, attach to identity
+  if (transliteration && (!baseStudy.identity.transliteration || baseStudy.identity.transliteration.startsWith('Kata '))) {
+    baseStudy.identity.transliteration = transliteration;
+  }
+
+  // If meaningIndo provided from WBW reader, use as primary meaning if study meaning is generic or raw citation
+  if (meaningIndo && (!baseStudy.primaryMeaning.text || baseStudy.primaryMeaning.text.startsWith(': see') || baseStudy.primaryMeaning.text.startsWith('; see') || baseStudy.primaryMeaning.text.startsWith('and ') || baseStudy.primaryMeaning.text === 'Makna Leksikal Terindeks')) {
+    baseStudy.primaryMeaning.text = meaningIndo;
+    baseStudy.primaryMeaning.sourceBadge = 'Terjemahan Kata';
+  }
+
+  const study = baseStudy;
 
   return (
     <div

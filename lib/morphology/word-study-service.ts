@@ -167,7 +167,15 @@ export function getWordStudy(
   let sourceBadge = 'Kamus Qurabic';
   let isEditorial = true;
 
-  if (lex?.hasLexicalData && lex.definition) {
+  if (lex?.indonesianDefinition) {
+    primaryText = lex.indonesianDefinition;
+    sourceBadge = "Lane's Lexicon";
+    isEditorial = false;
+  } else if (detail.translation.primaryMeaning) {
+    primaryText = detail.translation.primaryMeaning;
+    sourceBadge = detail.morphology.isParticle ? 'QAC Nahwu' : 'Kamus Qurabic';
+    isEditorial = true;
+  } else if (lex?.hasLexicalData && lex.definition && !lex.definition.startsWith(': see') && !lex.definition.startsWith('; see') && !lex.definition.startsWith('and ')) {
     primaryText = lex.definition;
     sourceBadge = "Lane's Lexicon";
     isEditorial = false;
