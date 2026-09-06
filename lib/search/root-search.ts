@@ -160,6 +160,8 @@ export function getRootBySlug(slug: string): RootWord | undefined {
   return root;
 }
 
+import { lookupQACByToken } from '../morphology/qac-lookup';
+
 /**
  * Extracts Arabic root letters only for valid root words (Returns empty string for particles)
  */
@@ -168,19 +170,30 @@ export function extractArabicRootLetters(arabic: string): string {
   if (isQuranicParticle(arabic)) return '';
   const clean = stripArabicHarakat(arabic);
 
+  // Authoritative QAC token lookup first
+  const qac = lookupQACByToken(clean);
+  if (qac?.rootArabic) {
+    return qac.rootArabic;
+  }
+
   let processed = clean.replace(/^(وال|فال|بال|كال|لل|ال)/, '');
   processed = processed.replace(/^[وفبلكس]/, '');
   processed = processed.replace(/(هما|كما|هم|كم|هن|كن|تم|تن|نا|ها|ني|يه|يا|ي|ه)$/, '');
   processed = processed.replace(/(ون|ين|ان|ات|ة|وا|تم|تمو)$/, '');
 
+  // Strip imperative / mudhari verbal prefix when followed by 3 consonant root letters
+  if ((processed.startsWith('ا') || processed.startsWith('ي') || processed.startsWith('ت') || processed.startsWith('ن')) && processed.length === 4) {
+    processed = processed.slice(1);
+  }
+
   if (processed.length < 3) return '';
-  const letters = processed.split('').filter(c => /[\u0600-\u06FF]/.test(c)).slice(0, 4);
-  return letters.length >= 3 ? letters.join(' ') : '';
+  const letters = processed.split('').filter(c => /[\u0600-\u06FF]/.test(c)).slice(0, 3);
+  return letters.length === 3 ? letters.join(' ') : '';
 }
 
 /**
  * Finds the exact matching RootWord from database.
- * STRICT DATA INTEGRITY: Exact matching only, NO substring/fuzzy inference.
+ * STRICT DATA INTEGRITY: Authoritative QAC token resolution + exact database match.
  */
 export function findBestMatchingRoot(wordArabic: string, meaningIndo?: string): RootWord | undefined {
   if (!wordArabic) return undefined;
@@ -189,7 +202,18 @@ export function findBestMatchingRoot(wordArabic: string, meaningIndo?: string): 
   }
   const clean = stripArabicHarakat(wordArabic);
 
-  // 1. Direct exact match on joined root
+  // 1. Authoritative QAC token resolution
+  const qac = lookupQACByToken(clean);
+  if (qac?.rootBw) {
+    const matched = ROOT_DATABASE.find(r => 
+      (qac.rootArabic && (r.rootArabic === qac.rootArabic || r.rootArabicJoined === qac.rootArabic.replace(/\s+/g, ''))) ||
+      r.id.replace(/-/g, '').toLowerCase() === qac.rootBw!.toLowerCase() ||
+      r.id.toLowerCase() === qac.rootBw!.toLowerCase()
+    );
+    if (matched) return matched;
+  }
+
+  // 2. Direct exact match on joined root
   for (const root of ROOT_DATABASE) {
     const rootClean = stripArabicHarakat(root.rootArabicJoined);
     if (clean === rootClean) {
@@ -197,7 +221,7 @@ export function findBestMatchingRoot(wordArabic: string, meaningIndo?: string): 
     }
   }
 
-  // 2. Exact match through derivative verbs or nouns
+  // 3. Exact match through derivative verbs or nouns
   for (const root of ROOT_DATABASE) {
     const matchedVerb = root.verbs.some(v => {
       const vClean = stripArabicHarakat(v.arabic);
@@ -232,7 +256,16 @@ export function inferGrammarRole(wordArabic: string, meaningIndo?: string): {
 } {
   const clean = stripArabicHarakat(wordArabic);
 
-  // 1. Demonstratives (Asma'ul Isyarah) & Relatives (Asma'ul Maushul) -> ISIM MABNI
+  // 1. Pure Quranic Particles (Harf) - Top priority to prevent particles like كلا / لما from being misidentified
+  if (isQuranicParticle(wordArabic)) {
+    return {
+      posCategory: 'Harf',
+      posDetail: 'Harf (Kata Tugas)',
+      wazanOrPattern: 'Mabni (Tetap)'
+    };
+  }
+
+  // 2. Demonstratives (Asma'ul Isyarah) & Relatives (Asma'ul Maushul) -> ISIM MABNI
   if (DEMONSTRATIVES_AND_RELATIVES.has(clean) || DEMONSTRATIVES_AND_RELATIVES.has(clean.replace(/^[وفلك]/, ''))) {
     const isRel = clean.includes('الذي') || clean.includes('التي') || clean.includes('الذين');
     return {
@@ -242,12 +275,13 @@ export function inferGrammarRole(wordArabic: string, meaningIndo?: string): {
     };
   }
 
-  // 2. Pure Quranic Particles (Harf)
-  if (isQuranicParticle(wordArabic)) {
+  // 3. Authoritative QAC token lookup
+  const qac = lookupQACByToken(clean);
+  if (qac) {
     return {
-      posCategory: 'Harf',
-      posDetail: 'Harf (Kata Tugas)',
-      wazanOrPattern: 'Mabni (Tetap)'
+      posCategory: qac.pos,
+      posDetail: qac.grammaticalRole,
+      wazanOrPattern: qac.wazanOrForm
     };
   }
 
@@ -259,7 +293,7 @@ export function inferGrammarRole(wordArabic: string, meaningIndo?: string): {
     };
   }
 
-  // 3. Verb checks (Fi'il)
+  // 4. Verb checks (Fi'il)
   if (
     clean.startsWith('ي') || clean.startsWith('ت') || clean.startsWith('ن') ||
     clean.startsWith('است') || clean.startsWith('ان') || clean.startsWith('اخ') ||
@@ -274,17 +308,18 @@ export function inferGrammarRole(wordArabic: string, meaningIndo?: string): {
         wazanOrPattern: undefined
       };
     }
-    if (clean.startsWith('اهْدِ') || clean.startsWith('اقْرَأْ') || clean.startsWith('قُلْ') || clean.startsWith('توكل')) {
+    // Imperative check: Words starting with bare/wasla alif and ending in plural waw (e.g. ادخلوا, اعلموا) or specific imperatives
+    if (clean.startsWith('اهْدِ') || clean.startsWith('اقْرَأْ') || clean.startsWith('قُلْ') || clean.startsWith('توكل') || ((clean.startsWith('ا') || clean.startsWith('ٱ')) && clean.endsWith('وا'))) {
       return {
         posCategory: "Fi'il",
         posDetail: "Fi'il Amr (Kata Kerja Perintah)",
-        wazanOrPattern: undefined
+        wazanOrPattern: "Fi'il Amr"
       };
     }
     return {
       posCategory: "Fi'il",
       posDetail: "Fi'il Madhi (Kata Kerja Bentuk Lampau / Selesai)",
-      wazanOrPattern: undefined
+      wazanOrPattern: "Fi'il Madhi"
     };
   }
 

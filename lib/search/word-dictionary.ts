@@ -114,9 +114,11 @@ export function cleanGlossToIndonesian(rawGloss?: string, fallbackMeaning?: stri
     }
   }
 
-  // If text is purely English characters without Indonesian, use fallback
-  const isEnglishOnly = /^[a-zA-Z\s.,'"“”()\-]+$/.test(trimmed) && !/^(dan|atau|dari|ke|di|pada|yang|mereka|kami|dia|aku|adalah|akan|telah|tidak|bukan|allah|rasul|ayat|surat|tuhan|maha|pengasih|penyayang|puji|segala|hari|jalan|lurus|nikmat|murka|sesat|orang|berkah)/i.test(trimmed);
-  if (isEnglishOnly && fallbackMeaning) {
+  // Only treat as English if it contains distinct common English words and lacks common Indonesian indicators
+  const isActuallyEnglish = /\b(the|and|or|of|to|in|on|from|with|by|for|not|he|they|we|you|she|it|his|their|our|your|my|who|which|that|enter|entered|say|said|know|knew|believed|disbelieved)\b/i.test(trimmed);
+  const hasIndonesianIndicators = /(kan|lah|nya|kah|pun|ber|ter|mem|men|meng|per|se|di|ke|yang|dan|atau|dari|pada|dalam|atas|orang|kami|mereka|kalian|kamu|dia|ia|aku|saya|kita|tidak|bukan|sudah|telah|akan|jangan|masuk)/i.test(trimmed);
+
+  if (isActuallyEnglish && !hasIndonesianIndicators && fallbackMeaning) {
     return fallbackMeaning;
   }
 
@@ -136,6 +138,39 @@ export const CURATED_WORD_DICTIONARY: Record<string, {
   wazanOrForm?: string;
   quranicNuances?: string[];
 }> = {
+  'ادخلوا': {
+    rootLetters: 'د خ ل',
+    rootLatin: 'dxl',
+    rootSlug: 'd-x-l',
+    primaryMeaning: 'Masuklah kalian (Perintah Masuk)',
+    meanings: [
+      'Masuklah secara serentak ke dalam suatu ruang, keadaan, atau ketaatan',
+      'Perintah komitmen total memasuki perlindungan dan ketundukan (Islam)',
+      'Berasal dari akar kata دخل (masuk, kebalikan dari keluar)'
+    ],
+    rootExplanation: 'Akar kata د خ ل melandasi gagasan masuk atau merasuk ke dalam suatu ruang, ikatan, atau kondisi ketenteraman.',
+    grammaticalRole: "Fi'il Amr Form I (Kata Kerja Perintah Jamak)",
+    posTag: "Fi'il",
+    wazanOrForm: "Fi'il Amr Form I (Uf'ulū)",
+    quranicNuances: [
+      'Digunakan untuk perintah memasuki kedamaian total (Islam kaffah) dalam QS. Al-Baqarah: 208',
+      'Digunakan untuk seruan memasuki surga dalam ketenteraman dan keridhaan Allah'
+    ]
+  },
+  'دخل': {
+    rootLetters: 'د خ ل',
+    rootLatin: 'dxl',
+    rootSlug: 'd-x-l',
+    primaryMeaning: 'Masuk / Memasuki',
+    meanings: [
+      'Masuk atau menembus ke dalam suatu tempat atau ruang',
+      'Memasuki suatu perjanjian atau ikatan batin'
+    ],
+    rootExplanation: 'Akar kata د خ ل bermakna masuk, kebalikan dari kharaja (keluar).',
+    grammaticalRole: "Fi'il Madhi Form I",
+    posTag: "Fi'il",
+    wazanOrForm: "Fi'il Madhi (Fa'ala)"
+  },
   'بسم': {
     rootLetters: 'س م و',
     rootLatin: 'samā',

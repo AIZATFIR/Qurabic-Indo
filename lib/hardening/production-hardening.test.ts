@@ -58,6 +58,17 @@ async function runHardeningTests() {
   assert(bismiStudy?.morphology.pos !== undefined, 'QAC POS facts populated');
   assert(bismiStudy?.provenance.some(p => p.name.includes('Quranic Arabic Corpus')) === true, 'Morphology provenance explicitly attributes QAC');
 
+  // udkhulu (QS. 2:208:4) Verb Invariant: Authentic Root dxl, Imperative Amr, and Non-Generic Meaning
+  const udkhuluStudy = getWordStudy('ٱدْخُلُوا۟', { surahNumber: 2, ayahNumber: 208, wordIndex: 4 });
+  assert(udkhuluStudy !== null, 'Word study resolves for "ٱدْخُلُوا۟" (2:208:4)');
+  assert(udkhuluStudy.lexical.rootArabic === 'د خ ل', 'udkhulu rootArabic must be "د خ ل", never Tanpa Akar or 4 letters');
+  assert(udkhuluStudy.lexical.rootSlug === 'd-x-l', 'udkhulu rootSlug must be "d-x-l"');
+  assert(udkhuluStudy.morphology.pos === "Fi'il", 'udkhulu POS must be "Fi\'il"');
+  assert(udkhuluStudy.morphology.verbType === 'Amr', 'udkhulu verbType must be "Amr", never Madhi');
+  assert(!udkhuluStudy.morphology.wazanOrForm?.includes('Madhi'), 'udkhulu wazan must NOT be Madhi');
+  assert(udkhuluStudy.primaryMeaning.text !== "Kosakata Terindeks Al-Qur'an", 'udkhulu primary meaning must not be generic fallback');
+  assert(!udkhuluStudy.lexical.rootPhilosophy?.includes('ا د خ ل'), 'udkhulu root philosophy must not have phantom Alif');
+
   // 3. API Route Security, Bounded Input & Caching
   console.log('\n🔒 3. API Route Security & Error Isolation:');
   

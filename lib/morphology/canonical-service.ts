@@ -1,4 +1,5 @@
 import { getQACAuthoritativeIndex } from './qac-parser';
+import { lookupQACByLocation, lookupQACByToken } from './qac-lookup';
 import { ROOT_DATABASE } from '../data/roots';
 import { getRootSemanticProfile } from '../data/root-semantics';
 import { stripArabicHarakat, isQuranicParticle, findBestMatchingRoot, inferGrammarRole } from '../search/root-search';
@@ -259,14 +260,21 @@ export function getCanonicalWordDetail(
        qacRecords[0])
     : undefined;
 
-  let rootBw = stemRecord?.root;
-  let lemmaBw = stemRecord?.lemma;
-  let tag = stemRecord?.tag || (isQuranicParticle(cleanArabic) ? 'P' : (inferredRole.posCategory === "Fi'il" ? 'V' : (inferredRole.posDetail.includes('Isyarah') ? 'DEM' : (inferredRole.posDetail.includes('Maushul') ? 'REL' : 'N'))));
+  // Authoritative static precompiled lookup
+  const qacLookup = isCoordinate
+    ? lookupQACByLocation(cleanInput)
+    : (context?.surahNumber && context?.ayahNumber && context?.wordIndex)
+    ? lookupQACByLocation(`${context.surahNumber}:${context.ayahNumber}:${context.wordIndex}`)
+    : lookupQACByToken(cleanArabic) || lookupQACByToken(stripArabicHarakat(cleanInput));
+
+  let rootBw = stemRecord?.root || qacLookup?.rootBw;
+  let lemmaBw = stemRecord?.lemma || qacLookup?.lemmaBw;
+  let tag = stemRecord?.tag || qacLookup?.posRaw || (isQuranicParticle(cleanArabic) ? 'P' : (inferredRole.posCategory === "Fi'il" ? 'V' : (inferredRole.posDetail.includes('Isyarah') ? 'DEM' : (inferredRole.posDetail.includes('Maushul') ? 'REL' : 'N'))));
   let rawFeatures = stemRecord?.rawFeatures || '';
 
   // 3. Resolve Root in ROOT_DATABASE (Strict, authentic root matching)
   const isParticleInput = isQuranicParticle(cleanArabic);
-  const rootAr = rootBw ? buckwalterToArabic(rootBw) : undefined;
+  const rootAr = (rootBw && !isParticleInput) ? (qacLookup?.rootArabic || buckwalterToArabic(rootBw)) : undefined;
   let matchedRoot = (rootBw && !isParticleInput)
     ? ROOT_DATABASE.find(r => 
         (rootAr && (r.rootArabic === rootAr || r.rootArabicJoined === rootAr.replace(/\s+/g, ''))) ||
@@ -287,7 +295,7 @@ export function getCanonicalWordDetail(
   }
 
   // Fallback to fuzzy search ONLY if no authoritative QAC stem was found and word is not a particle
-  if (!matchedRoot && !isParticleInput && !stemRecord) {
+  if (!matchedRoot && !isParticleInput && !stemRecord && !qacLookup) {
     matchedRoot = findBestMatchingRoot(cleanInput);
     if (matchedRoot && !rootBw) {
       rootBw = matchedRoot.id.replace(/-/g, '');
@@ -306,7 +314,16 @@ export function getCanonicalWordDetail(
         grammaticalRole: 'Harf / Kata Tugas dalam Kaidah Nahwu',
         isParticle: true
       }
-    : (stemRecord ? mapQACFeaturesToIndo(tag, rawFeatures) : (tag === 'DEM' || tag === 'REL' ? mapQACFeaturesToIndo(tag, '') : (inferredRole.posCategory === "Fi'il" ? {
+    : (stemRecord ? mapQACFeaturesToIndo(tag, rawFeatures) : (qacLookup ? {
+        pos: qacLookup.pos,
+        posLabelIndo: qacLookup.pos === "Fi'il" ? `Verba / Fi'il (${qacLookup.verbType || 'Kata Kerja'})` : (qacLookup.pos === 'Isim' ? `Isim (${qacLookup.nounType || 'Kata Benda'})` : 'Harf (Kata Tugas)'),
+        verbType: qacLookup.verbType,
+        verbForm: qacLookup.verbForm,
+        nounType: qacLookup.nounType,
+        wazanOrForm: qacLookup.wazanOrForm,
+        grammaticalRole: qacLookup.grammaticalRole,
+        isParticle: qacLookup.pos === 'Harf'
+      } : (tag === 'DEM' || tag === 'REL' ? mapQACFeaturesToIndo(tag, '') : (inferredRole.posCategory === "Fi'il" ? {
         pos: "Fi'il" as const,
         posLabelIndo: "Fi'il (Kata Kerja)",
         wazanOrForm: inferredRole.posDetail.includes('Madhi') ? "Fi'il Madhi" : (inferredRole.posDetail.includes('Amr') ? "Fi'il Amr" : "Fi'il Mudhari'"),
@@ -318,7 +335,7 @@ export function getCanonicalWordDetail(
         wazanOrForm: 'Bentuk Leksikal Standar',
         grammaticalRole: inferredRole.posDetail || 'Kosakata Terindeks Al-Qur\'an',
         isParticle: false
-      })));
+      }))));
 
   // 5. Semantic & Lexical Resolution
   const normCleanArabic = cleanArabic.replace(/^[وفلبك]/, '');

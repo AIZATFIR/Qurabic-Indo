@@ -163,7 +163,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
               <span>Kelas Kata</span>
             </span>
             <span className="text-xs sm:text-sm font-bold text-ink-primary block truncate">
-              {morphology.nounType || morphology.verbType || morphology.posLabelIndo || morphology.pos}
+              {morphology.pos === "Fi'il" ? (morphology.verbType ? `Fi'il ${morphology.verbType}` : "Fi'il") : (morphology.nounType || morphology.posLabelIndo || morphology.pos)}
             </span>
           </div>
 

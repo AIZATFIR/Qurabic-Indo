@@ -54,12 +54,150 @@ export function getQACAuthoritativeIndex(): QACAuthoritativeIndex {
     const fs = nodeReq('fs');
     const path = nodeReq('path');
 
-    const qacPath = path.join(process.cwd(), 'lib/quranic-corpus-morphology-0.4.txt');
-    if (!fs.existsSync(qacPath)) {
-      return emptyFallback;
+    const candidatePaths = [
+      path.join(process.cwd(), 'lib/quranic-corpus-morphology-0.4.txt'),
+      path.join(__dirname, 'quranic-corpus-morphology-0.4.txt'),
+      path.join(__dirname, '..', 'quranic-corpus-morphology-0.4.txt'),
+      path.join(__dirname, '..', '..', 'lib/quranic-corpus-morphology-0.4.txt'),
+      path.join(process.cwd(), '.next/server/lib/quranic-corpus-morphology-0.4.txt'),
+    ];
+    let resolvedPath: string | null = null;
+    for (const p of candidatePaths) {
+      if (fs.existsSync(p)) {
+        resolvedPath = p;
+        break;
+      }
     }
 
-    const content = fs.readFileSync(qacPath, 'utf8');
+    if (!resolvedPath) {
+      // Robust Serverless Fallback: Load precompiled JSON without needing 6.1MB raw text file
+      try {
+        const locationsData = nodeReq('./data/qac-locations.json');
+        const tokensData = nodeReq('./data/qac-tokens.json');
+        const recordsByWordLocation = new Map<string, NormalizedMorphologyRecord[]>();
+        const recordsByToken = new Map<string, NormalizedMorphologyRecord[]>();
+        const recordsByRoot = new Map<string, NormalizedMorphologyRecord[]>();
+        const recordsByLemma = new Map<string, NormalizedMorphologyRecord[]>();
+        const recordsByLocation = new Map<string, NormalizedMorphologyRecord>();
+
+        for (const [locKey, tuple] of Object.entries(locationsData as Record<string, [string, string, string, string, string]>)) {
+          const [sStr, aStr, wStr] = locKey.split(':');
+          const surah = parseInt(sStr, 10);
+          const ayah = parseInt(aStr, 10);
+          const word = parseInt(wStr, 10);
+          const [rootBw, lemmaBw, posRaw, typeRaw, formRaw] = tuple;
+          const rootArabic = rootBw ? buckwalterToArabic(rootBw).split('').join(' ') : undefined;
+          const lemmaArabic = lemmaBw ? buckwalterToArabic(lemmaBw) : undefined;
+          const pos = posRaw === 'V' ? 'V' : (posRaw === 'N' || posRaw === 'PN' || posRaw === 'ADJ') ? 'N' : posRaw;
+
+          let verbType: 'PERF' | 'IMPF' | 'IMPV' | undefined;
+          if (typeRaw === 'PERF') verbType = 'PERF';
+          else if (typeRaw === 'IMPF') verbType = 'IMPF';
+          else if (typeRaw === 'IMPV') verbType = 'IMPV';
+
+          const rec: NormalizedMorphologyRecord = {
+            surah,
+            ayah,
+            word,
+            segment: 1,
+            locationKey: `${locKey}:1`,
+            wordLocationKey: locKey,
+            ayahLocationKey: `${surah}:${ayah}`,
+            form: lemmaBw || '',
+            formArabic: lemmaArabic || '',
+            tag: posRaw,
+            pos,
+            root: rootBw || undefined,
+            rootArabic,
+            lemma: lemmaBw || undefined,
+            lemmaArabic,
+            verbType,
+            verbForm: formRaw || undefined,
+            nounType: typeRaw.includes('PCPL') || typeRaw === 'VN' ? (typeRaw as any) : undefined,
+            rawTag: posRaw,
+            rawFeatures: `POS:${posRaw}${rootBw ? `|ROOT:${rootBw}` : ''}${lemmaBw ? `|LEM:${lemmaBw}` : ''}${verbType ? `|${verbType}` : ''}`,
+            normalizedCategory: pos === 'V' ? `Verb + ${formRaw || 'Form I'} + ${verbType || ''}` : `Noun (${posRaw})`,
+            linguisticInterpretation: pos === 'V' ? `Fi'il ${verbType === 'PERF' ? 'Madhi' : verbType === 'IMPF' ? "Mudhari'" : 'Amr'} ${formRaw || 'Form I'}` : `Isim (${posRaw})`,
+            interpretationContract: {
+              label: pos === 'V' ? `Fi'il ${verbType || ''}` : `Isim`,
+              sourceEvidence: 'Precompiled QAC v0.4',
+              layer: 'interpretation',
+              derivation: 'derived'
+            }
+          };
+
+          recordsByLocation.set(`${locKey}:1`, rec);
+          recordsByWordLocation.set(locKey, [rec]);
+
+          if (rootBw) {
+            if (!recordsByRoot.has(rootBw)) recordsByRoot.set(rootBw, []);
+            recordsByRoot.get(rootBw)!.push(rec);
+          }
+          if (lemmaBw) {
+            if (!recordsByLemma.has(lemmaBw)) recordsByLemma.set(lemmaBw, []);
+            recordsByLemma.get(lemmaBw)!.push(rec);
+          }
+        }
+
+        for (const [tokKey, tuple] of Object.entries(tokensData as Record<string, [string, string, string, string, string]>)) {
+          const [rootBw, lemmaBw, posRaw, typeRaw, formRaw] = tuple;
+          const rootArabic = rootBw ? buckwalterToArabic(rootBw).split('').join(' ') : undefined;
+          const lemmaArabic = lemmaBw ? buckwalterToArabic(lemmaBw) : undefined;
+          const pos = posRaw === 'V' ? 'V' : (posRaw === 'N' || posRaw === 'PN' || posRaw === 'ADJ') ? 'N' : posRaw;
+
+          const rec: NormalizedMorphologyRecord = {
+            surah: 0,
+            ayah: 0,
+            word: 0,
+            segment: 1,
+            locationKey: '0:0:0:1',
+            wordLocationKey: '0:0:0',
+            ayahLocationKey: '0:0',
+            form: lemmaBw || '',
+            formArabic: tokKey,
+            tag: posRaw,
+            pos,
+            root: rootBw || undefined,
+            rootArabic,
+            lemma: lemmaBw || undefined,
+            lemmaArabic,
+            verbType: typeRaw === 'IMPV' ? 'IMPV' : typeRaw === 'PERF' ? 'PERF' : typeRaw === 'IMPF' ? 'IMPF' : undefined,
+            verbForm: formRaw || undefined,
+            nounType: undefined,
+            rawTag: posRaw,
+            rawFeatures: `POS:${posRaw}${rootBw ? `|ROOT:${rootBw}` : ''}${lemmaBw ? `|LEM:${lemmaBw}` : ''}`,
+            normalizedCategory: pos === 'V' ? `Verb + ${formRaw || 'Form I'}` : `Noun (${posRaw})`,
+            linguisticInterpretation: pos === 'V' ? `Fi'il` : `Isim`,
+            interpretationContract: {
+              label: 'QAC Precompiled',
+              sourceEvidence: 'QAC v0.4',
+              layer: 'interpretation',
+              derivation: 'derived'
+            }
+          };
+
+          recordsByToken.set(tokKey, [rec]);
+        }
+
+        cachedIndex = {
+          totalRecords: recordsByLocation.size,
+          rootBearingRecordsCount: recordsByRoot.size,
+          uniqueRootsCount: recordsByRoot.size,
+          uniqueLemmasCount: recordsByLemma.size,
+          recordsByRoot,
+          recordsByLemma,
+          recordsByLocation,
+          recordsByWordLocation,
+          recordsByToken
+        };
+
+        return cachedIndex;
+      } catch (err) {
+        return emptyFallback;
+      }
+    }
+
+    const content = fs.readFileSync(resolvedPath, 'utf8');
     const lines = content.split('\n');
 
     const recordsByRoot = new Map<string, NormalizedMorphologyRecord[]>();

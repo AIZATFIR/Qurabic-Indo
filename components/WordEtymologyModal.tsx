@@ -31,6 +31,10 @@ export default function WordEtymologyModal({
   wordArabic,
   transliteration,
   meaningIndo,
+  posTag,
+  posDetail,
+  matchedRootSlug,
+  rootLetters,
   surahNumber,
   ayahNumber,
   wordIndex,
@@ -117,9 +121,34 @@ export default function WordEtymologyModal({
   }
 
   // If meaningIndo provided from WBW reader, use as primary meaning if study meaning is generic or raw citation
-  if (meaningIndo && (!baseStudy.primaryMeaning.text || baseStudy.primaryMeaning.text.startsWith(': see') || baseStudy.primaryMeaning.text.startsWith('; see') || baseStudy.primaryMeaning.text.startsWith('and ') || baseStudy.primaryMeaning.text === 'Makna Leksikal Terindeks')) {
-    baseStudy.primaryMeaning.text = meaningIndo;
-    baseStudy.primaryMeaning.sourceBadge = 'Terjemahan Kata';
+  if (meaningIndo) {
+    const isGeneric = !baseStudy.primaryMeaning.text ||
+      baseStudy.primaryMeaning.text === "Kosakata Terindeks Al-Qur'an" ||
+      baseStudy.primaryMeaning.text === "Kata dalam Al-Qur'an" ||
+      baseStudy.primaryMeaning.text === "Makna Leksikal Terindeks" ||
+      baseStudy.primaryMeaning.text.startsWith('Konsep & Turunan') ||
+      baseStudy.primaryMeaning.text.startsWith(': see') ||
+      baseStudy.primaryMeaning.text.startsWith('; see') ||
+      baseStudy.primaryMeaning.text.startsWith('and ');
+
+    if (isGeneric) {
+      baseStudy.primaryMeaning.text = meaningIndo.charAt(0).toUpperCase() + meaningIndo.slice(1);
+      baseStudy.primaryMeaning.sourceBadge = 'Terjemahan Kata';
+    }
+  }
+
+  // If reader provided root or grammar, ensure they populate if missing from initial study
+  if (rootLetters && !baseStudy.lexical.rootArabic) {
+    baseStudy.lexical.rootArabic = rootLetters;
+    baseStudy.lexical.rootSlug = matchedRootSlug;
+  }
+  if (posTag && (!baseStudy.morphology.pos || baseStudy.morphology.pos === 'Isim')) {
+    if (posTag === "Fi'il" || posTag === 'Harf') {
+      baseStudy.morphology.pos = posTag;
+    }
+  }
+  if (posDetail && (!baseStudy.morphology.grammaticalRole || baseStudy.morphology.grammaticalRole.includes('Kosakata Terindeks'))) {
+    baseStudy.morphology.grammaticalRole = posDetail;
   }
 
   const study = baseStudy;

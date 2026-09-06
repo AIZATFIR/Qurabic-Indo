@@ -39,12 +39,20 @@ function loadChunk(chunkFilename: string): LaneEntryRecord[] | null {
       const path = getModule('path');
 
       if (fs && path) {
-        const chunkPath = path.join(process.cwd(), 'lib', 'lexicon', 'data', 'chunks', chunkFilename);
-        if (fs.existsSync(chunkPath)) {
-          const raw = fs.readFileSync(chunkPath, 'utf-8');
-          const parsed = JSON.parse(raw) as LaneEntryRecord[];
-          CHUNK_CACHE.set(chunkFilename, parsed);
-          return parsed;
+        const candidatePaths = [
+          path.join(process.cwd(), 'lib', 'lexicon', 'data', 'chunks', chunkFilename),
+          path.join(__dirname, 'data', 'chunks', chunkFilename),
+          path.join(__dirname, '..', '..', 'lib', 'lexicon', 'data', 'chunks', chunkFilename),
+          path.join(process.cwd(), '.next', 'server', 'lib', 'lexicon', 'data', 'chunks', chunkFilename)
+        ];
+
+        for (const chunkPath of candidatePaths) {
+          if (fs.existsSync(chunkPath)) {
+            const raw = fs.readFileSync(chunkPath, 'utf-8');
+            const parsed = JSON.parse(raw) as LaneEntryRecord[];
+            CHUNK_CACHE.set(chunkFilename, parsed);
+            return parsed;
+          }
         }
       }
     } catch (err) {
