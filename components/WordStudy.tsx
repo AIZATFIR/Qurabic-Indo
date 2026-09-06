@@ -20,6 +20,7 @@ import {
   Check
 } from 'lucide-react';
 import { WordStudyViewModel } from '@/lib/lexicon/types';
+import { formatLexiconSenseText } from '@/lib/lexicon/lexicon-formatter';
 import SourceDrawer from './SourceDrawer';
 
 interface WordStudyProps {
@@ -520,19 +521,36 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
 
             {/* Indonesian Lexical Summary if available */}
             {lexical.rootPhilosophy && (
-              <div className="p-4 sm:p-5 rounded-2xl bg-canvas-soft border border-hairline space-y-2">
+              <div className="p-4 sm:p-5 rounded-2xl bg-canvas-soft border border-hairline space-y-2.5">
                 <div className="flex items-center space-x-2 text-xs font-bold text-primary">
                   <Compass className="w-4 h-4" />
-                  <span>Filosofi &amp; Intisari Leksikal Akar {lexical.rootArabic ? `(${lexical.rootArabic})` : ''}</span>
+                  <span>Kajian Makna &amp; Filosofi Leksikal Akar {lexical.rootArabic ? `(${lexical.rootArabic})` : ''}</span>
                 </div>
                 <p className="text-sm sm:text-base text-ink-primary font-medium leading-relaxed">
                   {lexical.rootPhilosophy}
                 </p>
+                {lexical.usageNuances && lexical.usageNuances.length > 0 && (
+                  <div className="pt-2 border-t border-hairline/60 space-y-1.5">
+                    <span className="text-[11px] font-semibold text-ink-mute block">Nuansa Penggunaan dalam Ayat Al-Qur&apos;an:</span>
+                    <ul className="space-y-1 text-xs text-ink-secondary">
+                      {lexical.usageNuances.map((nuance, nIdx) => (
+                        <li key={nIdx} className="flex items-start space-x-1.5">
+                          <span className="text-primary font-bold mt-0.5">•</span>
+                          <span>{nuance}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             )}
 
             {lexical.senses.length > 0 ? (
               <div className="space-y-3">
+                <div className="text-xs text-ink-mute flex items-center justify-between px-1">
+                  <span className="font-semibold text-ink-secondary">Arsip Rujukan Leksikon Arab-Inggris Klasik:</span>
+                  <span>Lane&apos;s Lexicon (1863)</span>
+                </div>
                 {lexical.senses.map((sense, idx) => (
                   <div
                     key={idx}
@@ -548,7 +566,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                       </span>
                     </div>
                     <p className="text-sm sm:text-[15px] text-ink-primary font-normal leading-relaxed tracking-normal font-sans">
-                      {sense.text}
+                      {formatLexiconSenseText(sense.text)}
                     </p>
                   </div>
                 ))}

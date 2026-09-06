@@ -138,6 +138,44 @@ export const CURATED_WORD_DICTIONARY: Record<string, {
   wazanOrForm?: string;
   quranicNuances?: string[];
 }> = {
+  'يكذبون': {
+    rootLetters: 'ك ذ ب',
+    rootLatin: 'k*b',
+    rootSlug: 'k-*-b',
+    primaryMeaning: 'Mereka selalu berdusta (kebohongan lisan & batin)',
+    meanings: [
+      'Mereka terus-menerus berdusta dan menyalahi kebenaran fakta',
+      'Perilaku kaum munafik yang mengingkari janji dan sumpah setia kepada Allah',
+      'Berasal dari akar kata كذب (berdusta, lawan dari صدق / jujur)'
+    ],
+    rootExplanation: 'Akar kata ك ذ ب melandasi gagasan ketiadaan kesesuaian antara kabar yang diucapkan dengan hakikat kenyataan faktual.',
+    grammaticalRole: "Fi'il Mudhari' Form I (Verba Kontinu Jamak Mudzakkar)",
+    posTag: "Fi'il",
+    wazanOrForm: "Fi'il Mudhari' Form I (Yaf'ilūna)",
+    quranicNuances: [
+      'Digunakan dalam QS. At-Taubah: 77 untuk menggambarkan watak kemunafikan permanen akibat melanggar janji kepada Allah',
+      'Digunakan dalam QS. Al-Baqarah: 10 untuk penyakit hati yang menuai siksaan pedih'
+    ]
+  },
+  'كذب': {
+    rootLetters: 'ك ذ ب',
+    rootLatin: 'k*b',
+    rootSlug: 'k-*-b',
+    primaryMeaning: 'Berdusta / Berbohong / Dusta',
+    meanings: [
+      'Mengabarkan sesuatu yang menyalahi kenyataan yang sebenarnya',
+      'Lawan kata dari kebenaran dan kejujuran (ash-shidq)',
+      'Substansi kebohongan atau berita palsu'
+    ],
+    rootExplanation: 'Akar kata ك ذ ب melandasi gagasan ketidaksesuaian antara perkataan dan kenyataan.',
+    grammaticalRole: "Fi'il Madhi Form I / Isim Masdar",
+    posTag: "Fi'il",
+    wazanOrForm: "Fi'il Form I / Masdar",
+    quranicNuances: [
+      'Pangkal dari sifat nifaq dalam Al-Qur\'an',
+      'Dosa besar mengada-adakan kedustaan atas nama Allah'
+    ]
+  },
   'ادخلوا': {
     rootLetters: 'د خ ل',
     rootLatin: 'dxl',

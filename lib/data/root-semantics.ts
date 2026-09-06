@@ -434,6 +434,43 @@ export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
       'Membentengi diri dari azab dan murka Ilahi',
       'Perlindungan dan keselamatan dari keburukan'
     ]
+  },
+
+  // 14. k-*-b (ك ذ ب) - Lying, Falsehood, Denial of Truth
+  'k-*-b': {
+    titleIndo: 'Dusta / Berbohong / Mengingkari Kebenaran / Menyalahi Realitas',
+    coreMeaning:
+      'Akar ك ذ ب (k-dh-b) melandasi gagasan pokok tentang ketiadaan kesesuaian antara apa yang diucapkan atau diyakini dengan hakikat kenyataan yang sebenarnya (kebalikan dari ص د ق / kejujuran dan kesesuaian faktual). Dalam Al-Qur\'an, akar ini mencakup tiga dimensi: (1) kedustaan lisan terhadap Allah dan ayat-ayat-Nya, (2) kemunafikan amalan ketika lisan mengaku beriman padahal batin mengingkari, dan (3) angan-angan palsu yang memperdaya manusia.',
+    usagePatterns: [
+      {
+        title: 'Kedustaan Lisan & Pengingkaran Wahyu (Kadzaba / Yakdzibu)',
+        description: 'Bentuk verba Form I yang merujuk pada ucapan bohong atau penyampaian kabar yang bertentangan dengan kebenaran faktual.',
+        examples: ['يَكْذِبُونَ', 'كَذَبُوا عَلَىٰ أَنْفُسِهِمْ', 'إِنْ كَانَ مِنَ الْكَاذِبِينَ']
+      },
+      {
+        title: 'Mendustakan Kebenaran & Utusan Allah (Kadz-dzaba)',
+        description: 'Bentuk verba Form II (intensif) yang bermakna aktif menolak, menuduh bohong, atau menyangkal kebenaran risalah rasul dan hari pembalasan.',
+        examples: ['وَكَذَّبُوا بِآيَاتِنَا كِذَّابًا', 'فَكَذَّبُوهُ فَعَقَرُوهَا']
+      },
+      {
+        title: 'Hakikat Dusta & Berita Palsu (Kadzib / Kidzb)',
+        description: 'Bentuk nomina (masdar) yang merujuk pada substansi kebohongan, tuduhan palsu, atau kebatilan.',
+        examples: ['وَجَاءُوا عَلَىٰ قَمِيصِهِ بِدَمٍ كَذِبٍ', 'تَفْتَرُونَ عَلَى اللَّهِ الْكَذِبَ']
+      },
+      {
+        title: 'Pelaku Dusta yang Melampaui Batas (Kadz-dzab / Kadzib)',
+        description: 'Bentuk isim fa\'il dan mubalaghah (penyengatan) untuk menyebut pembohong kronis atau pendusta ajaran wahyu.',
+        examples: ['إِنَّ اللَّهَ لَا يَهْدِي مَنْ هُوَ مُسْرِفٌ كَذَّابٌ', 'كَٰذِبُونَ']
+      }
+    ],
+    contextualNote:
+      'Dalam QS. At-Taubah: 77, kata يَكْذِبُونَ menyoroti watak dasar kaum munafik yang merusak perjanjian dengan Allah karena kebiasaan berbohong yang telah mendarah daging.',
+    meaningsIndonesian: [
+      'Menyatakan sesuatu yang bertolak belakang dari kebenaran (dusta)',
+      'Mendustakan dan menolak ayat-ayat Allah serta seruan para rasul',
+      'Kemunafikan dan pengingkaran ikrar iman',
+      'Kebatilan dan kepalsuan klaim sesat'
+    ]
   }
 };
 
