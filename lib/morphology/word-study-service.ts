@@ -19,6 +19,7 @@ import { buckwalterToArabic } from './buckwalter';
 import { stripArabicHarakat } from '../search/root-search';
 import { getClassicalCitation } from '../lexicon/classical-citations';
 import { getWordDetailedExplanation, CURATED_WORD_DICTIONARY } from '../search/word-dictionary';
+import { ROOT_DATABASE } from '../data/roots';
 
 /**
  * Maps raw QAC morphological features string to detailed Indonesian syntactic breakdown
@@ -136,6 +137,27 @@ export function getWordStudy(
         count: item.count,
         sampleCoordinate: item.sampleLoc
       });
+    }
+
+    // Fallback to ROOT_DATABASE if QAC records are unavailable (e.g. client-side execution)
+    if (wordFamily.length === 0) {
+      const rootEntry = ROOT_DATABASE.find(
+        (r) => r.rootLatin === rootBw || r.id === detail.lexical.rootSlug || r.rootArabic === detail.lexical.rootArabic
+      );
+      if (rootEntry) {
+        const allDerivs = [...(rootEntry.verbs || []), ...(rootEntry.nouns || [])];
+        for (const deriv of allDerivs.slice(0, 12)) {
+          wordFamily.push({
+            arabic: deriv.arabic,
+            buckwalter: deriv.buckwalter || '',
+            lemmaArabic: deriv.arabic,
+            pos: deriv.type === 'verb' ? "Fi'il" : 'Isim',
+            meaningIndo: deriv.meaningIndo || (deriv.type === 'verb' ? 'Bentuk kerja' : 'Bentuk benda'),
+            count: deriv.frequency || 1,
+            sampleCoordinate: undefined
+          });
+        }
+      }
     }
   }
 

@@ -518,19 +518,37 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
               </div>
             </div>
 
+            {/* Indonesian Lexical Summary if available */}
+            {lexical.rootPhilosophy && (
+              <div className="p-4 sm:p-5 rounded-2xl bg-canvas-soft border border-hairline space-y-2">
+                <div className="flex items-center space-x-2 text-xs font-bold text-primary">
+                  <Compass className="w-4 h-4" />
+                  <span>Filosofi &amp; Intisari Leksikal Akar {lexical.rootArabic ? `(${lexical.rootArabic})` : ''}</span>
+                </div>
+                <p className="text-sm sm:text-base text-ink-primary font-medium leading-relaxed">
+                  {lexical.rootPhilosophy}
+                </p>
+              </div>
+            )}
+
             {lexical.senses.length > 0 ? (
               <div className="space-y-3">
                 {lexical.senses.map((sense, idx) => (
                   <div
                     key={idx}
-                    className="p-4 rounded-2xl bg-canvas-soft border border-hairline space-y-2"
+                    className="p-4 sm:p-5 rounded-2xl bg-canvas-surface border border-hairline shadow-xs space-y-2.5 border-l-4 border-l-primary"
                   >
-                    <div className="flex items-center justify-between text-xs text-ink-mute">
-                      <span className="font-semibold text-primary">Sense {idx + 1}</span>
-                      <span>Book I, Part {sense.citation.volume}, p. {sense.citation.page}</span>
+                    <div className="flex items-center justify-between text-xs pb-1.5 border-b border-hairline/60">
+                      <span className="font-bold text-primary text-xs flex items-center space-x-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block" />
+                        <span>Sense #{idx + 1}</span>
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-lg bg-canvas-soft border border-hairline text-[11px] font-mono font-semibold text-ink-primary">
+                        Book I, Part {sense.citation.volume}, p. {sense.citation.page}
+                      </span>
                     </div>
-                    <p className="text-sm sm:text-base text-ink-secondary leading-relaxed font-serif italic">
-                      &ldquo;{sense.text}&rdquo;
+                    <p className="text-sm sm:text-[15px] text-ink-primary font-normal leading-relaxed tracking-normal font-sans">
+                      {sense.text}
                     </p>
                   </div>
                 ))}

@@ -163,6 +163,15 @@ function BacaQuranPageContent() {
       ? 'text-4xl sm:text-5xl lg:text-6xl leading-[2.6]'
       : 'text-5xl sm:text-6xl lg:text-7xl leading-[2.8]';
 
+  const fontTranslationClass =
+    fontSize === 'sm'
+      ? 'text-xs sm:text-sm leading-relaxed'
+      : fontSize === 'md'
+      ? 'text-sm sm:text-base leading-relaxed'
+      : fontSize === 'lg'
+      ? 'text-base sm:text-lg lg:text-xl leading-relaxed'
+      : 'text-lg sm:text-xl lg:text-2xl leading-relaxed';
+
   return (
     <div className="min-h-screen transition-colors duration-200 bg-canvas text-ink-primary">
       
@@ -549,7 +558,7 @@ function BacaQuranPageContent() {
                     {/* Indonesian Translation Kemenag RI */}
                     {showTranslation && ayah.textIndo && (
                       <div className="pt-2">
-                        <p className="text-sm sm:text-base translation-kemenag leading-relaxed font-sans text-ink-secondary">
+                        <p className={`${fontTranslationClass} translation-kemenag font-sans text-ink-secondary transition-all`}>
                           &ldquo;{ayah.textIndo}&rdquo;
                         </p>
                       </div>

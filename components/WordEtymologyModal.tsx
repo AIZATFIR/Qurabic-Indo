@@ -64,9 +64,10 @@ export default function WordEtymologyModal({
 
     fetch(`/api/word-detail?${query.toString()}`)
       .then(res => res.ok ? res.json() : null)
-      .then(data => {
-        if (isMounted && data && data.study) {
-          setAsyncStudy(data.study);
+      .then(json => {
+        const payload = json?.data?.study || json?.study;
+        if (isMounted && payload) {
+          setAsyncStudy(payload);
         }
       })
       .catch(() => {});
