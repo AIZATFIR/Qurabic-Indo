@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, X, BookOpen, ArrowRight, Check, Hash, Sparkles } from 'lucide-react';
+import { Search, X, BookOpen, ArrowRight, Check, Hash } from 'lucide-react';
 import { SURAH_LIST, searchSurahs, SurahMeta } from '@/lib/data/surah-list';
 
 interface SurahSearchModalProps {
@@ -65,7 +65,11 @@ export default function SurahSearchModal({
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-12 sm:pt-20 p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150 overscroll-contain">
       <div className="fixed inset-0" onClick={onClose} />
 
-      <div className="relative w-full max-w-xl max-h-[82vh] flex flex-col bg-canvas-surface text-ink-primary border border-hairline rounded-2xl shadow-hover z-10 overflow-hidden overscroll-contain animate-in zoom-in-95 duration-150">
+      <div
+        data-lenis-prevent="true"
+        onWheel={(e) => e.stopPropagation()}
+        className="relative w-full max-w-xl max-h-[82vh] flex flex-col bg-[var(--bg-surface)] text-ink-primary border border-hairline rounded-2xl shadow-hover z-10 overflow-hidden overscroll-contain animate-in zoom-in-95 duration-150"
+      >
         
         {/* Search Header */}
         <div className="p-4 border-b border-hairline space-y-3 bg-canvas-surface">

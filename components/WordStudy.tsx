@@ -10,7 +10,6 @@ import {
   ChevronDown,
   ChevronUp,
   ShieldCheck,
-  Sparkles,
   GitFork,
   Compass,
   Quote,
@@ -89,13 +88,11 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
         {/* Top Control Bar */}
         <div className="flex items-center justify-between border-b border-hairline pb-3 text-left">
           <div className="flex items-center space-x-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-primary flex items-center space-x-1.5">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Bedah Kata Al-Qur&apos;an</span>
-            </span>
-            <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-primary-subdued text-primary font-semibold">
-              {morphology.pos}
-            </span>
+            {!isModalMode && (
+              <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                Bedah Kata Al-Qur&apos;an
+              </span>
+            )}
           </div>
 
           <div className="flex items-center space-x-2">
@@ -447,7 +444,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
             <section className="p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
               <div className="flex items-center justify-between border-b border-hairline pb-3">
                 <h3 className="text-base font-bold text-ink-primary flex items-center space-x-2">
-                  <Sparkles className="w-4 h-4 text-primary" />
+                  <BookOpen className="w-4 h-4 text-primary" />
                   <span>Kemunculan di Al-Qur&apos;an ({occurrences.totalCount} Ayat)</span>
                 </h3>
                 <button

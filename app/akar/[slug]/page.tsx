@@ -9,7 +9,7 @@ import DerivativesGrid from '@/components/DerivativesGrid';
 import AyahConcordance from '@/components/AyahConcordance';
 import MorphologyDistribution from '@/components/MorphologyDistribution';
 import Link from 'next/link';
-import { ArrowLeft, BookOpen, Layers, ShieldCheck, Database, Radio, Sparkles, BarChart3, BookMarked } from 'lucide-react';
+import { ArrowLeft, BookOpen, Layers, ShieldCheck, Database, Radio, BarChart3, BookMarked } from 'lucide-react';
 
 export function generateStaticParams() {
   // Prerender top 200 high-frequency roots at build time; dynamicParams = true handles all 1,642 roots seamlessly
@@ -282,7 +282,7 @@ export default async function RootDetailPage({ params }: PageProps) {
         <section id="contoh" className="scroll-mt-24 space-y-4">
           <div className="border-b border-hairline pb-2.5">
             <h2 className="text-xl sm:text-2xl font-light text-ink-primary tracking-tight flex items-center space-x-2 font-sans">
-              <Sparkles className="w-5 h-5 text-primary" />
+              <BookOpen className="w-5 h-5 text-primary" />
               <span>Contoh Penggunaan Ayat</span>
             </h2>
             <p className="text-xs sm:text-sm text-ink-mute mt-0.5 font-sans">

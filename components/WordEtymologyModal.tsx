@@ -126,7 +126,7 @@ export default function WordEtymologyModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-ink-primary/50 backdrop-blur-sm animate-fade-in font-sans"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-ink-primary/60 backdrop-blur-md animate-fade-in font-sans"
       dir="ltr"
       onClick={onClose}
     >
@@ -134,14 +134,16 @@ export default function WordEtymologyModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="word-study-modal-title"
-        className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto bg-canvas-page border border-hairline rounded-3xl shadow-float p-5 sm:p-7 space-y-6 animate-scale-up font-sans text-left"
+        data-lenis-prevent="true"
+        onWheel={(e) => e.stopPropagation()}
+        className="relative w-full max-w-2xl max-h-[88vh] overflow-y-auto overscroll-contain bg-[var(--bg-surface)] text-[var(--color-ink-primary)] border border-hairline rounded-3xl shadow-2xl p-5 sm:p-7 space-y-6 animate-scale-up font-sans text-left opacity-100"
         dir="ltr"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Top Control Bar */}
         <div className="flex items-center justify-between border-b border-hairline pb-3">
           <span id="word-study-modal-title" className="text-xs font-bold uppercase tracking-wider text-primary">
-            Eksplorasi Kata &amp; Leksikon
+            Bedah Kata &amp; Leksikon
           </span>
           <button
             onClick={onClose}

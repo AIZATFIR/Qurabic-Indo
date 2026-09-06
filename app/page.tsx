@@ -12,8 +12,7 @@ import {
   ShieldCheck,
   ExternalLink,
   Compass,
-  Volume2,
-  Sparkles
+  Volume2
 } from 'lucide-react';
 import { ROOT_DATABASE } from '@/lib/data/roots';
 import RootCard from '@/components/RootCard';

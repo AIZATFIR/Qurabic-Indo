@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Shuffle, RefreshCw, BookOpen, Volume2, Copy, Check, ArrowLeft, ArrowRight, Layers, Sparkles } from 'lucide-react';
+import { Shuffle, RefreshCw, BookOpen, Volume2, Copy, Check, ArrowLeft, ArrowRight, Layers } from 'lucide-react';
 import Link from 'next/link';
 import QuranWordInteractive from '@/components/QuranWordInteractive';
 import { findBestMatchingRoot, extractArabicRootLetters, inferGrammarRole } from '@/lib/search/root-search';

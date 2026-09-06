@@ -26,7 +26,9 @@ export default function SourceDrawer({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto bg-canvas-surface border border-hairline rounded-3xl shadow-float p-6 sm:p-7 space-y-5 animate-scale-up text-left"
+        data-lenis-prevent="true"
+        onWheel={(e) => e.stopPropagation()}
+        className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto overscroll-contain bg-[var(--bg-surface)] text-[var(--color-ink-primary)] border border-hairline rounded-3xl shadow-2xl p-6 sm:p-7 space-y-5 animate-scale-up text-left opacity-100"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

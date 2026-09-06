@@ -28,6 +28,7 @@ module.exports = {
         },
         canvas: {
           DEFAULT: 'var(--bg-page, #FAFCFA)',
+          page: 'var(--bg-page, #FAFCFA)',
           soft: 'var(--bg-soft, #F0F7F3)',
           surface: 'var(--bg-surface, #FFFFFF)',
           cream: '#FAF4EC',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, Sparkles, Compass, ShieldCheck } from 'lucide-react';
+import { BookOpen, Compass, ShieldCheck } from 'lucide-react';
 import { QuranicUsagePattern } from '@/lib/types/morphology';
 
 interface EtymologyCardProps {
@@ -63,7 +63,7 @@ export default function EtymologyCard({
       {usagePatterns && usagePatterns.length > 0 && (
         <div className="space-y-3 pt-2">
           <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-mute flex items-center space-x-1.5 font-sans">
-            <Sparkles className="w-3.5 h-3.5 text-primary" />
+            <BookOpen className="w-3.5 h-3.5 text-primary" />
             <span>Penggunaan dalam Al-Qur&apos;an</span>
           </h4>
 
