@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getWordStudy } from '@/lib/morphology/word-study-service';
@@ -17,6 +18,37 @@ interface PageProps {
 }
 
 export const dynamicParams = true;
+
+export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
+  const rawSlug = decodeURIComponent(params.slug).trim();
+  if (!rawSlug) return { title: 'Kata Al-Qur\'an' };
+
+  const surahNumber = searchParams?.surah ? parseInt(searchParams.surah, 10) : undefined;
+  const ayahNumber = searchParams?.ayah ? parseInt(searchParams.ayah, 10) : undefined;
+  const wordIndex = searchParams?.wordIndex ? parseInt(searchParams.wordIndex, 10) : undefined;
+
+  const study = getWordStudy(rawSlug, { surahNumber, ayahNumber, wordIndex });
+  if (!study) {
+    return {
+      title: `Kata: ${rawSlug} | Qurabic`,
+      description: `Analisis kata ${rawSlug} dalam Al-Qur'an.`,
+    };
+  }
+
+  const wordArabic = study.identity.arabic;
+  const meaning = study.primaryMeaning.text || '';
+  const translit = study.identity.transliteration || '';
+  const rootText = study.lexical.rootArabic ? `Akar kata: ${study.lexical.rootArabic}` : '';
+
+  return {
+    title: `${wordArabic} (${translit}) — Bedah Kata & Morfologi`,
+    description: `Bedah kata Al-Qur'an ${wordArabic} (${translit}): "${meaning}". ${rootText}. Dilengkapi analisis morfologi QAC, wazan, wacana leksikal klasik, dan ayat-ayat terkait.`,
+    openGraph: {
+      title: `${wordArabic} — Bedah Kata & Morfologi Al-Qur'an | Qurabic`,
+      description: `Analisis kata ${wordArabic} (${translit}): "${meaning}". Dilengkapi morfologi QAC dan leksikon klasik.`,
+    },
+  };
+}
 
 export default function WordDetailPage({ params, searchParams }: PageProps) {
   const rawSlug = decodeURIComponent(params.slug).trim();

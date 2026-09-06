@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import MobileBottomNav from '@/components/MobileBottomNav';
@@ -7,10 +7,38 @@ import Footer from '@/components/Footer';
 import { ThemeProvider } from '@/lib/context/ThemeContext';
 import { Toaster } from 'sonner';
 
+export const viewport: Viewport = {
+  themeColor: '#fbf8f1',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export const metadata: Metadata = {
-  title: 'Qurabic (Indo) - Quranic Arabic Corpus & Root Word Explorer',
-  description: 'Quranic Arabic Corpus & Root Word Explorer berbahasa Indonesia. Cari akar kata, lemma, morfologi, dan ayat Al-Qur\'an secara mendalam.',
-  keywords: ['qurabic', 'quranic corpus', 'akar kata quran', 'morfologi arab', 'bahasa indonesia', 'sabar', 'kamus al quran', 'sharaf nahwu'],
+  metadataBase: new URL('https://qurabic.vercel.app'),
+  title: {
+    default: 'Qurabic (Indo) — Quranic Arabic Corpus & Root Word Explorer',
+    template: '%s | Qurabic',
+  },
+  description: "Quranic Arabic Corpus & Root Word Explorer berbahasa Indonesia. Analisis morfologi, akar kata, lemma, leksikon klasik Lane's Lexicon, dan konkordansi ayat Al-Qur'an secara mendalam.",
+  keywords: ['qurabic', 'quranic corpus', 'akar kata quran', 'morfologi arab', 'bahasa indonesia', 'leksikon arab klasik', 'lanes lexicon', 'sharaf nahwu', 'mushaf al quran'],
+  authors: [{ name: 'Qurabic Team' }],
+  openGraph: {
+    title: 'Qurabic (Indo) — Quranic Arabic Corpus & Root Word Explorer',
+    description: "Eksplorasi morfologi, akar kata, dan leksikon Al-Qur'an terpercaya berbasis Quranic Arabic Corpus dan Lane's Lexicon.",
+    siteName: 'Qurabic',
+    locale: 'id_ID',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Qurabic (Indo) — Quranic Arabic Corpus & Root Word Explorer',
+    description: "Eksplorasi morfologi, akar kata, dan leksikon Al-Qur'an terpercaya.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

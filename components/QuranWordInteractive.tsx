@@ -141,12 +141,25 @@ function QuranWordInteractiveComponent({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+    }
+  };
+
+  const a11yLabel = `Bedah kata: ${wordArabic}, ${displayTransliteration}${meaningIndo ? `, arti: ${meaningIndo}` : ''}`;
+
   return (
     <>
       {mode === 'inline' ? (
         <span
+          role="button"
+          tabIndex={0}
           onClick={handleClick}
-          className="inline-block px-1.5 py-0.5 my-1 mx-0.5 rounded-xl hover:bg-primary-subdued hover:text-primary transition-all cursor-pointer select-none active:scale-95 group font-arabic"
+          onKeyDown={handleKeyDown}
+          aria-label={a11yLabel}
+          className="inline-block px-1.5 py-0.5 my-1 mx-0.5 rounded-xl hover:bg-primary-subdued hover:text-primary transition-all cursor-pointer select-none active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary group font-arabic"
           title="Klik untuk Bedah Akar Kata & Definisi"
           dir="rtl"
         >
@@ -156,8 +169,12 @@ function QuranWordInteractiveComponent({
         </span>
       ) : (
         <span
+          role="button"
+          tabIndex={0}
           onClick={handleClick}
-          className="inline-flex flex-col items-center justify-center px-1.5 py-1 rounded-2xl hover:bg-primary-subdued/80 hover:ring-2 hover:ring-primary/40 dark:hover:bg-slate-800 transition-all cursor-pointer select-none active:scale-95 text-center group my-1.5 mx-0.5"
+          onKeyDown={handleKeyDown}
+          aria-label={a11yLabel}
+          className="inline-flex flex-col items-center justify-center px-1.5 py-1 rounded-2xl hover:bg-primary-subdued/80 hover:ring-2 hover:ring-primary/40 dark:hover:bg-slate-800 transition-all cursor-pointer select-none active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-center group my-1.5 mx-0.5"
           title="Klik untuk Bedah Akar Kata & Definisi"
         >
           <span className="font-arabic text-inherit group-hover:text-primary transition-colors leading-[2.2] sm:leading-[2.4]" dir="rtl">

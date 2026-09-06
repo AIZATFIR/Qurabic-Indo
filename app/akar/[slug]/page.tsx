@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import { ROOT_DATABASE } from '@/lib/data/roots';
 import { getCanonicalRootDetail } from '@/lib/morphology/canonical-service';
 import { fetchLiveRoot } from '@/lib/api/quran-corpus-api';
@@ -23,6 +24,38 @@ export const dynamicParams = true;
 interface PageProps {
   params: {
     slug: string;
+  };
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  let rootModel = getCanonicalRootDetail(params.slug);
+  if (!rootModel) {
+    const liveRoot = await fetchLiveRoot(params.slug);
+    if (liveRoot) {
+      rootModel = getCanonicalRootDetail(liveRoot.id);
+    }
+  }
+
+  if (!rootModel) {
+    return {
+      title: `Akar Kata: ${params.slug} | Qurabic`,
+      description: `Eksplorasi akar kata ${params.slug} dalam Al-Qur'an.`,
+    };
+  }
+
+  const rootAr = rootModel.rootArabic || rootModel.rootArabicJoined || params.slug;
+  const translit = rootModel.rootLatin || rootModel.id;
+  const meaning = rootModel.coreMeaning || rootModel.titleIndo || '';
+  const occ = rootModel.statistics.totalOccurrences;
+  const lemmas = rootModel.statistics.uniqueLemmas;
+
+  return {
+    title: `${rootAr} (${translit}) — Bedah Akar Kata & Leksikon`,
+    description: `Eksplorasi linguistik akar kata Al-Qur'an ${rootAr} (${translit}). Makna dasar: "${meaning}". Muncul ${occ} kali di Al-Qur'an melintasi ${lemmas} lemma unik. Dilengkapi leksikon klasik Lane's Lexicon dan konkordansi ayat.`,
+    openGraph: {
+      title: `${rootAr} (${translit}) — Bedah Akar Kata Al-Qur'an | Qurabic`,
+      description: `Makna dasar: "${meaning}". Total ${occ} kemunculan dalam Al-Qur'an. Analisis morfologi dan leksikon klasik terpercaya.`,
+    },
   };
 }
 

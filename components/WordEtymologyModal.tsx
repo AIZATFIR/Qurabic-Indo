@@ -131,19 +131,23 @@ export default function WordEtymologyModal({
       onClick={onClose}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="word-study-modal-title"
         className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto bg-canvas-page border border-hairline rounded-3xl shadow-float p-5 sm:p-7 space-y-6 animate-scale-up font-sans text-left"
         dir="ltr"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Top Control Bar */}
         <div className="flex items-center justify-between border-b border-hairline pb-3">
-          <span className="text-xs font-bold uppercase tracking-wider text-primary">
+          <span id="word-study-modal-title" className="text-xs font-bold uppercase tracking-wider text-primary">
             Eksplorasi Kata &amp; Leksikon
           </span>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-canvas-soft text-ink-mute hover:text-ink-primary transition-colors border border-hairline"
+            className="p-1.5 rounded-full hover:bg-canvas-soft text-ink-mute hover:text-ink-primary transition-colors border border-hairline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             title="Tutup (ESC)"
+            aria-label="Tutup Jendela Eksplorasi Kata"
           >
             <X className="w-4 h-4" />
           </button>
