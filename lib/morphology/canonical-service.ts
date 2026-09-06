@@ -6,6 +6,7 @@ import { stripArabicHarakat, isQuranicParticle, findBestMatchingRoot, inferGramm
 import { buckwalterToArabic } from './buckwalter';
 import { getRootOccurrencesFromChunk } from './morphology-service';
 import { CURATED_WORD_DICTIONARY, getWordDetailedExplanation } from '../search/word-dictionary';
+import { getQuranicParticleInfo } from './particles-dictionary';
 import { VerseOccurrence, DerivativeWord } from '../types/morphology';
 import { getLaneRootRecord, getLaneEntryForLemma, getLaneLemmaRecord } from '../lexicon/lane-loader';
 import { LexicalLookupResult, LaneRootLexicon } from '../lexicon/types';
@@ -341,9 +342,13 @@ export function getCanonicalWordDetail(
   const normCleanArabic = cleanArabic.replace(/^[وفلبك]/, '');
   const curatedDict = CURATED_WORD_DICTIONARY[cleanArabic] || CURATED_WORD_DICTIONARY[normCleanArabic] || CURATED_WORD_DICTIONARY[displayArabic];
   const detailedExplanation = getWordDetailedExplanation(displayArabic);
+  const particleInfo = isParticle ? (getQuranicParticleInfo(cleanArabic) || getQuranicParticleInfo(displayArabic)) : null;
   const semanticProfile = matchedRoot ? getRootSemanticProfile(matchedRoot.id) : null;
 
   let primaryMeaning = curatedDict?.primaryMeaning;
+  if (!primaryMeaning && particleInfo) {
+    primaryMeaning = particleInfo.primaryMeaning;
+  }
   if (!primaryMeaning && detailedExplanation.primaryMeaning && detailedExplanation.primaryMeaning !== 'Kata dalam Al-Qur\'an' && detailedExplanation.primaryMeaning !== 'Kata Al-Qur\'an') {
     primaryMeaning = detailedExplanation.primaryMeaning;
   }
@@ -352,22 +357,24 @@ export function getCanonicalWordDetail(
       primaryMeaning = semanticProfile.coreMeaning;
     } else if (matchedRoot?.titleIndo && !matchedRoot.titleIndo.startsWith('Konsep & Turunan') && !matchedRoot.titleIndo.startsWith('Akar Kata')) {
       primaryMeaning = matchedRoot.titleIndo;
-    } else if (matchedRoot?.meaningsIndonesian && matchedRoot.meaningsIndonesian.length > 0 && !matchedRoot.meaningsIndonesian[0].startsWith('Gagasan pokok')) {
+    } else if (matchedRoot?.meaningsIndonesian && matchedRoot.meaningsIndonesian.length > 0 && !matchedRoot.meaningsIndonesian[0].startsWith('Gagasan pokok') && !matchedRoot.meaningsIndonesian[0].startsWith('Ragam makna')) {
       primaryMeaning = matchedRoot.meaningsIndonesian[0];
     } else if (isParticle) {
-      primaryMeaning = 'Partikel / kata tugas (Harf)';
+      primaryMeaning = 'Partikel / Kata Tugas (Harf)';
     }
   }
 
   let meanings = curatedDict?.meanings ||
-    (isParticle
-      ? [
-          'Partikel / kata tugas (Harf) yang menghubungkan makna antar-kata dalam ayat',
-          'Memiliki hukum i\'rab Mabni (bentuk harakat akhir tetap)'
-        ]
-      : (detailedExplanation.meanings.length > 1
-          ? detailedExplanation.meanings
-          : (semanticProfile?.meaningsIndonesian || (primaryMeaning ? [primaryMeaning] : []))));
+    (particleInfo
+      ? particleInfo.meanings
+      : (isParticle
+          ? [
+              'Partikel / kata tugas (Harf) yang menghubungkan makna antar-kata dalam ayat',
+              'Memiliki hukum i\'rab Mabni (bentuk harakat akhir tetap)'
+            ]
+          : (detailedExplanation.meanings.length > 1
+              ? detailedExplanation.meanings
+              : (semanticProfile?.meaningsIndonesian || (primaryMeaning ? [primaryMeaning] : [])))));
 
   // Occurrences
   const occurrences = matchedRoot

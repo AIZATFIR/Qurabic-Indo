@@ -1,5 +1,6 @@
 import { ROOT_DATABASE } from '../data/roots';
 import { stripArabicHarakat, findBestMatchingRoot, extractArabicRootLetters, inferGrammarRole } from './root-search';
+import { getQuranicParticleInfo } from '../morphology/particles-dictionary';
 
 export interface WordDetailedInfo {
   wordArabic: string;
@@ -208,6 +209,103 @@ export const CURATED_WORD_DICTIONARY: Record<string, {
     grammaticalRole: "Fi'il Madhi Form I",
     posTag: "Fi'il",
     wazanOrForm: "Fi'il Madhi (Fa'ala)"
+  },
+  'كان': {
+    rootLetters: 'ك و ن',
+    rootLatin: 'kwn',
+    rootSlug: 'k-w-n',
+    primaryMeaning: 'Adalah / Menjadi / Senantiasa Ada (Penetapan Wujud)',
+    meanings: [
+      'Penetapan sifat azali dan kesempurnaan Allah yang kekal (misal: "kāna Allāhu \'Alīman Ḥakīmā")',
+      'Fi\'il Naqish (verba kopulatif): Merofa\'kan isim dan menashabkan khabar dalam kalimat ismiyyah',
+      'Menjelaskan kondisi watak atau peristiwa masa lampau umat manusia'
+    ],
+    rootExplanation: 'Akar kata ك و ن melandasi gagasan penetapan eksistensi (al-kaun wal-wujud) dan peralihan kondisi.',
+    grammaticalRole: "Fi'il Madhi Naqish Form I",
+    posTag: "Fi'il",
+    wazanOrForm: "Fi'il Madhi Form I (Fa'ala)",
+    quranicNuances: [
+      'Sering digunakan untuk menetapkan sifat keagungan Allah yang tak terikat waktu',
+      'Digunakan untuk menceritakan kondisi umat-umat terdahulu'
+    ]
+  },
+  'كانوا': {
+    rootLetters: 'ك و ن',
+    rootLatin: 'kwn',
+    rootSlug: 'k-w-n',
+    primaryMeaning: 'Mereka (dahulu) senantiasa / Adalah mereka',
+    meanings: [
+      'Menunjukkan kebiasaan atau perilaku berulang kaum terdahulu di masa lampau',
+      'Fi\'il Madhi Naqish bersambung dengan Wawu Jama\'ah sebagai Isim Kāna',
+      'Khabar setelahnya menjelaskan perbuatan yang terus mereka lakukan'
+    ],
+    rootExplanation: 'Akar kata ك و ن bermakna wujud dan kesinambungan keadaan.',
+    grammaticalRole: "Fi'il Madhi Naqish dengan Wawu Jama'ah",
+    posTag: "Fi'il",
+    wazanOrForm: "Fi'il Madhi Jamak Mudzakkar",
+    quranicNuances: [
+      'Dipakai dalam peringatan: "kānū lā yatanāhauna \'an munkarin fa\'alūh"',
+      'Menjelaskan tabiat orang beriman atau orang munafik'
+    ]
+  },
+  'يكون': {
+    rootLetters: 'ك و ن',
+    rootLatin: 'kwn',
+    rootSlug: 'k-w-n',
+    primaryMeaning: 'Menjadi / Terjadi / Berada',
+    meanings: [
+      'Fi\'il Mudhari\' Naqish yang menunjukkan proses terjadinya suatu keadaan di masa kini atau nanti',
+      'Bentuk pembentukan wujud yang terjadi secara berkesinambungan'
+    ],
+    rootExplanation: 'Akar kata ك و ن bermakna kemunculan wujud nyata (al-kaun).',
+    grammaticalRole: "Fi'il Mudhari' Naqish Form I",
+    posTag: "Fi'il",
+    wazanOrForm: "Fi'il Mudhari' Form I (Yaf'ūlu)"
+  },
+  'تكون': {
+    rootLetters: 'ك و ن',
+    rootLatin: 'kwn',
+    rootSlug: 'k-w-n',
+    primaryMeaning: 'Engkau menjadi / Dia (perempuan) menjadi / Terjadi',
+    meanings: [
+      'Fi\'il Mudhari\' Naqish mukhatab (kamu) atau ghaibah mu\'annats (dia wanita/benda jamak)',
+      'Menunjukkan kondisi atau wujud yang sedang/akan terjadi'
+    ],
+    rootExplanation: 'Akar kata ك و ن berkaitan dengan terwujudnya suatu kondisi.',
+    grammaticalRole: "Fi'il Mudhari' Naqish Form I",
+    posTag: "Fi'il",
+    wazanOrForm: "Fi'il Mudhari' Form I (Taf'ūlu)"
+  },
+  'كن': {
+    rootLetters: 'ك و ن',
+    rootLatin: 'kwn',
+    rootSlug: 'k-w-n',
+    primaryMeaning: 'Jadilah! (Perintah Penciptaan Mutlak)',
+    meanings: [
+      'Fi\'il Amr (kata kerja perintah) titah penciptaan seketika dari Allah swt',
+      'Menunjukkan kekuasaan mutlak di mana titah Ilahi langsung mewujud tanpa halangan ("Kun fa yakūn")'
+    ],
+    rootExplanation: 'Akar kata ك و ن melambangkan kehendak wujud tertinggi dari Sang Pencipta.',
+    grammaticalRole: "Fi'il Amr Mabni 'alas-Sukun",
+    posTag: "Fi'il",
+    wazanOrForm: "Fi'il Amr Form I (Uf'ul)",
+    quranicNuances: [
+      'Digunakan pada ayat penciptaan alam semesta dan penciptaan Nabi Isa as: "Idzā qadhā amran fa innamā yaqūlu lahū kun fa yakūn"'
+    ]
+  },
+  'مكان': {
+    rootLetters: 'ك و ن',
+    rootLatin: 'kwn',
+    rootSlug: 'k-w-n',
+    primaryMeaning: 'Tempat / Kedudukan / Ruang Keberadaan',
+    meanings: [
+      'Isim Makan: Ruang fisik atau lokasi berlangsungnya suatu peristiwa',
+      'Martabat, derajat, atau kedudukan seseorang dalam tatanan moral'
+    ],
+    rootExplanation: 'Akar kata ك و ن melandasi kata benda tempat wujud (makān).',
+    grammaticalRole: 'Isim Makan (Nomina Lokatif)',
+    posTag: 'Isim',
+    wazanOrForm: 'Isim Makan (Maf\'āl)'
   },
   'بسم': {
     rootLetters: 'س م و',
@@ -559,16 +657,59 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
     }
   }
 
+  // 1b. Check Quranic Particle (Harf / Kata Tugas) Dictionary
+  const particleInfo = getQuranicParticleInfo(wordArabic);
+  if (particleInfo) {
+    return {
+      wordArabic,
+      rootLetters: 'Tanpa Akar (Harf)',
+      rootLatin: 'harf',
+      primaryMeaning: particleInfo.primaryMeaning,
+      meanings: particleInfo.meanings,
+      rootExplanation: particleInfo.syntaxExplanation,
+      grammaticalRole: particleInfo.grammaticalRole,
+      posTag: 'Harf',
+      wazanOrForm: 'Mabni (Bentuk Tetap)',
+      quranicNuances: particleInfo.quranicNuances,
+      isVerified: true,
+      sourceCitation: "Kajian Nahwu & I'rab Al-Qur'an (Kemenag RI & QAC)"
+    };
+  }
+
   // 2. Check match with ROOT_DATABASE (EXACT MATCH ONLY)
   const matchedRoot = findBestMatchingRoot(wordArabic, defaultMeaningIndo);
   const grammar = inferGrammarRole(wordArabic, defaultMeaningIndo);
   const extractedRoot = matchedRoot ? matchedRoot.rootArabic : extractArabicRootLetters(wordArabic);
 
   if (matchedRoot) {
-    const cleanedMeaning = cleanGlossToIndonesian(defaultMeaningIndo, matchedRoot.titleIndo);
-    const additionalMeanings = matchedRoot.meaningsIndonesian.length > 0
-      ? matchedRoot.meaningsIndonesian
-      : [cleanedMeaning];
+    // Sanitize title and additional meanings to NEVER return template filler
+    let cleanedMeaning = defaultMeaningIndo ? cleanGlossToIndonesian(defaultMeaningIndo) : '';
+    if (!cleanedMeaning || cleanedMeaning.startsWith('Konsep & Turunan') || cleanedMeaning.startsWith('Akar kata') || cleanedMeaning === 'Kata dalam Al-Qur\'an') {
+      if (matchedRoot.titleIndo && !matchedRoot.titleIndo.startsWith('Konsep & Turunan') && !matchedRoot.titleIndo.startsWith('Akar kata')) {
+        cleanedMeaning = matchedRoot.titleIndo;
+      } else {
+        cleanedMeaning = grammar.posCategory === "Fi'il"
+          ? `Bentuk Kata Kerja (Fi'il) dari akar ${matchedRoot.rootArabic}`
+          : `Bentuk Kata Benda (Isim) dari akar ${matchedRoot.rootArabic}`;
+      }
+    }
+
+    const filteredMeanings = (matchedRoot.meaningsIndonesian || []).filter(
+      (m) =>
+        !m.startsWith('Gagasan pokok yang terhimpun') &&
+        !m.startsWith('Ragam makna kontekstual') &&
+        !m.startsWith('Konsep & Turunan')
+    );
+
+    const safeMeanings = [
+      cleanedMeaning,
+      ...filteredMeanings.filter((m) => m !== cleanedMeaning)
+    ];
+
+    let safeExplanation = matchedRoot.coreMeaning || '';
+    if (safeExplanation.includes('memiliki peranan penting dalam kosakata Al-Qur\'an dengan berbagai bentuk turunan verba')) {
+      safeExplanation = `Akar kata ${matchedRoot.rootArabic} (${matchedRoot.rootLatin}) memiliki frekuensi ${matchedRoot.totalOccurrences} kemunculan morfologis dalam Al-Qur'an (${matchedRoot.verbsCount} verba, ${matchedRoot.nounsCount} nomina).`;
+    }
 
     return {
       wordArabic,
@@ -576,8 +717,8 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
       rootSlug: matchedRoot.id,
       rootLatin: matchedRoot.rootLatin,
       primaryMeaning: cleanedMeaning,
-      meanings: [cleanedMeaning, ...additionalMeanings.filter(m => m !== cleanedMeaning)],
-      rootExplanation: matchedRoot.coreMeaning || `Akar kata ${matchedRoot.rootArabic} (${matchedRoot.rootLatin}) memiliki ${matchedRoot.totalOccurrences} kemunculan morfologis dalam Al-Qur'an.`,
+      meanings: safeMeanings.length > 0 ? safeMeanings : [cleanedMeaning],
+      rootExplanation: safeExplanation || `Akar kata ${matchedRoot.rootArabic} (${matchedRoot.rootLatin}) memiliki ${matchedRoot.totalOccurrences} kemunculan morfologis dalam Al-Qur'an.`,
       grammaticalRole: grammar.posDetail,
       posTag: grammar.posCategory,
       wazanOrForm: grammar.wazanOrPattern,

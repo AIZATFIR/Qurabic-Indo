@@ -37,7 +37,7 @@ export default function RandomAyahPage() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [activeTab, setActiveTab] = useState<'mushaf' | 'wbw'>('mushaf');
+  const [activeTab, setActiveTab] = useState<'wbw' | 'mushaf' | 'both'>('wbw');
 
   async function fetchRandomAyah() {
     setLoading(true);
@@ -232,29 +232,110 @@ export default function RandomAyahPage() {
             </div>
           </div>
 
-          {/* Authentic Continuous Mushaf Arabic Verse (Clean Natural RTL Flow) */}
-          <div className="py-4 text-right" dir="rtl">
-            <p
-              dir="rtl"
-              className="font-arabic text-3xl sm:text-4xl lg:text-5xl text-ink-primary leading-[2.6] sm:leading-[2.8] tracking-wide"
-            >
-              {ayah.words.map((w, idx) => {
-                if (w.charType === 'end') {
-                  return (
-                    <span
-                      key={idx}
-                      className="text-primary font-bold text-2xl sm:text-3xl px-2 font-arabic select-none inline-block align-middle"
-                      dir="rtl"
-                    >
-                      {w.arabic || `﴿${ayah.ayahNumber}﴾`}
-                    </span>
-                  );
-                }
+          {/* Display Mode Tabs */}
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline pb-3">
+            <div className="flex items-center space-x-1 p-1 bg-canvas-soft rounded-2xl border border-hairline">
+              <button
+                onClick={() => setActiveTab('wbw')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all font-sans ${
+                  activeTab === 'wbw'
+                    ? 'bg-primary text-white shadow-subtle'
+                    : 'text-ink-secondary hover:text-ink-primary'
+                }`}
+              >
+                Kata per Kata (WBW)
+              </button>
+              <button
+                onClick={() => setActiveTab('mushaf')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all font-sans ${
+                  activeTab === 'mushaf'
+                    ? 'bg-primary text-white shadow-subtle'
+                    : 'text-ink-secondary hover:text-ink-primary'
+                }`}
+              >
+                Teks Mushaf Penuh
+              </button>
+              <button
+                onClick={() => setActiveTab('both')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all font-sans ${
+                  activeTab === 'both'
+                    ? 'bg-primary text-white shadow-subtle'
+                    : 'text-ink-secondary hover:text-ink-primary'
+                }`}
+              >
+                Keduanya
+              </button>
+            </div>
 
-                return (
+            <span className="text-xs text-ink-mute font-sans hidden sm:inline-block">
+              {ayah.words.filter(w => w.charType === 'word').length} Kata Terindeks
+            </span>
+          </div>
+
+          {/* Authentic Continuous Mushaf Arabic Verse (Clean Natural RTL Flow) */}
+          {(activeTab === 'mushaf' || activeTab === 'both') && (
+            <div className="py-4 text-right" dir="rtl">
+              <p
+                dir="rtl"
+                className="font-arabic text-3xl sm:text-4xl lg:text-5xl text-ink-primary leading-[2.6] sm:leading-[2.8] tracking-wide"
+              >
+                {ayah.words.map((w, idx) => {
+                  if (w.charType === 'end') {
+                    return (
+                      <span
+                        key={idx}
+                        className="text-primary font-bold text-2xl sm:text-3xl px-2 font-arabic select-none inline-block align-middle"
+                        dir="rtl"
+                      >
+                        {w.arabic || `﴿${ayah.ayahNumber}﴾`}
+                      </span>
+                    );
+                  }
+
+                  return (
+                    <QuranWordInteractive
+                      key={idx}
+                      mode="inline"
+                      wordArabic={w.arabic}
+                      transliteration={w.transliteration}
+                      meaningIndo={w.meaningIndo}
+                      posTag={w.posTag}
+                      posDetail={w.posDetail}
+                      matchedRootSlug={w.rootSlug}
+                      rootLetters={w.rootLetters}
+                      audioUrl={w.audioUrl}
+                      ayahArabic={ayah.verseArabic}
+                      ayahIndo={ayah.verseIndo}
+                      surahNumber={ayah.surahNumber}
+                      ayahNumber={ayah.ayahNumber}
+                      wordIndex={w.position || (idx + 1)}
+                      surahNameIndo={ayah.surahNameIndo}
+                    />
+                  );
+                })}
+              </p>
+            </div>
+          )}
+
+          {/* Word-by-Word Analysis (Kata per Kata) */}
+          {(activeTab === 'wbw' || activeTab === 'both') && (
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center justify-between border-b border-hairline pb-2">
+                <span className="text-xs font-semibold text-ink-primary uppercase tracking-wider flex items-center space-x-1.5 font-sans">
+                  <Layers className="w-3.5 h-3.5 text-primary" />
+                  <span>Analisis Kata per Kata (Transliterasi & Arti Terjemahan):</span>
+                </span>
+                <span className="text-xs text-ink-mute font-sans">
+                  Klik tiap kartu untuk Bedah Leksikal
+                </span>
+              </div>
+
+              <div className="flex flex-wrap gap-2.5 pt-1 items-stretch justify-start" dir="rtl">
+                {ayah.words.filter(w => w.charType === 'word').map((w, idx) => (
                   <QuranWordInteractive
                     key={idx}
-                    mode="inline"
+                    mode="stacked"
+                    showInlineMeaning={true}
                     wordArabic={w.arabic}
                     transliteration={w.transliteration}
                     meaningIndo={w.meaningIndo}
@@ -270,10 +351,10 @@ export default function RandomAyahPage() {
                     wordIndex={w.position || (idx + 1)}
                     surahNameIndo={ayah.surahNameIndo}
                   />
-                );
-              })}
-            </p>
-          </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Indonesian Kemenag Translation */}
           <div className="p-5 sm:p-6 bg-canvas-soft border border-hairline rounded-2xl space-y-1.5">
@@ -283,42 +364,6 @@ export default function RandomAyahPage() {
             <p className="text-sm sm:text-base translation-kemenag text-ink-secondary leading-relaxed font-sans">
               &ldquo;{ayah.verseIndo}&rdquo;
             </p>
-          </div>
-
-          {/* Word-by-Word Analysis (Kata per Kata) */}
-          <div className="space-y-3 pt-2">
-            <div className="flex items-center justify-between border-b border-hairline pb-2">
-              <span className="text-xs font-semibold text-ink-primary uppercase tracking-wider flex items-center space-x-1.5">
-                <Layers className="w-3.5 h-3.5 text-primary" />
-                <span>Analisis Kata per Kata (Klik untuk Bedah Leksikal):</span>
-              </span>
-              <span className="text-xs text-ink-mute">
-                {ayah.words.filter(w => w.charType === 'word').length} Kata
-              </span>
-            </div>
-
-            <div className="flex flex-wrap gap-2 pt-1" dir="rtl">
-              {ayah.words.filter(w => w.charType === 'word').map((w, idx) => (
-                <QuranWordInteractive
-                  key={idx}
-                  mode="stacked"
-                  wordArabic={w.arabic}
-                  transliteration={w.transliteration}
-                  meaningIndo={w.meaningIndo}
-                  posTag={w.posTag}
-                  posDetail={w.posDetail}
-                  matchedRootSlug={w.rootSlug}
-                  rootLetters={w.rootLetters}
-                  audioUrl={w.audioUrl}
-                  ayahArabic={ayah.verseArabic}
-                  ayahIndo={ayah.verseIndo}
-                  surahNumber={ayah.surahNumber}
-                  ayahNumber={ayah.ayahNumber}
-                  wordIndex={w.position || (idx + 1)}
-                  surahNameIndo={ayah.surahNameIndo}
-                />
-              ))}
-            </div>
           </div>
 
           {/* Direct Navigation Call-to-Action to Full Mushaf Reading Page */}

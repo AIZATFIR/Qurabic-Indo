@@ -471,6 +471,152 @@ export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
       'Kemunafikan dan pengingkaran ikrar iman',
       'Kebatilan dan kepalsuan klaim sesat'
     ]
+  },
+
+  // 9. k-w-n (ك و ن) - Dominant Existential & Creation Root (1,390 Occurrences)
+  'k-w-n': {
+    titleIndo: 'Wujud / Keberadaan / Terjadi / Menjadi / Kepastian Ketetapan (Kāna / Kun)',
+    coreMeaning:
+      'Akar ك و ن melandasi gagasan penetapan wujud (al-kaun wal-wujūd), kepastian eksistensi suatu hal, peralihan keadaan (ash-shairūrah), dan kehendak penciptaan mutlak Allah melalui titah "Kun fa yakūn". Dalam bahasa Arab Al-Qur\'an, kata kerja kāna bukan sekadar predikat lampau biasa, melainkan sering berfungsi menetapkan sifat azali dan kekal bagi Allah swt.',
+    usagePatterns: [
+      {
+        title: 'Penetapan Sifat Azali & Kekal Allah (Kāna Allāhu...)',
+        description: 'Bentuk verba yang menetapkan bahwa sifat kesempurnaan Allah (Maha Pengampun, Maha Mengetahui, Maha Bijaksana) senantiasa ada dan tidak pernah terputus oleh dimensi waktu.',
+        examples: ['وَكَانَ اللَّهُ غَفُورًا رَحِيمًا', 'وَكَانَ اللَّهُ عَلِيمًا حَكِيمًا', 'وَكَانَ اللَّهُ بِمَا تَعْمَلُونَ بَصِيرًا']
+      },
+      {
+        title: 'Titah Penciptaan Mutlak (Kun fa Yakūn)',
+        description: 'Bentuk fi\'il amr (perintah "Kun") yang menunjukkan keagungan kuasa Allah di mana segala sesuatu tercipta seketika tanpa perantara yang rumit saat Dia berkehendak.',
+        examples: ['إِذَا قَضَىٰ أَمْرًا فَإِنَّمَا يَقُولُ لَهُ كُنْ فَيَكُونُ', 'إِنَّمَا أَمْرُهُ إِذَا أَرَادَ شَيْئًا أَنْ يَقُولَ لَهُ كُنْ فَيَكُونُ']
+      },
+      {
+        title: 'Peristiwa Masa Lampau & Kondisi Umat Terdahulu',
+        description: 'Menjelaskan sejarah, watak, dan keadaan umat manusia serta akibat dari ketaatan atau keingkaran mereka.',
+        examples: ['كَانُوا لَا يَتَنَاهَوْنَ عَنْ مُنْكَرٍ فَعَلُوهُ', 'كَانَ النَّاسُ أُمَّةً وَاحِدَةً']
+      },
+      {
+        title: 'Nomina Tempat & Kedudukan (Makān / Makānah)',
+        description: 'Bentuk isim makan yang menunjukkan tempat fisik, kedudukan terhormat, atau ruang keberadaan suatu entitas.',
+        examples: ['مَكَانًا شَرْقِيًّا', 'مَكَانًا عَلِيًّا', 'اعْمَلُوا عَلَىٰ مَكَانَتِكُمْ']
+      }
+    ],
+    contextualNote:
+      'Imam Ar-Raghib Al-Ashfahani dalam Al-Mufradat menjelaskan bahwa "al-kaun" adalah pemunculan sesuatu dari ketiadaan menuju keberadaan nyata, sedangkan dalam kalam Ilahi kata "kāna" menegaskan hakikat yang pasti dan tak tergoyahkan.',
+    meaningsIndonesian: [
+      'Penetapan keberadaan dan hakikat sifat kekal Allah (kāna Allāh)',
+      'Titah penciptaan seketika dengan kehendak mutlak (Kun fa yakūn)',
+      'Kondisi, tabiat, dan rekam jejak perilaku manusia (kānū)',
+      'Tempat, ruang eksistensi, dan kedudukan martabat (makān)'
+    ]
+  },
+
+  // 10. A-l-h (ا ل ه) - The Supreme Divine Root (2,851 Occurrences)
+  'A-l-h': {
+    titleIndo: 'Ketuhanan / Sembahan yang Haq / Pengagungan & Cinta Mutlak (Allāh / Ilāh)',
+    coreMeaning:
+      'Akar ا ل ه melandasi gagasan ketundukan batin yang disertai rasa cinta mendalam (al-mahabbah), ketakjuban, dan pengagungan mutlak kepada Dzat Yang Maha Melindungi (Al-Ma\'lūh). Dari akar inilah lahir nama agung Allah (Lafzhul Jalālah) serta kata Ilāh (Tuhan sesembahan).',
+    usagePatterns: [
+      {
+        title: 'Lafzhul Jalālah (Allāh)',
+        description: 'Nama Dzat Yang Maha Suci, poros seluruh nama-nama indah (Asmaul Husna), yang mencakup segala sifat kesempurnaan mutlak.',
+        examples: ['اللَّهِ', 'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ', 'قُلْ هُوَ اللَّهُ أَحَدٌ']
+      },
+      {
+        title: 'Konsep Ketuhanan & Pemurnian Tauhid (Ilāh)',
+        description: 'Pernyataan bahwa tidak ada sesembahan yang berhak diibadahi dengan benar di alam semesta selain Dzat Yang Tunggal.',
+        examples: ['وَإِلَٰهُكُمْ إِلَٰهٌ وَاحِدٌ', 'لَا إِلَٰهَ إِلَّا أَنْتَ سُبْحَانَكَ']
+      }
+    ],
+    contextualNote:
+      'Ibnu Katsir dan para ahli tafsir menegaskan bahwa nama Allah adalah al-ism al-a\'zham (nama paling agung) yang tidak boleh disematkan kepada selain Dzat Pencipta.',
+    meaningsIndonesian: [
+      'Dzat Yang Maha Suci, Esa, dan Satu-satunya yang berhak disembah (Allāh)',
+      'Sesembahan yang ditaati dengan penuh cinta dan ketundukan batin (Ilāh)',
+      'Pemurnian Tauhid dan penolakan tandingan sekutu bagi-Nya'
+    ]
+  },
+
+  // 11. r-b-b (ر ب ب) - Divine Lordship & Nurturance (980 Occurrences)
+  'r-b-b': {
+    titleIndo: 'Pemeliharaan / Pendidik / Pemilik / Pengatur Semesta (Ar-Rabb)',
+    coreMeaning:
+      'Akar ر ب ب berkaitan dengan tindakan merawat, memelihara, mendidik, dan membimbing suatu ciptaan tahap demi tahap menuju kesempurnaan hakikinya (at-tarbiyah). Ar-Rabb adalah Penguasa yang mengurus seluruh kebutuhan hamba-Nya dengan penuh kasih dan hikmah.',
+    usagePatterns: [
+      {
+        title: 'Rabb Semesta Alam (Rabbul-\'Ālamīn)',
+        description: 'Gelar ketuhanan yang menegaskan bahwa seluruh galaksi, alam malaikat, jin, dan manusia berada di bawah asuhan dan pengawasan Allah.',
+        examples: ['الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ', 'قَالَ فِرْعَوْنُ وَمَا رَبُّ الْعَالَمِينَ']
+      },
+      {
+        title: 'Munajat Hamba kepada Sang Pemelihara (Rabbanā / Rabbī)',
+        description: 'Seruan doa yang paling sering dipanjatkan para nabi dan orang-orang saleh saat memohon ampunan, bimbingan, dan ketabahan.',
+        examples: ['رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً', 'رَبِّ اغْفِرْ لِي وَلِوَالِدَيَّ']
+      }
+    ],
+    contextualNote:
+      'Ibnu Jarir Ath-Thabari menjelaskan bahwa Ar-Rabb adalah Dzat yang memiliki hak kepemilikan mutlak (Al-Malik), yang ditaati perintah-Nya (As-Sayyid), dan yang memperbaiki urusan makhluk-Nya (Al-Mushlih).',
+    meaningsIndonesian: [
+      'Pemilik, Pencipta, dan Penguasa mutlak seluruh alam (Ar-Rabb)',
+      'Pendidik dan pembimbing ruhani manusia tahap demi tahap (At-Tarbiyah)',
+      'Tumpuan permohonan doa dan pertolongan hidup (Rabbanā)'
+    ]
+  },
+
+  // 12. E-m-l (ع م ل) - Action & Moral Praxis (360 Occurrences)
+  'E-m-l': {
+    titleIndo: 'Amal / Bekerja / Perbuatan Nyata / Konsekuensi Moral (\'Amila / \'Amal)',
+    coreMeaning:
+      'Akar ع م ل merujuk pada perbuatan yang dilakukan dengan niat, kesadaran akal, dan kehendak ikhtiar manusia. Dalam Al-Qur\'an, amal saleh hampir selalu digandengkan berdampingan dengan iman sebagai pembuktian nyata dari keyakinan batin.',
+    usagePatterns: [
+      {
+        title: 'Amal Saleh Pasangan Keimanan',
+        description: 'Tindakan kebajikan yang sesuai syariat dan ikhlas karena Allah sebagai prasyarat keselamatan akhirat.',
+        examples: ['الَّذِينَ آمَنُوا وَعَمِلُوا الصَّالِحَاتِ', 'فَمَنْ يَعْمَلْ مِثْقَالَ ذَرَّةٍ خَيْرًا يَرَهُ']
+      },
+      {
+        title: 'Balasan dan Rekam Jejak Perbuatan',
+        description: 'Penegasan bahwa setiap manusia akan menuai hasil amalannya secara adil tanpa ada yang dizalimi.',
+        examples: ['لِيَجْزِيَ الَّذِينَ أَسَاءُوا بِمَا عَمِلُوا', 'وَوُفِّيَتْ كُلُّ نَفْسٍ مَا عَمِلَتْ']
+      }
+    ],
+    contextualNote:
+      'Al-Qur\'an menegaskan konsep integritas amaliyah: iman tanpa amal adalah kekosongan, sedangkan amal tanpa iman laksana debu yang diterbangkan angin.',
+    meaningsIndonesian: [
+      'Bekerja, bertindak, dan berbuat dengan niat ikhtiar (\'Amila)',
+      'Amal saleh kebajikan sebagai bukti keimanan sejati',
+      'Catatan dan pertanggungjawaban amalan di mahkamah Ilahi'
+    ]
+  },
+
+  // 13. d-x-l (د خ ل) - Entering, Commitment & Sanctuary (126 Occurrences)
+  'd-x-l': {
+    titleIndo: 'Masuk / Merasuk / Menembus / Memasuki Naungan (Dakhala / Udkhulū)',
+    coreMeaning:
+      'Akar د خ ل berkaitan dengan tindakan masuk, melangkah ke dalam suatu ruang, kondisi, atau ikatan perlindungan (lawan dari kharaja / keluar). Dalam Al-Qur\'an, akar ini melambangkan komitmen total memasuki kepatuhan (Islam kaffah) dan anugerah memasuki surga yang penuh keselamatan.',
+    usagePatterns: [
+      {
+        title: 'Perintah Komitmen Menyeluruh (Udkhulū fīs-Silmi)',
+        description: 'Seruan kepada orang beriman untuk memasuki kedamaian Islam secara menyeluruh tanpa setengah hati.',
+        examples: ['يَا أَيُّهَا الَّذِينَ آمَنُوا ادْخُلُوا فِي السِّلْمِ كَافَّةً']
+      },
+      {
+        title: 'Memasuki Negeri Damai & Kenikmatan Surga (Jannāt)',
+        description: 'Undangan kehormatan bagi jiwa yang tenang untuk melangkah masuk ke dalam surga Allah.',
+        examples: ['ادْخُلُوهَا بِسَلَامٍ ذَٰلِكَ يَوْمُ الْخُلُودِ', 'فَادْخُلِي فِي عِبَادِي وَادْخُلِي جَنَّتِي']
+      },
+      {
+        title: 'Ketaatan Berkelompok ke dalam Agama Allah',
+        description: 'Menggambarkan fenomena hijrah dan masuknya manusia berbondong-bondong ke dalam naungan hidayah.',
+        examples: ['وَرَأَيْتَ النَّاسَ يَدْخُلُونَ فِي دِينِ اللَّهِ أَفْوَاجًا']
+      }
+    ],
+    contextualNote:
+      'Lisan al-\'Arab menjelaskan bahwa "ad-dukhūl" adalah penembusan batas luar menuju ruang inti yang dilindungi, menggambarkan keberserahan utuh seorang hamba.',
+    meaningsIndonesian: [
+      'Masuk dan menembus ke dalam suatu tempat atau ruang terlindung (Dakhala)',
+      'Komitmen utuh memasuki ajaran Islam secara kafah (Udkhulū)',
+      'Anugerah memasuki surga keselamatan abadi di akhirat'
+    ]
   }
 };
 

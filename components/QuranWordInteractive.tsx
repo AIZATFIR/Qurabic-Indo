@@ -174,19 +174,22 @@ function QuranWordInteractiveComponent({
           onClick={handleClick}
           onKeyDown={handleKeyDown}
           aria-label={a11yLabel}
-          className="inline-flex flex-col items-center justify-center px-1.5 py-1 rounded-2xl hover:bg-primary-subdued/80 hover:ring-2 hover:ring-primary/40 dark:hover:bg-slate-800 transition-all cursor-pointer select-none active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-center group my-1.5 mx-0.5"
-          title="Klik untuk Bedah Akar Kata & Definisi"
+          className="inline-flex flex-col items-center justify-between px-2.5 py-2 rounded-2xl bg-canvas-soft/80 hover:bg-primary-subdued/90 border border-hairline/80 hover:border-primary/40 transition-all cursor-pointer select-none active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-center group my-1.5 mx-0.5 min-w-[76px] sm:min-w-[90px] shadow-sm hover:shadow-subtle"
+          title="Klik untuk Bedah Leksikal & Morfologi"
         >
-          <span className="font-arabic text-inherit group-hover:text-primary transition-colors leading-[2.2] sm:leading-[2.4]" dir="rtl">
+          <span className="font-arabic text-2xl sm:text-3xl text-ink-primary group-hover:text-primary transition-colors leading-[2] sm:leading-[2.2]" dir="rtl">
             {wordArabic}
           </span>
           {displayTransliteration && (
-            <span className="text-[10px] sm:text-[11px] font-sans text-ink-mute group-hover:text-primary transition-colors mt-0.5 font-medium italic opacity-85">
+            <span className="text-[10px] sm:text-[11px] font-sans text-ink-mute group-hover:text-primary transition-colors mt-1 font-medium italic opacity-90">
               {displayTransliteration}
             </span>
           )}
           {showInlineMeaning && meaningIndo && (
-            <span className="text-[10px] font-sans text-ink-secondary group-hover:text-primary transition-colors mt-0.5 font-normal max-w-[85px] truncate block opacity-90" title={meaningIndo}>
+            <span
+              className="text-[10.5px] sm:text-[11px] font-sans text-ink-secondary group-hover:text-primary transition-colors mt-1 font-normal max-w-[125px] leading-tight block opacity-95 text-center line-clamp-2"
+              title={meaningIndo}
+            >
               {meaningIndo}
             </span>
           )}
