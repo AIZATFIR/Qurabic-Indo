@@ -71,18 +71,22 @@ export function formatLexiconSenseText(rawText: string): string {
 
   // Expand standard lexicographical abbreviations
   text = text.replace(/\baor\.\s*,?\s*inf\.\s*n\.\s*/gi, "Mudhari' & Masdar: ");
+  text = text.replace(/\bof\s+inf\.\s*n\./gi, 'of masdar');
   text = text.replace(/\binf\.\s*n\.\s*/gi, 'Masdar: ');
   text = text.replace(/\baor\.\s*/gi, "Mudhari': ");
   text = text.replace(/\(assumed tropical:\)/gi, '(Makna Kiasan):');
   text = text.replace(/\(tropical:\)/gi, '(Makna Majas):');
   text = text.replace(/\baccord\.\s*to\s*Kz\./gi, 'menurut Al-Kazzaz');
-  text = text.replace(/\b\(S,\s*K\b/g, '(Aṣ-Ṣiḥāḥ & Al-Qāmūs');
-  text = text.replace(/\b\(S\b/g, '(Aṣ-Ṣiḥāḥ');
-  text = text.replace(/\b\(K\b/g, '(Al-Qāmūs Al-Muḥīṭ');
-  text = text.replace(/\b\(L,\s*K\b/g, '(Lisān al-ʿArab & Al-Qāmūs');
-  text = text.replace(/\b\(L\b/g, '(Lisān al-ʿArab');
-  text = text.replace(/\b\(TA\b/g, '(Tāj al-ʿArūs');
-  text = text.replace(/\b\(Msb\b/g, '(Al-Miṣbāḥ al-Munīr)');
+  text = text.replace(/\(S,\s*K(?=[:\),])/g, '(Aṣ-Ṣiḥāḥ & Al-Qāmūs');
+  text = text.replace(/\(S(?=[:\),])/g, '(Aṣ-Ṣiḥāḥ');
+  text = text.replace(/\(K(?=[:\),])/g, '(Al-Qāmūs');
+  text = text.replace(/\(L,\s*K(?=[:\),])/g, '(Lisān al-ʿArab & Al-Qāmūs');
+  text = text.replace(/\(L(?=[:\),])/g, '(Lisān al-ʿArab');
+  text = text.replace(/\(TA(?=[:\),])/g, '(Tāj al-ʿArūs');
+  text = text.replace(/\(Msb(?=[:\),])/g, '(Al-Miṣbāḥ al-Munīr');
+  text = text.replace(/([;,\s(])MF(?=[:\),])/g, '$1Majduddīn');
+  text = text.replace(/([;,\s(])Sgh(?=[:\),])/g, '$1Aṣ-Ṣaghānī');
+  text = text.replace(/:;/g, ';');
 
   // Tokenize preserving whitespace and delimiters
   const tokens = text.split(/(\s+|[(),;:\[\]"“”]+)/);
