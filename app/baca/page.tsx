@@ -559,7 +559,7 @@ function BacaQuranPageContent() {
                     {showTranslation && ayah.textIndo && (
                       <div className="pt-2">
                         <p className={`${fontTranslationClass} translation-kemenag font-sans text-ink-secondary transition-all`}>
-                          &ldquo;{ayah.textIndo}&rdquo;
+                          &ldquo;{ayah.textIndo.replace(/^[“"']+|[”"']+$/g, '').trim()}&rdquo;
                         </p>
                       </div>
                     )}
