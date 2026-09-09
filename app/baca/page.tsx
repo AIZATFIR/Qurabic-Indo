@@ -14,6 +14,7 @@ import {
   Shuffle,
   Search,
   ChevronDown,
+  ChevronUp,
   Navigation,
   X
 } from 'lucide-react';
@@ -39,6 +40,7 @@ function BacaQuranPageContent() {
   const [isSurahModalOpen, setIsSurahModalOpen] = useState(false);
   const { theme, setTheme, options } = useTheme();
   const [fontSize, setFontSize] = useState<'sm' | 'md' | 'lg' | 'xl'>('lg');
+  const [readingMode, setReadingMode] = useState<'baca' | 'tadabbur'>('tadabbur');
   const [showTranslation, setShowTranslation] = useState(true);
   const [showInlineMeaning, setShowInlineMeaning] = useState(false);
   const [ayahs, setAyahs] = useState<FullAyahWBW[]>([]);
@@ -175,7 +177,27 @@ function BacaQuranPageContent() {
   return (
     <div className="min-h-screen transition-colors duration-200 bg-canvas text-ink-primary">
       
-      {/* Reader Headbar - Non-sticky, Solid Opaque */}
+      {/* Mini Top Action Bar: Lampiran 3 Quick Toggle to Open Headbar & Main Navigation */}
+      <div className="w-full bg-canvas-soft/80 border-b border-hairline py-1.5 px-4 text-center flex items-center justify-between text-[11px] text-ink-mute font-sans">
+        <Link href="/" className="inline-flex items-center space-x-1.5 text-ink-secondary hover:text-primary transition-colors font-medium">
+          <Navigation className="w-3 h-3 text-primary rotate-45" />
+          <span>Beranda Qurabic</span>
+        </Link>
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-canvas-surface border border-hairline hover:border-primary/40 text-ink-primary hover:text-primary transition-all shadow-subtle text-[11px] font-semibold"
+          title="Buka Headbar & Navigasi Utama"
+        >
+          <ChevronUp className="w-3 h-3 text-primary" />
+          <span>Buka Headbar / Menu Utama</span>
+        </button>
+        <div className="hidden sm:flex items-center space-x-3">
+          <Link href="/akar" className="hover:text-primary transition-colors">Indeks Akar</Link>
+          <Link href="/favorit" className="hover:text-primary transition-colors">Tersimpan</Link>
+        </div>
+      </div>
+
+      {/* Reader Headbar - Solid Opaque & Touch-Friendly */}
       <header className="w-full border-b border-hairline px-4 py-2.5 transition-colors duration-200 shadow-subtle bg-canvas">
         <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
           
@@ -209,20 +231,50 @@ function BacaQuranPageContent() {
             </Link>
           </div>
 
-          {/* RIGHT SIDE: Controls (Inline Meaning, Translation, Font Size, Theme) */}
+          {/* RIGHT SIDE: Controls (Mode Baca/Tadabbur, Meaning, Translation, Font Size, Theme) */}
           <div className="flex flex-wrap items-center space-x-1.5 sm:space-x-2 text-xs ml-auto">
-            {/* Inline Word-by-Word Meaning Toggle */}
-            <button
-              onClick={() => setShowInlineMeaning(!showInlineMeaning)}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-medium transition-all ${
-                showInlineMeaning
-                  ? 'bg-primary-subdued text-primary font-semibold ring-1 ring-primary/40'
-                  : 'text-ink-mute hover:bg-canvas-soft'
-              }`}
-              title="Tampilkan / Sembunyikan Terjemahan Per Kata di Bawah Lafaz"
-            >
-              Arti Kata
-            </button>
+            {/* Mode Switcher: Mode Baca vs Mode Tadabbur */}
+            <div className="flex items-center bg-canvas-soft border border-hairline rounded-xl p-0.5 shadow-subtle">
+              <button
+                onClick={() => setReadingMode('baca')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1.5 ${
+                  readingMode === 'baca'
+                    ? 'bg-primary text-white shadow-subtle'
+                    : 'text-ink-secondary hover:text-ink-primary'
+                }`}
+                title="Mode Baca: Tampilan Mushaf Al-Qur'an Alami Mengalir Tanpa Border Kartu"
+              >
+                <span>📖</span>
+                <span>Mode Baca</span>
+              </button>
+              <button
+                onClick={() => setReadingMode('tadabbur')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1.5 ${
+                  readingMode === 'tadabbur'
+                    ? 'bg-primary text-white shadow-subtle'
+                    : 'text-ink-secondary hover:text-ink-primary'
+                }`}
+                title="Mode Tadabbur: Tampilan Kotak Kata Interaktif dengan Transliterasi & Terjemahan"
+              >
+                <span>🔍</span>
+                <span>Mode Tadabbur</span>
+              </button>
+            </div>
+
+            {/* Inline Word-by-Word Meaning Toggle (Only in Tadabbur mode) */}
+            {readingMode === 'tadabbur' && (
+              <button
+                onClick={() => setShowInlineMeaning(!showInlineMeaning)}
+                className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-medium transition-all ${
+                  showInlineMeaning
+                    ? 'bg-primary-subdued text-primary font-semibold ring-1 ring-primary/40'
+                    : 'text-ink-mute hover:bg-canvas-soft'
+                }`}
+                title="Tampilkan / Sembunyikan Terjemahan Per Kata di Bawah Lafaz"
+              >
+                Arti Kata
+              </button>
+            )}
 
             {/* Translation Toggle */}
             <button
@@ -274,8 +326,8 @@ function BacaQuranPageContent() {
         </div>
       </header>
 
-      {/* Main Quran Reader Container */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+      {/* Main Quran Reader Container (Scaled to 125% Comfortable Look) */}
+      <main className="max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
         
         {/* Continuous Scholarly Reading Surface */}
         <div className="bg-canvas-surface rounded-2xl border border-hairline shadow-subtle overflow-hidden">
@@ -520,12 +572,16 @@ function BacaQuranPageContent() {
                     {/* Arabic Text with Interactive Clickable Words */}
                     <div
                       dir="rtl"
-                      className={`font-arabic ${fontArabicClass} text-ink-primary text-right flex flex-wrap items-center justify-start gap-x-2 gap-y-3 leading-loose`}
+                      className={`font-arabic ${fontArabicClass} text-ink-primary text-right flex flex-wrap items-center justify-start ${
+                        readingMode === 'baca'
+                          ? 'gap-x-2 sm:gap-x-3 gap-y-3 sm:gap-y-4 leading-loose'
+                          : 'gap-2.5 sm:gap-3.5 leading-relaxed'
+                      }`}
                     >
                       {ayah.words.map((word, wIdx) => {
                         if (word.charType === 'end') {
                           return (
-                            <span key={`end-${wIdx}`} className="text-primary font-bold text-xl px-2 font-arabic shrink-0 select-none" dir="rtl">
+                            <span key={`end-${wIdx}`} className="text-primary font-bold text-xl sm:text-2xl px-2 font-arabic shrink-0 select-none inline-flex items-center" dir="rtl">
                               {word.arabic || `﴿${ayah.ayahNumber}﴾`}
                             </span>
                           );
@@ -548,7 +604,9 @@ function BacaQuranPageContent() {
                             ayahNumber={ayah.ayahNumber}
                             wordIndex={word.position || (wIdx + 1)}
                             surahNameIndo={currentSurahMeta.nameIndo}
-                            showInlineMeaning={showInlineMeaning}
+                            showInlineMeaning={readingMode === 'tadabbur' ? true : showInlineMeaning}
+                            mode={readingMode === 'baca' ? 'inline' : 'stacked'}
+                            fontSize={fontSize}
                             onWordClick={handleWordClick}
                           />
                         );

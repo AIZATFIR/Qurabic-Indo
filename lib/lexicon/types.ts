@@ -208,6 +208,7 @@ export interface WordStudyViewModel {
     volume?: number;
     page?: number;
     rootPhilosophy?: string;
+    rootTranslation?: string;
     meanings?: string[];
     classicalCitation?: {
       book: string;
@@ -234,5 +235,6 @@ export interface WordStudyViewModel {
     wordIndex?: number;
     ayahArabic?: string;
     ayahIndo?: string;
+    surahNameIndo?: string;
   };
 }

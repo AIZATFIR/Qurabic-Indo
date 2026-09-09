@@ -1,6 +1,7 @@
 import { ROOT_DATABASE } from '../data/roots';
 import { stripArabicHarakat, findBestMatchingRoot, extractArabicRootLetters, inferGrammarRole } from './root-search';
 import { getQuranicParticleInfo } from '../morphology/particles-dictionary';
+import { getAuthenticWordMeaning } from '../morphology/root-dictionary';
 
 export interface WordDetailedInfo {
   wordArabic: string;
@@ -684,13 +685,17 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
   if (matchedRoot) {
     // Sanitize title and additional meanings to NEVER return template filler
     let cleanedMeaning = defaultMeaningIndo ? cleanGlossToIndonesian(defaultMeaningIndo) : '';
-    if (!cleanedMeaning || cleanedMeaning.startsWith('Konsep & Turunan') || cleanedMeaning.startsWith('Akar kata') || cleanedMeaning === 'Kata dalam Al-Qur\'an') {
+    const authenticMeaning = getAuthenticWordMeaning(wordArabic, matchedRoot.id, defaultMeaningIndo);
+
+    if (authenticMeaning && !authenticMeaning.startsWith('Bentuk Kata') && authenticMeaning !== 'Kosakata Al-Qur\'an') {
+      cleanedMeaning = authenticMeaning;
+    } else if (!cleanedMeaning || cleanedMeaning.startsWith('Konsep & Turunan') || cleanedMeaning.startsWith('Akar kata') || cleanedMeaning === 'Kata dalam Al-Qur\'an') {
       if (matchedRoot.titleIndo && !matchedRoot.titleIndo.startsWith('Konsep & Turunan') && !matchedRoot.titleIndo.startsWith('Akar kata')) {
         cleanedMeaning = matchedRoot.titleIndo;
       } else {
-        cleanedMeaning = grammar.posCategory === "Fi'il"
+        cleanedMeaning = authenticMeaning || (grammar.posCategory === "Fi'il"
           ? `Bentuk Kata Kerja (Fi'il) dari akar ${matchedRoot.rootArabic}`
-          : `Bentuk Kata Benda (Isim) dari akar ${matchedRoot.rootArabic}`;
+          : `Bentuk Kata Benda (Isim) dari akar ${matchedRoot.rootArabic}`);
       }
     }
 

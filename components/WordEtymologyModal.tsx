@@ -40,6 +40,7 @@ export default function WordEtymologyModal({
   wordIndex,
   ayahArabic,
   ayahIndo,
+  surahNameIndo,
 }: WordEtymologyModalProps) {
   const [asyncStudy, setAsyncStudy] = useState<WordStudyViewModel | null>(null);
 
@@ -106,7 +107,8 @@ export default function WordEtymologyModal({
     ayahNumber,
     wordIndex,
     ayahArabic,
-    ayahIndo
+    ayahIndo,
+    surahNameIndo
   });
 
   const baseStudy = asyncStudy ? { ...asyncStudy } : { ...initialStudy };
@@ -121,22 +123,23 @@ export default function WordEtymologyModal({
     baseStudy.identity.transliteration = transliteration;
   }
 
-  // If meaningIndo provided from WBW reader, use as primary meaning if study meaning is generic or raw citation
-  if (meaningIndo) {
-    const isGeneric = !baseStudy.primaryMeaning.text ||
-      baseStudy.primaryMeaning.text === "Kosakata Terindeks Al-Qur'an" ||
-      baseStudy.primaryMeaning.text === "Kata dalam Al-Qur'an" ||
-      baseStudy.primaryMeaning.text === "Makna Leksikal Terindeks" ||
-      baseStudy.primaryMeaning.text.startsWith('Konsep & Turunan') ||
-      baseStudy.primaryMeaning.text.startsWith(': see') ||
-      baseStudy.primaryMeaning.text.startsWith('; see') ||
-      baseStudy.primaryMeaning.text.startsWith('and ');
-
-    if (isGeneric) {
-      baseStudy.primaryMeaning.text = meaningIndo.charAt(0).toUpperCase() + meaningIndo.slice(1);
-      baseStudy.primaryMeaning.sourceBadge = 'Terjemahan Kata';
-    }
+  // Always prioritize authentic meaningIndo from WBW reader as the primary meaning
+  if (meaningIndo && meaningIndo.trim()) {
+    baseStudy.primaryMeaning.text = meaningIndo.charAt(0).toUpperCase() + meaningIndo.slice(1);
+    baseStudy.primaryMeaning.sourceBadge = 'Terjemahan Kata';
+    baseStudy.primaryMeaning.isEditorialSummary = false;
   }
+
+  // Ensure context contains all verse and ayah references
+  if (!baseStudy.context) {
+    baseStudy.context = {};
+  }
+  if (surahNumber) baseStudy.context.surahNumber = surahNumber;
+  if (ayahNumber) baseStudy.context.ayahNumber = ayahNumber;
+  if (wordIndex) baseStudy.context.wordIndex = wordIndex;
+  if (ayahArabic) baseStudy.context.ayahArabic = ayahArabic;
+  if (ayahIndo) baseStudy.context.ayahIndo = ayahIndo;
+  if (surahNameIndo) baseStudy.context.surahNameIndo = surahNameIndo;
 
   // If reader provided root or grammar, ensure they populate if missing from initial study
   if (rootLetters && !baseStudy.lexical.rootArabic) {

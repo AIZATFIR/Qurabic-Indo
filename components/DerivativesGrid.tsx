@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Layers, BookOpen, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { DerivativeWord } from '@/lib/types/morphology';
+import { getAuthenticWordMeaning } from '@/lib/morphology/root-dictionary';
 
 interface DerivativesGridProps {
   verbs: DerivativeWord[];
@@ -129,7 +130,9 @@ export default function DerivativesGrid({ verbs = [], nouns = [] }: DerivativesG
                 {/* Primary Indonesian Meaning */}
                 <div className="space-y-1">
                   <p className="text-sm sm:text-base font-semibold text-ink-primary font-sans">
-                    {item.meaningIndo}
+                    {(item.meaningIndo && !item.meaningIndo.startsWith('Nomina (') && !item.meaningIndo.startsWith('Verba (') && !item.meaningIndo.startsWith('Bentuk Kata'))
+                      ? item.meaningIndo
+                      : getAuthenticWordMeaning(item.arabic, undefined, item.meaningIndo)}
                   </p>
                 </div>
               </div>

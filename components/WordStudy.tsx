@@ -21,6 +21,8 @@ import {
 } from 'lucide-react';
 import { WordStudyViewModel } from '@/lib/lexicon/types';
 import { formatLexiconSenseText } from '@/lib/lexicon/lexicon-formatter';
+import { getAuthenticWordMeaning, getRootTranslationProfile } from '@/lib/morphology/root-dictionary';
+import { isRawBuckwalterRoot, transliterateArabic } from '@/lib/morphology/transliteration';
 import SourceDrawer from './SourceDrawer';
 
 interface WordStudyProps {
@@ -47,6 +49,15 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
     provenance,
     context
   } = study;
+
+  const rootProfile = (lexical.rootSlug || lexical.root || lexical.rootArabic)
+    ? getRootTranslationProfile(lexical.rootSlug || lexical.root || lexical.rootArabic)
+    : null;
+  const rootTrans = lexical.rootTranslation || rootProfile?.coreMeaning || (rootProfile?.titleIndo && !rootProfile.titleIndo.startsWith('Konsep') ? rootProfile.titleIndo.replace(/^Akar\s+[^\(]+\(/, '').replace(/\)$/, '') : undefined);
+
+  const displayTransliteration = (identity.transliteration && !isRawBuckwalterRoot(identity.transliteration))
+    ? identity.transliteration
+    : transliterateArabic(identity.arabic);
 
   const handlePlayAudio = () => {
     if (isPlayingAudio) return;
@@ -130,36 +141,57 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
         </div>
 
         {/* Transliteration */}
-        {identity.transliteration && (
+        {displayTransliteration && (
           <p className="text-xs sm:text-sm text-ink-mute font-mono tracking-wider">
-            — {identity.transliteration} —
+            — {displayTransliteration} —
           </p>
         )}
 
-        {/* Primary Readable Meaning Banner */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-canvas-soft border border-hairline space-y-1.5 text-center">
+        {/* Primary Readable Meaning Banner — Main Focus */}
+        <div className="p-5 sm:p-6 rounded-2xl bg-primary/10 border border-primary/20 space-y-2 text-center">
           <div className="flex items-center justify-center space-x-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-mute">
-              Makna Utama
+            <span className="text-xs font-bold uppercase tracking-wider text-primary">
+              Terjemahan Kata
             </span>
             <button
-              onClick={() => openSourceDrawer(primaryMeaning.isEditorialSummary ? 'kemenag-translation' : 'lane-arabic-english-lexicon')}
-              className="text-[10px] px-2 py-0.5 rounded-full bg-canvas-surface border border-hairline text-ink-secondary hover:text-primary hover:border-primary transition-colors font-medium inline-flex items-center space-x-1"
+              onClick={() => openSourceDrawer(primaryMeaning.isEditorialSummary ? 'kemenag-translation' : 'quranic-arabic-corpus')}
+              className="text-[11px] px-2.5 py-0.5 rounded-full bg-canvas-surface border border-hairline text-ink-secondary hover:text-primary hover:border-primary transition-colors font-medium inline-flex items-center space-x-1 shadow-subtle"
             >
-              <span>{primaryMeaning.sourceBadge}</span>
-              <ShieldCheck className="w-2.5 h-2.5" />
+              <span>{primaryMeaning.sourceBadge || 'Kemenag RI'}</span>
+              <ShieldCheck className="w-3 h-3 text-primary" />
             </button>
           </div>
-          <p className="text-base sm:text-lg font-bold text-ink-primary leading-snug">
+          <p className="text-2xl sm:text-3xl font-extrabold text-ink-primary tracking-tight leading-snug">
             {primaryMeaning.text}
           </p>
         </div>
 
+        {/* Konteks Ayat Lengkap (QS. Surah:Ayat) */}
+        {context?.ayahArabic && context?.ayahIndo && (
+          <div className="p-5 sm:p-6 rounded-2xl bg-canvas-soft border border-hairline text-left space-y-3 shadow-subtle">
+            <div className="flex items-center justify-between text-xs text-ink-mute border-b border-hairline pb-2.5">
+              <span className="font-bold text-primary flex items-center space-x-1.5 text-xs sm:text-sm">
+                <BookOpen className="w-4 h-4 text-primary" />
+                <span>Konteks Ayat (QS. {context.surahNameIndo || `Surah ${context.surahNumber}`}: {context.ayahNumber})</span>
+              </span>
+              <span className="text-[11px] font-sans font-medium px-2 py-0.5 rounded-md bg-canvas-surface border border-hairline text-ink-secondary">
+                Mushaf Kemenag RI
+              </span>
+            </div>
+            <p className="font-arabic text-2xl sm:text-3xl leading-[2.4] sm:leading-[2.6] text-right text-ink-primary" dir="rtl">
+              {context.ayahArabic}
+            </p>
+            <p className="text-xs sm:text-sm text-ink-secondary italic leading-relaxed pt-1 border-t border-hairline/60">
+              &ldquo;{context.ayahIndo.replace(/^[“"']+|[”"']+$/g, '').trim()}&rdquo;
+            </p>
+          </div>
+        )}
+
         {/* 3 Crisp Info Chips */}
         <div className="grid grid-cols-3 gap-2 sm:gap-3 text-left">
           {/* Chip 1: Kelas Kata */}
-          <div className="p-3 rounded-2xl bg-canvas-soft border border-hairline space-y-0.5 text-center sm:text-left">
-            <span className="text-[10px] text-ink-mute font-semibold uppercase tracking-wider block flex items-center justify-center sm:justify-start space-x-1">
+          <div className="p-3.5 rounded-2xl bg-canvas-soft border border-hairline space-y-1 text-center sm:text-left">
+            <span className="text-[10px] text-ink-mute font-semibold uppercase tracking-wider flex items-center justify-center sm:justify-start space-x-1">
               <Tag className="w-3 h-3 text-primary hidden sm:inline" />
               <span>Kelas Kata</span>
             </span>
@@ -169,28 +201,35 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
           </div>
 
           {/* Chip 2: Akar Kata */}
-          <div className="p-3 rounded-2xl bg-canvas-soft border border-hairline space-y-0.5 text-center sm:text-left">
-            <span className="text-[10px] text-ink-mute font-semibold uppercase tracking-wider block flex items-center justify-center sm:justify-start space-x-1">
+          <div className="p-3.5 rounded-2xl bg-canvas-soft border border-hairline space-y-1 text-center sm:text-left">
+            <span className="text-[10px] text-ink-mute font-semibold uppercase tracking-wider flex items-center justify-center sm:justify-start space-x-1">
               <Compass className="w-3 h-3 text-primary hidden sm:inline" />
               <span>Akar Kata</span>
             </span>
             {lexical.rootArabic ? (
-              <span className="font-arabic font-bold text-sm sm:text-base text-primary block truncate" dir="rtl">
-                {lexical.rootArabic} {occurrences.totalCount > 0 && <span className="text-[11px] font-sans font-normal text-ink-mute">({occurrences.totalCount}×)</span>}
-              </span>
+              <div className="space-y-0.5">
+                <span className="font-arabic font-bold text-sm sm:text-base text-primary block truncate" dir="rtl">
+                  {lexical.rootArabic} {occurrences.totalCount > 0 && <span className="text-[11px] font-sans font-normal text-ink-mute">({occurrences.totalCount}×)</span>}
+                </span>
+                {rootTrans && (
+                  <span className="text-[10px] text-ink-secondary block truncate font-sans" title={rootTrans}>
+                    {rootTrans}
+                  </span>
+                )}
+              </div>
             ) : (
               <span className="text-xs font-semibold text-ink-mute block truncate">Tanpa Akar</span>
             )}
           </div>
 
           {/* Chip 3: Bentuk / Wazan */}
-          <div className="p-3 rounded-2xl bg-canvas-soft border border-hairline space-y-0.5 text-center sm:text-left">
-            <span className="text-[10px] text-ink-mute font-semibold uppercase tracking-wider block flex items-center justify-center sm:justify-start space-x-1">
+          <div className="p-3.5 rounded-2xl bg-canvas-soft border border-hairline space-y-1 text-center sm:text-left">
+            <span className="text-[10px] text-ink-mute font-semibold uppercase tracking-wider flex items-center justify-center sm:justify-start space-x-1">
               <Layers className="w-3 h-3 text-primary hidden sm:inline" />
-              <span>Wazan (Pola Bentuk)</span>
+              <span>Wazan (Pola)</span>
             </span>
             <span className="text-xs sm:text-sm font-bold text-ink-primary block truncate">
-              {morphology.wazanOrForm || 'Bentuk Baku'}
+              {morphology.wazanOrForm || (morphology.isParticle ? 'Mabni (Bentuk Tetap)' : 'Bentuk Baku')}
             </span>
           </div>
         </div>
@@ -200,7 +239,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
           <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
             <Link
               href={`/baca?surah=${context.surahNumber}&ayah=${context.ayahNumber}`}
-              className="px-4 py-2 rounded-full bg-primary hover:bg-primary-deep text-white text-xs font-semibold shadow-subtle transition-all inline-flex items-center space-x-1.5"
+              className="px-5 py-2.5 rounded-full bg-primary hover:bg-primary-deep text-white text-xs font-semibold shadow-subtle transition-all inline-flex items-center space-x-1.5"
             >
               <span>Buka di Mushaf (QS. {context.surahNumber}:{context.ayahNumber})</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -208,10 +247,10 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
             {lexical.rootSlug && !morphology.isParticle && (
               <Link
                 href={`/akar/${lexical.rootSlug}`}
-                className="px-4 py-2 rounded-full bg-canvas-surface hover:bg-canvas-page border border-hairline text-ink-primary hover:text-primary text-xs font-semibold transition-all inline-flex items-center space-x-1.5"
+                className="px-5 py-2.5 rounded-full bg-canvas-surface hover:bg-canvas-page border border-hairline text-ink-primary hover:text-primary text-xs font-semibold transition-all inline-flex items-center space-x-1.5 shadow-subtle"
               >
                 <span>Jelajahi Indeks Akar ({lexical.rootArabic})</span>
-                <Compass className="w-3.5 h-3.5" />
+                <Compass className="w-3.5 h-3.5 text-primary" />
               </Link>
             )}
           </div>
@@ -219,45 +258,51 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       </section>
 
       {/* ========================================================================= */}
-      {/* 2. SEGMENTED 3-TAB SWITCHER */}
+      {/* 2. OPTIONAL DEEPER TABS (Only shown if substantive data exists) */}
       {/* ========================================================================= */}
-      <div className="flex items-center p-1.5 bg-canvas-soft rounded-2xl border border-hairline">
-        <button
-          onClick={() => setActiveTab('makna')}
-          className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-1.5 ${
-            activeTab === 'makna'
-              ? 'bg-canvas-surface text-primary shadow-subtle border border-hairline'
-              : 'text-ink-mute hover:text-ink-primary'
-          }`}
-        >
-          <BookOpen className="w-4 h-4" />
-          <span>Bedah Makna</span>
-        </button>
+      {(!morphology.isParticle || (lexical.meanings && lexical.meanings.length > 1) || wordFamily.length > 0) && (
+        <div className="flex items-center p-1.5 bg-canvas-soft rounded-2xl border border-hairline">
+          <button
+            onClick={() => setActiveTab('makna')}
+            className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-1.5 ${
+              activeTab === 'makna'
+                ? 'bg-canvas-surface text-primary shadow-subtle border border-hairline'
+                : 'text-ink-mute hover:text-ink-primary'
+            }`}
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>Bedah Makna</span>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('keluarga')}
-          className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-1.5 ${
-            activeTab === 'keluarga'
-              ? 'bg-canvas-surface text-primary shadow-subtle border border-hairline'
-              : 'text-ink-mute hover:text-ink-primary'
-          }`}
-        >
-          <GitFork className="w-4 h-4" />
-          <span>Keluarga Kata {wordFamily.length > 0 && `(${wordFamily.length})`}</span>
-        </button>
+          {!morphology.isParticle && wordFamily.length > 0 && (
+            <button
+              onClick={() => setActiveTab('keluarga')}
+              className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-1.5 ${
+                activeTab === 'keluarga'
+                  ? 'bg-canvas-surface text-primary shadow-subtle border border-hairline'
+                  : 'text-ink-mute hover:text-ink-primary'
+              }`}
+            >
+              <GitFork className="w-4 h-4" />
+              <span>Keluarga Kata ({wordFamily.length})</span>
+            </button>
+          )}
 
-        <button
-          onClick={() => setActiveTab('klasik')}
-          className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-1.5 ${
-            activeTab === 'klasik'
-              ? 'bg-canvas-surface text-primary shadow-subtle border border-hairline'
-              : 'text-ink-mute hover:text-ink-primary'
-          }`}
-        >
-          <Library className="w-4 h-4" />
-          <span>Kamus &amp; I&apos;rab</span>
-        </button>
-      </div>
+          {!morphology.isParticle && (
+            <button
+              onClick={() => setActiveTab('klasik')}
+              className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-1.5 ${
+                activeTab === 'klasik'
+                  ? 'bg-canvas-surface text-primary shadow-subtle border border-hairline'
+                  : 'text-ink-mute hover:text-ink-primary'
+              }`}
+            >
+              <Library className="w-4 h-4" />
+              <span>Kamus &amp; I&apos;rab</span>
+            </button>
+          )}
+        </div>
+      )}
 
       {/* ========================================================================= */}
       {/* TAB 1: BEDAH MAKNA & FILOSOFI AKAR (DEFAULT) */}
@@ -399,39 +444,45 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
           {/* Section: Keluarga Kata dalam Al-Qur'an */}
           {!morphology.isParticle && wordFamily.length > 0 ? (
             <section className="p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
-              <div className="flex items-center justify-between border-b border-hairline pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-hairline pb-3">
                 <h3 className="text-base font-bold text-ink-primary flex items-center space-x-2">
-                  <GitFork className="w-4 h-4 text-primary" />
+                  <GitFork className="w-4 h-4 text-primary shrink-0" />
                   <span>Keluarga Kata dalam Al-Qur&apos;an ({wordFamily.length} Bentuk)</span>
                 </h3>
-                <span className="text-xs text-ink-mute">
-                  Akar {lexical.rootArabic}
+                <span className="text-xs text-ink-mute font-medium">
+                  Akar {lexical.rootArabic} {rootTrans ? `· ${rootTrans}` : ''}
                 </span>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
-                {wordFamily.map((item, idx) => (
-                  <Link
-                    key={idx}
-                    href={`/kata/${encodeURIComponent(item.arabic)}`}
-                    className="p-3.5 rounded-2xl bg-canvas-soft hover:bg-canvas-page border border-hairline hover:border-primary/40 transition-all text-center space-y-1.5 group flex flex-col justify-between"
-                  >
-                    <div className="space-y-1">
-                      <span className="font-arabic text-xl font-bold text-ink-primary group-hover:text-primary transition-colors block leading-relaxed" dir="rtl">
-                        {item.arabic}
-                      </span>
-                      {item.meaningIndo && (
-                        <p className="text-[11px] text-ink-secondary group-hover:text-primary transition-colors line-clamp-1 italic">
-                          {item.meaningIndo}
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex items-center justify-between text-[11px] text-ink-mute pt-1 border-t border-hairline/60">
-                      <span>{item.pos}</span>
-                      <span className="font-bold text-primary">{item.count}×</span>
-                    </div>
-                  </Link>
-                ))}
+                {wordFamily.map((item, idx) => {
+                  const displayMeaning = (item.meaningIndo && !item.meaningIndo.startsWith('Bentuk Kata') && !item.meaningIndo.startsWith('Nomina (') && !item.meaningIndo.startsWith('Verba ('))
+                    ? item.meaningIndo
+                    : getAuthenticWordMeaning(item.arabic, lexical.rootSlug || lexical.root);
+
+                  return (
+                    <Link
+                      key={idx}
+                      href={`/kata/${encodeURIComponent(item.arabic)}`}
+                      className="p-3.5 rounded-2xl bg-canvas-soft hover:bg-canvas-page border border-hairline hover:border-primary/40 transition-all text-center space-y-1.5 group flex flex-col justify-between"
+                    >
+                      <div className="space-y-1.5">
+                        <span className="font-arabic text-xl font-bold text-ink-primary group-hover:text-primary transition-colors block leading-relaxed" dir="rtl">
+                          {item.arabic}
+                        </span>
+                        {displayMeaning && (
+                          <p className="text-xs text-ink-secondary group-hover:text-primary transition-colors line-clamp-2 leading-tight">
+                            {displayMeaning}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between text-[11px] text-ink-mute pt-1 border-t border-hairline/60">
+                        <span>{item.pos}</span>
+                        <span className="font-bold text-primary">{item.count}×</span>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </section>
           ) : (

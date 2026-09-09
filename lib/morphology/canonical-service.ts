@@ -10,6 +10,8 @@ import { getQuranicParticleInfo } from './particles-dictionary';
 import { VerseOccurrence, DerivativeWord } from '../types/morphology';
 import { getLaneRootRecord, getLaneEntryForLemma, getLaneLemmaRecord } from '../lexicon/lane-loader';
 import { LexicalLookupResult, LaneRootLexicon } from '../lexicon/types';
+import { transliterateArabic, isRawBuckwalterRoot } from './transliteration';
+import { getAuthenticWordMeaning, getRootTranslationProfile } from './root-dictionary';
 
 export interface WordDetailModel {
   identity: {
@@ -50,6 +52,7 @@ export interface WordDetailModel {
     wordIndex?: number;
     ayahArabic?: string;
     ayahIndo?: string;
+    surahNameIndo?: string;
   };
   corpus: {
     source: string;
@@ -207,6 +210,7 @@ export interface CanonicalWordContext {
   wordIndex?: number;
   ayahArabic?: string;
   ayahIndo?: string;
+  surahNameIndo?: string;
 }
 
 /**
@@ -362,6 +366,10 @@ export function getCanonicalWordDetail(
     } else if (isParticle) {
       primaryMeaning = 'Partikel / Kata Tugas (Harf)';
     }
+  }
+
+  if (!primaryMeaning || primaryMeaning.startsWith('Bentuk Kata') || primaryMeaning.startsWith('Konsep & Turunan') || primaryMeaning === "Kata dalam Al-Qur'an") {
+    primaryMeaning = getAuthenticWordMeaning(displayArabic, matchedRoot?.id || rootBw, primaryMeaning);
   }
 
   let meanings = curatedDict?.meanings ||
@@ -526,7 +534,9 @@ export function getCanonicalWordDetail(
       coordinate: stemRecord ? stemRecord.wordLocationKey : (context?.surahNumber ? `${context.surahNumber}:${context.ayahNumber}:${context.wordIndex || 1}` : (isCoordinate ? cleanInput : undefined)),
       arabic: displayArabic,
       cleanArabic,
-      transliteration: curatedDict?.rootLatin || matchedRoot?.rootLatin || undefined
+      transliteration: (curatedDict?.rootLatin && !isRawBuckwalterRoot(curatedDict.rootLatin))
+        ? curatedDict.rootLatin
+        : transliterateArabic(displayArabic)
     },
     lexical: {
       lemma: lemmaBw,
@@ -555,7 +565,8 @@ export function getCanonicalWordDetail(
       ayahNumber: context.ayahNumber,
       wordIndex: context.wordIndex,
       ayahArabic: context.ayahArabic,
-      ayahIndo: context.ayahIndo
+      ayahIndo: context.ayahIndo,
+      surahNameIndo: context.surahNameIndo
     } : undefined,
     corpus: {
       source: 'The Quranic Arabic Corpus',
@@ -664,14 +675,35 @@ export function getCanonicalRootDetail(slug: string): RootDetailModel | null {
   ].filter(p => p.count > 0);
 
   const semanticProfile = getRootSemanticProfile(matchedRoot.id);
+  const rootProfile = getRootTranslationProfile(matchedRoot.id);
+
+  const enrichedVerbs = (matchedRoot.verbs || []).map((v) => ({
+    ...v,
+    transliteration: (v.transliteration && !isRawBuckwalterRoot(v.transliteration)) ? v.transliteration : transliterateArabic(v.arabic),
+    meaningIndo: getAuthenticWordMeaning(v.arabic, matchedRoot.id, v.meaningIndo),
+  }));
+
+  const enrichedNouns = (matchedRoot.nouns || []).map((n) => ({
+    ...n,
+    transliteration: (n.transliteration && !isRawBuckwalterRoot(n.transliteration)) ? n.transliteration : transliterateArabic(n.arabic),
+    meaningIndo: getAuthenticWordMeaning(n.arabic, matchedRoot.id, n.meaningIndo),
+  }));
+
+  const cleanTitle = (matchedRoot.titleIndo && !matchedRoot.titleIndo.startsWith('Konsep & Turunan') && !matchedRoot.titleIndo.startsWith('Akar Kata'))
+    ? matchedRoot.titleIndo
+    : (rootProfile?.titleIndo || `Akar ${matchedRoot.rootArabic} (${rootProfile?.coreMeaning || 'Kosakata Al-Qur\'an'})`);
+
+  const cleanCoreMeaning = (matchedRoot.coreMeaning && !matchedRoot.coreMeaning.includes('memiliki peranan penting dalam kosakata Al-Qur\'an'))
+    ? matchedRoot.coreMeaning
+    : (rootProfile?.coreMeaning || matchedRoot.coreMeaning || 'Makna leksikal terindeks dalam Al-Qur\'an.');
 
   return {
     id: matchedRoot.id,
     rootArabic: matchedRoot.rootArabic,
     rootArabicJoined: matchedRoot.rootArabicJoined,
     rootLatin: matchedRoot.rootLatin,
-    titleIndo: semanticProfile?.titleIndo || matchedRoot.titleIndo || `Akar Kata ${matchedRoot.rootArabic}`,
-    coreMeaning: semanticProfile?.coreMeaning || matchedRoot.coreMeaning || 'Makna leksikal terindeks dalam Al-Qur\'an.',
+    titleIndo: semanticProfile?.titleIndo || cleanTitle,
+    coreMeaning: semanticProfile?.coreMeaning || cleanCoreMeaning,
     contextualNote: semanticProfile?.contextualNote || matchedRoot.contextualNote,
     meaningsIndonesian: semanticProfile?.meaningsIndonesian || matchedRoot.meaningsIndonesian || [matchedRoot.coreMeaning],
     statistics: {
@@ -687,8 +719,8 @@ export function getCanonicalRootDetail(slug: string): RootDetailModel | null {
       formDistribution,
       surahDistribution
     },
-    verbs: matchedRoot.verbs || [],
-    nouns: matchedRoot.nouns || [],
+    verbs: enrichedVerbs,
+    nouns: enrichedNouns,
     occurrences,
     lexicon: getLaneRootRecord(rootBw)
   };

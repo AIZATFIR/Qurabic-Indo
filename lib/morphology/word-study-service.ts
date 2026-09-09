@@ -20,6 +20,8 @@ import { stripArabicHarakat } from '../search/root-search';
 import { getClassicalCitation } from '../lexicon/classical-citations';
 import { getWordDetailedExplanation, CURATED_WORD_DICTIONARY } from '../search/word-dictionary';
 import { ROOT_DATABASE } from '../data/roots';
+import { transliterateArabic, isRawBuckwalterRoot } from './transliteration';
+import { getAuthenticWordMeaning, getRootTranslationProfile } from './root-dictionary';
 
 /**
  * Maps raw QAC morphological features string to detailed Indonesian syntactic breakdown
@@ -126,7 +128,7 @@ export function getWordStudy(
     for (const item of sortedItems) {
       const cleanAr = stripArabicHarakat(item.arabic);
       const curated = CURATED_WORD_DICTIONARY[cleanAr] || CURATED_WORD_DICTIONARY[item.arabic];
-      const meaning = curated?.primaryMeaning || (detail.lexical.coreMeaning ? `${item.pos === "Fi'il" ? 'Bentuk kerja' : 'Bentuk benda'} akar ${detail.lexical.rootArabic || ''}`.trim() : undefined);
+      const meaning = curated?.primaryMeaning || getAuthenticWordMeaning(item.arabic, detail.lexical.rootSlug || rootBw);
 
       wordFamily.push({
         arabic: item.arabic,
@@ -152,7 +154,7 @@ export function getWordStudy(
             buckwalter: deriv.buckwalter || '',
             lemmaArabic: deriv.arabic,
             pos: deriv.type === 'verb' ? "Fi'il" : 'Isim',
-            meaningIndo: deriv.meaningIndo || (deriv.type === 'verb' ? 'Bentuk kerja' : 'Bentuk benda'),
+            meaningIndo: getAuthenticWordMeaning(deriv.arabic, rootEntry.id || rootBw, deriv.meaningIndo),
             count: deriv.frequency || 1,
             sampleCoordinate: undefined
           });
@@ -241,12 +243,17 @@ export function getWordStudy(
     provenance.push(SOURCES_REGISTRY.laneLexicon);
   }
 
+  const rootProfile = rootSlugOrAr ? getRootTranslationProfile(rootSlugOrAr) : null;
+  const rootTranslation = rootProfile?.coreMeaning || detail.lexical.coreMeaning || undefined;
+
   return {
     identity: {
       coordinate: detail.identity.coordinate,
       arabic: detail.identity.arabic,
       cleanArabic: detail.identity.cleanArabic,
-      transliteration: detail.identity.transliteration
+      transliteration: (detail.identity.transliteration && !isRawBuckwalterRoot(detail.identity.transliteration))
+        ? detail.identity.transliteration
+        : transliterateArabic(detail.identity.arabic)
     },
     primaryMeaning: {
       text: primaryText,
@@ -283,6 +290,7 @@ export function getWordStudy(
       volume: lex?.volume,
       page: lex?.page,
       rootPhilosophy: rootPhil,
+      rootTranslation,
       meanings: detailedExpl.meanings.length > 0 ? detailedExpl.meanings : detail.translation.meanings,
       classicalCitation: classicalCit,
       usageNuances: detailedExpl.quranicNuances

@@ -37,6 +37,7 @@ export interface QuranWordInteractiveProps {
   surahNameIndo?: string;
   mode?: 'stacked' | 'inline';
   showInlineMeaning?: boolean;
+  fontSize?: 'sm' | 'md' | 'lg' | 'xl';
   onWordClick?: (data: QuranWordClickData) => void;
 }
 
@@ -110,6 +111,7 @@ function QuranWordInteractiveComponent({
   surahNameIndo,
   mode = 'stacked',
   showInlineMeaning = false,
+  fontSize = 'lg',
   onWordClick,
 }: QuranWordInteractiveProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -117,6 +119,34 @@ function QuranWordInteractiveComponent({
   const displayTransliteration = transliteration && !transliteration.startsWith('Kata ')
     ? transliteration
     : getArabicWordTransliteration(wordArabic);
+
+  // Scaled typography for Mode Tadabbur Cards
+  const stackedArabicSize =
+    fontSize === 'sm'
+      ? 'text-2xl sm:text-3xl'
+      : fontSize === 'md'
+      ? 'text-3xl sm:text-4xl'
+      : fontSize === 'lg'
+      ? 'text-4xl sm:text-5xl'
+      : 'text-5xl sm:text-6xl';
+
+  const stackedTranslitSize =
+    fontSize === 'sm'
+      ? 'text-xs'
+      : fontSize === 'md'
+      ? 'text-xs sm:text-sm'
+      : fontSize === 'lg'
+      ? 'text-sm sm:text-base'
+      : 'text-base sm:text-lg';
+
+  const stackedMeaningSize =
+    fontSize === 'sm'
+      ? 'text-xs'
+      : fontSize === 'md'
+      ? 'text-xs sm:text-sm font-medium'
+      : fontSize === 'lg'
+      ? 'text-sm sm:text-base font-semibold'
+      : 'text-base sm:text-lg font-semibold';
 
   const handleClick = () => {
     if (onWordClick) {
@@ -153,14 +183,15 @@ function QuranWordInteractiveComponent({
   return (
     <>
       {mode === 'inline' ? (
+        /* Mode Baca: Seamless, Non-Border, Natural Quranic Calligraphy Flow */
         <span
           role="button"
           tabIndex={0}
           onClick={handleClick}
           onKeyDown={handleKeyDown}
           aria-label={a11yLabel}
-          className="inline-block px-1.5 py-0.5 my-1 mx-0.5 rounded-xl hover:bg-primary-subdued hover:text-primary transition-all cursor-pointer select-none active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary group font-arabic"
-          title="Klik untuk Bedah Akar Kata & Definisi"
+          className="inline-block px-1 sm:px-1.5 py-0.5 my-0.5 rounded-lg border-0 bg-transparent hover:bg-primary-subdued/50 hover:text-primary transition-all cursor-pointer select-none active:scale-95 focus:outline-none focus-visible:ring-1 focus-visible:ring-primary group font-arabic"
+          title="Klik untuk Bedah Leksikal & Arti Kata"
           dir="rtl"
         >
           <span className="font-arabic text-inherit group-hover:text-primary transition-colors" dir="rtl">
@@ -168,26 +199,27 @@ function QuranWordInteractiveComponent({
           </span>
         </span>
       ) : (
+        /* Mode Tadabbur: Spacious, Touch-Friendly Interactive Analytical Cards */
         <span
           role="button"
           tabIndex={0}
           onClick={handleClick}
           onKeyDown={handleKeyDown}
           aria-label={a11yLabel}
-          className="inline-flex flex-col items-center justify-between px-2.5 py-2 rounded-2xl bg-canvas-soft/80 hover:bg-primary-subdued/90 border border-hairline/80 hover:border-primary/40 transition-all cursor-pointer select-none active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-center group my-1.5 mx-0.5 min-w-[76px] sm:min-w-[90px] shadow-sm hover:shadow-subtle"
+          className="inline-flex flex-col items-center justify-between px-3.5 py-3 rounded-2xl bg-canvas-soft/90 hover:bg-primary-subdued/90 border border-hairline/90 hover:border-primary/50 transition-all cursor-pointer select-none active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-center group my-1.5 mx-1 min-w-[95px] sm:min-w-[115px] shadow-sm hover:shadow-subtle"
           title="Klik untuk Bedah Leksikal & Morfologi"
         >
-          <span className="font-arabic text-2xl sm:text-3xl text-ink-primary group-hover:text-primary transition-colors leading-[2] sm:leading-[2.2]" dir="rtl">
+          <span className={`font-arabic ${stackedArabicSize} text-ink-primary group-hover:text-primary transition-colors leading-[2.2] sm:leading-[2.4]`} dir="rtl">
             {wordArabic}
           </span>
           {displayTransliteration && (
-            <span className="text-[10px] sm:text-[11px] font-sans text-ink-mute group-hover:text-primary transition-colors mt-1 font-medium italic opacity-90">
+            <span className={`${stackedTranslitSize} font-sans text-ink-mute group-hover:text-primary transition-colors mt-1 font-medium italic opacity-95`}>
               {displayTransliteration}
             </span>
           )}
           {showInlineMeaning && meaningIndo && (
             <span
-              className="text-[10.5px] sm:text-[11px] font-sans text-ink-secondary group-hover:text-primary transition-colors mt-1 font-normal max-w-[125px] leading-tight block opacity-95 text-center line-clamp-2"
+              className={`${stackedMeaningSize} font-sans text-ink-secondary group-hover:text-primary transition-colors mt-1 max-w-[140px] leading-snug block text-center line-clamp-2`}
               title={meaningIndo}
             >
               {meaningIndo}

@@ -153,4 +153,33 @@ describe('PRD Finalization — Golden Runtime Test Matrix', () => {
     assert.strictEqual(smw.statistics.verbsCount, 8);
     assert.strictEqual(smw.statistics.nounsCount, 373);
   });
+
+  it('Case 15: Token حُرُمَٰتُ has authentic translation, phonetic transliteration, and zero Buckwalter leak', () => {
+    const detail = getCanonicalWordDetail('حُرُمَٰتُ');
+    assert.ok(detail, 'Word detail must be resolved');
+    assert.ok(detail.identity.transliteration && !detail.identity.transliteration.includes('Hrm'), 'Transliteration must not leak Buckwalter Hrm');
+    assert.ok(detail.translation.primaryMeaning && !detail.translation.primaryMeaning.startsWith('Bentuk Kata Benda'), 'Primary meaning must not be generic fallback');
+    assert.ok(detail.translation.primaryMeaning.includes('disucikan') || detail.translation.primaryMeaning.includes('Kehormatan'), 'Primary meaning must convey holiness/sacredness');
+  });
+
+  it('Case 16: Token ٱلشَّهْرُ has authentic translation and zero Buckwalter leak', () => {
+    const detail = getCanonicalWordDetail('ٱلشَّهْرُ');
+    assert.ok(detail, 'Word detail must be resolved');
+    assert.ok(detail.identity.transliteration && !detail.identity.transliteration.includes('$hr'), 'Transliteration must not leak Buckwalter $hr');
+    assert.ok(detail.translation.primaryMeaning && !detail.translation.primaryMeaning.startsWith('Bentuk Kata Benda'), 'Primary meaning must not be generic fallback');
+    assert.ok(detail.translation.primaryMeaning.includes('Bulan'), 'Primary meaning must translate as Bulan');
+  });
+
+  it('Case 17: Root H-r-m detail provides authentic verbs and nouns meanings in Keluarga Kata', () => {
+    const hrm = getCanonicalRootDetail('H-r-m');
+    assert.ok(hrm, 'Root H-r-m must exist');
+    assert.ok(!hrm.titleIndo.startsWith('Konsep & Turunan'), 'Title must be human-curated');
+    assert.ok(hrm.verbs.length > 0, 'Verbs must exist');
+    assert.ok(hrm.nouns.length > 0, 'Nouns must exist');
+    
+    // Ensure every single noun has authentic meaning, not "Nomina (حُرُمَات)"
+    for (const noun of hrm.nouns) {
+      assert.ok(noun.meaningIndo && !noun.meaningIndo.startsWith('Nomina ('), `Noun ${noun.arabic} must have authentic meaning, got: ${noun.meaningIndo}`);
+    }
+  });
 });
