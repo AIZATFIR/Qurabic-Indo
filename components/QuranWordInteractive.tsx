@@ -120,33 +120,43 @@ function QuranWordInteractiveComponent({
     ? transliteration
     : getArabicWordTransliteration(wordArabic);
 
-  // Scaled typography for Mode Tadabbur Cards
+  // Scaled typography & card dimensions for Mode Tadabbur Cards
+  // Scales Arabic, Latin transliteration, and Indonesian meaning simultaneously
   const stackedArabicSize =
     fontSize === 'sm'
       ? 'text-2xl sm:text-3xl'
       : fontSize === 'md'
       ? 'text-3xl sm:text-4xl'
       : fontSize === 'lg'
-      ? 'text-4xl sm:text-5xl'
-      : 'text-5xl sm:text-6xl';
+      ? 'text-5xl sm:text-6xl'
+      : 'text-6xl sm:text-7xl lg:text-8xl';
 
   const stackedTranslitSize =
     fontSize === 'sm'
       ? 'text-xs'
       : fontSize === 'md'
-      ? 'text-xs sm:text-sm'
-      : fontSize === 'lg'
       ? 'text-sm sm:text-base'
-      : 'text-base sm:text-lg';
+      : fontSize === 'lg'
+      ? 'text-base sm:text-lg font-medium'
+      : 'text-xl sm:text-2xl font-semibold';
 
   const stackedMeaningSize =
     fontSize === 'sm'
-      ? 'text-xs'
+      ? 'text-[11px]'
       : fontSize === 'md'
       ? 'text-xs sm:text-sm font-medium'
       : fontSize === 'lg'
       ? 'text-sm sm:text-base font-semibold'
-      : 'text-base sm:text-lg font-semibold';
+      : 'text-lg sm:text-xl font-bold';
+
+  const stackedCardPadding =
+    fontSize === 'sm'
+      ? 'px-2.5 py-2 min-w-[85px] sm:min-w-[100px]'
+      : fontSize === 'md'
+      ? 'px-3.5 py-3 min-w-[110px] sm:min-w-[130px]'
+      : fontSize === 'lg'
+      ? 'px-4.5 py-4 min-w-[140px] sm:min-w-[165px]'
+      : 'px-6 py-5 min-w-[180px] sm:min-w-[215px]';
 
   const handleClick = () => {
     if (onWordClick) {
@@ -172,7 +182,8 @@ function QuranWordInteractiveComponent({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
+    // Only handle Enter for word interaction so Space is exclusively reserved for Audio Play/Pause
+    if (e.key === 'Enter') {
       e.preventDefault();
       handleClick();
     }
@@ -206,20 +217,20 @@ function QuranWordInteractiveComponent({
           onClick={handleClick}
           onKeyDown={handleKeyDown}
           aria-label={a11yLabel}
-          className="inline-flex flex-col items-center justify-between px-3.5 py-3 rounded-2xl bg-canvas-soft/90 hover:bg-primary-subdued/90 border border-hairline/90 hover:border-primary/50 transition-all cursor-pointer select-none active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-center group my-1.5 mx-1 min-w-[95px] sm:min-w-[115px] shadow-sm hover:shadow-subtle"
+          className={`inline-flex flex-col items-center justify-between ${stackedCardPadding} rounded-2xl bg-canvas-soft/90 hover:bg-primary-subdued/90 border border-hairline/90 hover:border-primary/50 transition-all cursor-pointer select-none active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-center group my-1.5 mx-1 shadow-sm hover:shadow-subtle`}
           title="Klik untuk Bedah Leksikal & Morfologi"
         >
           <span className={`font-arabic ${stackedArabicSize} text-ink-primary group-hover:text-primary transition-colors leading-[2.2] sm:leading-[2.4]`} dir="rtl">
             {wordArabic}
           </span>
           {displayTransliteration && (
-            <span className={`${stackedTranslitSize} font-sans text-ink-mute group-hover:text-primary transition-colors mt-1 font-medium italic opacity-95`}>
+            <span className={`${stackedTranslitSize} font-sans text-ink-mute group-hover:text-primary transition-colors mt-1 italic opacity-95`}>
               {displayTransliteration}
             </span>
           )}
           {showInlineMeaning && meaningIndo && (
             <span
-              className={`${stackedMeaningSize} font-sans text-ink-secondary group-hover:text-primary transition-colors mt-1 max-w-[140px] leading-snug block text-center line-clamp-2`}
+              className={`${stackedMeaningSize} font-sans text-ink-secondary group-hover:text-primary transition-colors mt-1 max-w-[200px] leading-snug block text-center line-clamp-2`}
               title={meaningIndo}
             >
               {meaningIndo}

@@ -258,10 +258,12 @@ export function useQuranAudio({
     const audio = audioRef.current;
     if (!audio) return;
 
-    if (playbackState === 'playing') {
+    const isAudioPlaying = !audio.paused && audio.currentTime > 0 && !audio.ended;
+
+    if (isAudioPlaying || playbackState === 'playing') {
       audio.pause();
       setPlaybackState('paused');
-    } else if (playbackState === 'paused' && currentAyah !== null) {
+    } else if (currentAyah !== null && audio.src) {
       audio.play().catch(() => {});
       setPlaybackState('playing');
     } else {
@@ -349,22 +351,30 @@ export function useQuranAudio({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const activeTag = document.activeElement?.tagName.toLowerCase();
-      if (activeTag === 'input' || activeTag === 'textarea') return;
+      if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select') return;
 
-      if (e.code === 'Space') {
+      const isSpace = e.code === 'Space' || e.key === ' ' || e.key === 'Spacebar' || e.keyCode === 32;
+
+      if (isSpace) {
         e.preventDefault();
+        e.stopPropagation();
+        if (document.activeElement instanceof HTMLElement && document.activeElement !== document.body) {
+          document.activeElement.blur();
+        }
         togglePlayPause();
       } else if (e.code === 'ArrowRight' && currentAyah !== null) {
         e.preventDefault();
+        e.stopPropagation();
         nextAyah();
       } else if (e.code === 'ArrowLeft' && currentAyah !== null) {
         e.preventDefault();
+        e.stopPropagation();
         prevAyah();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown, { capture: true });
+    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
   }, [togglePlayPause, nextAyah, prevAyah, currentAyah]);
 
   const progress = duration > 0 ? Math.min(1, Math.max(0, currentTime / duration)) : 0;

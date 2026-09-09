@@ -16,6 +16,7 @@ import {
   ChevronDown,
   ChevronUp,
   Navigation,
+  SlidersHorizontal,
   X
 } from 'lucide-react';
 import QuranWordInteractive, { QuranWordClickData } from '@/components/QuranWordInteractive';
@@ -43,6 +44,7 @@ function BacaQuranPageContent() {
   const [readingMode, setReadingMode] = useState<'baca' | 'tadabbur'>('tadabbur');
   const [showTranslation, setShowTranslation] = useState(true);
   const [showInlineMeaning, setShowInlineMeaning] = useState(false);
+  const [isMobileControlsOpen, setIsMobileControlsOpen] = useState(false);
   const [ayahs, setAyahs] = useState<FullAyahWBW[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -155,15 +157,25 @@ function BacaQuranPageContent() {
     setActiveWordData(data);
   }, []);
 
-  // High-impact font size scaling
+  // Scaled typography classes with SIGNIFICANT, HIGH-IMPACT differences (XL reaching 133%+)
+  // Scales Arabic, Latin transliteration, and Indonesian translation simultaneously
   const fontArabicClass =
     fontSize === 'sm'
-      ? 'text-2xl sm:text-3xl leading-[2.2]'
+      ? 'text-2xl sm:text-3xl leading-[2.1]'
       : fontSize === 'md'
-      ? 'text-3xl sm:text-4xl leading-[2.4]'
+      ? 'text-3xl sm:text-4xl leading-[2.3]'
       : fontSize === 'lg'
-      ? 'text-4xl sm:text-5xl lg:text-6xl leading-[2.6]'
-      : 'text-5xl sm:text-6xl lg:text-7xl leading-[2.8]';
+      ? 'text-5xl sm:text-6xl leading-[2.5]'
+      : 'text-6xl sm:text-7xl lg:text-8xl leading-[2.7]';
+
+  const fontTranslitClass =
+    fontSize === 'sm'
+      ? 'text-xs sm:text-sm leading-relaxed'
+      : fontSize === 'md'
+      ? 'text-sm sm:text-base leading-relaxed'
+      : fontSize === 'lg'
+      ? 'text-lg sm:text-xl leading-relaxed font-medium'
+      : 'text-xl sm:text-2xl lg:text-3xl leading-relaxed font-semibold';
 
   const fontTranslationClass =
     fontSize === 'sm'
@@ -171,13 +183,13 @@ function BacaQuranPageContent() {
       : fontSize === 'md'
       ? 'text-sm sm:text-base leading-relaxed'
       : fontSize === 'lg'
-      ? 'text-base sm:text-lg lg:text-xl leading-relaxed'
-      : 'text-lg sm:text-xl lg:text-2xl leading-relaxed';
+      ? 'text-lg sm:text-xl lg:text-2xl leading-relaxed'
+      : 'text-2xl sm:text-3xl lg:text-4xl leading-relaxed font-normal';
 
   return (
     <div className="min-h-screen transition-colors duration-200 bg-canvas text-ink-primary">
       
-      {/* Mini Top Action Bar: Lampiran 3 Quick Toggle to Open Headbar & Main Navigation */}
+      {/* Mini Top Action Bar: Navigation Link to Home & Index */}
       <div className="w-full bg-canvas-soft/80 border-b border-hairline py-1.5 px-4 text-center flex items-center justify-between text-[11px] text-ink-mute font-sans">
         <Link href="/" className="inline-flex items-center space-x-1.5 text-ink-secondary hover:text-primary transition-colors font-medium">
           <Navigation className="w-3 h-3 text-primary rotate-45" />
@@ -185,11 +197,11 @@ function BacaQuranPageContent() {
         </Link>
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-canvas-surface border border-hairline hover:border-primary/40 text-ink-primary hover:text-primary transition-all shadow-subtle text-[11px] font-semibold"
-          title="Buka Headbar & Navigasi Utama"
+          className="inline-flex items-center space-x-1.5 px-3 py-0.5 rounded-full bg-canvas-surface border border-hairline hover:border-primary/40 text-ink-primary hover:text-primary transition-all shadow-subtle text-[11px] font-semibold"
+          title="Ke Awal Surah / Halaman"
         >
           <ChevronUp className="w-3 h-3 text-primary" />
-          <span>Buka Headbar / Menu Utama</span>
+          <span>Awal Surah</span>
         </button>
         <div className="hidden sm:flex items-center space-x-3">
           <Link href="/akar" className="hover:text-primary transition-colors">Indeks Akar</Link>
@@ -197,15 +209,15 @@ function BacaQuranPageContent() {
         </div>
       </div>
 
-      {/* Reader Headbar - Solid Opaque & Touch-Friendly */}
-      <header className="w-full border-b border-hairline px-4 py-2.5 transition-colors duration-200 shadow-subtle bg-canvas">
-        <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      {/* Sticky Reader Headbar - Always Follows the Screen (Accessible Even at Deep Verses) */}
+      <header className="sticky top-0 z-30 w-full bg-canvas/95 backdrop-blur-md border-b border-hairline transition-all duration-200 shadow-subtle">
+        <div className="max-w-6xl xl:max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:py-2.5 flex flex-wrap items-center justify-between gap-2.5">
           
-          {/* LEFT SIDE: Searchable Surah Trigger Button & Random Ayah Button */}
+          {/* LEFT: Searchable Surah Trigger Button & Quick Jump to Top */}
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setIsSurahModalOpen(true)}
-              className="flex items-center space-x-2 font-medium rounded-xl px-3.5 py-1.5 text-xs border border-hairline bg-canvas-surface text-ink-primary hover:border-primary/50 transition-all font-sans shadow-subtle group"
+              className="flex items-center space-x-2 font-medium rounded-xl px-3 py-1.5 text-xs border border-hairline bg-canvas-surface text-ink-primary hover:border-primary/50 transition-all font-sans shadow-subtle group"
               title="Klik untuk Cari & Ganti Surah"
             >
               <BookMarked className="w-3.5 h-3.5 text-primary shrink-0" />
@@ -215,15 +227,25 @@ function BacaQuranPageContent() {
               <span className="font-arabic font-bold text-sm text-primary" dir="rtl">
                 ({currentSurahMeta.nameArabic})
               </span>
-              <span className="text-[10px] text-ink-mute hidden sm:inline">
+              <span className="text-[10px] text-ink-mute hidden md:inline">
                 - {currentSurahMeta.ayahsCount} Ayat
               </span>
               <ChevronDown className="w-3.5 h-3.5 text-ink-mute group-hover:text-primary transition-colors" />
             </button>
 
+            {/* Quick Ke Atas Button */}
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border border-hairline bg-canvas-surface hover:border-primary/40 text-ink-secondary hover:text-primary transition-all text-xs shadow-subtle"
+              title="Kembali ke Atas / Awal Surah"
+            >
+              <ChevronUp className="w-3.5 h-3.5 text-primary" />
+              <span className="hidden lg:inline text-[11px] font-medium">Ke Atas</span>
+            </button>
+
             <Link
               href="/ayat-random"
-              className="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-transparent hover:border-hairline transition-all text-ink-secondary hover:text-primary"
+              className="hidden xl:inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border border-transparent hover:border-hairline transition-all text-ink-secondary hover:text-primary"
               title="Buka Ayat Acak"
             >
               <Shuffle className="w-3.5 h-3.5 text-primary" />
@@ -231,13 +253,13 @@ function BacaQuranPageContent() {
             </Link>
           </div>
 
-          {/* RIGHT SIDE: Controls (Mode Baca/Tadabbur, Meaning, Translation, Font Size, Theme) */}
-          <div className="flex flex-wrap items-center space-x-1.5 sm:space-x-2 text-xs ml-auto">
+          {/* RIGHT: Primary Controls (Mode Baca/Tadabbur, Arti Kata, Terjemahan, Font Size, Theme) */}
+          <div className="flex items-center space-x-1.5 sm:space-x-2 text-xs ml-auto">
             {/* Mode Switcher: Mode Baca vs Mode Tadabbur */}
             <div className="flex items-center bg-canvas-soft border border-hairline rounded-xl p-0.5 shadow-subtle">
               <button
                 onClick={() => setReadingMode('baca')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1.5 ${
+                className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1.5 ${
                   readingMode === 'baca'
                     ? 'bg-primary text-white shadow-subtle'
                     : 'text-ink-secondary hover:text-ink-primary'
@@ -245,11 +267,11 @@ function BacaQuranPageContent() {
                 title="Mode Baca: Tampilan Mushaf Al-Qur'an Alami Mengalir Tanpa Border Kartu"
               >
                 <span>📖</span>
-                <span>Mode Baca</span>
+                <span className="hidden xs:inline">Mode Baca</span>
               </button>
               <button
                 onClick={() => setReadingMode('tadabbur')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1.5 ${
+                className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1.5 ${
                   readingMode === 'tadabbur'
                     ? 'bg-primary text-white shadow-subtle'
                     : 'text-ink-secondary hover:text-ink-primary'
@@ -257,73 +279,153 @@ function BacaQuranPageContent() {
                 title="Mode Tadabbur: Tampilan Kotak Kata Interaktif dengan Transliterasi & Terjemahan"
               >
                 <span>🔍</span>
-                <span>Mode Tadabbur</span>
+                <span className="hidden xs:inline">Mode Tadabbur</span>
               </button>
             </div>
 
-            {/* Inline Word-by-Word Meaning Toggle (Only in Tadabbur mode) */}
-            {readingMode === 'tadabbur' && (
-              <button
-                onClick={() => setShowInlineMeaning(!showInlineMeaning)}
-                className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-medium transition-all ${
-                  showInlineMeaning
-                    ? 'bg-primary-subdued text-primary font-semibold ring-1 ring-primary/40'
-                    : 'text-ink-mute hover:bg-canvas-soft'
-                }`}
-                title="Tampilkan / Sembunyikan Terjemahan Per Kata di Bawah Lafaz"
-              >
-                Arti Kata
-              </button>
-            )}
-
-            {/* Translation Toggle */}
+            {/* Mobile Toggle Button for Headbar Controls */}
             <button
-              onClick={() => setShowTranslation(!showTranslation)}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-medium transition-all ${
-                showTranslation
-                  ? 'bg-primary-subdued text-primary font-semibold'
-                  : 'text-ink-mute hover:bg-canvas-soft'
+              onClick={() => setIsMobileControlsOpen(!isMobileControlsOpen)}
+              className={`sm:hidden p-1.5 rounded-xl border border-hairline transition-all ${
+                isMobileControlsOpen
+                  ? 'bg-primary text-white border-primary'
+                  : 'bg-canvas-soft text-ink-secondary hover:text-ink-primary'
               }`}
-              title="Sembunyikan / Tampilkan Terjemahan Kemenag"
+              title="Buka / Tutup Pengaturan Headbar"
+              aria-label="Pengaturan Headbar"
             >
-              Terjemahan
+              <SlidersHorizontal className="w-4 h-4" />
             </button>
 
-            {/* Font Size Adjusters */}
-            <div className="flex items-center bg-canvas-soft border border-hairline rounded-lg p-0.5">
-              {(['sm', 'md', 'lg', 'xl'] as const).map((size) => (
+            {/* Desktop / Always-Available Controls Container */}
+            <div className="hidden sm:flex items-center space-x-1.5 sm:space-x-2">
+              {/* Inline Word-by-Word Meaning Toggle (Only in Tadabbur mode) */}
+              {readingMode === 'tadabbur' && (
                 <button
-                  key={size}
-                  onClick={() => setFontSize(size)}
-                  className={`px-2 py-1 rounded text-[11px] font-medium transition-colors ${
-                    fontSize === size
-                      ? 'bg-canvas-surface text-primary shadow-subtle font-bold'
-                      : 'text-ink-mute hover:text-ink-primary'
+                  onClick={() => setShowInlineMeaning(!showInlineMeaning)}
+                  className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-medium transition-all ${
+                    showInlineMeaning
+                      ? 'bg-primary-subdued text-primary font-semibold ring-1 ring-primary/40'
+                      : 'text-ink-mute hover:bg-canvas-soft border border-hairline/60'
                   }`}
+                  title="Tampilkan / Sembunyikan Terjemahan Per Kata di Bawah Lafaz"
                 >
-                  {size.toUpperCase()}
+                  Arti Kata
                 </button>
-              ))}
-            </div>
+              )}
 
-            {/* Theme Selectors */}
-            <div className="flex items-center space-x-1 bg-canvas-soft border border-hairline rounded-lg p-0.5">
-              {options.map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => setTheme(t.id)}
-                  className={`w-5 h-5 rounded-md transition-all flex items-center justify-center ${
-                    theme === t.id ? 'ring-2 ring-primary ring-offset-1 scale-105' : 'opacity-60 hover:opacity-100'
-                  }`}
-                  style={{ backgroundColor: t.bgHex }}
-                  title={`Tema: ${t.label}`}
-                  aria-label={`Pilih Tema ${t.label}`}
-                />
-              ))}
+              {/* Translation Toggle */}
+              <button
+                onClick={() => setShowTranslation(!showTranslation)}
+                className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-medium transition-all ${
+                  showTranslation
+                    ? 'bg-primary-subdued text-primary font-semibold ring-1 ring-primary/40'
+                    : 'text-ink-mute hover:bg-canvas-soft border border-hairline/60'
+                }`}
+                title="Sembunyikan / Tampilkan Terjemahan Kemenag"
+              >
+                Terjemahan
+              </button>
+
+              {/* Unified Font Size Adjuster (Scales Arabic, Latin transliteration, and translation together) */}
+              <div className="flex items-center bg-canvas-soft border border-hairline rounded-lg p-0.5" title="Ukuran Font (Arab & Latin Terjemahan)">
+                {(['sm', 'md', 'lg', 'xl'] as const).map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => setFontSize(size)}
+                    className={`px-2 py-1 rounded text-[11px] font-medium transition-colors ${
+                      fontSize === size
+                        ? 'bg-canvas-surface text-primary shadow-subtle font-bold ring-1 ring-primary/30'
+                        : 'text-ink-mute hover:text-ink-primary'
+                    }`}
+                    title={`Ukuran ${size.toUpperCase()}${size === 'xl' ? ' (133% Paling Besar)' : ''}`}
+                  >
+                    {size.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+
+              {/* Theme Selectors */}
+              <div className="flex items-center space-x-1 bg-canvas-soft border border-hairline rounded-lg p-0.5">
+                {options.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setTheme(t.id)}
+                    className={`w-5 h-5 rounded-md transition-all flex items-center justify-center ${
+                      theme === t.id ? 'ring-2 ring-primary ring-offset-1 scale-105' : 'opacity-60 hover:opacity-100'
+                    }`}
+                    style={{ backgroundColor: t.bgHex }}
+                    title={`Tema: ${t.label}`}
+                    aria-label={`Pilih Tema ${t.label}`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
 
         </div>
+
+        {/* Mobile Dropdown Toolbar when toggled */}
+        {isMobileControlsOpen && (
+          <div className="sm:hidden border-t border-hairline px-3 py-2 bg-canvas-surface/95 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div className="flex items-center space-x-1.5">
+              {readingMode === 'tadabbur' && (
+                <button
+                  onClick={() => setShowInlineMeaning(!showInlineMeaning)}
+                  className={`px-2.5 py-1 rounded-lg font-medium text-xs transition-all ${
+                    showInlineMeaning
+                      ? 'bg-primary text-white font-semibold'
+                      : 'text-ink-mute bg-canvas-soft'
+                  }`}
+                >
+                  Arti Kata
+                </button>
+              )}
+              <button
+                onClick={() => setShowTranslation(!showTranslation)}
+                className={`px-2.5 py-1 rounded-lg font-medium text-xs transition-all ${
+                  showTranslation
+                    ? 'bg-primary text-white font-semibold'
+                    : 'text-ink-mute bg-canvas-soft'
+                }`}
+              >
+                Terjemahan
+              </button>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <div className="flex items-center bg-canvas-soft border border-hairline rounded-lg p-0.5">
+                {(['sm', 'md', 'lg', 'xl'] as const).map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => setFontSize(size)}
+                    className={`px-2 py-0.5 rounded text-[11px] font-medium ${
+                      fontSize === size
+                        ? 'bg-canvas-surface text-primary font-bold shadow-subtle'
+                        : 'text-ink-mute'
+                    }`}
+                  >
+                    {size.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex items-center space-x-1 bg-canvas-soft border border-hairline rounded-lg p-0.5">
+                {options.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setTheme(t.id)}
+                    className={`w-4 h-4 rounded transition-all ${
+                      theme === t.id ? 'ring-2 ring-primary ring-offset-1 scale-105' : 'opacity-60'
+                    }`}
+                    style={{ backgroundColor: t.bgHex }}
+                    title={t.label}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Main Quran Reader Container (Scaled to 125% Comfortable Look) */}
@@ -613,12 +715,25 @@ function BacaQuranPageContent() {
                       })}
                     </div>
 
-                    {/* Indonesian Translation Kemenag RI */}
-                    {showTranslation && ayah.textIndo && (
-                      <div className="pt-2">
-                        <p className={`${fontTranslationClass} translation-kemenag font-sans text-ink-secondary transition-all`}>
-                          &ldquo;{ayah.textIndo.replace(/^[“"']+|[”"']+$/g, '').trim()}&rdquo;
-                        </p>
+                    {/* Latin Transliteration & Indonesian Translation (Both Scaled Simultaneously) */}
+                    {showTranslation && (
+                      <div className="pt-3 space-y-1.5 border-t border-hairline/60 mt-2">
+                        {(() => {
+                          const ayahTranslit = ayah.words
+                            .filter((w) => w.charType !== 'end' && w.transliteration && !w.transliteration.startsWith('Kata '))
+                            .map((w) => w.transliteration)
+                            .join(' ');
+                          return ayahTranslit ? (
+                            <p className={`${fontTranslitClass} font-sans italic text-ink-mute font-normal tracking-wide transition-all select-text`}>
+                              {ayahTranslit}
+                            </p>
+                          ) : null;
+                        })()}
+                        {ayah.textIndo && (
+                          <p className={`${fontTranslationClass} translation-kemenag font-sans text-ink-secondary transition-all select-text`}>
+                            &ldquo;{ayah.textIndo.replace(/^[“"']+|[”"']+$/g, '').trim()}&rdquo;
+                          </p>
+                        )}
                       </div>
                     )}
                   </article>

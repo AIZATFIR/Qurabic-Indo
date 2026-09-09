@@ -101,7 +101,10 @@ export default function QuranAudioPlayer({
           <div className="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
             {/* Repeat Mode Button */}
             <button
-              onClick={cycleRepeatMode}
+              onClick={(e) => {
+                e.currentTarget.blur();
+                cycleRepeatMode();
+              }}
               className={`p-1.5 rounded-lg text-xs font-semibold font-sans transition-colors flex items-center space-x-1 ${
                 repeatMode !== 'off'
                   ? 'bg-primary-subdued text-primary'
@@ -123,7 +126,10 @@ export default function QuranAudioPlayer({
 
             {/* Prev Ayah */}
             <button
-              onClick={prevAyah}
+              onClick={(e) => {
+                e.currentTarget.blur();
+                prevAyah();
+              }}
               disabled={activeAyahNum <= 1 && currentTime <= 3}
               className="p-1.5 rounded-lg text-ink-secondary hover:text-ink-primary hover:bg-canvas-soft disabled:opacity-40 transition-colors"
               title="Ayat Sebelumnya (Arrow Left)"
@@ -134,7 +140,10 @@ export default function QuranAudioPlayer({
 
             {/* Play / Pause / Loading Button */}
             <button
-              onClick={togglePlayPause}
+              onClick={(e) => {
+                e.currentTarget.blur();
+                togglePlayPause();
+              }}
               disabled={Boolean(error)}
               className="p-2.5 rounded-xl bg-primary hover:bg-primary-deep text-white shadow-subtle transition-all active:scale-95 flex items-center justify-center disabled:opacity-50"
               title={isPlaying ? 'Jeda (Space)' : 'Putar (Space)'}
@@ -151,7 +160,10 @@ export default function QuranAudioPlayer({
 
             {/* Next Ayah */}
             <button
-              onClick={nextAyah}
+              onClick={(e) => {
+                e.currentTarget.blur();
+                nextAyah();
+              }}
               disabled={activeAyahNum >= totalAyahs}
               className="p-1.5 rounded-lg text-ink-secondary hover:text-ink-primary hover:bg-canvas-soft disabled:opacity-40 transition-colors"
               title="Ayat Selanjutnya (Arrow Right)"
@@ -162,7 +174,10 @@ export default function QuranAudioPlayer({
 
             {/* Dismiss / Stop Player */}
             <button
-              onClick={stop}
+              onClick={(e) => {
+                e.currentTarget.blur();
+                stop();
+              }}
               className="p-1.5 rounded-lg text-ink-mute hover:text-ink-primary hover:bg-canvas-soft transition-colors ml-1"
               title="Tutup Pemutar Audio"
               aria-label="Tutup Pemutar Audio"
