@@ -234,11 +234,32 @@ const CURATED_LINGUISTIC_PROFILES: Record<string, {
       `Secara linguistik, ${word} dan kata-kata terkait berasal dari akar kata ${rootSpaced}, dengan kata kerja dasar عَبَدَ yang berakar pada jalan yang diinjak hingga menjadi rata dan mudah dilalui (tharīq mu'abbad), melambangkan ketundukan mutlak yang berpadu dengan cinta tertinggi.`,
     quranicTheme:
       'Dalam Al-Qur\'an, penghambaan (\'ubūdiyyah) kepada Allah semata adalah tujuan penciptaan jin dan manusia serta kemerdekaan hakiki dari penghambaan kepada makhluk.'
+  },
+
+  // 21. Root m-w-h (م-و-ه) — Air, Sumber Kehidupan (QS. 2:22, dll.)
+  'm-w-h': {
+    baseLemma: 'مَاء / مَوَهَ',
+    baseMeaning: 'air / zat cair sumber kehidupan',
+    narrative: (word, rootSpaced) =>
+      `Secara linguistik, ${word} dan kata-kata terkait berasal dari akar kata ${rootSpaced}, dengan bentuk dasar مَوَهَ yang melandasi kata مَاء (jamak: مِيَاه dan أَمْوَاه). Akar kata ini secara hakiki melambangkan kelembutan, kesucian, dan zat cair esensial yang menjadi asal-usul serta penopang kelangsungan hidup seluruh makhluk di alam semesta.`,
+    quranicTheme:
+      'Dalam Al-Qur\'an, air (مَاء) diangkat sebagai bukti agung keesaan dan kemurahan Allah: "Dan Kami jadikan dari air segala sesuatu yang hidup" (QS. Al-Anbiya\': 30), sekaligus sebagai perumpamaan turunnya wahyu yang menghidupkan hati yang mati sebagaimana hujan menghidupkan tanah yang tandus.'
+  },
+
+  // 22. Root E-l-n (ع-ل-ن) — Pengungkapan Nyata (QS. 2:77, dll.)
+  'E-l-n': {
+    baseLemma: 'أَعْلَنَ / عَلَنَ',
+    baseMeaning: 'menampakkan / menyatakan secara terbuka',
+    narrative: (word, rootSpaced) =>
+      `Secara linguistik, ${word} dan kata-kata terkait berasal dari akar kata ${rootSpaced}, dengan kata kerja dasar عَلَنَ yang berarti tampak nyata dan tidak tersembunyi (lawan dari as-sirr / rahasia). Dalam wazan Form IV (أَعْلَنَ), kata ini bermakna menyiarkan, menyatakan secara terbuka, atau menampakkan apa yang sebelumnya terpendam.`,
+    quranicTheme:
+      'Dalam Al-Qur\'an, akar kata ini sering dikontraskan dengan kata sirr (rahasia) — seperti "Ya\'lamu ma tusirruna wa ma tu\'linun" — menegaskan kemahatahuan Allah atas apa pun yang disembunyikan dalam dada manusia maupun apa yang mereka tampakkan secara terang-terangan.'
   }
 };
 
 /**
- * Synthesizes a rich, coherent Kalaam-standard linguistic narrative for ANY word and root.
+ * Returns authentic, hand-curated linguistic explanations.
+ * For uncurated roots, returns null to avoid synthetic filler or circular text.
  */
 export function getLinguisticExplanation(params: {
   wordArabic: string;
@@ -249,16 +270,14 @@ export function getLinguisticExplanation(params: {
   posLabelIndo?: string;
   primaryMeaning?: string;
   isParticle?: boolean;
-}): LinguisticExplanation {
+}): LinguisticExplanation | null {
   const {
     wordArabic,
     rootArabic,
     rootSlug,
     lemmaArabic,
     pos,
-    posLabelIndo,
-    primaryMeaning,
-    isParticle
+    primaryMeaning
   } = params;
 
   const cleanWord = wordArabic.trim();
@@ -295,48 +314,6 @@ export function getLinguisticExplanation(params: {
     };
   }
 
-  // 2. Specialized synthesis for Particles (Harf)
-  if (isParticle || pos === 'Harf') {
-    const narrativeText = `Secara gramatikal dan tata bahasa Al-Qur'an, kata ${cleanWord} adalah partikel (حَرْف / Harf) yang memiliki kedudukan tetap (mabni) dalam kaidah Nahwu. Partikel dalam bahasa Arab tidak menerima tanda-tanda isim maupun fi'il, melainkan berfungsi sebagai penghubung sintaksis, penegas makna (taukid), atau pengubah hukum i'rab kata setelahnya.`;
-    const quranicThemeText = `Dalam susunan balaghah Al-Qur'an, kehadiran ${cleanWord} memberikan tekanan ritmis dan ketepatan makna yang mengikat kalimat secara padat, menegaskan pesan wahyu dengan keindahan uslub yang tiada tara.`;
-    const fullText = `${narrativeText}\n\n${quranicThemeText}`;
-
-    return {
-      wordArabic: cleanWord,
-      rootArabicJoined: 'Harf',
-      rootArabicSpaced: 'حَرْف',
-      baseLemmaArabic: cleanWord,
-      baseLemmaMeaning: primaryMeaning || 'Partikel / Kata Tugas',
-      primaryMeaning: primaryMeaning || 'Partikel',
-      narrativeText,
-      quranicThemeText,
-      fullText,
-      isCurated: false
-    };
-  }
-
-  // 3. Dynamic Kalaam-Style Synthesis for all remaining roots
-  const rootProfile = rootSlug ? getRootTranslationProfile(rootSlug) : null;
-  const baseLemma = lemmaArabic || (rootJoined ? stripArabicHarakat(rootJoined) : cleanWord);
-  const authenticMeaning = primaryMeaning || getAuthenticWordMeaning(cleanWord, rootSlug);
-  const rootCoreMeaning = rootProfile?.coreMeaning || authenticMeaning;
-
-  const narrativeText = `Secara linguistik, ${cleanWord} dan kata-kata terkait berasal dari akar kata ${rootSpaced}, dengan kata dasar ${baseLemma} yang merepresentasikan konsep "${rootCoreMeaning}". ${cleanWord} berarti "${authenticMeaning}", yang menaungi konteks pengungkapan pesan secara terarah dan terukur. Ini menekankan prinsip perwujudan makna dari potensi leksikal akar kata menjadi bentuk kalimat yang hidup dan berdaya guna dalam uslub bahasa Arab klasik.`;
-
-  const quranicThemeText = `Dalam Al-Qur'an, kata-kata dari akar ${rootSpaced} dipilih secara cermat oleh Allah (ﷻ) untuk menyampaikan hikmah yang sarat makna, mempertautkan antara nilai keimanan, keteladanan moral, dan petunjuk bagi manusia dalam menjalani kehidupan.`;
-
-  const fullText = `${narrativeText}\n\n${quranicThemeText}`;
-
-  return {
-    wordArabic: cleanWord,
-    rootArabicJoined: rootJoined,
-    rootArabicSpaced: rootSpaced,
-    baseLemmaArabic: baseLemma,
-    baseLemmaMeaning: rootCoreMeaning,
-    primaryMeaning: authenticMeaning,
-    narrativeText,
-    quranicThemeText,
-    fullText,
-    isCurated: false
-  };
+  // Zero synthetic filler for uncurated roots: Return null so UI displays authentic Lane's Lexicon directly
+  return null;
 }

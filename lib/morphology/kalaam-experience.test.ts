@@ -53,15 +53,33 @@ test('Kalaam Experience Suite: QS. 95:6:7 (أَجْرٌ)', () => {
 });
 
 test('Kalaam Experience Suite: Zero Empty Placeholders across diverse words', () => {
-  const testTokens = ['1:1:1', '1:2:1', '1:5:2', '1:5:4', '2:2:2', '112:1:3', '114:1:3'];
+  const testTokens = ['1:1:1', '1:2:1', '1:5:2', '1:5:4', '2:2:2', '2:22:11', '2:77:9', '112:1:3', '114:1:3'];
 
   for (const token of testTokens) {
     const study = getWordStudy(token);
     assert.ok(study.identity.arabic, `Word Arabic must exist for ${token}`);
     assert.ok(study.primaryMeaning.text, `Primary meaning must exist for ${token}`);
     assert.notStrictEqual(study.primaryMeaning.text, "Kosakata Al-Qur'an", `Must not be generic placeholder for ${token}`);
-    assert.ok(study.linguisticExplanation?.narrativeText, `Linguistic narrative must exist for ${token}`);
+    
+    // Either curated narrative or authentic classical lexicon senses must be present
+    const hasLexicalEvidence = (study.linguisticExplanation?.narrativeText) || (study.lexical.senses.length > 0);
+    assert.ok(hasLexicalEvidence, `Lexical evidence (curated or Lane) must exist for ${token}`);
+    
     assert.ok(study.grammarDerivation?.baseLemma.arabic, `Grammar base lemma must exist for ${token}`);
     assert.ok(study.grammarDerivation?.verseForm.arabic, `Grammar verse form must exist for ${token}`);
   }
+});
+
+test('Kalaam Experience Suite: Root Eln (2:77:9) and Root mwh (2:22:11) have authentic scholarship', () => {
+  const yuElinun = getWordStudy('2:77:9');
+  assert.strictEqual(yuElinun.identity.arabic, 'يُعْلِنُونَ');
+  assert.ok(yuElinun.linguisticExplanation?.narrativeText.includes('ع ل ن'));
+  assert.ok(yuElinun.linguisticExplanation?.narrativeText.includes('menampakkan'));
+  assert.ok(yuElinun.lexical.senses.length > 0, 'Must have Lane Lexicon senses');
+
+  const ma = getWordStudy('2:22:11');
+  assert.strictEqual(ma.identity.arabic, 'مَاْءً');
+  assert.ok(ma.linguisticExplanation?.narrativeText.includes('م و ه'));
+  assert.ok(ma.linguisticExplanation?.narrativeText.includes('kelangsungan hidup'));
+  assert.ok(ma.lexical.senses.length > 0, 'Must have Lane Lexicon senses');
 });

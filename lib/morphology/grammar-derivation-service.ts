@@ -122,7 +122,7 @@ export function getGrammarDerivation(params: {
           }
         ],
         contextMeaning: 'dia membuat / menempatkan (pertanyaan dengan أَلَمْ)',
-        grammarExplanation: 'Awalan يَـ di awal menunjukkan peristiwa terjadi sekarang atau akan datang (fi\'il mudhari\'). Tanda sukun (ْ) pada huruf lam ditambahkan karena kata ini didahului partikel jazm أَلَمْ (apakah tidak) yang menjazamkan fi\'il mudhari\'. Bersama-sama, أَلَمْ يَجْعَلْ berarti "apakah Dia tidak menjadikan"?'
+        grammarExplanation: 'Awalan يَـ di awal menunjukkan fi\'il mudhari\' (waktu sekarang/akan datang). Tanda sukun majzum (ـْ) pada huruf lam terjadi karena didahului amil jazm أَلَمْ (apakah tidak) yang menjazamkan fi\'il mudhari\'. Bersama-sama, أَلَمْ يَجْعَلْ berarti "apakah Dia tidak menjadikan"?'
       }
     };
   }

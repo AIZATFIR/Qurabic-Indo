@@ -239,6 +239,6 @@ export interface WordStudyViewModel {
     ayahIndo?: string;
     surahNameIndo?: string;
   };
-  linguisticExplanation?: LinguisticExplanation;
+  linguisticExplanation?: LinguisticExplanation | null;
   grammarDerivation?: GrammarDerivation;
 }

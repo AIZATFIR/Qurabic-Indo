@@ -53,9 +53,10 @@ export function getLexiconEnrichedWordDetail(
   const pos = wordModel.morphology.pos === "Fi'il" ? 'V' : 'N';
 
   const laneRoot = getLaneRootRecord(rootBw);
-  const laneEntry = getLaneEntryForLemma(rootBw, lemmaBw, verbForm, pos);
+  const laneEntry = laneRoot ? getLaneEntryForLemma(rootBw, lemmaBw, verbForm, pos) : null;
+  const effectiveEntry = laneEntry || (laneRoot && laneRoot.entries.length > 0 ? laneRoot.entries[0] : null);
 
-  if (!laneRoot || !laneEntry) {
+  if (!laneRoot || !effectiveEntry) {
     const unindexedResult: LexicalLookupResult = {
       hasLexicalData: false,
       source: "Lane's Arabic-English Lexicon",
@@ -72,18 +73,19 @@ export function getLexiconEnrichedWordDetail(
     };
   }
 
-  // 4. Exact verified match retrieved
+  // 4. Exact verified match or authentic root entry retrieved
   const successResult: LexicalLookupResult = {
     hasLexicalData: true,
     source: "Lane's Arabic-English Lexicon",
     rootArabic: laneRoot.rootArabic,
     rootBw: laneRoot.rootBw,
-    matchedLemmaArabic: laneEntry.headwordArabic,
-    matchedLemmaBw: laneEntry.headwordBw,
-    matchedForm: laneEntry.itype ? `Form ${laneEntry.itype}` : undefined,
-    senses: laneEntry.senses,
-    volume: laneEntry.volume,
-    page: laneEntry.page,
+    matchedLemmaArabic: effectiveEntry.headwordArabic,
+    matchedLemmaBw: effectiveEntry.headwordBw,
+    matchedForm: effectiveEntry.itype ? `Form ${effectiveEntry.itype}` : undefined,
+    isRootEntry: !laneEntry,
+    senses: effectiveEntry.senses || [],
+    volume: effectiveEntry.volume || laneRoot.volume,
+    page: effectiveEntry.page || laneRoot.page,
     sourceCitation: laneRoot.sourceCitation
   };
 

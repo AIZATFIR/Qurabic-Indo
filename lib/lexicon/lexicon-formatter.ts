@@ -18,15 +18,19 @@ const COMMON_ENGLISH_WORDS = new Set([
   'virtuous', 'weak', 'silent', 'feigning', 'asleep', 'retreat', 'retreated', 'adversary', 'charge',
   'charged', 'cowardly', 'opinion', 'falsified', 'aloud', 'voice', 'voce', 'ex', 'exs', 'see', 'also',
   'pass', 'act', 'part', 'inf', 'aor', 'fem', 'masc', 'pl', 'sing', 'dial', 'kur', 'art', 'ibn', 'al',
-  'el', 'abu', 'aboo', 'es', 'ed', 'en', 'er', 'et', 'ez', 'seed', 'seed', 'kz', 'mf', 'ta', 'msb'
+  'el', 'abu', 'aboo', 'es', 'ed', 'en', 'er', 'et', 'ez', 'seed', 'kz', 'mf', 'ta', 'msb', 'tk', 'ck',
+  'sk', 'sm', 'mgh', 'jk', 'sgh', 'trad', 'app', 'lit', 'calcutta', 'taj', 'al-arus', 'al-qamus'
 ]);
 
 function isBuckwalterWord(token: string): boolean {
-  const clean = token.replace(/^[^\w*~^`_{}]+|[^\w*~^`_{}]+$/g, '');
+  const clean = token.replace(/^[^a-zA-Z*~^`_{}]+|[^a-zA-Z*~^`_{}]+$/g, '');
   if (!clean || clean.length < 2) return false;
 
   const lower = clean.toLowerCase();
   if (COMMON_ENGLISH_WORDS.has(lower)) return false;
+
+  // Never match Latin transliteration words with Arabic diacritics (e.g. Tāj, Aṣ-Ṣiḥāḥ)
+  if (/[āīūḍṣḥṭẓʿ]/.test(clean)) return false;
 
   // Never match pure English hyphenated names (e.g. Ibn-Es-Seed)
   if (clean.includes('-')) {
@@ -82,17 +86,19 @@ export function formatLexiconSenseText(rawText: string): string {
   text = text.replace(/\(K(?=[:\),])/g, '(Al-Qāmūs');
   text = text.replace(/\(L,\s*K(?=[:\),])/g, '(Lisān al-ʿArab & Al-Qāmūs');
   text = text.replace(/\(L(?=[:\),])/g, '(Lisān al-ʿArab');
-  text = text.replace(/\(TA(?=[:\),])/g, '(Tāj al-ʿArūs');
-  text = text.replace(/\(Msb(?=[:\),])/g, '(Al-Miṣbāḥ al-Munīr');
-  text = text.replace(/([;,\s(])MF(?=[:\),])/g, '$1Majduddīn');
-  text = text.replace(/([;,\s(])Sgh(?=[:\),])/g, '$1Aṣ-Ṣaghānī');
+  text = text.replace(/\bTA\b/g, 'Tāj al-ʿArūs');
+  text = text.replace(/\bTK\b/g, 'At-Takmilah');
+  text = text.replace(/\bCK\b/g, 'Calcutta Ed.');
+  text = text.replace(/\bMsb\b/g, 'Al-Miṣbāḥ');
+  text = text.replace(/\bMF\b/g, 'Majduddīn');
+  text = text.replace(/\bSgh\b/g, 'Aṣ-Ṣaghānī');
   text = text.replace(/:;/g, ';');
 
   // Tokenize preserving whitespace and delimiters
   const tokens = text.split(/(\s+|[(),;:\[\]"“”]+)/);
   const transformed = tokens.map((token) => {
     if (isBuckwalterWord(token)) {
-      const clean = token.replace(/^[^\w*~^`_{}]+|[^\w*~^`_{}]+$/g, '');
+      const clean = token.replace(/^[^a-zA-Z*~^`_{}]+|[^a-zA-Z*~^`_{}]+$/g, '');
       const ar = buckwalterToArabic(clean);
       if (ar && /[\u0600-\u06FF]/.test(ar)) {
         return token.replace(clean, ar);
@@ -107,4 +113,43 @@ export function formatLexiconSenseText(rawText: string): string {
     .replace(/\s+;/g, ';')
     .replace(/\s{2,}/g, ' ')
     .trim();
+}
+
+export interface LexiconToken {
+  type: 'arabic' | 'citation' | 'text';
+  content: string;
+}
+
+/**
+ * Parses formatted Lane's Lexicon sense text into distinct segments
+ * so Arabic words can be rendered with large, dedicated font-arabic and <bdi> isolation.
+ */
+export function parseLexiconSenseTokens(rawText: string): LexiconToken[] {
+  const formatted = formatLexiconSenseText(rawText);
+  if (!formatted) return [];
+
+  // Match Arabic chunks (one or more Arabic words/harakat)
+  const segments: LexiconToken[] = [];
+  const regex = /([\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]+(?:\s+[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]+)*)/g;
+
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(formatted)) !== null) {
+    if (match.index > lastIndex) {
+      const textPart = formatted.substring(lastIndex, match.index);
+      if (textPart) {
+        segments.push({ type: 'text', content: textPart });
+      }
+    }
+
+    segments.push({ type: 'arabic', content: match[1] });
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < formatted.length) {
+    segments.push({ type: 'text', content: formatted.substring(lastIndex) });
+  }
+
+  return segments;
 }

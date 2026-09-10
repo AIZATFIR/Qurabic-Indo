@@ -346,6 +346,76 @@ export const CURATED_WORD_DICTIONARY: Record<string, {
       'Imbalan keadilan dan kemurahan hati Allah di dunia dan akhirat'
     ]
   },
+  'ماء': {
+    rootLetters: 'م و ه',
+    rootLatin: 'mwh',
+    rootSlug: 'm-w-h',
+    primaryMeaning: 'Air (Sumber Kehidupan & Rahmat)',
+    meanings: [
+      'Air tawar yang menyuburkan bumi dan menjadi sumber kehidupan bagi seluruh makhluk hidup',
+      'Air hujan yang diturunkan dari langit sebagai penyuci dan pelepas dahaga',
+      'Zat cair esensial dalam penciptaan manusia'
+    ],
+    rootExplanation: 'Akar kata م و ه melandasi hakikat air (ماء) sebagai cairan penopang seluruh kehidupan di muka bumi.',
+    grammaticalRole: "Isim / Nomina (Isim Jins / Masdar)",
+    posTag: "Isim",
+    wazanOrForm: "Fa'l (asal: مَوَهٌ)",
+    quranicNuances: [
+      'Sumber segala kehidupan: "Dan Kami jadikan dari air segala sesuatu yang hidup" (QS. Al-Anbiya\': 30)',
+      'Penumbuh tanaman dan rezeki bagi hamba-hamba Allah (QS. Al-Baqarah: 22)'
+    ]
+  },
+  'الماء': {
+    rootLetters: 'م و ه',
+    rootLatin: 'mwh',
+    rootSlug: 'm-w-h',
+    primaryMeaning: 'Air (Definit / Tertentu)',
+    meanings: [
+      'Air yang telah diketahui fungsi dan keberkahannya bagi kelangsungan hidup',
+      'Air hujan yang menghidupkan bumi yang telah mati'
+    ],
+    rootExplanation: 'Akar kata م و ه melandasi pembentukan kata air dalam Al-Qur\'an.',
+    grammaticalRole: "Isim Ma'rifah (Nomina dengan Alif Lam)",
+    posTag: "Isim",
+    wazanOrForm: "Isim Ma'rifah",
+    quranicNuances: [
+      'Penyebutan air secara definit (ٱلْمَآءِ) menunjuk pada substansi esensial kehidupan dunia.'
+    ]
+  },
+  'يعلن': {
+    rootLetters: 'ع ل ن',
+    rootLatin: 'Eln',
+    rootSlug: 'E-l-n',
+    primaryMeaning: 'Dia menampakkan / menyatakan secara terbuka',
+    meanings: [
+      'Menampakkan atau menyiarkan sesuatu secara terbuka (lawan dari menyembunyikan / sirr)',
+      'Menyatakan isi hati atau perbuatan ke hadapan publik'
+    ],
+    rootExplanation: 'Akar kata ع ل ن melandasi gagasan keterbukaan, penampakan nyata, dan kejelasan tanpa kesamaran.',
+    grammaticalRole: "Fi'il Mudhari' Form IV (Af'ala - Yuf'ilu)",
+    posTag: "Fi'il",
+    wazanOrForm: "Fi'il Mudhari' Form IV",
+    quranicNuances: [
+      'Sering disandingkan dengan sirr: "Allah mengetahui apa yang kalian rahasiakan dan apa yang kalian tampakkan secara terang-terangan."'
+    ]
+  },
+  'يعلنون': {
+    rootLetters: 'ع ل ن',
+    rootLatin: 'Eln',
+    rootSlug: 'E-l-n',
+    primaryMeaning: 'Mereka menyatakan secara terang-terangan / terbuka',
+    meanings: [
+      'Mereka menampakkan atau menyatakan perbuatan/ucapan secara terbuka di depan orang banyak',
+      'Lawan kata dari menyembunyikan rahasia dalam dada'
+    ],
+    rootExplanation: 'Akar kata ع ل ن melandasi penampakan sesuatu yang sebelumnya tersembunyi.',
+    grammaticalRole: "Fi'il Mudhari' Form IV (Jamak Mudzakkar Marfu' dengan tsubutun nun)",
+    posTag: "Fi'il",
+    wazanOrForm: "Fi'il Mudhari' Form IV (Yuf'ilūna)",
+    quranicNuances: [
+      'QS. Al-Baqarah: 77 (أَوَلَا يَعْلَمُونَ أَنَّ اللَّهَ يَعْلَمُ مَا يُسِرُّونَ وَمَا يُعْلِنُونَ)'
+    ]
+  },
   'يكذبون': {
     rootLetters: 'ك ذ ب',
     rootLatin: 'k*b',

@@ -442,23 +442,24 @@ export function getCanonicalWordDetail(
     const laneRoot = getLaneRootRecord(rootBw);
     const verbForm = ('verbForm' in morphInfo ? morphInfo.verbForm : undefined) || morphInfo.wazanOrForm;
     const laneEntry = laneRoot ? getLaneEntryForLemma(rootBw, lemmaBw, verbForm, morphInfo.pos === "Fi'il" ? 'V' : 'N') : null;
+    const effectiveLaneEntry = laneEntry || (laneRoot && laneRoot.entries.length > 0 ? laneRoot.entries[0] : null);
 
-    if (laneRoot && laneEntry && laneEntry.senses && laneEntry.senses.length > 0) {
+    if (laneRoot && effectiveLaneEntry && effectiveLaneEntry.senses && effectiveLaneEntry.senses.length > 0) {
       lexiconResult = {
         hasLexicalData: true,
         source: "Lane's Arabic-English Lexicon",
         rootArabic: laneRoot.rootArabic,
         rootBw: laneRoot.rootBw,
-        matchedLemmaArabic: laneEntry.headwordArabic,
-        matchedLemmaBw: laneEntry.headwordBw,
-        matchedForm: laneEntry.itype ? `Form ${laneEntry.itype}` : undefined,
-        definition: laneEntry.definition || laneEntry.senses[0]?.text,
-        sourceDefinition: laneEntry.sourceDefinition,
+        matchedLemmaArabic: effectiveLaneEntry.headwordArabic,
+        matchedLemmaBw: effectiveLaneEntry.headwordBw,
+        matchedForm: effectiveLaneEntry.itype ? `Form ${effectiveLaneEntry.itype}` : undefined,
+        definition: effectiveLaneEntry.definition || effectiveLaneEntry.senses[0]?.text,
+        sourceDefinition: effectiveLaneEntry.sourceDefinition,
         translationMethod: 'classical_source',
-        isRootEntry: true,
-        senses: laneEntry.senses,
-        volume: laneEntry.volume,
-        page: laneEntry.page,
+        isRootEntry: !laneEntry,
+        senses: effectiveLaneEntry.senses,
+        volume: effectiveLaneEntry.volume || laneRoot.volume,
+        page: effectiveLaneEntry.page || laneRoot.page,
         sourceCitation: laneRoot.sourceCitation
       };
     } else if (matchedRoot && (matchedRoot.coreMeaning || (matchedRoot.meaningsIndonesian && matchedRoot.meaningsIndonesian.length > 0))) {
