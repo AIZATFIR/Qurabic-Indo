@@ -198,7 +198,14 @@ export function getWordStudy(
   let sourceBadge = 'Kamus Qurabic';
   let isEditorial = true;
 
-  if (detail.translation.primaryMeaning && !detail.translation.primaryMeaning.startsWith(': see') && !detail.translation.primaryMeaning.startsWith('; see') && !detail.translation.primaryMeaning.startsWith('and ')) {
+  const rootSlugOrAr = detail.lexical.rootSlug || detail.lexical.rootArabic || detail.lexical.root;
+  const authenticIndo = getAuthenticWordMeaning(detail.identity.arabic, rootSlugOrAr);
+
+  if (authenticIndo && authenticIndo !== "Kosakata Al-Qur'an" && !authenticIndo.startsWith('Keluarga kata:')) {
+    primaryText = authenticIndo;
+    sourceBadge = detail.morphology.isParticle ? 'QAC Nahwu' : 'Kamus Qurabic';
+    isEditorial = true;
+  } else if (detail.translation.primaryMeaning && !detail.translation.primaryMeaning.startsWith(': see') && !detail.translation.primaryMeaning.startsWith('; see') && !detail.translation.primaryMeaning.startsWith('and ') && !/\b(the|and|or|of|to|in|on|from|with|by|for|not|he|they|we|you)\b/i.test(detail.translation.primaryMeaning)) {
     primaryText = detail.translation.primaryMeaning;
     sourceBadge = detail.morphology.isParticle ? 'QAC Nahwu' : 'Kamus Qurabic';
     isEditorial = true;
@@ -214,10 +221,10 @@ export function getWordStudy(
     primaryText = 'Partikel / Kata Tugas (Harf)';
     sourceBadge = 'QAC Nahwu';
     isEditorial = false;
-  } else if (lex?.hasLexicalData && lex.definition && !lex.definition.startsWith(': see') && !lex.definition.startsWith('; see') && !lex.definition.startsWith('and ') && !lex.definition.startsWith(', ')) {
-    primaryText = lex.definition;
-    sourceBadge = "Lane's Lexicon";
-    isEditorial = false;
+  } else if (authenticIndo && authenticIndo !== "Kosakata Al-Qur'an") {
+    primaryText = authenticIndo;
+    sourceBadge = 'Kamus Qurabic';
+    isEditorial = true;
   } else {
     primaryText = detail.translation.primaryMeaning || 'Kosakata Terindeks Al-Qur\'an';
     sourceBadge = 'Qurabic Corpus';
@@ -228,7 +235,6 @@ export function getWordStudy(
   const syntax = parseSyntacticFeatures(detail.morphology.rawTag, detail.morphology.rawFeatures);
 
   // 6. Resolve Classical Citation & Root Philosophy
-  const rootSlugOrAr = detail.lexical.rootSlug || detail.lexical.rootArabic || detail.lexical.root;
   const classicalCit = getClassicalCitation(rootSlugOrAr);
   const detailedExpl = getWordDetailedExplanation(detail.identity.arabic);
   const rootPhil = classicalCit?.corePhilosophy || detailedExpl.rootExplanation || detail.lexical.coreMeaning || (detail.lexical.rootArabic ? `Akar kata ${detail.lexical.rootArabic} melandasi pembentukan makna kata ini dalam Al-Qur'an.` : undefined);

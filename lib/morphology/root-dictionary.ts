@@ -371,6 +371,104 @@ export const ROOT_DICTIONARY: Record<string, RootTranslationProfile> = {
       'قِيلَ': 'Dikatakan kepada mereka',
     },
   },
+
+  // 17. Root h-d-y (ه د ي) — 316 occurrences
+  'h-d-y': {
+    rootArabic: 'ه د ي',
+    rootLatin: 'hdy',
+    titleIndo: 'Akar ه د ي (Petunjuk, Hidayah, Bimbingan)',
+    coreMeaning: 'Menunjuki jalan kebenaran, membimbing kepada petunjuk lurus, dan menganugerahkan hidayah.',
+    derivatives: {
+      'هَدَىٰ': 'Memberi petunjuk / Menunjuki',
+      'يَهْدِي': 'Membimbing / Memberi hidayah',
+      'ٱهْدِنَا': 'Tunjukilah kami jalan yang lurus',
+      'هُدًى': 'Petunjuk kebenaran (Hidayah)',
+      'ٱلْهُدَىٰ': 'Petunjuk wahyu Allah',
+      'مُهْتَدُونَ': 'Orang-orang yang mendapat petunjuk',
+      'مُهْتَدٍ': 'Orang yang terbimbing',
+    },
+  },
+
+  // 18. Root r-b-b (ر ب ب) — 980 occurrences
+  'r-b-b': {
+    rootArabic: 'ر ب ب',
+    rootLatin: 'rbb',
+    titleIndo: 'Akar ر ب ب (Tuhan Pemelihara, Rabb)',
+    coreMeaning: 'Memelihara, mendidik, merawat secara bertahap hingga sempurna, dan menguasai kepemilikan semesta alam.',
+    derivatives: {
+      'رَبّ': 'Tuhan Pemelihara (Rabb)',
+      'رَبِّ': 'Tuhan Pemeliharaku',
+      'رَبَّنَا': 'Ya Tuhan Pemelihara kami',
+      'رَبُّكُمْ': 'Tuhan Pemelihara kalian',
+      'رَبِّهِمْ': 'Tuhan Pemelihara mereka',
+      'ٱلرَّبّ': 'Sang Maha Pemelihara',
+    },
+  },
+
+  // 19. Root n-z-l (ن ز ل) — 293 occurrences
+  'n-z-l': {
+    rootArabic: 'ن ز ل',
+    rootLatin: 'nzl',
+    titleIndo: 'Akar ن ز ل (Turun, Menurunkan Wahyu)',
+    coreMeaning: 'Turun dari ketinggian, menurunkan wahyu, kitab suci, rahmat, atau rezeki dari langit.',
+    derivatives: {
+      'نَزَلَ': 'Telah turun',
+      'أَنزَلَ': 'Telah menurunkan (wahyu)',
+      'أَنزَلْنَا': 'Kami telah menurunkan',
+      'نَزَّلَ': 'Menurunkan secara berangsur-angsur',
+      'تَنزِيل': 'Penurunan wahyu Al-Qur\'an',
+      'مُنزَل': 'Tempat yang diturunkan',
+    },
+  },
+
+  // 20. Root k-t-b (ك ت ب) — 319 occurrences
+  'k-t-b': {
+    rootArabic: 'ك ت ب',
+    rootLatin: 'ktb',
+    titleIndo: 'Akar ك ت ب (Menulis, Mewajibkan, Kitab)',
+    coreMeaning: 'Mengumpulkan huruf menjadi tulisan, mencatat takdir, menetapkan hukum kewajiban, dan Kitab Suci.',
+    derivatives: {
+      'كَتَبَ': 'Telah menulis / Mewajibkan',
+      'كُتِبَ': 'Diwajibkan / Ditetapkan',
+      'كِتَٰب': 'Kitab / Buku catatan amal',
+      'ٱلْكِتَٰب': 'Al-Kitab (Al-Qur\'an / Taurat / Injil)',
+      'يَكْتُبُونَ': 'Mereka menulis',
+      'كَاتِب': 'Juru tulis',
+    },
+  },
+
+  // 21. Root E-b-d (ع ب د) — 275 occurrences
+  'E-b-d': {
+    rootArabic: 'ع ب د',
+    rootLatin: 'Ebd',
+    titleIndo: 'Akar ع ب د (Menyembah, Ibadah, Hamba)',
+    coreMeaning: 'Menghinakan diri dalam ketundukan penuh kepada Allah, menyembah dengan penuh cinta, dan melayani sebagai hamba.',
+    derivatives: {
+      'عَبَدَ': 'Menyembah',
+      'نَعْبُدُ': 'Kami menyembah hanya kepada-Mu',
+      'ٱعْبُدُوا۟': 'Sembahlah oleh kalian!',
+      'عِبَاد': 'Hamba-hamba Allah',
+      'عِبَادَة': 'Ibadah / Penghambaan',
+      'عَابِدُونَ': 'Orang-orang yang beribadah',
+    },
+  },
+
+  // 22. Root b-y-n (ب ي ن) — 523 occurrences
+  'b-y-n': {
+    rootArabic: 'ب ي ن',
+    rootLatin: 'byn',
+    titleIndo: 'Akar ب ي ن (Jelas, Nyata, Menerangkan)',
+    coreMeaning: 'Tampak jelas dan terpisah dari keraguan, menjelaskan hakikat perkara, dan bukti nyata kebenaran.',
+    derivatives: {
+      'بَيَّنَ': 'Menjelaskan dengan terang',
+      'بَيَّنَّا': 'Kami telah menjelaskan',
+      'يُبَيِّنُ': 'Menjelaskan / Menerangkan',
+      'بَيِّنَة': 'Bukti yang nyata / Keterangan jelas',
+      'بَيِّنَٰت': 'Bukti-bukti nyata kebenaran',
+      'بَيْنَ': 'Di antara',
+      'مُبِين': 'Yang nyata / Terang benderang',
+    },
+  },
 };
 
 /**
@@ -426,7 +524,7 @@ export function getAuthenticWordMeaning(
     }
   }
 
-  // 3. Fall back to clean default meaning if it is a real translation
+  // 3. Fall back to clean default meaning if it is a genuine Indonesian translation
   if (
     defaultMeaning &&
     !defaultMeaning.startsWith('Konsep & Turunan') &&
@@ -436,7 +534,11 @@ export function getAuthenticWordMeaning(
     !defaultMeaning.startsWith('Verba (') &&
     defaultMeaning !== "Kata dalam Al-Qur'an"
   ) {
-    return defaultMeaning;
+    // Ensure default meaning is not raw English
+    const isEnglish = /\b(the|and|or|of|to|in|on|from|with|by|for|not|he|they|we|you|she|it|his|their|our|your|my|who|which|that|enter|entered|say|said|know|knew|believed|disbelieved|eat|eaten|surely|will|were|was|are|is|have|has|had|brought|hosts|another|clear|prison|throne|recited)\b/i.test(defaultMeaning);
+    if (!isEnglish) {
+      return defaultMeaning;
+    }
   }
 
   // 4. Intelligent Morphological Pattern Synthesizer

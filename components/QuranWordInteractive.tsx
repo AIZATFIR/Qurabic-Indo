@@ -124,7 +124,7 @@ function QuranWordInteractiveComponent({
   // Scales Arabic, Latin transliteration, and Indonesian meaning simultaneously
   const stackedArabicSize =
     fontSize === 'sm'
-      ? 'text-2xl sm:text-3xl'
+      ? 'text-xl sm:text-2xl'
       : fontSize === 'md'
       ? 'text-3xl sm:text-4xl'
       : fontSize === 'lg'

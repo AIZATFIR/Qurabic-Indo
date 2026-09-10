@@ -23,24 +23,97 @@ export interface WordDetailedInfo {
 
 // Common English-to-Indonesian gloss translations for upstream Word-by-Word data
 const ENGLISH_TO_INDO_GLOSS: Record<string, string> = {
+  // Particles, conjunctions & pronouns
   'and': 'dan',
   'or': 'atau',
   'then': 'kemudian',
   'in': 'di dalam',
   'on': 'di atas',
+  'upon': 'atas / kepada',
   'from': 'dari',
   'to': 'kepada / ke',
   'with': 'dengan',
   'by': 'demi / dengan',
   'not': 'tidak / bukan',
+  'not (do)': 'tidak',
+  'do not': 'jangan / tidak',
   'no': 'tidak',
   'yes': 'ya',
   'indeed': 'sungguh / sesungguhnya',
+  'indeed, he': 'sesungguhnya Dia',
+  'indeed he': 'sesungguhnya Dia',
+  'and indeed': 'dan sungguh',
+  'so': 'maka',
+  'as': 'sebagaimana / seperti',
+  'when': 'ketika / tatkala',
+  'and when': 'dan apabila / ketika',
+  'if': 'jika / sekiranya',
+  'except': 'kecuali / melainkan',
+  'only': 'hanya',
+  'about': 'tentang',
+  'between': 'di antara',
+  'after': 'setelah / sesudah',
+  'after that': 'setelah itu',
+  'before': 'sebelum',
+  'therein': 'di dalamnya',
+  'herein': 'di sini',
+  'wherever': 'di mana saja',
+  'while': 'sedangkan / padahal',
+  'while the hereafter': 'sedangkan akhirat',
+  'who': 'orang yang',
+  'whom': 'yang kepadanya',
+  'which': 'yang',
+  'what': 'apa yang',
+  'to what': 'terhadap apa yang',
+  'that': 'itu / bahwa',
+  'this': 'ini',
+  'these': 'ini semua',
+  'those': 'mereka yang',
+  'to those who': 'kepada orang-orang yang',
+  'he': 'dia (laki-laki)',
+  'she': 'dia (perempuan)',
+  'they': 'mereka',
+  'we': 'kami',
+  'you': 'kamu / kalian',
+  'for you': 'bagi kalian',
+  'to you': 'kepada kalian',
+  'to him': 'kepadanya',
+  'from him': 'dari-Nya',
+  'it': 'ia / itu',
+  'i': 'aku',
+  'i am': 'aku berada',
+  'my': 'milikku',
+  'my lord': 'Tuhanku',
+  'your lord': 'Tuhanmu',
+  'our lord': 'Tuhan kami',
+  'their lord': 'Tuhan mereka',
+  'his': 'milik-Nya / kepunyaan-Nya',
+  'their': 'milik mereka',
+  'our': 'kami',
+  'your': 'kamu',
+  'o': 'wahai',
+  'o my father': 'wahai ayahku',
+  'o father': 'wahai ayah',
+  'another': 'yang lain',
+  'other': 'lainnya',
+  'clear': 'nyata / jelas / terang',
+  'evil': 'kejahatan / keburukan',
+  'good': 'kebaikan',
+
+  // Divine Names & Sacred Concepts
   'allah': 'Allah',
   'god': 'Allah / Tuhan',
   'lord': 'Tuhan Pemelihara',
   'the most gracious': 'Maha Pengasih',
   'the most merciful': 'Maha Penyayang',
+  'most merciful': 'Maha Penyayang',
+  'all-knower': 'Maha Mengetahui',
+  'the all-knower': 'Maha Mengetahui',
+  'most subtle': 'Maha Lembut',
+  'all-hearing': 'Maha Mendengar',
+  'all-seeing': 'Maha Melihat',
+  'oft-forgiving': 'Maha Pengampun',
+  'surely oft-forgiving': 'Maha Pengampun',
   'all praise': 'segala puji',
   'praise': 'pujian',
   'of the worlds': 'semesta alam',
@@ -57,6 +130,9 @@ const ENGLISH_TO_INDO_GLOSS: Record<string, string> = {
   'you have bestowed favor': 'Engkau beri nikmat',
   'not of those who earned anger': 'bukan jalan mereka yang dimurkai',
   'nor of those who are astray': 'dan bukan pula jalan mereka yang sesat',
+  'the religion': 'agama (Islam)',
+
+  // Verbs & Actions
   'they say': 'mereka berkata',
   'he said': 'dia berkata',
   'say': 'katakanlah',
@@ -64,8 +140,42 @@ const ENGLISH_TO_INDO_GLOSS: Record<string, string> = {
   'and he pardons': 'dan Dia memaafkan',
   'he pardons': 'Dia memaafkan',
   'but he pardons': 'dan Dia memaafkan (sebagian besar)',
-  'fear': 'takut / rasa takut',
+  'recited': 'dibacakan',
+  'are recited': 'dibacakan',
+  'will surely eat': 'pasti memakan',
+  'eat': 'makan',
+  'drink': 'minum',
+  'prostrate': 'bersujud',
+  'prostrating': 'orang-orang yang bersujud',
+  'and they fell down': 'dan mereka tersungkur',
+  'fell down': 'tersungkur',
+  'repented': 'bertaubat',
+  'repent': 'bertaubatlah',
+  'did': 'mengerjakan',
+  'and corrected themselves': 'dan mengadakan perbaikan',
+  'corrected': 'memperbaiki diri',
+  'he was good': 'Dia telah berbuat baik',
+  'we have revealed': 'Kami telah menurunkan',
+  'revealed': 'diturunkan',
+  'he has ordained': 'Dia telah mensyariatkan',
+  'ordained': 'disyariatkan',
+  'we enjoined': 'Kami wasiatkan / perintahkan',
+  'he enjoined': 'Dia perintahkan',
+  'establish': 'tegakkanlah',
+  'turns': 'berpaling',
+  'has made it': 'telah menjadikannya',
+  'made': 'menjadikan',
+  'know': 'mengetahui',
+  'knew': 'mengetahui',
+  'believed': 'beriman',
+  'disbelieved': 'kafir / mengingkari',
+  'fear': 'takut / bertakwalah',
   'patience': 'sabar / ketabahan',
+  'and he has enjoined': 'dan Dia memerintahkan kepadaku',
+  'as long as': 'selama',
+  'i remain alive': 'aku hidup',
+
+  // Nouns, Roles & Entities
   'prayer': 'shalat',
   'charity': 'zakat / sedekah',
   'faith': 'iman / percaya',
@@ -76,15 +186,16 @@ const ENGLISH_TO_INDO_GLOSS: Record<string, string> = {
   'peace': 'kedamaian / keselamatan',
   'forgiveness': 'ampunan / pemaafan',
   'blessed': 'orang yang diberkahi',
+  'hosts': 'bala tentara / golongan',
+  'are hosts': 'bala tentara',
+  'the hosts': 'bala tentara / kelompok',
   'the companies': 'golongan-golongan (sekutu)',
   'the allies': 'pasukan sekutu / golongan',
   'the factions': 'golongan-golongan',
-  'the hosts': 'bala tentara / kelompok',
-  'wherever': 'di mana saja',
-  'i am': 'aku berada',
-  'and he has enjoined': 'dan Dia memerintahkan kepadaku',
-  'as long as': 'selama',
-  'i remain alive': 'aku hidup',
+  'who will be brought': 'yang dihadirkan',
+  'be brought': 'dihadirkan',
+  'warner': 'pemberi peringatan',
+  'a warner': 'pemberi peringatan',
   'mercy': 'rahmat / kasih sayang',
   'grace': 'karunia / anugerah',
   'righteous': 'orang-orang saleh',
@@ -96,32 +207,53 @@ const ENGLISH_TO_INDO_GLOSS: Record<string, string> = {
   'signs': 'tanda-tanda kebesaran',
   'wisdom': 'hikmah / kebijaksanaan',
   'heart': 'hati / kalbu',
-  'hearts': 'hati nurani'
+  'hearts': 'hati nurani',
+  'the prison': 'penjara',
+  'prison': 'penjara',
+  'the throne': 'singgasana',
+  'throne': 'singgasana',
+  'the shaitaan': 'setan',
+  'shaitaan': 'setan',
+  'satan': 'setan',
+  'tree': 'pohon',
+  'zaqqum': 'pohon zaqqum',
+  'nuh': 'Nabi Nuh AS',
+  'musa': 'Nabi Musa AS',
+  'ibrahim': 'Nabi Ibrahim AS',
+  'isa': 'Nabi Isa AS',
+  'muhammad': 'Nabi Muhammad SAW'
 };
 
 export function cleanGlossToIndonesian(rawGloss?: string, fallbackMeaning?: string): string {
   if (!rawGloss) return fallbackMeaning || 'Kata dalam Al-Qur\'an';
   const trimmed = rawGloss.trim();
-  const lower = trimmed.toLowerCase();
+  // Strip outer quotes, brackets, parentheses for matching
+  const stripped = trimmed.replace(/^[\s\(\[\{“"']+|[\s\)\]\}”"']+$/g, '').trim();
+  const lowerStripped = stripped.toLowerCase();
+  const lowerRaw = trimmed.toLowerCase();
 
-  // Direct map match
-  if (ENGLISH_TO_INDO_GLOSS[lower]) {
-    return ENGLISH_TO_INDO_GLOSS[lower];
+  // 1. Direct dictionary match
+  if (ENGLISH_TO_INDO_GLOSS[lowerStripped]) {
+    return ENGLISH_TO_INDO_GLOSS[lowerStripped];
+  }
+  if (ENGLISH_TO_INDO_GLOSS[lowerRaw]) {
+    return ENGLISH_TO_INDO_GLOSS[lowerRaw];
   }
 
-  // Check if string contains English words that should be translated
-  for (const [en, id] of Object.entries(ENGLISH_TO_INDO_GLOSS)) {
-    if (lower === en || lower === `(${en})` || lower === `"${en}"` || lower === `“${en}”`) {
-      return id;
+  // 2. Multi-word phrase cleaning (e.g. "(are) hosts" -> "hosts", "not (do)" -> "not")
+  const normalizedPhrase = lowerRaw.replace(/[\(\)\[\]\{\}]/g, ' ').replace(/\s+/g, ' ').trim();
+  if (ENGLISH_TO_INDO_GLOSS[normalizedPhrase]) {
+    return ENGLISH_TO_INDO_GLOSS[normalizedPhrase];
+  }
+
+  // 3. Fallback meaning if available and input is clearly English
+  const isActuallyEnglish = /\b(the|and|or|of|to|in|on|from|with|by|for|not|he|they|we|you|she|it|his|their|our|your|my|who|which|that|enter|entered|say|said|know|knew|believed|disbelieved|eat|eaten|surely|will|were|was|are|is|have|has|had|brought|hosts|another|clear|prison|throne)\b/i.test(trimmed);
+  const hasIndonesianIndicators = /(kan|lah|nya|kah|pun|ber|ter|mem|men|meng|per|se|di|ke|yang|dan|atau|dari|pada|dalam|atas|orang|kami|mereka|kalian|kamu|dia|ia|aku|saya|kita|tidak|bukan|sudah|telah|akan|jangan|masuk|pohon|penjara|bala|tentara)/i.test(trimmed);
+
+  if (isActuallyEnglish && !hasIndonesianIndicators) {
+    if (fallbackMeaning && !/\b(the|and|or|of|to|in|on|from|with|by|for|not|he|they)\b/i.test(fallbackMeaning)) {
+      return fallbackMeaning;
     }
-  }
-
-  // Only treat as English if it contains distinct common English words and lacks common Indonesian indicators
-  const isActuallyEnglish = /\b(the|and|or|of|to|in|on|from|with|by|for|not|he|they|we|you|she|it|his|their|our|your|my|who|which|that|enter|entered|say|said|know|knew|believed|disbelieved)\b/i.test(trimmed);
-  const hasIndonesianIndicators = /(kan|lah|nya|kah|pun|ber|ter|mem|men|meng|per|se|di|ke|yang|dan|atau|dari|pada|dalam|atas|orang|kami|mereka|kalian|kamu|dia|ia|aku|saya|kita|tidak|bukan|sudah|telah|akan|jangan|masuk)/i.test(trimmed);
-
-  if (isActuallyEnglish && !hasIndonesianIndicators && fallbackMeaning) {
-    return fallbackMeaning;
   }
 
   return trimmed;
