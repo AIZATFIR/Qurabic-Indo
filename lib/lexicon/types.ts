@@ -8,6 +8,8 @@
  */
 
 import { VerseOccurrence } from '../types/morphology';
+import { LinguisticExplanation } from '../morphology/linguistic-explanation-service';
+import { GrammarDerivation } from '../morphology/grammar-derivation-service';
 
 export type LexicalStatus =
   | 'verified'              // Verified classical entry with discrete structured senses
@@ -237,4 +239,6 @@ export interface WordStudyViewModel {
     ayahIndo?: string;
     surahNameIndo?: string;
   };
+  linguisticExplanation?: LinguisticExplanation;
+  grammarDerivation?: GrammarDerivation;
 }

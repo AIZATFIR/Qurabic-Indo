@@ -17,7 +17,11 @@ import {
   Library,
   Tag,
   Flame,
-  Check
+  Check,
+  Copy,
+  Sparkles,
+  ArrowDown,
+  Info
 } from 'lucide-react';
 import { WordStudyViewModel } from '@/lib/lexicon/types';
 import { formatLexiconSenseText } from '@/lib/lexicon/lexicon-formatter';
@@ -32,8 +36,10 @@ interface WordStudyProps {
 }
 
 export default function WordStudy({ study, onClose, isModalMode = false }: WordStudyProps) {
-  const [activeTab, setActiveTab] = useState<'makna' | 'keluarga' | 'klasik'>('makna');
+  const [activeTab, setActiveTab] = useState<'detail' | 'penggunaan' | 'klasik'>('detail');
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [isGrammarOpen, setIsGrammarOpen] = useState(true);
+  const [isCopied, setIsCopied] = useState(false);
   const [isOccurrencesOpen, setIsOccurrencesOpen] = useState(false);
   const [isSourceDrawerOpen, setIsSourceDrawerOpen] = useState(false);
   const [selectedSourceId, setSelectedSourceId] = useState<string | undefined>();
@@ -47,7 +53,9 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
     occurrences,
     syntax,
     provenance,
-    context
+    context,
+    linguisticExplanation,
+    grammarDerivation
   } = study;
 
   const rootProfile = (lexical.rootSlug || lexical.root || lexical.rootArabic)
@@ -89,22 +97,77 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
     setIsSourceDrawerOpen(true);
   };
 
+  const handleCopyExplanation = () => {
+    const textToCopy = linguisticExplanation?.fullText || primaryMeaning.text;
+    if (!textToCopy) return;
+    navigator.clipboard.writeText(textToCopy);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  // Highlights the active word in Indonesian verse context
+  const renderHighlightedVerseIndo = (verseIndo: string, wordMeaning: string) => {
+    if (!verseIndo) return null;
+    const cleanVerse = verseIndo.replace(/^[“"']+|[”"']+$/g, '').trim();
+
+    // Extract potential search tokens from word meaning
+    const tokens = wordMeaning
+      .split(/[\/\(\)\,\;]/)
+      .map(w => w.trim().toLowerCase())
+      .filter(w => w.length > 2 && !['dia', 'kami', 'mereka', 'kalian', 'yang', 'dan', 'atau', 'dalam', 'atas', 'dengan'].includes(w));
+
+    let matchedToken = '';
+    for (const t of tokens) {
+      if (cleanVerse.toLowerCase().includes(t)) {
+        matchedToken = t;
+        break;
+      }
+    }
+
+    if (!matchedToken) {
+      return <span>&ldquo;{cleanVerse}&rdquo;</span>;
+    }
+
+    const regex = new RegExp(`(${matchedToken})`, 'gi');
+    const parts = cleanVerse.split(regex);
+
+    return (
+      <span>
+        &ldquo;
+        {parts.map((part, i) =>
+          part.toLowerCase() === matchedToken.toLowerCase() ? (
+            <strong key={i} className="font-extrabold text-primary bg-primary/10 px-1 py-0.5 rounded underline decoration-primary/40 underline-offset-2">
+              {part}
+            </strong>
+          ) : (
+            part
+          )
+        )}
+        &rdquo;
+      </span>
+    );
+  };
+
   const classicalCit = lexical.classicalCitation;
 
   return (
     <div className="space-y-6 font-sans text-left" dir="ltr">
       {/* ========================================================================= */}
-      {/* 1. HERO SECTION & PRIMARY MEANING (Kalaam Style) */}
+      {/* 1. HERO SECTION (Kalaam Inspired Clean Word Identity) */}
       {/* ========================================================================= */}
-      <section className="p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-5 text-center">
+      <section className="p-6 sm:p-7 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4 text-center">
         {/* Top Control Bar */}
         <div className="flex items-center justify-between border-b border-hairline pb-3 text-left">
           <div className="flex items-center space-x-2">
-            {!isModalMode && (
+            {context?.surahNumber && context?.ayahNumber && context?.wordIndex ? (
+              <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                ({context.surahNumber}:{context.ayahNumber}:{context.wordIndex})
+              </span>
+            ) : !isModalMode ? (
               <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
                 Bedah Kata Al-Qur&apos;an
               </span>
-            )}
+            ) : null}
           </div>
 
           <div className="flex items-center space-x-2">
@@ -131,7 +194,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
         </div>
 
         {/* Arabic Word Display */}
-        <div className="py-2" dir="rtl">
+        <div className="py-1" dir="rtl">
           <span
             className="font-arabic text-5xl sm:text-6xl font-bold text-primary tracking-wide block leading-[2.2] sm:leading-[2.4]"
             title={identity.arabic}
@@ -147,299 +210,284 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
           </p>
         )}
 
-        {/* Primary Readable Meaning Banner — Main Focus */}
-        <div className="p-5 sm:p-6 rounded-2xl bg-primary/10 border border-primary/20 space-y-2 text-center">
+        {/* Primary Readable Meaning Banner */}
+        <div className="p-4 sm:p-5 rounded-2xl bg-primary/10 border border-primary/20 space-y-1.5 text-center">
           <div className="flex items-center justify-center space-x-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-primary">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
               Terjemahan Kata
             </span>
             <button
               onClick={() => openSourceDrawer(primaryMeaning.isEditorialSummary ? 'kemenag-translation' : 'quranic-arabic-corpus')}
-              className="text-[11px] px-2.5 py-0.5 rounded-full bg-canvas-surface border border-hairline text-ink-secondary hover:text-primary hover:border-primary transition-colors font-medium inline-flex items-center space-x-1 shadow-subtle"
+              className="text-[10px] px-2 py-0.5 rounded-full bg-canvas-surface border border-hairline text-ink-secondary hover:text-primary hover:border-primary transition-colors font-medium inline-flex items-center space-x-1 shadow-subtle"
             >
               <span>{primaryMeaning.sourceBadge || 'Kemenag RI'}</span>
               <ShieldCheck className="w-3 h-3 text-primary" />
             </button>
           </div>
-          <p className="text-2xl sm:text-3xl font-extrabold text-ink-primary tracking-tight leading-snug">
+          <p className="text-xl sm:text-2xl font-extrabold text-ink-primary tracking-tight leading-snug">
             {primaryMeaning.text}
           </p>
         </div>
-
-        {/* Konteks Ayat Lengkap (QS. Surah:Ayat) */}
-        {context?.ayahArabic && context?.ayahIndo && (
-          <div className="p-5 sm:p-6 rounded-2xl bg-canvas-soft border border-hairline text-left space-y-3 shadow-subtle">
-            <div className="flex items-center justify-between text-xs text-ink-mute border-b border-hairline pb-2.5">
-              <span className="font-bold text-primary flex items-center space-x-1.5 text-xs sm:text-sm">
-                <BookOpen className="w-4 h-4 text-primary" />
-                <span>Konteks Ayat (QS. {context.surahNameIndo || `Surah ${context.surahNumber}`}: {context.ayahNumber})</span>
-              </span>
-              <span className="text-[11px] font-sans font-medium px-2 py-0.5 rounded-md bg-canvas-surface border border-hairline text-ink-secondary">
-                Mushaf Kemenag RI
-              </span>
-            </div>
-            <p className="font-arabic text-2xl sm:text-3xl leading-[2.4] sm:leading-[2.6] text-right text-ink-primary" dir="rtl">
-              {context.ayahArabic}
-            </p>
-            <p className="text-xs sm:text-sm text-ink-secondary italic leading-relaxed pt-1 border-t border-hairline/60">
-              &ldquo;{context.ayahIndo.replace(/^[“"']+|[”"']+$/g, '').trim()}&rdquo;
-            </p>
-          </div>
-        )}
-
-        {/* 3 Crisp Info Chips */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-3 text-left">
-          {/* Chip 1: Kelas Kata */}
-          <div className="p-3.5 rounded-2xl bg-canvas-soft border border-hairline space-y-1 text-center sm:text-left">
-            <span className="text-[10px] text-ink-mute font-semibold uppercase tracking-wider flex items-center justify-center sm:justify-start space-x-1">
-              <Tag className="w-3 h-3 text-primary hidden sm:inline" />
-              <span>Kelas Kata</span>
-            </span>
-            <span className="text-xs sm:text-sm font-bold text-ink-primary block truncate">
-              {morphology.pos === "Fi'il" ? (morphology.verbType ? `Fi'il ${morphology.verbType}` : "Fi'il") : (morphology.nounType || morphology.posLabelIndo || morphology.pos)}
-            </span>
-          </div>
-
-          {/* Chip 2: Akar Kata */}
-          <div className="p-3.5 rounded-2xl bg-canvas-soft border border-hairline space-y-1 text-center sm:text-left">
-            <span className="text-[10px] text-ink-mute font-semibold uppercase tracking-wider flex items-center justify-center sm:justify-start space-x-1">
-              <Compass className="w-3 h-3 text-primary hidden sm:inline" />
-              <span>Akar Kata</span>
-            </span>
-            {lexical.rootArabic ? (
-              <div className="space-y-0.5">
-                <span className="font-arabic font-bold text-sm sm:text-base text-primary block truncate" dir="rtl">
-                  {lexical.rootArabic} {occurrences.totalCount > 0 && <span className="text-[11px] font-sans font-normal text-ink-mute">({occurrences.totalCount}×)</span>}
-                </span>
-                {rootTrans && (
-                  <span className="text-[10px] text-ink-secondary block truncate font-sans" title={rootTrans}>
-                    {rootTrans}
-                  </span>
-                )}
-              </div>
-            ) : (
-              <span className="text-xs font-semibold text-ink-mute block truncate">Tanpa Akar</span>
-            )}
-          </div>
-
-          {/* Chip 3: Bentuk / Wazan */}
-          <div className="p-3.5 rounded-2xl bg-canvas-soft border border-hairline space-y-1 text-center sm:text-left">
-            <span className="text-[10px] text-ink-mute font-semibold uppercase tracking-wider flex items-center justify-center sm:justify-start space-x-1">
-              <Layers className="w-3 h-3 text-primary hidden sm:inline" />
-              <span>Wazan (Pola)</span>
-            </span>
-            <span className="text-xs sm:text-sm font-bold text-ink-primary block truncate">
-              {morphology.wazanOrForm || (morphology.isParticle ? 'Mabni (Bentuk Tetap)' : 'Bentuk Baku')}
-            </span>
-          </div>
-        </div>
-
-        {/* Context Ayah Navigation Buttons */}
-        {context?.surahNumber && context?.ayahNumber && (
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
-            <Link
-              href={`/baca?surah=${context.surahNumber}&ayah=${context.ayahNumber}`}
-              className="px-5 py-2.5 rounded-full bg-primary hover:bg-primary-deep text-white text-xs font-semibold shadow-subtle transition-all inline-flex items-center space-x-1.5"
-            >
-              <span>Buka di Mushaf (QS. {context.surahNumber}:{context.ayahNumber})</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-            {lexical.rootSlug && !morphology.isParticle && (
-              <Link
-                href={`/akar/${lexical.rootSlug}`}
-                className="px-5 py-2.5 rounded-full bg-canvas-surface hover:bg-canvas-page border border-hairline text-ink-primary hover:text-primary text-xs font-semibold transition-all inline-flex items-center space-x-1.5 shadow-subtle"
-              >
-                <span>Jelajahi Indeks Akar ({lexical.rootArabic})</span>
-                <Compass className="w-3.5 h-3.5 text-primary" />
-              </Link>
-            )}
-          </div>
-        )}
       </section>
 
       {/* ========================================================================= */}
-      {/* 2. OPTIONAL DEEPER TABS (Only shown if substantive data exists) */}
+      {/* 2. TAB CONTROLS (Detail | Penggunaan | Leksikon Klasik) */}
       {/* ========================================================================= */}
-      {(!morphology.isParticle || (lexical.meanings && lexical.meanings.length > 1) || wordFamily.length > 0) && (
-        <div className="flex items-center p-1.5 bg-canvas-soft rounded-2xl border border-hairline">
+      <div className="flex items-center p-1.5 bg-canvas-soft rounded-2xl border border-hairline font-sans">
+        <button
+          onClick={() => setActiveTab('detail')}
+          className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-1.5 ${
+            activeTab === 'detail'
+              ? 'bg-canvas-surface text-primary shadow-subtle border border-hairline'
+              : 'text-ink-mute hover:text-ink-primary'
+          }`}
+        >
+          <BookOpen className="w-4 h-4" />
+          <span>Detail &amp; Tata Bahasa</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('penggunaan')}
+          className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-1.5 ${
+            activeTab === 'penggunaan'
+              ? 'bg-canvas-surface text-primary shadow-subtle border border-hairline'
+              : 'text-ink-mute hover:text-ink-primary'
+          }`}
+        >
+          <GitFork className="w-4 h-4" />
+          <span>Penggunaan ({occurrences.totalCount || wordFamily.length})</span>
+        </button>
+
+        {!morphology.isParticle && (
           <button
-            onClick={() => setActiveTab('makna')}
+            onClick={() => setActiveTab('klasik')}
             className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-1.5 ${
-              activeTab === 'makna'
+              activeTab === 'klasik'
                 ? 'bg-canvas-surface text-primary shadow-subtle border border-hairline'
                 : 'text-ink-mute hover:text-ink-primary'
             }`}
           >
-            <BookOpen className="w-4 h-4" />
-            <span>Bedah Makna</span>
+            <Library className="w-4 h-4" />
+            <span>Leksikon Klasik</span>
           </button>
-
-          {!morphology.isParticle && wordFamily.length > 0 && (
-            <button
-              onClick={() => setActiveTab('keluarga')}
-              className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-1.5 ${
-                activeTab === 'keluarga'
-                  ? 'bg-canvas-surface text-primary shadow-subtle border border-hairline'
-                  : 'text-ink-mute hover:text-ink-primary'
-              }`}
-            >
-              <GitFork className="w-4 h-4" />
-              <span>Keluarga Kata ({wordFamily.length})</span>
-            </button>
-          )}
-
-          {!morphology.isParticle && (
-            <button
-              onClick={() => setActiveTab('klasik')}
-              className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-1.5 ${
-                activeTab === 'klasik'
-                  ? 'bg-canvas-surface text-primary shadow-subtle border border-hairline'
-                  : 'text-ink-mute hover:text-ink-primary'
-              }`}
-            >
-              <Library className="w-4 h-4" />
-              <span>Kamus &amp; I&apos;rab</span>
-            </button>
-          )}
-        </div>
-      )}
+        )}
+      </div>
 
       {/* ========================================================================= */}
-      {/* TAB 1: BEDAH MAKNA & FILOSOFI AKAR (DEFAULT) */}
+      {/* TAB 1: DETAIL & TATA BAHASA (Kalaam Paradigms) */}
       {/* ========================================================================= */}
-      {activeTab === 'makna' && (
+      {activeTab === 'detail' && (
         <div className="space-y-6 animate-fade-in">
-          {/* Card 1: Rincian & Nuansa Makna Kata */}
-          <section className="p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
+          {/* Konteks Ayat Lengkap dengan Penanda Kata Aktif */}
+          {context?.ayahArabic && context?.ayahIndo && (
+            <section className="p-5 sm:p-6 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle text-left space-y-3">
+              <div className="flex items-center justify-between text-xs text-ink-mute border-b border-hairline pb-2.5">
+                <span className="font-bold text-primary flex items-center space-x-1.5 text-xs sm:text-sm">
+                  <BookOpen className="w-4 h-4 text-primary" />
+                  <span>Konteks Ayat (QS. {context.surahNameIndo || `Surah ${context.surahNumber}`}: {context.ayahNumber})</span>
+                </span>
+                <span className="text-[11px] font-sans font-medium px-2 py-0.5 rounded-md bg-canvas-soft border border-hairline text-ink-secondary">
+                  Mushaf Kemenag RI
+                </span>
+              </div>
+              <p className="font-arabic text-2xl sm:text-3xl leading-[2.4] sm:leading-[2.6] text-right text-ink-primary" dir="rtl">
+                {context.ayahArabic}
+              </p>
+              <div className="text-xs sm:text-sm text-ink-secondary leading-relaxed pt-1 border-t border-hairline/60 font-sans">
+                {renderHighlightedVerseIndo(context.ayahIndo, primaryMeaning.text)}
+              </div>
+            </section>
+          )}
+
+          {/* 3.1 BAGIAN PENJELASAN (Linguistic Narrative ala Kalaam) */}
+          <section className="p-6 sm:p-7 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
             <div className="flex items-center justify-between border-b border-hairline pb-3">
               <h3 className="text-base font-bold text-ink-primary flex items-center space-x-2">
-                <ScrollText className="w-4 h-4 text-primary" />
-                <span>Rincian &amp; Nuansa Makna Kata</span>
+                <Sparkles className="w-4 h-4 text-primary" />
+                <span>Penjelasan</span>
               </h3>
               <button
-                onClick={() => openSourceDrawer('quranic-arabic-corpus')}
-                className="text-xs text-ink-mute hover:text-primary flex items-center space-x-1 transition-colors"
+                onClick={handleCopyExplanation}
+                className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-canvas-soft hover:bg-canvas-page border border-hairline text-xs font-semibold text-ink-secondary hover:text-primary transition-all shadow-subtle"
+                title="Salin penjelasan ke papan klip"
               >
-                <span>Kemenag &amp; QAC</span>
-                <ShieldCheck className="w-3 h-3" />
+                {isCopied ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">Tersalin!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5" />
+                    <span>Salin</span>
+                  </>
+                )}
               </button>
             </div>
 
-            {/* Meanings List */}
-            {lexical.meanings && lexical.meanings.length > 0 ? (
-              <div className="space-y-2.5">
-                {lexical.meanings.map((meaning, idx) => (
-                  <div key={idx} className="p-3.5 rounded-2xl bg-canvas-soft border border-hairline flex items-start space-x-3 text-xs sm:text-sm text-ink-primary">
-                    <span className="w-5 h-5 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                      {idx + 1}
-                    </span>
-                    <span className="leading-relaxed">{meaning}</span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="p-4 rounded-2xl bg-canvas-soft border border-hairline text-xs sm:text-sm text-ink-primary leading-relaxed">
-                {primaryMeaning.text}
-              </div>
-            )}
+            {/* Narrative Paragraph */}
+            <p className="text-sm sm:text-base text-ink-primary leading-relaxed font-sans text-justify sm:text-left">
+              {linguisticExplanation?.narrativeText}
+            </p>
 
-            {/* Grammatical Role Note */}
-            <div className="p-3.5 bg-canvas-soft rounded-2xl border border-hairline text-xs text-ink-secondary leading-relaxed">
-              <strong className="text-ink-primary">Peran Gramatikal:</strong> {morphology.grammaticalRole}
-            </div>
-
-            {/* Quranic Nuances */}
-            {lexical.usageNuances && lexical.usageNuances.length > 0 && (
-              <div className="pt-2 space-y-2">
-                <span className="text-xs font-bold text-ink-primary block uppercase tracking-wider">
-                  Nuansa Penggunaan dalam Al-Qur&apos;an:
+            {/* Quranic Theme Note */}
+            {linguisticExplanation?.quranicThemeText && (
+              <div className="p-4 rounded-2xl bg-canvas-soft border border-hairline space-y-1.5 text-xs sm:text-sm text-ink-secondary leading-relaxed">
+                <span className="font-bold text-primary block uppercase tracking-wider text-[11px]">
+                  Refleksi dalam Al-Qur&apos;an:
                 </span>
-                <ul className="space-y-1.5 text-xs text-ink-secondary list-disc list-inside">
-                  {lexical.usageNuances.map((nuance, idx) => (
-                    <li key={idx} className="leading-relaxed">{nuance}</li>
-                  ))}
-                </ul>
+                <p>{linguisticExplanation.quranicThemeText}</p>
               </div>
             )}
           </section>
 
-          {/* Card 2: Bedah Filosofi Akar Kata (Kutipan Kitab Klasik) */}
-          <section className="p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
-            <div className="flex items-center justify-between border-b border-hairline pb-3">
-              <h3 className="text-base font-bold text-ink-primary flex items-center space-x-2">
-                <Quote className="w-4 h-4 text-primary" />
-                <span>
-                  {lexical.rootArabic
-                    ? `Bedah Filosofi Akar (${lexical.rootArabic})`
-                    : 'Karakter Leksikal Kata'}
-                </span>
-              </h3>
-            </div>
+          {/* 3.2 BAGIAN TATA BAHASA (Morphological Flowchart ala Kalaam) */}
+          {grammarDerivation && (
+            <section className="p-6 sm:p-7 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-5">
+              <div className="flex items-center justify-between border-b border-hairline pb-3">
+                <h3 className="text-base font-bold text-ink-primary flex items-center space-x-2">
+                  <Layers className="w-4 h-4 text-primary" />
+                  <span>Tata bahasa</span>
+                </h3>
+                <button
+                  onClick={() => setIsGrammarOpen(!isGrammarOpen)}
+                  className="p-1.5 rounded-xl hover:bg-canvas-soft text-ink-mute hover:text-ink-primary transition-colors border border-hairline"
+                  title={isGrammarOpen ? 'Tutup Tata Bahasa' : 'Buka Tata Bahasa'}
+                >
+                  {isGrammarOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </button>
+              </div>
 
-            {classicalCit ? (
-              <div className="space-y-4">
-                {/* Classical Quote Card */}
-                <div className="p-5 sm:p-6 rounded-2xl bg-canvas-soft border border-hairline space-y-3">
-                  {/* Book Citation Header */}
-                  <div className="flex flex-wrap items-center justify-between gap-1 text-xs text-ink-mute border-b border-hairline/60 pb-2">
-                    <span className="font-bold text-primary">
-                      {classicalCit.book} — {classicalCit.author}
+              {isGrammarOpen && (
+                <div className="space-y-4 animate-fade-in">
+                  {/* Card 1: Bentuk Dasar / Kata Kerja Asal */}
+                  <div className="p-5 sm:p-6 rounded-2xl bg-canvas-soft border border-hairline text-center space-y-2 relative group hover:border-primary/30 transition-all">
+                    <span className="absolute top-3 right-3 text-ink-mute" title="Bentuk Asal / Lemma">
+                      <Info className="w-4 h-4" />
                     </span>
-                    {classicalCit.volumePage && (
-                      <span className="text-[11px] font-mono">{classicalCit.volumePage}</span>
-                    )}
+                    <span className="text-3xl sm:text-4xl font-arabic font-bold text-emerald-600 dark:text-emerald-400 block py-1" dir="rtl">
+                      {grammarDerivation.baseLemma.arabic}
+                    </span>
+                    <p className="text-sm sm:text-base font-bold text-ink-primary">
+                      {grammarDerivation.baseLemma.meaning}
+                    </p>
+                    <p className="text-xs text-ink-secondary leading-relaxed max-w-lg mx-auto">
+                      {grammarDerivation.baseLemma.formationNote}
+                    </p>
                   </div>
 
-                  {/* Original Arabic Quote */}
-                  {classicalCit.originalArabic && (
-                    <p className="font-arabic text-base sm:text-lg text-ink-primary leading-loose text-right pt-1" dir="rtl">
-                      «{classicalCit.originalArabic}»
-                    </p>
-                  )}
+                  {/* Connecting Arrow */}
+                  <div className="flex items-center justify-center py-1">
+                    <div className="flex flex-col items-center text-primary">
+                      <div className="w-0.5 h-4 bg-primary/40" />
+                      <ArrowDown className="w-4 h-4 text-primary" />
+                    </div>
+                  </div>
 
-                  {/* Indonesian Translation Quote */}
-                  <blockquote className="text-xs sm:text-sm text-ink-secondary leading-relaxed italic border-l-2 border-primary pl-3">
-                    &ldquo;{classicalCit.indonesianQuote}&rdquo;
-                  </blockquote>
+                  {/* Card 2: Bentuk Kata dalam Ayat Ini */}
+                  <div className="p-5 sm:p-6 rounded-2xl bg-canvas-soft border border-hairline text-center space-y-3 relative group hover:border-primary/30 transition-all">
+                    <span className="absolute top-3 right-3 text-ink-mute" title="Bentuk dalam Ayat Al-Qur'an">
+                      <Info className="w-4 h-4" />
+                    </span>
+
+                    {/* Morphemes colored display */}
+                    <div className="flex items-center justify-center space-x-1 font-arabic text-3xl sm:text-4xl font-bold py-1 select-none" dir="rtl">
+                      {grammarDerivation.verseForm.morphemes.map((m, idx) => (
+                        <span key={idx} className={m.colorClass} title={`${m.label}: ${m.meaning || ''}`}>
+                          {m.text}
+                        </span>
+                      ))}
+                    </div>
+
+                    <p className="text-sm sm:text-base font-bold text-ink-primary">
+                      {grammarDerivation.verseForm.contextMeaning}
+                    </p>
+
+                    {/* Concise Nahwu & I'rab Explanation */}
+                    <div className="text-xs sm:text-sm text-ink-secondary leading-relaxed text-left sm:text-center max-w-xl mx-auto bg-canvas-surface p-3.5 rounded-xl border border-hairline">
+                      {grammarDerivation.verseForm.grammarExplanation}
+                    </div>
+                  </div>
                 </div>
+              )}
+            </section>
+          )}
 
-                {/* Core Philosophy Card */}
-                {classicalCit.corePhilosophy && (
-                  <div className="p-4 rounded-2xl bg-canvas-surface border border-hairline space-y-1.5">
-                    <span className="text-[11px] font-bold text-primary uppercase tracking-wider flex items-center space-x-1.5">
-                      <Flame className="w-3.5 h-3.5" />
-                      <span>Intisari Filosofis</span>
+          {/* 3.3 TIGA CHIPS MORFOLOGI RINGKAS */}
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 text-left">
+            {/* Chip 1: Kelas Kata */}
+            <div className="p-3.5 rounded-2xl bg-canvas-surface border border-hairline space-y-1 text-center sm:text-left shadow-subtle">
+              <span className="text-[10px] text-ink-mute font-semibold uppercase tracking-wider flex items-center justify-center sm:justify-start space-x-1">
+                <Tag className="w-3 h-3 text-primary hidden sm:inline" />
+                <span>Kelas Kata</span>
+              </span>
+              <span className="text-xs sm:text-sm font-bold text-ink-primary block truncate">
+                {morphology.pos === "Fi'il" ? (morphology.verbType ? `Fi'il ${morphology.verbType}` : "Fi'il") : (morphology.nounType || morphology.posLabelIndo || morphology.pos)}
+              </span>
+            </div>
+
+            {/* Chip 2: Akar Kata */}
+            <div className="p-3.5 rounded-2xl bg-canvas-surface border border-hairline space-y-1 text-center sm:text-left shadow-subtle">
+              <span className="text-[10px] text-ink-mute font-semibold uppercase tracking-wider flex items-center justify-center sm:justify-start space-x-1">
+                <Compass className="w-3 h-3 text-primary hidden sm:inline" />
+                <span>Akar Kata</span>
+              </span>
+              {lexical.rootArabic ? (
+                <div className="space-y-0.5">
+                  <span className="font-arabic font-bold text-sm sm:text-base text-primary block truncate" dir="rtl">
+                    {lexical.rootArabic} {occurrences.totalCount > 0 && <span className="text-[11px] font-sans font-normal text-ink-mute">({occurrences.totalCount}×)</span>}
+                  </span>
+                  {rootTrans && (
+                    <span className="text-[10px] text-ink-secondary block truncate font-sans" title={rootTrans}>
+                      {rootTrans}
                     </span>
-                    <p className="text-xs sm:text-sm text-ink-primary leading-relaxed">
-                      {classicalCit.corePhilosophy}
-                    </p>
-                  </div>
-                )}
-              </div>
-            ) : lexical.rootPhilosophy ? (
-              <div className="p-5 rounded-2xl bg-canvas-soft border border-hairline space-y-2">
-                <span className="text-xs font-bold text-ink-primary block uppercase tracking-wider">
-                  Konsep Akar Kata:
-                </span>
-                <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed">
-                  {lexical.rootPhilosophy}
-                </p>
-              </div>
-            ) : (
-              <div className="p-5 rounded-2xl bg-canvas-soft border border-hairline text-center text-xs text-ink-mute italic">
-                {morphology.isParticle
-                  ? "Kata ini adalah Partikel (Harf) yang memiliki peran gramatikal tetap dalam kaidah Nahwu Al-Qur'an."
-                  : "Kajian filosofi akar kata terindeks melalui Quranic Arabic Corpus dan leksikografi klasik."}
-              </div>
-            )}
-          </section>
+                  )}
+                </div>
+              ) : (
+                <span className="text-xs font-semibold text-ink-mute block truncate">Tanpa Akar</span>
+              )}
+            </div>
+
+            {/* Chip 3: Bentuk / Wazan */}
+            <div className="p-3.5 rounded-2xl bg-canvas-surface border border-hairline space-y-1 text-center sm:text-left shadow-subtle">
+              <span className="text-[10px] text-ink-mute font-semibold uppercase tracking-wider flex items-center justify-center sm:justify-start space-x-1">
+                <Layers className="w-3 h-3 text-primary hidden sm:inline" />
+                <span>Wazan (Pola)</span>
+              </span>
+              <span className="text-xs sm:text-sm font-bold text-ink-primary block truncate">
+                {morphology.wazanOrForm || (morphology.isParticle ? 'Mabni (Bentuk Tetap)' : 'Bentuk Baku')}
+              </span>
+            </div>
+          </div>
+
+          {/* Context Ayah Navigation Buttons */}
+          {context?.surahNumber && context?.ayahNumber && (
+            <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
+              <Link
+                href={`/baca?surah=${context.surahNumber}&ayah=${context.ayahNumber}`}
+                className="px-5 py-2.5 rounded-full bg-primary hover:bg-primary-deep text-white text-xs font-semibold shadow-subtle transition-all inline-flex items-center space-x-1.5"
+              >
+                <span>Buka di Mushaf (QS. {context.surahNumber}:{context.ayahNumber})</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+              {lexical.rootSlug && !morphology.isParticle && (
+                <Link
+                  href={`/akar/${lexical.rootSlug}`}
+                  className="px-5 py-2.5 rounded-full bg-canvas-surface hover:bg-canvas-page border border-hairline text-ink-primary hover:text-primary text-xs font-semibold transition-all inline-flex items-center space-x-1.5 shadow-subtle"
+                >
+                  <span>Jelajahi Indeks Akar ({lexical.rootArabic})</span>
+                  <Compass className="w-3.5 h-3.5 text-primary" />
+                </Link>
+              )}
+            </div>
+          )}
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* TAB 2: KELUARGA KATA & OCCURRENCES */}
+      {/* TAB 2: PENGGUNAAN (Keluarga Kata & Kemunculan di Al-Qur'an) */}
       {/* ========================================================================= */}
-      {activeTab === 'keluarga' && (
+      {activeTab === 'penggunaan' && (
         <div className="space-y-6 animate-fade-in">
           {/* Section: Keluarga Kata dalam Al-Qur'an */}
           {!morphology.isParticle && wordFamily.length > 0 ? (
@@ -487,7 +535,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
             </section>
           ) : (
             <div className="p-8 rounded-3xl bg-canvas-surface border border-hairline text-center text-xs text-ink-mute">
-              Tidak ada data keluarga kata turunan untuk partikel atau kata ini.
+              Tidak ada data keluarga kata turunan untuk partikel ini.
             </div>
           )}
 
@@ -509,7 +557,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
               </div>
 
               <div className="space-y-3">
-                {(isOccurrencesOpen ? occurrences.items : occurrences.items.slice(0, 4)).map((occ, idx) => (
+                {(isOccurrencesOpen ? occurrences.items : occurrences.items.slice(0, 5)).map((occ, idx) => (
                   <Link
                     key={idx}
                     href={`/baca?surah=${occ.surahNumber}&ayah=${occ.ayahNumber}`}
@@ -527,7 +575,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                       {occ.verseArabic}
                     </p>
                     {occ.verseIndo && (
-                      <p className="text-xs sm:text-sm text-ink-secondary line-clamp-2">
+                      <p className="text-xs sm:text-sm text-ink-secondary line-clamp-2 font-sans">
                         {occ.verseIndo}
                       </p>
                     )}
@@ -540,7 +588,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       )}
 
       {/* ========================================================================= */}
-      {/* TAB 3: KAMUS KLASIK & I'RAB */}
+      {/* TAB 3: KAMUS KLASIK & I'RAB LANJUTAN */}
       {/* ========================================================================= */}
       {activeTab === 'klasik' && (
         <div className="space-y-6 animate-fade-in">
@@ -557,7 +605,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
               </h3>
 
               <div className="flex items-center space-x-1.5">
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary-subdued text-primary font-semibold">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-semibold">
                   {lexical.isRootEntry ? 'Entri Akar' : 'Definisi Leksikal'}
                 </span>
                 <button
@@ -570,36 +618,10 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
               </div>
             </div>
 
-            {/* Indonesian Lexical Summary if available */}
-            {lexical.rootPhilosophy && (
-              <div className="p-4 sm:p-5 rounded-2xl bg-canvas-soft border border-hairline space-y-2.5">
-                <div className="flex items-center space-x-2 text-xs font-bold text-primary">
-                  <Compass className="w-4 h-4" />
-                  <span>Kajian Makna &amp; Filosofi Leksikal Akar {lexical.rootArabic ? `(${lexical.rootArabic})` : ''}</span>
-                </div>
-                <p className="text-sm sm:text-base text-ink-primary font-medium leading-relaxed">
-                  {lexical.rootPhilosophy}
-                </p>
-                {lexical.usageNuances && lexical.usageNuances.length > 0 && (
-                  <div className="pt-2 border-t border-hairline/60 space-y-1.5">
-                    <span className="text-[11px] font-semibold text-ink-mute block">Nuansa Penggunaan dalam Ayat Al-Qur&apos;an:</span>
-                    <ul className="space-y-1 text-xs text-ink-secondary">
-                      {lexical.usageNuances.map((nuance, nIdx) => (
-                        <li key={nIdx} className="flex items-start space-x-1.5">
-                          <span className="text-primary font-bold mt-0.5">•</span>
-                          <span>{nuance}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            )}
-
             {lexical.senses.length > 0 ? (
               <div className="space-y-3">
                 <div className="text-xs text-ink-mute flex items-center justify-between px-1">
-                  <span className="font-semibold text-ink-secondary">Arsip Rujukan Leksikon Arab-Inggris Klasik:</span>
+                  <span className="font-semibold text-ink-secondary">Arsip Rujukan Leksikon Klasik:</span>
                   <span>Lane&apos;s Lexicon (1863)</span>
                 </div>
                 {lexical.senses.map((sense, idx) => (
@@ -621,22 +643,10 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                     </p>
                   </div>
                 ))}
-
-                <div className="p-3 bg-canvas-surface rounded-2xl border border-hairline text-xs text-ink-mute flex flex-wrap items-center justify-between gap-2">
-                  <span><strong>Otoritas:</strong> Edward William Lane, <em>An Arabic-English Lexicon</em> (Perseus &amp; Alpheios Project)</span>
-                  <span>Lisensi: CC BY-SA 3.0</span>
-                </div>
               </div>
             ) : (
-              <div className="p-6 bg-canvas-soft rounded-2xl border border-hairline text-center space-y-1">
-                <p className="text-sm text-ink-mute italic">
-                  {morphology.isParticle
-                    ? "Kata ini adalah Partikel (Harf) yang memiliki peran gramatikal tetap dalam kaidah Nahwu Al-Qur'an."
-                    : "Makna leksikal terverifikasi belum terindeks untuk kata ini."}
-                </p>
-                <p className="text-xs text-ink-mute">
-                  Qurabic memegang prinsip keaslian data: Zero AI hallucination, hanya menyajikan kutipan leksikografi asli yang terverifikasi.
-                </p>
+              <div className="p-5 rounded-2xl bg-canvas-soft border border-hairline text-center space-y-1 text-xs text-ink-secondary">
+                <p>Kajian mendalam kata ini dipetakan secara lengkap melalui kaidah Nahwu QAC dan Leksikografi Klasik di tab Detail &amp; Tata Bahasa.</p>
               </div>
             )}
           </section>
@@ -678,21 +688,8 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                   {morphology.rawTag && (
                     <li>Tag QAC: <code className="px-1.5 py-0.5 rounded bg-canvas-surface border border-hairline text-primary font-mono">{morphology.rawTag}</code></li>
                   )}
-                  {morphology.rawFeatures && (
-                    <li>Raw Features: <code className="px-1.5 py-0.5 rounded bg-canvas-surface border border-hairline text-ink-mute font-mono">{morphology.rawFeatures}</code></li>
-                  )}
                 </ul>
               </div>
-            </div>
-
-            <div className="p-3.5 bg-canvas-soft rounded-2xl border border-hairline text-xs text-ink-mute flex items-center justify-between">
-              <span>Metodologi: QAC Computational Arabic Treebank &amp; Nahwu Tradisional</span>
-              <button
-                onClick={() => openSourceDrawer('quranic-arabic-corpus')}
-                className="text-primary hover:underline font-semibold"
-              >
-                Lihat Otoritas QAC
-              </button>
             </div>
           </section>
         </div>

@@ -272,6 +272,80 @@ export const CURATED_WORD_DICTIONARY: Record<string, {
   wazanOrForm?: string;
   quranicNuances?: string[];
 }> = {
+  'يجعل': {
+    rootLetters: 'ج ع ل',
+    rootLatin: 'jEl',
+    rootSlug: 'j-E-l',
+    primaryMeaning: 'Dia membuat / menjadikan / menempatkan',
+    meanings: [
+      'Menjadikan sesuatu berpindah dari satu kondisi ke kondisi lain',
+      'Menetapkan hukum, posisi, atau tatanan peran tertentu',
+      'Mengubah tipu daya musuh menjadi kehancuran bagi diri mereka sendiri'
+    ],
+    rootExplanation: 'Akar kata ج ع ل melandasi gagasan penetapan peran yang disengaja dan transformasi potensi menjadi realitas.',
+    grammaticalRole: "Fi'il Mudhari' Form I (Majzum / Marfu')",
+    posTag: "Fi'il",
+    wazanOrForm: "Fi'il Mudhari' Form I (Yaf'alu)",
+    quranicNuances: [
+      'Digunakan dalam QS. Al-Fil: 2 (أَلَمْ يَجْعَلْ كَيْدَهُمْ فِي تَضْلِيلٍ) untuk menggagalkan makar tentara bergajah',
+      'Digunakan untuk ketetapan Allah menciptakan malam dan siang'
+    ]
+  },
+  'جعل': {
+    rootLetters: 'ج ع ل',
+    rootLatin: 'jEl',
+    rootSlug: 'j-E-l',
+    primaryMeaning: 'Dia telah membuat / menjadikan / menetapkan',
+    meanings: [
+      'Menciptakan, mempersiapkan, menunjuk, dan mengubah keadaan',
+      'Tindakan yang disengaja untuk menyebabkan sesuatu mengambil bentuk tertentu',
+      'Mewujudkan perubahan atau membangun ketertiban dalam kerangka terstruktur'
+    ],
+    rootExplanation: 'Akar kata ج ع ل menyampaikan tema-tema penciptaan yang disengaja, penunjukan, dan transformasi.',
+    grammaticalRole: "Fi'il Madhi Form I (Kata Kerja Lampau)",
+    posTag: "Fi'il",
+    wazanOrForm: "Fi'il Madhi Form I (Fa'ala)",
+    quranicNuances: [
+      'Digunakan untuk penunjukan khalifah di muka bumi (إِنِّي جَاعِلٌ فِي الْأَرْضِ خَلِيفَةً)',
+      'Digunakan untuk penciptaan cahaya dan kegelapan'
+    ]
+  },
+  'أجر': {
+    rootLetters: 'أ ج ر',
+    rootLatin: 'Ajr',
+    rootSlug: 'A-j-r',
+    primaryMeaning: 'Pahala / Imbalan / Upah yang adil',
+    meanings: [
+      'Imbalan, upah, atau kompensasi yang diberikan atas pekerjaan kebajikan',
+      'Konsep ganti rugi yang adil atas usaha nyata seorang hamba',
+      'Pahala mulia yang menanti orang beriman di sisi Allah'
+    ],
+    rootExplanation: 'Akar kata أ ج ر melandasi gagasan kompensasi yang adil dan pembalasan kebaikan yang melimpah.',
+    grammaticalRole: "Isim / Nomina (Mubtada' Mu'akhkhar / Maf'ul)",
+    posTag: "Isim",
+    wazanOrForm: "Isim Masdar (Fa'l)",
+    quranicNuances: [
+      'Digunakan dalam QS. At-Tin: 6 (فَلَهُمْ أَجْرٌ غَيْرُ مَمْنُونٍ) untuk pahala tanpa batas',
+      "Pahala besar (ajrun 'azhīm) dan pahala mulia (ajrun karīm)"
+    ]
+  },
+  'اجر': {
+    rootLetters: 'أ ج ر',
+    rootLatin: 'Ajr',
+    rootSlug: 'A-j-r',
+    primaryMeaning: 'Pahala / Imbalan / Upah',
+    meanings: [
+      'Kompensasi dan balasan mulia atas amal kebajikan',
+      'Pahala yang tiada putus-putusnya bagi orang-orang beriman'
+    ],
+    rootExplanation: 'Akar kata أ ج ر berkaitan dengan perekrutan, upah, dan balasan atas perbuatan.',
+    grammaticalRole: "Isim / Nomina",
+    posTag: "Isim",
+    wazanOrForm: "Isim Masdar",
+    quranicNuances: [
+      'Imbalan keadilan dan kemurahan hati Allah di dunia dan akhirat'
+    ]
+  },
   'يكذبون': {
     rootLetters: 'ك ذ ب',
     rootLatin: 'k*b',

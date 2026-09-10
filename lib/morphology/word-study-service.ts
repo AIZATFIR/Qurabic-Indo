@@ -22,6 +22,8 @@ import { getWordDetailedExplanation, CURATED_WORD_DICTIONARY } from '../search/w
 import { ROOT_DATABASE } from '../data/roots';
 import { transliterateArabic, isRawBuckwalterRoot } from './transliteration';
 import { getAuthenticWordMeaning, getRootTranslationProfile } from './root-dictionary';
+import { getLinguisticExplanation } from './linguistic-explanation-service';
+import { getGrammarDerivation } from './grammar-derivation-service';
 
 /**
  * Maps raw QAC morphological features string to detailed Indonesian syntactic breakdown
@@ -252,6 +254,37 @@ export function getWordStudy(
   const rootProfile = rootSlugOrAr ? getRootTranslationProfile(rootSlugOrAr) : null;
   const rootTranslation = rootProfile?.coreMeaning || detail.lexical.coreMeaning || undefined;
 
+  // 8. Synthesize Kalaam-Style Linguistic Explanation & Grammar Derivation Flow
+  const linguisticExplanation = getLinguisticExplanation({
+    wordArabic: detail.identity.arabic,
+    rootArabic: detail.lexical.rootArabic,
+    rootSlug: detail.lexical.rootSlug,
+    lemmaArabic: detail.lexical.lemmaArabic,
+    pos: detail.morphology.pos,
+    posLabelIndo: detail.morphology.posLabelIndo,
+    primaryMeaning: primaryText,
+    isParticle: detail.morphology.isParticle
+  });
+
+  const grammarDerivation = getGrammarDerivation({
+    wordArabic: detail.identity.arabic,
+    locationKey: detail.identity.coordinate,
+    rawTag: detail.morphology.rawTag,
+    rawFeatures: detail.morphology.rawFeatures,
+    rootLetters: detail.lexical.rootArabic,
+    rootSlug: detail.lexical.rootSlug,
+    lemmaArabic: detail.lexical.lemmaArabic,
+    pos: detail.morphology.pos,
+    verbType: detail.morphology.verbType,
+    wazanOrForm: detail.morphology.wazanOrForm,
+    primaryMeaning: primaryText,
+    verseArabic: detail.context?.ayahArabic,
+    ayahIndo: detail.context?.ayahIndo,
+    surahNumber: detail.context?.surahNumber,
+    ayahNumber: detail.context?.ayahNumber,
+    wordIndex: detail.context?.wordIndex
+  });
+
   return {
     identity: {
       coordinate: detail.identity.coordinate,
@@ -308,6 +341,8 @@ export function getWordStudy(
     },
     syntax,
     provenance,
-    context: detail.context
+    context: detail.context,
+    linguisticExplanation,
+    grammarDerivation
   };
 }

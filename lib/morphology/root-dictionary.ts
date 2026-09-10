@@ -5,6 +5,7 @@
  */
 
 import { stripArabicHarakat } from '../search/root-search';
+import { ROOT_DATABASE } from '../data/roots';
 
 export interface RootTranslationProfile {
   rootArabic: string;
@@ -469,6 +470,75 @@ export const ROOT_DICTIONARY: Record<string, RootTranslationProfile> = {
       'مُبِين': 'Yang nyata / Terang benderang',
     },
   },
+
+  // 23. Root j-E-l (ج ع ل) — 346 occurrences (QS. 105:2:2, etc.)
+  'j-E-l': {
+    rootArabic: 'ج ع ل',
+    rootLatin: 'jEl',
+    titleIndo: 'Akar ج ع ل (Membuat, Menjadikan, Menetapkan)',
+    coreMeaning: 'Menjadikan, membuat, menempatkan, mengubah keadaan, menunjuk, dan menetapkan peran terstruktur.',
+    derivatives: {
+      'جَعَلَ': 'Dia membuat / menjadikan / menempatkan',
+      'جَعَلْنَا': 'Kami jadikan / Kami ciptakan',
+      'جَعَلُوا۟': 'Mereka menjadikan',
+      'جَعَلُوا': 'Mereka menjadikan',
+      'يَجْعَلْ': 'Dia membuat / menjadikan',
+      'يَجْعَلُ': 'Dia membuat / menjadikan',
+      'يَجْعَلُونَ': 'Mereka menjadikan',
+      'تَجْعَلُوا۟': 'Jangan kamu jadikan / Kamu jadikan',
+      'تَجْعَلُوا': 'Jangan kamu jadikan / Kamu jadikan',
+      'تَجْعَلْ': 'Engkau jadikan',
+      'أَجْعَلُ': 'Aku menjadikan',
+      'نَجْعَلَ': 'Kami jadikan',
+      'نَجْعَلُ': 'Kami jadikan',
+      'جَاعِل': 'Yang menjadikan',
+      'جَاعِلٌ': 'Yang menjadikan',
+      'جَاعِلُوكَ': 'Menjadikanmu',
+      'جَعْل': 'Pembuatan / Penetapan',
+    },
+  },
+
+  // 24. Root A-j-r (أ ج ر) — 108 occurrences (QS. 95:6:7, etc.)
+  'A-j-r': {
+    rootArabic: 'أ ج ر',
+    rootLatin: 'Ajr',
+    titleIndo: 'Akar أ ج ر (Pahala, Upah, Kompensasi Kebaikan)',
+    coreMeaning: 'Memberi imbalan yang adil, upah atas kebaikan atau jasa, dan ganti rugi yang mulia.',
+    derivatives: {
+      'أَجْر': 'Pahala / Imbalan / Upah',
+      'أَجْرٌ': 'Pahala / Imbalan yang agung',
+      'أَجْرًا': 'Pahala yang besar / balasan',
+      'أَجْرِيَ': 'Upahku / Pahala bagiku',
+      'أَجْرِهِ': 'Pahalanya',
+      'أَجْرُهُمْ': 'Pahala mereka',
+      'أُجُور': 'Pahala-pahala / Mahar / Upah',
+      'أُجُورَهُمْ': 'Pahala-pahala mereka',
+      'أُجُورَهُنَّ': 'Mahar-mahar mereka',
+      'أَجْرَيْنِ': 'Dua pahala',
+      'أَجَرَ': 'Dia memberi imbalan / menyewa',
+      'تَأْجُرَنِي': 'Engkau bekerja padaku',
+      'ٱسْتَـْٔجِرْهُ': 'Pekerjakanlah dia',
+    },
+  },
+
+  // 25. Root f-E-l (ف ع ل) — 108 occurrences
+  'f-E-l': {
+    rootArabic: 'ف ع ل',
+    rootLatin: 'fEl',
+    titleIndo: 'Akar ف ع ل (Mengerjakan, Berbuat, Melakukan)',
+    coreMeaning: 'Mengerjakan suatu tindakan, mewujudkan perbuatan nyata, dan beraktivitas.',
+    derivatives: {
+      'فَعَلَ': 'Dia telah berbuat / mengerjakan',
+      'فَعَلْتُمْ': 'Kalian telah kerjakan',
+      'فَعَلُوا۟': 'Mereka telah perbuat',
+      'يَفْعَلُ': 'Dia berbuat / mengerjakan',
+      'يَفْعَلُونَ': 'Mereka berbuat / mengerjakan',
+      'تَفْعَلُوا۟': 'Kalian kerjakan',
+      'تَفْعَلُونَ': 'Kalian kerjakan',
+      'فِعْل': 'Perbuatan / Tindakan',
+      'فَعَّال': 'Maha Melaksanakan kehendak-Nya',
+    },
+  },
 };
 
 /**
@@ -541,17 +611,51 @@ export function getAuthenticWordMeaning(
     }
   }
 
-  // 4. Intelligent Morphological Pattern Synthesizer
+  // 4. Intelligent Morphological Pattern Synthesizer using ROOT_DICTIONARY
   if (prof && prof.coreMeaning) {
     const firstMeaning = prof.coreMeaning.split(',')[0].trim();
     if (cleanAr.startsWith('ال') || cleanAr.startsWith('ٱل')) {
-      return `Lafaz Isim: ${firstMeaning}`;
+      return firstMeaning.charAt(0).toUpperCase() + firstMeaning.slice(1);
     }
     if (cleanAr.startsWith('ي') || cleanAr.startsWith('ت') || cleanAr.startsWith('ن')) {
-      return `Fi'il Mudhari': Sedang/Akan ${firstMeaning}`;
+      return `Sedang/Akan ${firstMeaning}`;
     }
-    return `Keluarga kata: ${firstMeaning}`;
+    return firstMeaning.charAt(0).toUpperCase() + firstMeaning.slice(1);
   }
 
-  return 'Kosakata Al-Qur\'an';
+  // 5. Query 1,642 Roots Database (ROOT_DATABASE)
+  if (rootSlugOrArabic) {
+    const cleanSlug = rootSlugOrArabic.replace(/[\s\-_]/g, '');
+    const dbRoot = ROOT_DATABASE.find(r => 
+      r.id === rootSlugOrArabic || 
+      r.rootLatin === cleanSlug || 
+      r.rootArabicJoined === cleanSlug ||
+      r.rootArabic.replace(/\s+/g, '') === cleanSlug
+    );
+
+    if (dbRoot) {
+      // Check verbs
+      for (const v of dbRoot.verbs || []) {
+        if (stripArabicHarakat(v.arabic) === cleanAr && v.meaningIndo && !v.meaningIndo.startsWith('Verba (')) {
+          return v.meaningIndo;
+        }
+      }
+      // Check nouns
+      for (const n of dbRoot.nouns || []) {
+        if (stripArabicHarakat(n.arabic) === cleanAr && n.meaningIndo && !n.meaningIndo.startsWith('Nomina (')) {
+          return n.meaningIndo;
+        }
+      }
+      // Use clean titleIndo or coreMeaning
+      if (dbRoot.titleIndo && !dbRoot.titleIndo.startsWith('Konsep & Turunan')) {
+        const cleanTitle = dbRoot.titleIndo.replace(/^Akar\s+[^\(]+\(/, '').replace(/\)$/, '').trim();
+        return cleanTitle.charAt(0).toUpperCase() + cleanTitle.slice(1);
+      }
+      if (dbRoot.coreMeaning && !dbRoot.coreMeaning.startsWith('Akar kata ') && !dbRoot.coreMeaning.includes('memiliki peranan penting')) {
+        return dbRoot.coreMeaning.split('.')[0].trim();
+      }
+    }
+  }
+
+  return cleanAr;
 }

@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { getWordStudy } from '@/lib/morphology/word-study-service';
+import { getLinguisticExplanation } from '@/lib/morphology/linguistic-explanation-service';
+import { getGrammarDerivation } from '@/lib/morphology/grammar-derivation-service';
 import WordStudy from './WordStudy';
 import { WordStudyViewModel } from '@/lib/lexicon/types';
 
@@ -155,6 +157,39 @@ export default function WordEtymologyModal({
     baseStudy.morphology.grammaticalRole = posDetail;
   }
 
+  // Ensure linguisticExplanation and grammarDerivation reflect custom meaningIndo if provided
+  if (meaningIndo && meaningIndo.trim()) {
+    baseStudy.linguisticExplanation = getLinguisticExplanation({
+      wordArabic: baseStudy.identity.arabic,
+      rootArabic: baseStudy.lexical.rootArabic,
+      rootSlug: baseStudy.lexical.rootSlug,
+      lemmaArabic: baseStudy.lexical.lemmaArabic,
+      pos: baseStudy.morphology.pos,
+      posLabelIndo: baseStudy.morphology.posLabelIndo,
+      primaryMeaning: baseStudy.primaryMeaning.text,
+      isParticle: baseStudy.morphology.isParticle
+    });
+
+    baseStudy.grammarDerivation = getGrammarDerivation({
+      wordArabic: baseStudy.identity.arabic,
+      locationKey: baseStudy.identity.coordinate,
+      rawTag: baseStudy.morphology.rawTag,
+      rawFeatures: baseStudy.morphology.rawFeatures,
+      rootLetters: baseStudy.lexical.rootArabic,
+      rootSlug: baseStudy.lexical.rootSlug,
+      lemmaArabic: baseStudy.lexical.lemmaArabic,
+      pos: baseStudy.morphology.pos,
+      verbType: baseStudy.morphology.verbType,
+      wazanOrForm: baseStudy.morphology.wazanOrForm,
+      primaryMeaning: baseStudy.primaryMeaning.text,
+      verseArabic: ayahArabic || baseStudy.context?.ayahArabic,
+      ayahIndo: ayahIndo || baseStudy.context?.ayahIndo,
+      surahNumber,
+      ayahNumber,
+      wordIndex
+    });
+  }
+
   const study = baseStudy;
 
   return (
@@ -175,9 +210,16 @@ export default function WordEtymologyModal({
       >
         {/* Modal Top Control Bar */}
         <div className="flex items-center justify-between border-b border-hairline pb-3">
-          <span id="word-study-modal-title" className="text-xs font-bold uppercase tracking-wider text-primary">
-            Bedah Kata &amp; Leksikon
-          </span>
+          <div className="flex items-center space-x-2">
+            <span id="word-study-modal-title" className="text-xs font-bold uppercase tracking-wider text-primary">
+              Bedah Kata &amp; Leksikon
+            </span>
+            {surahNumber && ayahNumber && wordIndex ? (
+              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                ({surahNumber}:{ayahNumber}:{wordIndex})
+              </span>
+            ) : null}
+          </div>
           <button
             onClick={onClose}
             className="p-1.5 rounded-full hover:bg-canvas-soft text-ink-mute hover:text-ink-primary transition-colors border border-hairline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
