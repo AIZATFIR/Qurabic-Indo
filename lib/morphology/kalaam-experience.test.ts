@@ -83,3 +83,43 @@ test('Kalaam Experience Suite: Root Eln (2:77:9) and Root mwh (2:22:11) have aut
   assert.ok(ma.linguisticExplanation?.narrativeText.includes('kelangsungan hidup'));
   assert.ok(ma.lexical.senses.length > 0, 'Must have Lane Lexicon senses');
 });
+
+test('Kalaam Experience Suite: QS. 17:64:1 (وَٱسْتَفْزِزْ) Case-Sensitivity & Authentic Lane Lexicon', async () => {
+  const study = getWordStudy('17:64:1', {
+    meaningIndo: 'Dan hasunglah/gerakanlah'
+  });
+
+  // 1. Strict case-sensitive root assertions: must be f-z-z (ف ز ز), NEVER f-Z-Z (ف ظ ظ)
+  assert.strictEqual(study.lexical.root, 'fzz');
+  assert.strictEqual(study.lexical.rootArabic, 'ف ز ز');
+  assert.strictEqual(study.lexical.rootSlug, 'f-z-z');
+  assert.notStrictEqual(study.lexical.rootArabic, 'ف ظ ظ');
+
+  // 2. Meaning & Morphology
+  assert.strictEqual(study.primaryMeaning.text, 'Dan hasunglah/gerakanlah');
+  assert.strictEqual(study.morphology.pos, "Fi'il");
+  assert.strictEqual(study.morphology.verbType, 'Amr');
+
+  // 3. Lane's Lexicon authentic senses from Volume 6, Page 2392
+  assert.ok(study.lexical.senses.length >= 1, 'Must have Lane Lexicon senses for f-z-z');
+  const firstSense = study.lexical.senses[0].text;
+  assert.ok(firstSense.includes('unsettled him') || firstSense.includes('lightness and unsteadiness'));
+  assert.ok(firstSense.includes('waA@sotafozizo') || firstSense.includes('xvii. 66'));
+
+  // 4. Zero fake boilerplate templates in senses or philosophy
+  for (const s of study.lexical.senses) {
+    assert.ok(!s.text.includes('memiliki peranan penting dalam kosakata Al-Qur\'an'), 'Zero generic importance string');
+    assert.ok(!s.text.includes('Gagasan pokok yang terhimpun'), 'Zero generic gagasan pokok');
+    assert.ok(!s.text.includes('Ragam makna kontekstual'), 'Zero generic ragam makna');
+    assert.ok(!s.text.includes('secara terarah dan terukur'), 'Zero generic terarah dan terukur');
+  }
+
+  // 5. Official Kemenag RI Tafsir integration
+  const { getAyahTafsir } = await import('../tafsir/tafsir-service');
+  const tafsir = await getAyahTafsir(17, 64);
+  assert.ok(tafsir, 'Tafsir Kemenag for 17:64 must exist');
+  assert.strictEqual(tafsir.source, 'Kemenag RI');
+  assert.ok(tafsir.text.includes('Iblis') || tafsir.text.includes('menggoda'));
+  assert.ok(tafsir.text.includes('tentara berkuda') || tafsir.text.includes('berjalan kaki'));
+});
+

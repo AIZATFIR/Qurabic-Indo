@@ -125,13 +125,13 @@ describe('PRD Finalization — Golden Runtime Test Matrix', () => {
   it('Case 14: All 1,642 roots in ROOT_DATABASE map 1-to-1 to QAC records with preserved Buckwalter case', () => {
     const sbr = getCanonicalRootDetail('s-b-r');
     const xlt = getCanonicalRootDetail('x-l-T');
-    const hmd = getCanonicalRootDetail('h-m-d');
+    const hmd = getCanonicalRootDetail('H-m-d');
     const alh = getCanonicalRootDetail('A-l-h');
     const elm = getCanonicalRootDetail('E-l-m');
 
     assert.ok(sbr && sbr.statistics.totalOccurrences === 103, 's-b-r must have 103 occurrences');
     assert.ok(xlt && xlt.statistics.totalOccurrences > 0, 'x-l-T must have occurrences');
-    assert.ok(hmd && hmd.statistics.totalOccurrences === 63, 'h-m-d must have 63 occurrences');
+    assert.ok(hmd && hmd.statistics.totalOccurrences === 63, 'H-m-d must have 63 occurrences');
     assert.ok(alh && alh.statistics.totalOccurrences === 2851, 'A-l-h must have 2851 occurrences');
     assert.ok(elm && elm.statistics.totalOccurrences === 854, 'E-l-m must have 854 occurrences');
   });

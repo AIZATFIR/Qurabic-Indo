@@ -43,10 +43,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    const rawMeaning = searchParams.get('meaning') || searchParams.get('meaningIndo') || '';
+    const meaningIndo = rawMeaning.trim() ? rawMeaning.trim() : undefined;
+
     const context = {
       surahNumber: (surahNumber && surahNumber >= 1 && surahNumber <= 114) ? surahNumber : undefined,
       ayahNumber: (ayahNumber && ayahNumber >= 1) ? ayahNumber : undefined,
       wordIndex: (wordIndex && wordIndex >= 1) ? wordIndex : undefined,
+      meaningIndo,
     };
 
     const detail = getCanonicalWordDetail(targetInput, context);

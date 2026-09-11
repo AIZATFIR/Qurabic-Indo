@@ -203,7 +203,11 @@ export function getWordStudy(
   const rootSlugOrAr = detail.lexical.rootSlug || detail.lexical.rootArabic || detail.lexical.root;
   const authenticIndo = getAuthenticWordMeaning(detail.identity.arabic, rootSlugOrAr);
 
-  if (authenticIndo && authenticIndo !== "Kosakata Al-Qur'an" && !authenticIndo.startsWith('Keluarga kata:')) {
+  if (context?.meaningIndo && context.meaningIndo.trim()) {
+    primaryText = context.meaningIndo.trim();
+    sourceBadge = 'Terjemahan Kata';
+    isEditorial = false;
+  } else if (authenticIndo && authenticIndo !== "Kosakata Al-Qur'an" && !authenticIndo.startsWith('Keluarga kata:')) {
     primaryText = authenticIndo;
     sourceBadge = detail.morphology.isParticle ? 'QAC Nahwu' : 'Kamus Qurabic';
     isEditorial = true;

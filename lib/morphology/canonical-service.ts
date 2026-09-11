@@ -211,6 +211,11 @@ export interface CanonicalWordContext {
   ayahArabic?: string;
   ayahIndo?: string;
   surahNameIndo?: string;
+  meaningIndo?: string;
+  ayahTafsir?: {
+    source: string;
+    text: string;
+  };
 }
 
 /**
@@ -277,14 +282,13 @@ export function getCanonicalWordDetail(
   let tag = stemRecord?.tag || qacLookup?.posRaw || (isQuranicParticle(cleanArabic) ? 'P' : (inferredRole.posCategory === "Fi'il" ? 'V' : (inferredRole.posDetail.includes('Isyarah') ? 'DEM' : (inferredRole.posDetail.includes('Maushul') ? 'REL' : 'N'))));
   let rawFeatures = stemRecord?.rawFeatures || '';
 
-  // 3. Resolve Root in ROOT_DATABASE (Strict, authentic root matching)
+  // 3. Resolve Root in ROOT_DATABASE (Strict, case-sensitive authentic root matching)
   const isParticleInput = isQuranicParticle(cleanArabic);
   const rootAr = (rootBw && !isParticleInput) ? (qacLookup?.rootArabic || buckwalterToArabic(rootBw)) : undefined;
   let matchedRoot = (rootBw && !isParticleInput)
-    ? ROOT_DATABASE.find(r => 
-        (rootAr && (r.rootArabic === rootAr || r.rootArabicJoined === rootAr.replace(/\s+/g, ''))) ||
-        (rootBw && r.id.replace(/-/g, '').toLowerCase() === rootBw.toLowerCase()) ||
-        r.id === rootBw
+    ? (
+        ROOT_DATABASE.find(r => r.id.replace(/-/g, '') === rootBw || r.rootLatin === rootBw || r.id === rootBw) ||
+        ROOT_DATABASE.find(r => rootAr && (r.rootArabic === rootAr || r.rootArabicJoined === rootAr.replace(/\s+/g, '')))
       )
     : undefined;
 
@@ -349,7 +353,7 @@ export function getCanonicalWordDetail(
   const particleInfo = isParticle ? (getQuranicParticleInfo(cleanArabic) || getQuranicParticleInfo(displayArabic)) : null;
   const semanticProfile = matchedRoot ? getRootSemanticProfile(matchedRoot.id) : null;
 
-  let primaryMeaning = curatedDict?.primaryMeaning;
+  let primaryMeaning = (context?.meaningIndo && context.meaningIndo.trim()) ? context.meaningIndo.trim() : curatedDict?.primaryMeaning;
   if (!primaryMeaning && particleInfo) {
     primaryMeaning = particleInfo.primaryMeaning;
   }
@@ -462,9 +466,13 @@ export function getCanonicalWordDetail(
         page: effectiveLaneEntry.page || laneRoot.page,
         sourceCitation: laneRoot.sourceCitation
       };
-    } else if (matchedRoot && (matchedRoot.coreMeaning || (matchedRoot.meaningsIndonesian && matchedRoot.meaningsIndonesian.length > 0))) {
+    } else if (
+      matchedRoot &&
+      ((matchedRoot.coreMeaning && !matchedRoot.coreMeaning.includes('memiliki peranan penting')) ||
+       (matchedRoot.meaningsIndonesian && matchedRoot.meaningsIndonesian.some(m => !m.startsWith('Gagasan pokok') && !m.startsWith('Ragam makna') && !m.includes('memiliki peranan penting'))))
+    ) {
       const senses = [];
-      if (matchedRoot.coreMeaning) {
+      if (matchedRoot.coreMeaning && !matchedRoot.coreMeaning.includes('memiliki peranan penting')) {
         senses.push({
           senseIndex: 1,
           text: matchedRoot.coreMeaning,
@@ -478,7 +486,12 @@ export function getCanonicalWordDetail(
       }
       if (matchedRoot.meaningsIndonesian) {
         matchedRoot.meaningsIndonesian.forEach((m, idx) => {
-          if (m !== matchedRoot.coreMeaning) {
+          if (
+            m !== matchedRoot.coreMeaning &&
+            !m.startsWith('Gagasan pokok') &&
+            !m.startsWith('Ragam makna') &&
+            !m.includes('memiliki peranan penting')
+          ) {
             senses.push({
               senseIndex: senses.length + 1,
               text: m,
@@ -588,14 +601,14 @@ export function getCanonicalRootDetail(slug: string): RootDetailModel | null {
   const cleanSlug = slug.trim();
   const qacIndex = getQACAuthoritativeIndex();
 
-  // Find root in ROOT_DATABASE (case-preserving match first, then case-insensitive fallback)
-  const matchedRoot = ROOT_DATABASE.find(r => 
-    r.id === cleanSlug ||
-    r.id.replace(/-/g, '') === cleanSlug.replace(/-/g, '') ||
-    r.id.toLowerCase() === cleanSlug.toLowerCase() ||
-    r.id.replace(/-/g, '').toLowerCase() === cleanSlug.replace(/-/g, '').toLowerCase() ||
-    r.rootLatin.toLowerCase() === cleanSlug.toLowerCase()
-  );
+  // Find root in ROOT_DATABASE (exact case-preserving match first, then case-insensitive fallback)
+  const matchedRoot = 
+    ROOT_DATABASE.find(r => r.id === cleanSlug || r.id.replace(/-/g, '') === cleanSlug || r.rootLatin === cleanSlug) ||
+    ROOT_DATABASE.find(r => 
+      r.id.toLowerCase() === cleanSlug.toLowerCase() ||
+      r.id.replace(/-/g, '').toLowerCase() === cleanSlug.replace(/-/g, '').toLowerCase() ||
+      r.rootLatin.toLowerCase() === cleanSlug.toLowerCase()
+    );
 
   if (!matchedRoot) return null;
 

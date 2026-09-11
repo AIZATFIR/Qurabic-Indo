@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   BookOpen,
@@ -40,6 +40,11 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
   const [isOccurrencesOpen, setIsOccurrencesOpen] = useState(false);
   const [isSourceDrawerOpen, setIsSourceDrawerOpen] = useState(false);
   const [selectedSourceId, setSelectedSourceId] = useState<string | undefined>();
+  const [tafsirData, setTafsirData] = useState<{ source: string; text: string } | null>(
+    study.context?.ayahTafsir || null
+  );
+  const [isLoadingTafsir, setIsLoadingTafsir] = useState(false);
+  const [isTafsirExpanded, setIsTafsirExpanded] = useState(false);
 
   const {
     identity,
@@ -101,6 +106,36 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
+
+  // Fetch authentic Kemenag RI Tafsir for current verse context
+  useEffect(() => {
+    if (context?.ayahTafsir) {
+      setTafsirData(context.ayahTafsir);
+      return;
+    }
+    if (!context?.surahNumber || !context?.ayahNumber) return;
+
+    let isMounted = true;
+    setIsLoadingTafsir(true);
+    fetch(`/api/tafsir?surah=${context.surahNumber}&ayah=${context.ayahNumber}`)
+      .then(res => res.ok ? res.json() : null)
+      .then(json => {
+        if (isMounted && json?.data) {
+          setTafsirData({
+            source: json.data.sourceTitle || 'Tafsir Kemenag RI',
+            text: json.data.text
+          });
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (isMounted) setIsLoadingTafsir(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [context?.surahNumber, context?.ayahNumber, context?.ayahTafsir]);
 
   // Highlights the active word in Indonesian verse context
   const renderHighlightedVerseIndo = (verseIndo: string, wordMeaning: string) => {
@@ -277,6 +312,49 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
               <div className="text-base sm:text-lg text-ink-secondary leading-relaxed pt-2 border-t border-hairline/60 font-sans select-text">
                 {renderHighlightedVerseIndo(context.ayahIndo, primaryMeaning.text)}
               </div>
+            </section>
+          )}
+
+          {/* 3.1.2 TAFSIR & KANDUNGAN AYAT RESMI KEMENAG RI (6.236 Ayat Otomatis) */}
+          {(tafsirData || isLoadingTafsir) && (
+            <section className="p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
+              <div className="flex items-center justify-between border-b border-hairline pb-3">
+                <div className="flex items-center space-x-2">
+                  <BookOpen className="w-5 h-5 text-primary" />
+                  <h3 className="text-lg sm:text-xl font-bold text-ink-primary">
+                    Tafsir &amp; Kandungan Ayat
+                  </h3>
+                </div>
+                <span className="text-xs font-sans font-medium px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                  Kementerian Agama RI
+                </span>
+              </div>
+
+              {isLoadingTafsir ? (
+                <div className="animate-pulse space-y-2 py-2">
+                  <div className="h-4 bg-canvas-soft rounded w-3/4"></div>
+                  <div className="h-4 bg-canvas-soft rounded w-full"></div>
+                  <div className="h-4 bg-canvas-soft rounded w-5/6"></div>
+                </div>
+              ) : tafsirData?.text ? (
+                <div className="space-y-3">
+                  <div
+                    className={`text-base sm:text-lg text-ink-primary leading-relaxed sm:leading-loose font-sans text-justify sm:text-left whitespace-pre-line select-text ${
+                      !isTafsirExpanded && tafsirData.text.length > 360 ? 'line-clamp-4' : ''
+                    }`}
+                  >
+                    {tafsirData.text}
+                  </div>
+                  {tafsirData.text.length > 360 && (
+                    <button
+                      onClick={() => setIsTafsirExpanded(!isTafsirExpanded)}
+                      className="text-xs sm:text-sm font-semibold text-primary hover:underline pt-1 inline-flex items-center space-x-1"
+                    >
+                      <span>{isTafsirExpanded ? 'Tampilkan Lebih Sedikit' : 'Baca Tafsir Lengkap...'}</span>
+                    </button>
+                  )}
+                </div>
+              ) : null}
             </section>
           )}
 

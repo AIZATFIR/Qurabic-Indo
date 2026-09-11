@@ -238,6 +238,10 @@ export interface WordStudyViewModel {
     ayahArabic?: string;
     ayahIndo?: string;
     surahNameIndo?: string;
+    ayahTafsir?: {
+      source: string;
+      text: string;
+    };
   };
   linguisticExplanation?: LinguisticExplanation | null;
   grammarDerivation?: GrammarDerivation;

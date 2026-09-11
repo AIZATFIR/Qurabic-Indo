@@ -62,7 +62,8 @@ export default function WordEtymologyModal({
       location: locParam,
       surah: surahNumber ? String(surahNumber) : '',
       ayah: ayahNumber ? String(ayahNumber) : '',
-      wordIndex: wordIndex ? String(wordIndex) : ''
+      wordIndex: wordIndex ? String(wordIndex) : '',
+      meaning: meaningIndo || ''
     });
 
     fetch(`/api/word-detail?${query.toString()}`)
@@ -78,7 +79,7 @@ export default function WordEtymologyModal({
     return () => {
       isMounted = false;
     };
-  }, [isOpen, wordArabic, surahNumber, ayahNumber, wordIndex]);
+  }, [isOpen, wordArabic, surahNumber, ayahNumber, wordIndex, meaningIndo]);
 
   // Body scroll lock & ESC keyboard dismissal
   useEffect(() => {
@@ -110,7 +111,8 @@ export default function WordEtymologyModal({
     wordIndex,
     ayahArabic,
     ayahIndo,
-    surahNameIndo
+    surahNameIndo,
+    meaningIndo
   });
 
   const baseStudy = asyncStudy ? { ...asyncStudy } : { ...initialStudy };

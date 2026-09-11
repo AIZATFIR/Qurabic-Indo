@@ -234,8 +234,11 @@ export async function fetchLiveQuranOccurrences(query: string): Promise<VerseOcc
 
     if (isArabicQuery) {
       // Search Arabic text using quran-simple
-      const arSearchRes = await fetch(`https://api.alquran.cloud/v1/search/${encoded}/all/quran-simple`, { next: { revalidate: 86400 } });
-      if (arSearchRes.ok) {
+      const arSearchRes = await fetch(`https://api.alquran.cloud/v1/search/${encoded}/all/quran-simple`, {
+        next: { revalidate: 86400 },
+        signal: AbortSignal.timeout(3000)
+      }).catch(() => null);
+      if (arSearchRes && arSearchRes.ok) {
         const arJson = await arSearchRes.json();
         if (arJson.code === 200 && arJson.data?.matches) {
           rawMatches = arJson.data.matches.slice(0, 15).map((m: any) => ({
@@ -248,8 +251,11 @@ export async function fetchLiveQuranOccurrences(query: string): Promise<VerseOcc
       }
     } else {
       // Search Indonesian translation using id.indonesian
-      const idSearchRes = await fetch(`https://api.alquran.cloud/v1/search/${encoded}/all/id.indonesian`, { next: { revalidate: 86400 } });
-      if (idSearchRes.ok) {
+      const idSearchRes = await fetch(`https://api.alquran.cloud/v1/search/${encoded}/all/id.indonesian`, {
+        next: { revalidate: 86400 },
+        signal: AbortSignal.timeout(3000)
+      }).catch(() => null);
+      if (idSearchRes && idSearchRes.ok) {
         const idJson = await idSearchRes.json();
         if (idJson.code === 200 && idJson.data?.matches) {
           rawMatches = idJson.data.matches.slice(0, 15).map((m: any) => ({

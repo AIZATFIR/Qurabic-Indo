@@ -1,25 +1,11 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import { Amiri, Inter } from 'next/font/google';
 import Navbar from '@/components/Navbar';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import SmoothScroll from '@/components/SmoothScroll';
 import Footer from '@/components/Footer';
 import { ThemeProvider } from '@/lib/context/ThemeContext';
 import { Toaster } from 'sonner';
-
-const amiri = Amiri({
-  weight: ['400', '700'],
-  subsets: ['arabic', 'latin'],
-  variable: '--font-amiri',
-  display: 'swap',
-});
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
 
 export const viewport: Viewport = {
   themeColor: '#fbf8f1',
@@ -61,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" className={`scroll-smooth ${amiri.variable} ${inter.variable}`} data-theme="bookpaper">
+    <html lang="id" className="scroll-smooth" data-theme="bookpaper">
       <body className="min-h-screen flex flex-col bg-canvas text-ink-primary selection:bg-primary-subdued selection:text-primary-deep font-sans pb-16 md:pb-0">
         <ThemeProvider>
           <SmoothScroll>
