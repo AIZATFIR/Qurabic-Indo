@@ -24,4 +24,15 @@ if (key !== '114:6') {
 }
 console.log('✅ Test 3 Passed: Ayah key formatting works accurately');
 
+// Test 4: Candidate URLs for resilience
+import { getAudioCandidateUrls } from './audio';
+const candidates = getAudioCandidateUrls(18, 1);
+if (!Array.isArray(candidates) || candidates.length < 2) {
+  throw new Error('Expected multiple candidate audio URLs for fallback');
+}
+if (!candidates[0].includes('verses.quran.com') || !candidates[0].includes('018001.mp3')) {
+  throw new Error(`Expected primary candidate to be verses.quran.com 018001.mp3, got ${candidates[0]}`);
+}
+console.log('✅ Test 4 Passed: Multi-CDN candidate URLs generated for resilient audio fallback');
+
 console.log('🎉 ALL QURAN AUDIO ABSTRACTION UNIT TESTS PASSED!');

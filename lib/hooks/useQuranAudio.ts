@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { getAyahAudioUrl } from '../api/audio';
+import { getAyahAudioUrl, getAudioCandidateUrls } from '../api/audio';
 
 export type PlaybackState = 'idle' | 'loading' | 'playing' | 'paused' | 'ended' | 'error';
 export type RepeatMode = 'off' | 'ayah' | 'surah';
@@ -52,6 +52,9 @@ export function useQuranAudio({
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const requestIdRef = useRef<number>(0);
+  const candidateIndexRef = useRef<number>(0);
+  const candidateUrlsRef = useRef<string[]>([]);
+  const loadTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const activeAyahRef = useRef<number | null>(null);
   activeAyahRef.current = currentAyah;
@@ -68,6 +71,98 @@ export function useQuranAudio({
   const autoNextRef = useRef<boolean>(autoNext);
   autoNextRef.current = autoNext;
 
+  // Forward refs to eliminate circular dependencies and hook warnings
+  const playAyahInternalRef = useRef<(ayahNum: number) => void>(() => {});
+  const tryNextCandidateRef = useRef<(reqId: number, ayahNum: number) => void>(() => {});
+
+  // Clear watchdog timer helper
+  const clearWatchdog = useCallback(() => {
+    if (loadTimeoutRef.current) {
+      clearTimeout(loadTimeoutRef.current);
+      loadTimeoutRef.current = null;
+    }
+  }, []);
+
+  // Smooth auto-scroll helper
+  const scrollToAyah = useCallback((ayahNum: number) => {
+    if (!autoScroll || typeof document === 'undefined') return;
+
+    requestAnimationFrame(() => {
+      const el = document.getElementById(`ayah-${ayahNum}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  }, [autoScroll]);
+
+  // Load a candidate URL with timeout watchdog & race-condition protection
+  const loadCandidate = useCallback((index: number, reqId: number, ayahNum: number) => {
+    clearWatchdog();
+
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const urls = candidateUrlsRef.current;
+    if (index >= urls.length) {
+      setPlaybackState('error');
+      setError('Audio tilawah tidak tersedia. Ketuk untuk mencoba lagi.');
+      return;
+    }
+
+    candidateIndexRef.current = index;
+    const targetUrl = urls[index];
+
+    audio.src = targetUrl;
+    audio.load();
+
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          if (requestIdRef.current !== reqId) return;
+          clearWatchdog();
+          setPlaybackState('playing');
+          setError(null);
+          scrollToAyah(ayahNum);
+        })
+        .catch((err) => {
+          if (requestIdRef.current !== reqId) return;
+          if (err.name === 'NotAllowedError') {
+            // Browser autoplay restricted; keep in paused state ready for user tap
+            clearWatchdog();
+            setPlaybackState('paused');
+          } else if (err.name !== 'AbortError') {
+            console.warn(`[Qurabic Audio] Failed candidate ${index}: ${err.message}`);
+            // Fallback immediately to next candidate
+            tryNextCandidateRef.current(reqId, ayahNum);
+          }
+        });
+    }
+
+    // Watchdog timer: If audio doesn't start playing within 4.5s (e.g. stalled connection), failover
+    loadTimeoutRef.current = setTimeout(() => {
+      if (requestIdRef.current !== reqId) return;
+      if (audio.paused || audio.readyState < 2) {
+        console.warn(`[Qurabic Audio] Watchdog triggered on candidate ${index}, trying next candidate CDN...`);
+        tryNextCandidateRef.current(reqId, ayahNum);
+      }
+    }, 4500);
+  }, [clearWatchdog, scrollToAyah]);
+
+  // Failover to next candidate in chain
+  const tryNextCandidate = useCallback((reqId: number, ayahNum: number) => {
+    const nextIndex = candidateIndexRef.current + 1;
+    if (nextIndex < candidateUrlsRef.current.length) {
+      loadCandidate(nextIndex, reqId, ayahNum);
+    } else {
+      clearWatchdog();
+      setPlaybackState('error');
+      setError('Koneksi audio tilawah terputus. Ketuk untuk mencoba lagi.');
+    }
+  }, [loadCandidate, clearWatchdog]);
+
+  tryNextCandidateRef.current = tryNextCandidate;
+
   // Initialize single shared audio instance
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -81,6 +176,7 @@ export function useQuranAudio({
     const audio = audioRef.current;
 
     const handlePlay = () => {
+      clearWatchdog();
       setPlaybackState('playing');
       setError(null);
     };
@@ -94,6 +190,7 @@ export function useQuranAudio({
     };
 
     const handleTimeUpdate = () => {
+      clearWatchdog();
       setCurrentTime(audio.currentTime);
       if (audio.duration && !isNaN(audio.duration)) {
         setDuration(audio.duration);
@@ -111,6 +208,7 @@ export function useQuranAudio({
     };
 
     const handleCanPlay = () => {
+      clearWatchdog();
       if (audio.paused) {
         setPlaybackState((prev) => (prev === 'loading' ? 'paused' : prev));
       } else {
@@ -119,9 +217,14 @@ export function useQuranAudio({
     };
 
     const handleError = () => {
-      console.warn(`[Qurabic Audio] Error playback Surah ${surahNumberRef.current}:${activeAyahRef.current}`);
-      setPlaybackState('error');
-      setError('Audio tilawah tidak tersedia untuk ayat ini');
+      console.warn(`[Qurabic Audio] Media element error on candidate ${candidateIndexRef.current}`);
+      const activeAyah = activeAyahRef.current;
+      if (activeAyah !== null) {
+        tryNextCandidateRef.current(requestIdRef.current, activeAyah);
+      } else {
+        setPlaybackState('error');
+        setError('Audio tilawah tidak tersedia untuk ayat ini');
+      }
     };
 
     // Ayah Autoplay & Repeat Logic
@@ -135,14 +238,14 @@ export function useQuranAudio({
 
       // 1. AYAH Repeat Mode
       if (mode === 'ayah') {
-        playAyahInternal(current);
+        playAyahInternalRef.current(current);
         return;
       }
 
       // 2. Next Ayah within Surah
       if (current < total) {
         if (isAutoNext) {
-          playAyahInternal(current + 1);
+          playAyahInternalRef.current(current + 1);
         } else {
           setPlaybackState('paused');
         }
@@ -153,7 +256,7 @@ export function useQuranAudio({
       if (current >= total) {
         if (mode === 'surah') {
           // Loop back to Ayah 1 of the same surah
-          playAyahInternal(1);
+          playAyahInternalRef.current(1);
         } else {
           // Stop at final ayah, keep selected
           setPlaybackState('ended');
@@ -180,14 +283,16 @@ export function useQuranAudio({
       audio.removeEventListener('error', handleError);
       audio.removeEventListener('ended', handleEnded);
 
+      clearWatchdog();
       audio.pause();
       audio.src = '';
     };
-  }, []);
+  }, [clearWatchdog]);
 
   // When selected surah changes, reset audio state cleanly
   useEffect(() => {
     requestIdRef.current++;
+    clearWatchdog();
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.src = '';
@@ -197,19 +302,7 @@ export function useQuranAudio({
     setCurrentTime(0);
     setDuration(0);
     setError(null);
-  }, [surahNumber]);
-
-  // Smooth auto-scroll helper
-  const scrollToAyah = useCallback((ayahNum: number) => {
-    if (!autoScroll || typeof document === 'undefined') return;
-
-    requestAnimationFrame(() => {
-      const el = document.getElementById(`ayah-${ayahNum}`);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    });
-  }, [autoScroll]);
+  }, [surahNumber, clearWatchdog]);
 
   // Core internal function to load and play a specific Ayah with Race Condition protection
   const playAyahInternal = useCallback((ayahNum: number) => {
@@ -217,7 +310,8 @@ export function useQuranAudio({
     if (!audio) return;
 
     const currentRequestId = ++requestIdRef.current;
-    const url = getAyahAudioUrl(surahNumberRef.current, ayahNum);
+    const candidates = getAudioCandidateUrls(surahNumberRef.current, ayahNum);
+    candidateUrlsRef.current = candidates;
 
     setCurrentAyah(ayahNum);
     setPlaybackState('loading');
@@ -225,27 +319,10 @@ export function useQuranAudio({
     setCurrentTime(0);
     setDuration(0);
 
-    audio.src = url;
-    audio.load();
+    loadCandidate(0, currentRequestId, ayahNum);
+  }, [loadCandidate]);
 
-    const playPromise = audio.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          // Protect against race condition: only update if this is still the active request
-          if (requestIdRef.current !== currentRequestId) return;
-          setPlaybackState('playing');
-          scrollToAyah(ayahNum);
-        })
-        .catch((err) => {
-          if (requestIdRef.current !== currentRequestId) return;
-          if (err.name !== 'AbortError') {
-            console.warn('[Qurabic Audio] Playback notice:', err.message);
-            setPlaybackState('paused');
-          }
-        });
-    }
-  }, [scrollToAyah]);
+  playAyahInternalRef.current = playAyahInternal;
 
   // Public: Play a specific Ayah
   const playAyah = useCallback((ayahNum: number) => {

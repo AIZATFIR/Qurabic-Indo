@@ -26,12 +26,25 @@ export function getFormattedAyahKey(surahNumber: number, ayahNumber: number): st
 
 /**
  * Resolves authoritative recitation audio URL for a specific Surah & Ayah
- * Uses high-availability EveryAyah 128kbps CDN with CORS support
+ * Uses high-availability Quran.com CDN (BunnyCDN SG/ID) with instant edge caching & CORS support
  */
 export function getAyahAudioUrl(surahNumber: number, ayahNumber: number): string {
   const s = padDigits(surahNumber, 3);
   const a = padDigits(ayahNumber, 3);
-  return `https://everyayah.com/data/Alafasy_128kbps/${s}${a}.mp3`;
+  return `https://verses.quran.com/Alafasy/mp3/${s}${a}.mp3`;
+}
+
+/**
+ * Returns ordered candidate audio CDN URLs for multi-source fallback resilience
+ */
+export function getAudioCandidateUrls(surahNumber: number, ayahNumber: number): string[] {
+  const s = padDigits(surahNumber, 3);
+  const a = padDigits(ayahNumber, 3);
+  return [
+    `https://verses.quran.com/Alafasy/mp3/${s}${a}.mp3`,
+    `https://audio.qurancdn.com/Alafasy/mp3/${s}${a}.mp3`,
+    `https://everyayah.com/data/Alafasy_128kbps/${s}${a}.mp3`,
+  ];
 }
 
 /**
@@ -40,5 +53,5 @@ export function getAyahAudioUrl(surahNumber: number, ayahNumber: number): string
 export function getFallbackAyahAudioUrl(surahNumber: number, ayahNumber: number): string {
   const s = padDigits(surahNumber, 3);
   const a = padDigits(ayahNumber, 3);
-  return `https://verses.quran.com/Alafasy/mp3/${s}${a}.mp3`;
+  return `https://audio.qurancdn.com/Alafasy/mp3/${s}${a}.mp3`;
 }

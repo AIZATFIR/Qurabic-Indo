@@ -138,16 +138,19 @@ export default function QuranAudioPlayer({
               <SkipBack className="w-4 h-4" />
             </button>
 
-            {/* Play / Pause / Loading Button */}
+            {/* Play / Pause / Loading / Retry Button */}
             <button
               onClick={(e) => {
                 e.currentTarget.blur();
-                togglePlayPause();
+                if (error) {
+                  audio.playAyah(activeAyahNum);
+                } else {
+                  togglePlayPause();
+                }
               }}
-              disabled={Boolean(error)}
-              className="p-2.5 rounded-xl bg-primary hover:bg-primary-deep text-white shadow-subtle transition-all active:scale-95 flex items-center justify-center disabled:opacity-50"
-              title={isPlaying ? 'Jeda (Space)' : 'Putar (Space)'}
-              aria-label={isPlaying ? 'Jeda' : 'Putar'}
+              className="p-2.5 rounded-xl bg-primary hover:bg-primary-deep text-white shadow-subtle transition-all active:scale-95 flex items-center justify-center"
+              title={error ? 'Coba Lagi Memuat Audio' : isPlaying ? 'Jeda (Space)' : 'Putar (Space)'}
+              aria-label={error ? 'Coba Lagi' : isPlaying ? 'Jeda' : 'Putar'}
             >
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -190,9 +193,17 @@ export default function QuranAudioPlayer({
 
         {/* Error message if audio fails to load */}
         {error && (
-          <div className="flex items-center space-x-1.5 text-[11px] text-amber-700 dark:text-amber-300 bg-amber-500/10 px-2.5 py-1 rounded-lg">
-            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-            <span className="truncate">{error}</span>
+          <div className="flex items-center justify-between gap-2 text-[11px] text-amber-700 dark:text-amber-300 bg-amber-500/10 px-2.5 py-1.5 rounded-lg">
+            <div className="flex items-center space-x-1.5 truncate">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">{error}</span>
+            </div>
+            <button
+              onClick={() => audio.playAyah(activeAyahNum)}
+              className="px-2 py-0.5 rounded bg-primary text-white text-[10px] font-semibold hover:bg-primary-deep shrink-0 transition-colors"
+            >
+              Coba Lagi
+            </button>
           </div>
         )}
       </div>
