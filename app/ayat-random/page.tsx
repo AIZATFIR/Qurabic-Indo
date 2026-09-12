@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { RefreshCw, BookOpen, Volume2, Copy, Check, ArrowLeft, ArrowRight, Layers, Type } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { RefreshCw, BookOpen, Volume2, Pause, Loader2, Copy, Check, ArrowLeft, ArrowRight, Layers, Type } from 'lucide-react';
 import Link from 'next/link';
 import QuranWordInteractive from '@/components/QuranWordInteractive';
 import { findBestMatchingRoot, extractArabicRootLetters, inferGrammarRole } from '@/lib/search/root-search';
 import { getSurahByNumber, SURAH_LIST } from '@/lib/data/surah-list';
 import { cleanGlossToIndonesian } from '@/lib/search/word-dictionary';
 import { getAuthenticWordMeaning } from '@/lib/morphology/root-dictionary';
+import { getAyahAudioUrl, getAudioCandidateUrls } from '@/lib/api/audio';
 
 interface RandomAyahWord {
   id: number;
@@ -38,14 +39,37 @@ export default function RandomAyahPage() {
   const [ayah, setAyah] = useState<RandomAyah | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [audioStatus, setAudioStatus] = useState<'idle' | 'loading' | 'playing'>('idle');
   const [activeTab, setActiveTab] = useState<'wbw' | 'mushaf' | 'both'>('wbw');
   const [fontSize, setFontSize] = useState<'sm' | 'md' | 'lg'>('sm');
+  const [showTafsir, setShowTafsir] = useState(false);
+  const [loadingTafsir, setLoadingTafsir] = useState(false);
+  const [tafsirContent, setTafsirContent] = useState<string | null>(null);
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Clean up audio on unmount
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
 
   async function fetchRandomAyah() {
+    // Stop any active audio playback immediately
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    setAudioStatus('idle');
+    setShowTafsir(false);
+    setTafsirContent(null);
     setLoading(true);
     setCopied(false);
-    setIsPlaying(false);
+
     try {
       // Pick a random surah (1..114) and a random ayah within that surah's total ayahs
       const randomSurahIdx = Math.floor(Math.random() * SURAH_LIST.length);
@@ -109,7 +133,7 @@ export default function RandomAyahPage() {
           ayahNumber: ayahNum,
           verseArabic: arabicFull,
           verseIndo: translationIndo,
-          audioUrl: `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${v.id || 1}.mp3`,
+          audioUrl: getAyahAudioUrl(surahNum, ayahNum),
           words: parsedWords
         });
       }
@@ -132,12 +156,89 @@ export default function RandomAyahPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handlePlayAudio = () => {
-    if (!ayah || !ayah.audioUrl) return;
-    setIsPlaying(true);
-    const audio = new Audio(ayah.audioUrl);
-    audio.play().catch((err) => console.warn(err));
-    audio.onended = () => setIsPlaying(false);
+  const handleToggleAudio = () => {
+    if (!ayah) return;
+
+    if (audioStatus === 'playing') {
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+      setAudioStatus('idle');
+      return;
+    }
+
+    if (audioRef.current && audioRef.current.src) {
+      setAudioStatus('loading');
+      audioRef.current.play()
+        .then(() => setAudioStatus('playing'))
+        .catch(() => setAudioStatus('idle'));
+      return;
+    }
+
+    const candidates = getAudioCandidateUrls(ayah.surahNumber, ayah.ayahNumber);
+    let candidateIndex = 0;
+
+    const audio = new Audio(candidates[0]);
+    audioRef.current = audio;
+    setAudioStatus('loading');
+
+    audio.onplaying = () => setAudioStatus('playing');
+    audio.onpause = () => {
+      if (audioRef.current === audio) {
+        setAudioStatus('idle');
+      }
+    };
+    audio.onended = () => {
+      setAudioStatus('idle');
+      audioRef.current = null;
+    };
+    audio.onerror = () => {
+      candidateIndex++;
+      if (candidateIndex < candidates.length) {
+        audio.src = candidates[candidateIndex];
+        audio.play().catch(() => setAudioStatus('idle'));
+      } else {
+        setAudioStatus('idle');
+        audioRef.current = null;
+      }
+    };
+
+    audio.play().catch((err) => {
+      console.warn('Audio play error:', err);
+      candidateIndex++;
+      if (candidateIndex < candidates.length) {
+        audio.src = candidates[candidateIndex];
+        audio.play().catch(() => setAudioStatus('idle'));
+      } else {
+        setAudioStatus('idle');
+        audioRef.current = null;
+      }
+    });
+  };
+
+  const handleToggleTafsir = async () => {
+    if (!ayah) return;
+    if (showTafsir) {
+      setShowTafsir(false);
+      return;
+    }
+    setShowTafsir(true);
+    if (!tafsirContent) {
+      setLoadingTafsir(true);
+      try {
+        const res = await fetch(`/api/tafsir?surah=${ayah.surahNumber}&ayah=${ayah.ayahNumber}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json?.data?.text) {
+            setTafsirContent(json.data.text);
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to load random ayah tafsir:', err);
+      } finally {
+        setLoadingTafsir(false);
+      }
+    }
   };
 
   // Scaled continuous Arabic typography for proportional, anti-kegedean rendering
@@ -229,14 +330,35 @@ export default function RandomAyahPage() {
               </Link>
 
               <button
-                onClick={handlePlayAudio}
-                className={`inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-all font-sans ${
-                  isPlaying ? 'bg-primary text-white shadow-subtle' : 'bg-canvas-soft text-ink-secondary hover:bg-primary-subdued'
+                onClick={handleToggleAudio}
+                className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all font-sans ${
+                  audioStatus === 'playing'
+                    ? 'bg-primary text-white shadow-subtle'
+                    : 'bg-canvas-soft text-ink-secondary hover:bg-primary-subdued'
                 }`}
-                title="Dengarkan Audio Tilawah"
+                title={audioStatus === 'playing' ? 'Jeda Tilawah' : 'Dengarkan Audio Tilawah'}
               >
-                <Volume2 className="w-3 h-3" />
-                <span>{isPlaying ? 'Memutar...' : 'Audio'}</span>
+                {audioStatus === 'loading' ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+                ) : audioStatus === 'playing' ? (
+                  <Pause className="w-3.5 h-3.5 fill-current" />
+                ) : (
+                  <Volume2 className="w-3.5 h-3.5" />
+                )}
+                <span>{audioStatus === 'loading' ? 'Memuat...' : audioStatus === 'playing' ? 'Jeda' : 'Audio'}</span>
+              </button>
+
+              <button
+                onClick={handleToggleTafsir}
+                className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all font-sans border ${
+                  showTafsir
+                    ? 'bg-primary text-white border-primary shadow-subtle'
+                    : 'bg-canvas-soft border-hairline text-ink-secondary hover:bg-primary-subdued'
+                }`}
+                title="Lihat Tafsir Ringkas Kemenag RI"
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>Tafsir</span>
               </button>
 
               <button
@@ -405,6 +527,42 @@ export default function RandomAyahPage() {
               &ldquo;{ayah.verseIndo}&rdquo;
             </p>
           </div>
+
+          {/* Expandable Tafsir Kemenag RI */}
+          {showTafsir && (
+            <div className="p-5 rounded-2xl bg-canvas-soft border border-primary/20 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="flex items-center justify-between border-b border-hairline pb-2">
+                <div className="flex items-center space-x-2">
+                  <BookOpen className="w-4 h-4 text-primary" />
+                  <span className="text-xs font-bold font-sans text-ink-primary uppercase tracking-wider">
+                    Tafsir Ringkas Kemenag RI — QS. {ayah.surahNameIndo}: {ayah.ayahNumber}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setShowTafsir(false)}
+                  className="text-xs text-ink-mute hover:text-ink-primary font-medium"
+                >
+                  Tutup
+                </button>
+              </div>
+
+              {loadingTafsir ? (
+                <div className="py-6 flex items-center justify-center space-x-2 text-ink-mute text-xs">
+                  <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                  <span>Memuat penjelasan tafsir...</span>
+                </div>
+              ) : tafsirContent ? (
+                <div className="text-xs sm:text-sm font-sans leading-relaxed text-ink-secondary space-y-2 select-text">
+                  <p className="whitespace-pre-line">{tafsirContent}</p>
+                  <p className="text-[11px] text-ink-mute pt-2 border-t border-hairline">
+                    Sumber: Kemenag RI (Kementerian Agama Republik Indonesia)
+                  </p>
+                </div>
+              ) : (
+                <p className="text-xs text-ink-mute italic">Tafsir untuk ayat ini belum tersedia.</p>
+              )}
+            </div>
+          )}
 
           {/* Direct Navigation Call-to-Action to Full Mushaf Reading Page */}
           <div className="p-4 rounded-xl bg-canvas-soft border border-hairline flex flex-col sm:flex-row items-center justify-between gap-3">

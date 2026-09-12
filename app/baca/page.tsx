@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback, Suspense } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -17,7 +17,9 @@ import {
   ChevronUp,
   Navigation,
   SlidersHorizontal,
-  X
+  X,
+  ArrowRight,
+  BookOpen
 } from 'lucide-react';
 import QuranWordInteractive, { QuranWordClickData } from '@/components/QuranWordInteractive';
 import WordEtymologyModal from '@/components/WordEtymologyModal';
@@ -84,6 +86,62 @@ function BacaQuranPageContent() {
     totalAyahs: currentSurahMeta.ayahsCount,
     autoScroll: true,
   });
+
+  // Tafsir per-Ayat state & handler
+  const [expandedTafsirAyah, setExpandedTafsirAyah] = useState<number | null>(null);
+  const [tafsirCache, setTafsirCache] = useState<Record<number, { text: string; source: string }>>({});
+  const [loadingTafsirAyah, setLoadingTafsirAyah] = useState<number | null>(null);
+
+  const handleToggleTafsir = useCallback(async (ayahNumber: number) => {
+    if (expandedTafsirAyah === ayahNumber) {
+      setExpandedTafsirAyah(null);
+      return;
+    }
+
+    setExpandedTafsirAyah(ayahNumber);
+
+    if (tafsirCache[ayahNumber]) return;
+
+    setLoadingTafsirAyah(ayahNumber);
+    try {
+      const res = await fetch(`/api/tafsir?surah=${selectedSurah}&ayah=${ayahNumber}`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json?.data) {
+          setTafsirCache((prev) => ({
+            ...prev,
+            [ayahNumber]: {
+              text: json.data.text,
+              source: json.data.sourceTitle || 'Tafsir Ringkas Kemenag RI',
+            },
+          }));
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to load ayah tafsir:', err);
+    } finally {
+      setLoadingTafsirAyah(null);
+    }
+  }, [expandedTafsirAyah, tafsirCache, selectedSurah]);
+
+  // Reset tafsir state on surah change
+  useEffect(() => {
+    setExpandedTafsirAyah(null);
+    setTafsirCache({});
+  }, [selectedSurah]);
+
+  // Smart surah match when user types surah name in search bar
+  const matchedSurahs = useMemo(() => {
+    if (!wordQuery || wordQuery.trim().length < 2) return [];
+    const q = wordQuery.trim().toLowerCase();
+    return SURAH_LIST.filter(
+      (s) =>
+        s.number.toString() === q ||
+        s.nameIndo.toLowerCase().includes(q) ||
+        s.nameArabic.includes(q) ||
+        s.translationId.toLowerCase().includes(q)
+    );
+  }, [wordQuery]);
 
   // Sync with URL query parameters
   useEffect(() => {
@@ -604,9 +662,53 @@ function BacaQuranPageContent() {
               <p className="text-xs font-sans text-ink-mute">Memuat teks Al-Qur&apos;an &amp; analisis kata...</p>
             </div>
           ) : displayedAyahs.length === 0 ? (
-            <div className="py-16 text-center space-y-2">
-              <p className="text-sm font-semibold text-ink-primary">Tidak ada ayat yang cocok</p>
-              <p className="text-xs text-ink-mute">Coba gunakan kata kunci lain atau bersihkan pencarian.</p>
+            <div className="py-16 text-center space-y-4 max-w-lg mx-auto px-4">
+              {matchedSurahs.length > 0 ? (
+                <div className="p-5 rounded-2xl bg-canvas-soft border border-primary/20 shadow-subtle space-y-3 text-left">
+                  <div className="flex items-center space-x-2 text-xs font-semibold text-primary">
+                    <BookOpen className="w-4 h-4" />
+                    <span>Ditemukan Nama Surah:</span>
+                  </div>
+                  <div className="space-y-2">
+                    {matchedSurahs.slice(0, 3).map((s: (typeof SURAH_LIST)[number]) => (
+                      <button
+                        key={s.number}
+                        onClick={() => {
+                          clearSearch();
+                          handleSelectSurah(s.number);
+                        }}
+                        className="w-full flex items-center justify-between p-3 rounded-xl bg-canvas-surface hover:bg-primary-subdued/30 border border-hairline hover:border-primary/40 transition-all text-ink-primary group"
+                      >
+                        <div className="flex items-center space-x-3">
+                          <span className="w-7 h-7 rounded-lg bg-canvas-soft border border-hairline text-xs font-semibold flex items-center justify-center text-ink-secondary">
+                            {s.number}
+                          </span>
+                          <div className="text-left">
+                            <p className="text-sm font-semibold text-ink-primary group-hover:text-primary transition-colors">
+                              Surah {s.nameIndo}
+                            </p>
+                            <p className="text-[11px] text-ink-mute">
+                              {s.translationId} • {s.ayahsCount} Ayat
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2 text-ink-mute group-hover:text-primary">
+                          <span className="font-arabic text-base">{s.nameArabic}</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-[11px] text-ink-mute text-center pt-1">
+                    Klik surah di atas untuk langsung membuka dan membaca.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <p className="text-sm font-semibold text-ink-primary">Tidak ada ayat yang cocok</p>
+                  <p className="text-xs text-ink-mute">Coba gunakan kata kunci lain atau bersihkan pencarian.</p>
+                </>
+              )}
             </div>
           ) : (
             /* Continuous Ayah List with Subtle Dividers */
@@ -663,6 +765,19 @@ function BacaQuranPageContent() {
                           ) : (
                             <Volume2 className="w-3.5 h-3.5" />
                           )}
+                        </button>
+
+                        <button
+                          onClick={() => handleToggleTafsir(ayah.ayahNumber)}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-sans font-medium transition-colors flex items-center space-x-1.5 border ${
+                            expandedTafsirAyah === ayah.ayahNumber
+                              ? 'bg-primary text-white border-primary shadow-subtle'
+                              : 'bg-canvas-surface border-hairline text-ink-secondary hover:text-primary hover:border-primary/40'
+                          }`}
+                          title="Buka Tafsir Ringkas Kemenag RI untuk Ayat ini"
+                        >
+                          <BookOpen className="w-3.5 h-3.5" />
+                          <span>Tafsir</span>
                         </button>
                       </div>
 
@@ -733,6 +848,42 @@ function BacaQuranPageContent() {
                           <p className={`${fontTranslationClass} translation-kemenag font-sans text-ink-secondary transition-all select-text`}>
                             &ldquo;{ayah.textIndo.replace(/^[“"']+|[”"']+$/g, '').trim()}&rdquo;
                           </p>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Expandable Tafsir Kemenag RI Drawer */}
+                    {expandedTafsirAyah === ayah.ayahNumber && (
+                      <div className="mt-4 p-5 rounded-2xl bg-canvas-soft/70 border border-primary/20 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div className="flex items-center justify-between border-b border-hairline pb-2">
+                          <div className="flex items-center space-x-2">
+                            <BookOpen className="w-4 h-4 text-primary" />
+                            <span className="text-xs font-bold font-sans text-ink-primary uppercase tracking-wider">
+                              Tafsir Kemenag RI — QS. {currentSurahMeta.nameIndo}: {ayah.ayahNumber}
+                            </span>
+                          </div>
+                          <button
+                            onClick={() => setExpandedTafsirAyah(null)}
+                            className="text-xs text-ink-mute hover:text-ink-primary font-medium"
+                          >
+                            Tutup
+                          </button>
+                        </div>
+
+                        {loadingTafsirAyah === ayah.ayahNumber ? (
+                          <div className="py-6 flex items-center justify-center space-x-2 text-ink-mute text-xs">
+                            <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                            <span>Memuat penjelasan tafsir...</span>
+                          </div>
+                        ) : tafsirCache[ayah.ayahNumber]?.text ? (
+                          <div className="text-xs sm:text-sm font-sans leading-relaxed text-ink-secondary space-y-2 select-text">
+                            <p className="whitespace-pre-line">{tafsirCache[ayah.ayahNumber].text}</p>
+                            <p className="text-[11px] text-ink-mute pt-2 border-t border-hairline">
+                              Sumber: {tafsirCache[ayah.ayahNumber].source}
+                            </p>
+                          </div>
+                        ) : (
+                          <p className="text-xs text-ink-mute italic">Tafsir untuk ayat ini belum tersedia.</p>
                         )}
                       </div>
                     )}
