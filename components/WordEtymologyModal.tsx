@@ -210,24 +210,25 @@ export default function WordEtymologyModal({
         dir="ltr"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Modal Top Control Bar */}
-        <div className="flex items-center justify-between border-b border-hairline pb-3">
-          <div className="flex items-center space-x-2">
-            <span id="word-study-modal-title" className="text-xs font-bold uppercase tracking-wider text-primary">
-              Bedah Kata &amp; Leksikon
+        {/* Modal Top Control Bar (Sticky with Glassmorphism) */}
+        <div className="sticky top-0 z-20 -mx-5 -mt-5 sm:-mx-8 sm:-mt-8 px-5 py-4 sm:px-8 sm:py-4.5 bg-[var(--bg-surface)]/90 backdrop-blur-md border-b border-hairline/80 flex items-center justify-between rounded-t-3xl shadow-xs">
+          <div className="flex items-center space-x-2.5">
+            <span id="word-study-modal-title" className="text-xs font-bold uppercase tracking-wider text-primary flex items-center space-x-1.5">
+              <span>Bedah Kosakata Al-Qur&apos;an</span>
             </span>
             {surahNumber && ayahNumber && wordIndex ? (
-              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                ({surahNumber}:{ayahNumber}:{wordIndex})
+              <span className="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                QS. {surahNumber}:{ayahNumber} (#{wordIndex})
               </span>
             ) : null}
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-canvas-soft text-ink-mute hover:text-ink-primary transition-colors border border-hairline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            title="Tutup (ESC)"
+            className="p-1.5 sm:px-3 sm:py-1.5 rounded-full hover:bg-canvas-soft text-ink-mute hover:text-ink-primary transition-all border border-hairline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary flex items-center space-x-1"
+            title="Tutup jendela (ESC)"
             aria-label="Tutup Jendela Eksplorasi Kata"
           >
+            <span className="text-xs font-semibold hidden sm:inline">Tutup</span>
             <X className="w-4 h-4" />
           </button>
         </div>

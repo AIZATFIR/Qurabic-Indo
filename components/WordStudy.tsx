@@ -24,6 +24,7 @@ import { WordStudyViewModel } from '@/lib/lexicon/types';
 import { parseLexiconSenseTokens } from '@/lib/lexicon/lexicon-formatter';
 import { getAuthenticWordMeaning, getRootTranslationProfile } from '@/lib/morphology/root-dictionary';
 import { isRawBuckwalterRoot, transliterateArabic } from '@/lib/morphology/transliteration';
+import { stripArabicHarakat } from '@/lib/search/root-search';
 import SourceDrawer from './SourceDrawer';
 
 interface WordStudyProps {
@@ -65,6 +66,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
     : transliterateArabic(identity.arabic);
 
   const rootLettersList = lexical.rootArabic ? lexical.rootArabic.split(/\s+/).filter(Boolean) : [];
+  const cleanActiveArabic = stripArabicHarakat(identity.arabic.replace(/\u0670/g, '\u0627'));
 
   const handlePlayAudio = () => {
     if (isPlayingAudio) return;
@@ -148,59 +150,68 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
   };
 
   return (
-    <div className="space-y-6 font-sans text-left" dir="ltr">
+    <div className="space-y-6 sm:space-y-7 font-sans text-left" dir="ltr">
       {/* ========================================================================= */}
       {/* 1. HERO WORD SECTION (Identity, Crisp Arabic, Pronunciation & Meaning)     */}
       {/* ========================================================================= */}
-      <section className="p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-5 text-center">
+      <section className="p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-5 text-center relative overflow-hidden">
         {/* Top Control Bar */}
-        <div className="flex items-center justify-between border-b border-hairline pb-3 text-left">
+        <div className="flex items-center justify-between border-b border-hairline pb-3.5 text-left">
           <div className="flex items-center space-x-2">
-            {context?.surahNumber && context?.ayahNumber && context?.wordIndex ? (
+            {context?.surahNumber && context?.ayahNumber && context?.wordIndex && !isModalMode ? (
               <span className="text-xs sm:text-sm font-mono font-bold px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
-                ({context.surahNumber}:{context.ayahNumber}:{context.wordIndex})
+                QS. {context.surahNumber}:{context.ayahNumber} (Kata #{context.wordIndex})
               </span>
             ) : !isModalMode ? (
-              <span className="text-xs font-bold uppercase tracking-wider text-primary">
-                Bedah Kata Al-Qur&apos;an
+              <span className="text-xs font-bold uppercase tracking-wider text-primary flex items-center space-x-1.5">
+                <BookOpen className="w-3.5 h-3.5 text-primary" />
+                <span>Bedah Kosakata Al-Qur&apos;an</span>
               </span>
-            ) : null}
+            ) : (
+              <span className="text-xs text-ink-mute font-medium">
+                Kajian Morfologi &amp; Semantik Kata
+              </span>
+            )}
           </div>
 
           <div className="flex items-center space-x-2">
             <button
               onClick={handlePlayAudio}
               disabled={isPlayingAudio}
-              title="Dengarkan pengucapan kata"
-              className={`p-2.5 rounded-full transition-all border border-hairline ${
+              title="Dengarkan pengucapan kata ini"
+              className={`p-2.5 sm:px-3.5 sm:py-2 rounded-2xl transition-all duration-200 border flex items-center space-x-1.5 ${
                 isPlayingAudio
-                  ? 'bg-primary text-white scale-105 shadow-subtle animate-pulse'
-                  : 'bg-canvas-soft hover:bg-canvas-page text-ink-secondary hover:text-primary'
+                  ? 'bg-primary text-white scale-105 shadow-md border-primary animate-pulse'
+                  : 'bg-canvas-soft hover:bg-canvas-page text-ink-secondary hover:text-primary border-hairline shadow-xs'
               }`}
             >
               <Volume2 aria-hidden="true" className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-xs font-semibold hidden sm:inline">
+                {isPlayingAudio ? 'Memutar...' : 'Audio'}
+              </span>
             </button>
             <button
               onClick={() => openSourceDrawer()}
               title="Lihat Otoritas Sumber Data"
-              className="p-2.5 rounded-full bg-canvas-soft hover:bg-canvas-page text-ink-mute hover:text-primary transition-colors border border-hairline"
+              className="p-2.5 rounded-2xl bg-canvas-soft hover:bg-canvas-page text-ink-mute hover:text-primary transition-colors border border-hairline shadow-xs"
             >
               <ShieldCheck aria-hidden="true" className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
         </div>
 
-        {/* Big Crisp Arabic Word Display */}
-        <div className="py-2" dir="rtl">
+        {/* Crisp Grand Arabic Word Display with Soft Ambient Glow */}
+        <div className="relative py-4 my-1 flex items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-b from-primary/5 via-canvas-soft/40 to-transparent border border-hairline/40">
           <span
-            className="font-arabic text-6xl sm:text-7xl font-bold text-primary tracking-wide block leading-[2.6] sm:leading-[2.8] select-text"
+            className="font-arabic text-6xl sm:text-7xl lg:text-8xl font-bold text-primary tracking-wide block leading-[2.6] sm:leading-[2.8] select-text transition-transform duration-300 hover:scale-[1.02]"
             title={identity.arabic}
+            dir="rtl"
           >
             {identity.arabic}
           </span>
         </div>
 
-        {/* Transliteration */}
+        {/* Phonetic Transliteration */}
         {displayTransliteration && (
           <p className="text-sm sm:text-base text-ink-mute font-mono tracking-wider">
             — {displayTransliteration} —
@@ -208,7 +219,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
         )}
 
         {/* Primary Readable Meaning Banner (Bahasa Indonesia) */}
-        <div className="p-5 sm:p-6 rounded-2xl bg-primary/10 border border-primary/20 space-y-2 text-center">
+        <div className="p-5 sm:p-6 rounded-2xl bg-primary/10 border border-primary/25 space-y-2 text-center shadow-xs">
           <div className="flex items-center justify-center space-x-2">
             <span className="text-xs font-bold uppercase tracking-wider text-primary">
               Terjemahan Kata
@@ -231,36 +242,36 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       {/* 2. ROOT CONCEPT BANNER (Akar Kata & Filosofi Makna) — KALAAM BEST PRACTICE */}
       {/* ========================================================================= */}
       {lexical.rootArabic && (
-        <section className="p-5 sm:p-6 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-3.5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-hairline pb-3">
+        <section className="p-5 sm:p-6 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-hairline pb-3.5">
             <div className="flex items-center space-x-3">
               <span className="text-xs font-bold uppercase tracking-wider text-ink-mute flex items-center space-x-1.5">
                 <Compass className="w-4 h-4 text-primary" />
                 <span>Akar Kata</span>
               </span>
 
-              {/* Distinct Arabic Root Letter Pills */}
-              <div className="flex items-center space-x-1.5" dir="rtl">
+              {/* Distinct Arabic Root Letter Tiles */}
+              <div className="flex items-center space-x-2" dir="rtl">
                 {rootLettersList.map((letter, idx) => (
-                  <span
+                  <div
                     key={idx}
-                    className="w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 text-primary font-arabic text-lg font-bold flex items-center justify-center shadow-xs select-text"
+                    className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-primary/10 border border-primary/25 text-primary font-arabic text-2xl font-extrabold flex items-center justify-center shadow-xs transition-transform hover:-translate-y-0.5 select-text"
                   >
                     {letter}
-                  </span>
+                  </div>
                 ))}
               </div>
 
               {lexical.root && (
-                <span className="text-xs font-mono text-ink-mute">
+                <span className="text-xs font-mono font-semibold text-ink-mute">
                   ({lexical.root})
                 </span>
               )}
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2.5">
               {occurrences.totalCount > 0 && (
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-canvas-soft border border-hairline text-ink-secondary">
+                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-canvas-soft border border-hairline text-ink-secondary">
                   {occurrences.totalCount}× di Al-Qur&apos;an
                 </span>
               )}
@@ -270,26 +281,30 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                   className="text-xs font-bold text-primary hover:underline inline-flex items-center space-x-1"
                 >
                   <span>Indeks Akar</span>
-                  <ArrowRight className="w-3 h-3" />
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               )}
             </div>
           </div>
 
           {rootTrans && (
-            <p className="text-sm sm:text-base text-ink-secondary leading-relaxed font-sans select-text">
-              <strong className="text-ink-primary">Makna Dasar:</strong> {rootTrans}
-            </p>
+            <div className="p-4 rounded-2xl bg-canvas-soft/80 border border-hairline flex items-start space-x-3">
+              <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+              <div className="text-xs sm:text-sm text-ink-secondary leading-relaxed font-sans select-text">
+                <strong className="text-ink-primary font-semibold">Filosofi Dasar Makna:</strong>{' '}
+                {rootTrans}
+              </div>
+            </div>
           )}
         </section>
       )}
 
       {/* ========================================================================= */}
-      {/* 3. KELUARGA KATA DALAM AL-QUR'AN (WORD FAMILY) — PROMINENT TOP POSITION   */}
+      {/* 3. KELUARGA KATA DALAM AL-QUR'AN (WORD FAMILY) — THE CENTERPIECE AT TOP    */}
       {/* ========================================================================= */}
       {!morphology.isParticle && wordFamily.length > 0 && (
         <section className="p-6 sm:p-7 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-hairline pb-3.5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-hairline pb-3.5">
             <div>
               <h3 className="text-base sm:text-lg font-bold text-ink-primary flex items-center space-x-2">
                 <GitFork className="w-5 h-5 text-primary shrink-0" />
@@ -323,40 +338,54 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                 : item.meaningIndo;
 
               const isVerb = item.pos === "Fi'il";
+              const cleanItemArabic = stripArabicHarakat(item.arabic.replace(/\u0670/g, '\u0627'));
+              const isCurrentWord = cleanItemArabic === cleanActiveArabic;
 
               return (
                 <Link
                   key={idx}
                   href={`/kata/${encodeURIComponent(item.arabic)}`}
-                  className="p-4 sm:p-5 rounded-2xl bg-canvas-soft hover:bg-canvas-page border border-hairline hover:border-primary/40 transition-all text-center space-y-2.5 group flex flex-col justify-between shadow-xs hover:shadow-subtle"
+                  className={`p-4 sm:p-5 rounded-2xl transition-all duration-200 text-center space-y-2.5 group flex flex-col justify-between shadow-xs hover:shadow-md hover:-translate-y-0.5 border ${
+                    isCurrentWord
+                      ? 'bg-primary/10 border-primary/40 ring-2 ring-primary/20'
+                      : 'bg-canvas-soft hover:bg-canvas-page border-hairline hover:border-primary/40'
+                  }`}
                 >
                   {/* Top Row: POS Tag & Frequency Badge */}
                   <div className="flex items-center justify-between text-xs">
-                    <span className={`px-2 py-0.5 rounded-md text-[11px] font-bold border ${
+                    <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
                       isVerb
                         ? 'bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/20'
                         : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20'
                     }`}>
                       {item.pos}
                     </span>
-                    <span className="font-mono font-bold text-xs text-ink-mute group-hover:text-primary transition-colors bg-canvas-surface px-2 py-0.5 rounded-md border border-hairline">
-                      {item.count}×
-                    </span>
+
+                    <div className="flex items-center space-x-1.5">
+                      {isCurrentWord && (
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/20 px-1.5 py-0.5 rounded-md">
+                          Kata Ini
+                        </span>
+                      )}
+                      <span className="font-mono font-bold text-xs text-ink-mute group-hover:text-primary transition-colors bg-canvas-surface px-2 py-0.5 rounded-full border border-hairline">
+                        {item.count}×
+                      </span>
+                    </div>
                   </div>
 
                   {/* Arabic Word Display in Large Calligraphic Typography */}
                   <div className="py-1">
                     <span
-                      className="font-arabic text-2xl sm:text-3xl font-bold text-ink-primary group-hover:text-primary transition-colors block leading-relaxed select-text"
+                      className="font-arabic text-3xl sm:text-4xl font-bold text-ink-primary group-hover:text-primary transition-colors block leading-relaxed select-text"
                       dir="rtl"
                     >
                       {item.arabic}
                     </span>
                   </div>
 
-                  {/* Clear Authentic Indonesian Definition (No placeholders, No bare Arabic) */}
-                  <div className="pt-1.5 border-t border-hairline/60">
-                    <p className="text-xs sm:text-sm font-semibold text-ink-primary group-hover:text-primary transition-colors line-clamp-2 leading-snug font-sans select-text">
+                  {/* Clear Authentic Indonesian Definition */}
+                  <div className="pt-2 border-t border-hairline/60">
+                    <p className="text-xs sm:text-sm font-bold text-ink-primary group-hover:text-primary transition-colors line-clamp-2 leading-snug font-sans select-text">
                       {displayMeaning}
                     </p>
                   </div>
@@ -670,7 +699,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
             </button>
             <button
               onClick={() => setIsLexiconOpen(!isLexiconOpen)}
-              className="p-1.5 rounded-lg hover:bg-canvas-soft text-ink-mute hover:text-ink-primary transition-colors border border-hairline"
+              className="p-1.5 rounded-lg hover:bg-canvas-soft text-ink-mute hover:text-primary transition-colors border border-hairline"
               title={isLexiconOpen ? 'Tutup Leksikon Klasik' : 'Buka Leksikon Klasik'}
             >
               {isLexiconOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
