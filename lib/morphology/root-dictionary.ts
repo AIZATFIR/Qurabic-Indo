@@ -539,6 +539,73 @@ export const ROOT_DICTIONARY: Record<string, RootTranslationProfile> = {
       'فَعَّال': 'Maha Melaksanakan kehendak-Nya',
     },
   },
+
+  // 26. Root m-l-k (م ل ك) — 206 occurrences (QS. 1:4:1, QS. 2:30:4, etc.)
+  'm-l-k': {
+    rootArabic: 'م ل ك',
+    rootLatin: 'mlk',
+    titleIndo: 'Akar م ل ك (Kepemilikan, Kerajaan, Penguasa, Malaikat)',
+    coreMeaning: 'Kepemilikan hakiki, kekuasaan semesta, wewenang mengatur urusan, dan utusan Ilahi yang patuh.',
+    derivatives: {
+      'مَلَك': 'Malaikat',
+      'مَلَكًا': 'Seorang malaikat',
+      'مَلَكٌ': 'Malaikat',
+      'مَلَكَيْنِ': 'Dua malaikat (Harut & Marut)',
+      'مَلَـٰٓئِكَة': 'Para Malaikat',
+      'مَلَائِكَة': 'Para Malaikat',
+      'ٱلْمَلَـٰٓئِكَةُ': 'Para Malaikat',
+      'ٱلْمَلَـٰٓئِكَةِ': 'Para Malaikat',
+      'ٱلْمَلَـٰٓئِكَةَ': 'Para Malaikat',
+      'يَمْلِكُ': 'Dia memiliki / menguasai',
+      'يَمْلِكُونَ': 'Mereka memiliki / menguasai',
+      'أَمْلِكُ': 'Aku memiliki / menguasai',
+      'تَمْلِكُ': 'Kamu memiliki / menguasai',
+      'تَمْلِكُونَ': 'Kalian memiliki / menguasai',
+      'نَمْلِكُ': 'Kami memiliki / menguasai',
+      'مَلَكَتْ': 'Dimiliki oleh (hamba sahaya)',
+      'مَلَكْتُمْ': 'Kalian miliki / kuasai',
+      'مُلْك': 'Kerajaan / Kekuasaan mutlak',
+      'مُلْكًا': 'Kerajaan / Kekuasaan yang besar',
+      'مُلْكُ': 'Kerajaan / Kepemilikan',
+      'مُلْكِ': 'Kerajaan / Kekuasaan',
+      'ٱلْمُلْكُ': 'Kerajaan semesta / Kekuasaan mutlak',
+      'مَلِك': 'Raja / Penguasa',
+      'مَلِكًا': 'Seorang raja',
+      'مَلِكٌ': 'Raja',
+      'ٱلْمَلِكُ': 'Sang Raja (Maha Penguasa)',
+      'مُلُوك': 'Raja-raja',
+      'مُلُوكًا': 'Raja-raja',
+      'مَالِك': 'Pemilik / Penguasa / Malaikat Malik',
+      'مَـٰلِكِ': 'Pemilik / Penguasa (Hari Pembalasan)',
+      'مَمْلُوك': 'Hamba sahaya / Yang dimiliki',
+      'مَمْلُوكًا': 'Hamba sahaya / Yang dimiliki orang lain',
+      'مَلَكُوت': 'Kerajaan agung / Kekuasaan semesta',
+      'مَلَكُوتَ': 'Kerajaan semesta / Kekuasaan tertinggi',
+      'مَلِيك': 'Raja Yang Maha Kuasa',
+    },
+  },
+
+  // 27. Root E-m-y (ع م ي) — 33 occurrences (QS. 80:2, etc.)
+  'E-m-y': {
+    rootArabic: 'ع م ي',
+    rootLatin: 'Emy',
+    titleIndo: 'Akar ع م ي (Kebutaan, Tertutup Penglihatan, Buta Hati)',
+    coreMeaning: 'Hilangnya penglihatan mata lahiriah atau tertutupnya mata batin/nurani dari petunjuk kebenaran.',
+    derivatives: {
+      'أَعْمَىٰ': 'Orang yang buta',
+      'ٱلْأَعْمَىٰ': 'Orang yang buta',
+      'أَعْمَى': 'Orang yang buta',
+      'عَمِىَ': 'Dia telah buta (mata/hatinya)',
+      'عَمُوا۟': 'Mereka telah buta',
+      'عَمِينَ': 'Orang-orang yang buta mata hatinya',
+      'عُمْي': 'Orang-orang buta (jamak)',
+      'عُمْيًا': 'Dalam keadaan buta',
+      'عُمْيٌ': 'Orang-orang buta',
+      'عُمِّيَتْ': 'Dibutakan / Disamarkan bagi mereka',
+      'تَعْمَى': 'Menjadi buta (mata hati)',
+      'عَمَايَة': 'Kesesatan / Kebutaan batin',
+    },
+  },
 };
 
 /**
@@ -563,6 +630,26 @@ export function getRootTranslationProfile(slugOrArabic?: string): RootTranslatio
   return null;
 }
 
+function normalizeStemForMatch(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/^[\u0651\u0640]+/, '') // remove leading shaddah or tatweel
+    .replace(/[\u064B\u064C\u064D]?[\u0627\u0649]$/, '') // remove accusative alif/ya with tanwin e.g. ملكا -> ملك
+    .replace(/[\u064B-\u0652\u0670]+$/, '') // strip final case harakat
+    .replace(/\u0670/g, '\u0627') // normalize dagger alif to alif
+    .replace(/[\u0653\u0640\u0652]/g, '') // remove madda, tatweel, sukun
+    .trim();
+}
+
+function getBareWordKey(text: string): string {
+  if (!text) return '';
+  return stripArabicHarakat(text.replace(/\u0670/g, '\u0627'))
+    .replace(/^[\u0640]+/, '')
+    .replace(/[\u0627\u0649]$/, '') // strip trailing alif / ya
+    .replace(/ت$/, 'ة') // normalize construct plural e.g. ملائكت -> ملائكة
+    .trim();
+}
+
 /**
  * Resolves authentic Indonesian meaning for any Quranic word
  */
@@ -573,25 +660,43 @@ export function getAuthenticWordMeaning(
 ): string {
   if (!wordArabic) return '';
 
+  const stemNorm = normalizeStemForMatch(wordArabic);
+  const bareKey = getBareWordKey(wordArabic);
   const cleanAr = stripArabicHarakat(wordArabic);
+  const cleanWithAlif = stripArabicHarakat(wordArabic.replace(/\u0670/g, '\u0627'));
+
+  // Helper to search a derivative record dictionary
+  const matchInDerivatives = (derivs: Record<string, string>): string | null => {
+    // 1. Exact string match
+    if (derivs[wordArabic]) return derivs[wordArabic];
+    // 2. Normalized stem match (preserves internal vowels and dagger alif)
+    for (const [k, v] of Object.entries(derivs)) {
+      if (normalizeStemForMatch(k) === stemNorm) return v;
+    }
+    // 3. Bare key with dagger alif converted to alif
+    if (derivs[cleanWithAlif]) return derivs[cleanWithAlif];
+    for (const [k, v] of Object.entries(derivs)) {
+      if (getBareWordKey(k) === bareKey) return v;
+    }
+    // 4. Standard harakat-stripped match
+    if (derivs[cleanAr]) return derivs[cleanAr];
+    for (const [k, v] of Object.entries(derivs)) {
+      if (stripArabicHarakat(k) === cleanAr) return v;
+    }
+    return null;
+  };
 
   // 1. Check root-specific derivative dictionary
   const prof = getRootTranslationProfile(rootSlugOrArabic);
   if (prof) {
-    if (prof.derivatives[wordArabic]) return prof.derivatives[wordArabic];
-    if (prof.derivatives[cleanAr]) return prof.derivatives[cleanAr];
-    for (const [k, v] of Object.entries(prof.derivatives)) {
-      if (stripArabicHarakat(k) === cleanAr) return v;
-    }
+    const found = matchInDerivatives(prof.derivatives);
+    if (found) return found;
   }
 
   // 2. Check all roots if not found in given root profile
   for (const p of Object.values(ROOT_DICTIONARY)) {
-    if (p.derivatives[wordArabic]) return p.derivatives[wordArabic];
-    if (p.derivatives[cleanAr]) return p.derivatives[cleanAr];
-    for (const [k, v] of Object.entries(p.derivatives)) {
-      if (stripArabicHarakat(k) === cleanAr) return v;
-    }
+    const found = matchInDerivatives(p.derivatives);
+    if (found) return found;
   }
 
   // 3. Fall back to clean default meaning if it is a genuine Indonesian translation
@@ -600,8 +705,9 @@ export function getAuthenticWordMeaning(
     !defaultMeaning.startsWith('Konsep & Turunan') &&
     !defaultMeaning.startsWith('Bentuk Kata') &&
     !defaultMeaning.startsWith('Akar kata') &&
-    !defaultMeaning.startsWith('Nomina (') &&
-    !defaultMeaning.startsWith('Verba (') &&
+    !defaultMeaning.startsWith('Nomina') &&
+    !defaultMeaning.startsWith('Verba') &&
+    !defaultMeaning.startsWith('Partikel') &&
     defaultMeaning !== "Kata dalam Al-Qur'an"
   ) {
     // Ensure default meaning is not raw English
@@ -613,12 +719,24 @@ export function getAuthenticWordMeaning(
 
   // 4. Intelligent Morphological Pattern Synthesizer using ROOT_DICTIONARY
   if (prof && prof.coreMeaning) {
-    const firstMeaning = prof.coreMeaning.split(',')[0].trim();
+    const firstMeaning = prof.coreMeaning.split(',')[0].replace(/^(Memiliki|Mengharamkan|Mengerjakan|Hilangnya|Memberi)\s+/i, '').trim();
     if (cleanAr.startsWith('ال') || cleanAr.startsWith('ٱل')) {
       return firstMeaning.charAt(0).toUpperCase() + firstMeaning.slice(1);
     }
-    if (cleanAr.startsWith('ي') || cleanAr.startsWith('ت') || cleanAr.startsWith('ن')) {
-      return `Sedang/Akan ${firstMeaning}`;
+    if (cleanAr.startsWith('ي')) {
+      return `Dia ${firstMeaning}`;
+    }
+    if (cleanAr.startsWith('ت')) {
+      return `Kamu / Dia ${firstMeaning}`;
+    }
+    if (cleanAr.startsWith('أ') || cleanAr.startsWith('ا')) {
+      return `Aku ${firstMeaning}`;
+    }
+    if (cleanAr.startsWith('ن')) {
+      return `Kami ${firstMeaning}`;
+    }
+    if (cleanAr.endsWith('وا')) {
+      return `Mereka ${firstMeaning}`;
     }
     return firstMeaning.charAt(0).toUpperCase() + firstMeaning.slice(1);
   }
@@ -636,13 +754,13 @@ export function getAuthenticWordMeaning(
     if (dbRoot) {
       // Check verbs
       for (const v of dbRoot.verbs || []) {
-        if (stripArabicHarakat(v.arabic) === cleanAr && v.meaningIndo && !v.meaningIndo.startsWith('Verba (')) {
+        if (stripArabicHarakat(v.arabic) === cleanAr && v.meaningIndo && !v.meaningIndo.startsWith('Verba')) {
           return v.meaningIndo;
         }
       }
       // Check nouns
       for (const n of dbRoot.nouns || []) {
-        if (stripArabicHarakat(n.arabic) === cleanAr && n.meaningIndo && !n.meaningIndo.startsWith('Nomina (')) {
+        if (stripArabicHarakat(n.arabic) === cleanAr && n.meaningIndo && !n.meaningIndo.startsWith('Nomina')) {
           return n.meaningIndo;
         }
       }
@@ -654,8 +772,14 @@ export function getAuthenticWordMeaning(
       if (dbRoot.coreMeaning && !dbRoot.coreMeaning.startsWith('Akar kata ') && !dbRoot.coreMeaning.includes('memiliki peranan penting')) {
         return dbRoot.coreMeaning.split('.')[0].trim();
       }
+      // Generate clean root derivation label instead of bare Arabic
+      const rootAr = dbRoot.rootArabic || dbRoot.rootArabicJoined;
+      if (cleanAr.startsWith('ي') || cleanAr.startsWith('ت') || cleanAr.startsWith('أ') || cleanAr.startsWith('ن')) {
+        return `Bentuk Kata Kerja (Fi'il) dari Akar ${rootAr}`;
+      }
+      return `Bentuk Turunan Kata (Isim) dari Akar ${rootAr}`;
     }
   }
 
-  return cleanAr;
+  return 'Kosakata Al-Qur\'an';
 }

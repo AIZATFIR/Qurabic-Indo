@@ -206,7 +206,7 @@ export default function WordEtymologyModal({
         aria-labelledby="word-study-modal-title"
         data-lenis-prevent="true"
         onWheel={(e) => e.stopPropagation()}
-        className="relative w-full max-w-2xl max-h-[88vh] overflow-y-auto overscroll-contain bg-[var(--bg-surface)] text-[var(--color-ink-primary)] border border-hairline rounded-3xl shadow-2xl p-5 sm:p-7 space-y-6 animate-scale-up font-sans text-left opacity-100"
+        className="relative w-full max-w-3xl lg:max-w-4xl max-h-[90vh] overflow-y-auto overscroll-contain bg-[var(--bg-surface)] text-[var(--color-ink-primary)] border border-hairline rounded-3xl shadow-2xl p-5 sm:p-8 space-y-6 animate-scale-up font-sans text-left opacity-100"
         dir="ltr"
         onClick={(e) => e.stopPropagation()}
       >

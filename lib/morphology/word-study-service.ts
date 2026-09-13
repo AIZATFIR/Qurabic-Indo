@@ -107,16 +107,30 @@ export function getWordStudy(
     const grouped = new Map<string, { arabic: string; bw: string; lemmaAr: string; pos: 'Isim' | "Fi'il" | 'Harf'; count: number; sampleLoc?: string }>();
 
     for (const rec of records) {
-      const key = rec.formArabic ? stripArabicHarakat(rec.formArabic) : rec.form;
+      let rawAr = (rec.formArabic || buckwalterToArabic(rec.form)).replace(/^[\u0651\u0640]+/, '').trim();
+      const withAlif = rawAr.replace(/\u0670/g, '\u0627');
+      const cleanStem = withAlif
+        .replace(/[\u064B\u064C\u064D]?[\u0627\u0649]$/, '')
+        .replace(/[\u064B-\u0652]+$/, '')
+        .replace(/[\u0653\u0640]/g, '');
+      const bareNorm = stripArabicHarakat(cleanStem);
+      const pos: 'Isim' | "Fi'il" = rec.pos === 'V' ? "Fi'il" : 'Isim';
+      const cleanLemma = stripArabicHarakat((rec.lemmaArabic || rec.lemma || '').replace(/\u0670/g, '\u0627'));
+      const key = `${bareNorm}_${pos}_${cleanLemma}`;
+
       const existing = grouped.get(key);
       if (existing) {
         existing.count++;
+        // Prefer shorter un-suffixed forms as representative display
+        if (rawAr.length < existing.arabic.length && !rawAr.endsWith('ا')) {
+          existing.arabic = rawAr;
+        }
       } else {
         grouped.set(key, {
-          arabic: rec.formArabic || buckwalterToArabic(rec.form),
+          arabic: rawAr,
           bw: rec.form,
           lemmaAr: rec.lemmaArabic || (rec.lemma ? buckwalterToArabic(rec.lemma) : ''),
-          pos: rec.pos === 'V' ? "Fi'il" : 'Isim',
+          pos,
           count: 1,
           sampleLoc: rec.locationKey
         });
