@@ -396,6 +396,16 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
         </section>
       )}
 
+      {/* Partikel Fungsional Al-Qur'an (Harf) */}
+      {morphology.isParticle && (
+        <section className="p-5 sm:p-6 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-2 text-center">
+          <span className="text-xs font-bold uppercase tracking-wider text-primary">Karakter Partikel Al-Qur&apos;an</span>
+          <p className="text-sm text-ink-secondary leading-relaxed max-w-lg mx-auto font-sans">
+            Partikel fungsional (Harf) memiliki bentuk tetap yang berfungsi merangkai makna antar-kata dan menegaskan struktur pesan ayat.
+          </p>
+        </section>
+      )}
+
       {/* ========================================================================= */}
       {/* 4. KONTEKS AYAT LENGKAP DENGAN PENANDA KATA AKTIF                          */}
       {/* ========================================================================= */}
@@ -582,7 +592,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                     <span>Akar Kata</span>
                   </span>
                   <span className="font-arabic font-bold text-base sm:text-lg text-primary block truncate select-text" dir="rtl">
-                    {lexical.rootArabic || 'Tanpa Akar'}
+                    {lexical.rootArabic || 'Bentuk Mandiri'}
                   </span>
                 </div>
 
