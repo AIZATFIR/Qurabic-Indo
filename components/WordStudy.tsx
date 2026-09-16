@@ -16,7 +16,6 @@ import {
   Tag,
   Check,
   Copy,
-  Sparkles,
   ArrowDown,
   Info
 } from 'lucide-react';
@@ -292,7 +291,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
 
           {rootTrans && (
             <div className="p-4 rounded-2xl bg-canvas-soft/80 border border-hairline flex items-start space-x-3">
-              <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+              <BookOpen className="w-4 h-4 text-primary shrink-0 mt-0.5" />
               <div className="text-xs sm:text-sm text-ink-secondary leading-relaxed font-sans select-text">
                 <strong className="text-ink-primary font-semibold">Filosofi Dasar Makna:</strong>{' '}
                 {rootTrans}
@@ -450,7 +449,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
         <section className="p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
           <div className="flex items-center justify-between border-b border-hairline pb-3">
             <h3 className="text-lg sm:text-xl font-bold text-ink-primary flex items-center space-x-2">
-              <Sparkles className="w-5 h-5 text-primary" />
+              <Library className="w-5 h-5 text-primary" />
               <span>Kajian Linguistik &amp; Makna Akar</span>
             </h3>
             <button

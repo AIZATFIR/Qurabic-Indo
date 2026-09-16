@@ -324,7 +324,7 @@ function BacaQuranPageContent() {
                 }`}
                 title="Mode Baca: Tampilan Mushaf Al-Qur'an Alami Mengalir Tanpa Border Kartu"
               >
-                <span>📖</span>
+                <BookOpen className="w-3.5 h-3.5 shrink-0" />
                 <span className="hidden xs:inline">Mode Baca</span>
               </button>
               <button
@@ -336,7 +336,7 @@ function BacaQuranPageContent() {
                 }`}
                 title="Mode Tadabbur: Tampilan Kotak Kata Interaktif dengan Transliterasi & Terjemahan"
               >
-                <span>🔍</span>
+                <Search className="w-3.5 h-3.5 shrink-0" />
                 <span className="hidden xs:inline">Mode Tadabbur</span>
               </button>
             </div>

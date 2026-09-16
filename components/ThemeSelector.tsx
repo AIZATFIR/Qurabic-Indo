@@ -2,13 +2,13 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useTheme } from '@/lib/context/ThemeContext';
-import { Palette, Check, Sun, Moon, Sparkles, BookOpen } from 'lucide-react';
+import { Palette, Check, Sun, Moon, Leaf, BookOpen } from 'lucide-react';
 import { ThemeType } from '@/lib/context/theme-config';
 
 const THEME_ICONS: Record<ThemeType, any> = {
   bookpaper: BookOpen,
   light: Sun,
-  green: Sparkles,
+  green: Leaf,
   dark: Moon,
 };
 
