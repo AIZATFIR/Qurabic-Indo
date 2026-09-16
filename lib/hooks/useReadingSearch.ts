@@ -29,9 +29,36 @@ export interface UseReadingSearchResult {
   loadMoreAyahs: () => void;
 }
 
-const DEFAULT_CHUNK_SIZE = 26;
+const DEFAULT_CHUNK_SIZE = 30;
 const DEFAULT_DEBOUNCE_MS = 180;
 const CONTEXT_RADIUS = 3; // 3 before + target + 3 after = 7 ayahs
+
+// Helper to compute initial or updated visible range end
+// If surah has <= 42 verses (e.g. Al-Mulk, An-Naba, short surahs), load entirely immediately.
+// For longer surahs, if remainder is <= 12 verses, absorb it to prevent orphan chunks of 3-4 verses.
+export function computeAdaptiveEnd(
+  totalAyahs: number,
+  chunkSize: number = DEFAULT_CHUNK_SIZE,
+  targetAyah?: number
+): number {
+  if (!totalAyahs || totalAyahs <= 42) {
+    return totalAyahs || chunkSize;
+  }
+
+  if (targetAyah && targetAyah > 1) {
+    const rawEnd = Math.max(chunkSize, Math.ceil(targetAyah / chunkSize) * chunkSize);
+    if (totalAyahs - rawEnd <= 12) {
+      return totalAyahs;
+    }
+    return Math.min(totalAyahs, rawEnd);
+  }
+
+  if (totalAyahs - chunkSize <= 12) {
+    return totalAyahs;
+  }
+
+  return Math.min(chunkSize, totalAyahs);
+}
 
 export function useReadingSearch(
   allAyahs: FullAyahWBW[],
@@ -54,9 +81,7 @@ export function useReadingSearch(
   // Visible continuous slice [startAyahNumber, endAyahNumber]
   const [visibleRange, setVisibleRange] = useState<{ start: number; end: number }>({
     start: 1,
-    end: initialAyah
-      ? Math.max(chunkSize, Math.min(totalAyahs || chunkSize, Math.ceil(initialAyah / chunkSize) * chunkSize))
-      : Math.min(chunkSize, totalAyahs || chunkSize),
+    end: computeAdaptiveEnd(totalAyahs, chunkSize, initialAyah),
   });
 
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -70,7 +95,7 @@ export function useReadingSearch(
     setFocusedAyah(null);
     setVisibleRange({
       start: 1,
-      end: Math.min(chunkSize, totalAyahs || chunkSize),
+      end: computeAdaptiveEnd(totalAyahs, chunkSize),
     });
   }, [surahNumber, totalAyahs, chunkSize]);
 
@@ -116,10 +141,14 @@ export function useReadingSearch(
     } else {
       setSelectedAyah(targetAyah);
       setFocusedAyah(targetAyah);
-      setVisibleRange((prev) => ({
-        start: 1,
-        end: Math.max(prev.end, Math.min(totalAyahs, Math.ceil(targetAyah / chunkSize) * chunkSize)),
-      }));
+      setVisibleRange((prev) => {
+        const rawEnd = Math.max(prev.end, Math.ceil(targetAyah / chunkSize) * chunkSize);
+        const finalEnd = totalAyahs - rawEnd <= 12 ? totalAyahs : Math.min(totalAyahs, rawEnd);
+        return {
+          start: 1,
+          end: finalEnd,
+        };
+      });
     }
 
     // Smooth scroll and pulse highlight - aligned to top of the verse with DOM retry
@@ -142,9 +171,11 @@ export function useReadingSearch(
   const loadMoreAyahs = useCallback(() => {
     setVisibleRange((prev) => {
       if (prev.end < totalAyahs) {
+        const nextEnd = prev.end + chunkSize;
+        const finalEnd = totalAyahs - nextEnd <= 12 ? totalAyahs : Math.min(nextEnd, totalAyahs);
         return {
           start: 1,
-          end: Math.min(prev.end + chunkSize, totalAyahs),
+          end: finalEnd,
         };
       }
       return prev;
@@ -160,9 +191,9 @@ export function useReadingSearch(
     setFocusedAyah(null);
     setVisibleRange((prev) => ({
       start: 1,
-      end: Math.max(prev.end, chunkSize),
+      end: Math.max(prev.end, computeAdaptiveEnd(totalAyahs, chunkSize)),
     }));
-  }, [chunkSize]);
+  }, [totalAyahs, chunkSize]);
 
   // Compute displayed ayahs based on active mode
   const isFilteringKata = searchMode === 'word' && debouncedWordQuery.length > 0;

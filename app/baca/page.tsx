@@ -77,7 +77,7 @@ function BacaQuranPageContent() {
     surahNumber: selectedSurah,
     totalAyahs: currentSurahMeta.ayahsCount,
     initialAyah: ayahQuery ? parseInt(ayahQuery, 10) : undefined,
-    chunkSize: 26,
+    chunkSize: 30,
     debounceMs: 180,
   });
 
@@ -934,10 +934,14 @@ function BacaQuranPageContent() {
               <div ref={sentinelRef} className="h-4 w-full" />
               <button
                 onClick={loadMoreAyahs}
-                className="px-5 py-2.5 rounded-xl bg-canvas-surface hover:bg-canvas-page border border-hairline text-xs font-semibold text-primary transition-all shadow-subtle"
+                className="px-5 py-2.5 rounded-xl bg-canvas-surface hover:bg-canvas-page border border-hairline text-xs font-semibold text-primary transition-all shadow-subtle inline-flex items-center space-x-2 font-sans"
               >
-                Muat 26 Ayat Berikutnya (Menampilkan {visibleRange.end} dari {ayahs.length} Ayat)
+                <span>Tampilkan Selanjutnya</span>
+                <ChevronDown className="w-4 h-4" />
               </button>
+              <span className="text-[11px] text-ink-mute block font-sans">
+                Menampilkan {visibleRange.end} dari {ayahs.length} Ayat
+              </span>
             </div>
           )}
 
