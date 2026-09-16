@@ -60,7 +60,7 @@ export default function QuranAudioPlayer({
   return (
     <aside
       aria-label="Pemutar Audio Tilawah Al-Qur'an"
-      className="fixed bottom-4 inset-x-4 sm:bottom-6 sm:inset-x-auto sm:right-6 sm:left-auto max-w-md sm:w-[420px] z-40 bg-canvas-surface/95 backdrop-blur-md border border-hairline rounded-2xl shadow-hover transition-all duration-200 text-ink-primary font-sans animate-in slide-in-from-bottom-4"
+      className="fixed bottom-3 inset-x-3 sm:bottom-6 sm:right-6 sm:inset-x-auto sm:w-[420px] z-40 bg-canvas-surface border border-hairline rounded-2xl shadow-hover transition-all duration-200 text-ink-primary font-sans animate-in slide-in-from-bottom-4"
     >
       {/* Subtle Progress Bar along top edge of player */}
       <div

@@ -151,11 +151,17 @@ export function useReadingSearch(
       });
     }
 
-    // Smooth scroll and pulse highlight - aligned to top of the verse with DOM retry
+    // Smooth scroll and pulse highlight - aligned with precision to top border of the verse with DOM retry
     const tryScrollAndPulse = (attemptsLeft = 5) => {
       const el = document.getElementById(`ayah-${targetAyah}`);
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const header = document.getElementById('reader-headbar');
+        const headerHeight = header ? header.getBoundingClientRect().height : 56;
+        const elementTop = el.getBoundingClientRect().top + window.pageYOffset;
+        window.scrollTo({
+          top: Math.max(0, elementTop - headerHeight),
+          behavior: 'smooth',
+        });
         el.classList.add('ring-2', 'ring-primary', 'bg-primary-subdued/30');
         setTimeout(() => {
           el.classList.remove('ring-2', 'ring-primary', 'bg-primary-subdued/30');

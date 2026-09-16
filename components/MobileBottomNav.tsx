@@ -20,6 +20,10 @@ export default function MobileBottomNav() {
     { label: 'Tersimpan', href: '/favorit', icon: Bookmark, badge: bookmarkedIds.length },
   ];
 
+  if (pathname === '/baca') {
+    return null;
+  }
+
   return (
     <>
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-canvas-page/90 backdrop-blur-md border-t border-hairline px-2 py-1.5 shadow-subtle">

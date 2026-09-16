@@ -1,0 +1,17 @@
+{
+  "name": "Qurabic (Indo) — Al-Qur'an & Morfologi",
+  "short_name": "Qurabic",
+  "description": "Quranic Arabic Corpus & Root Word Explorer berbahasa Indonesia",
+  "start_url": "/baca",
+  "display": "standalone",
+  "background_color": "#fbf8f1",
+  "theme_color": "#1b4332",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}

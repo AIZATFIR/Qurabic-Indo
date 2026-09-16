@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { BookOpen, Search, Bookmark, BookMarked, Shuffle, Compass } from 'lucide-react';
 import OmniSearch from './OmniSearch';
 import ThemeSelector from './ThemeSelector';
@@ -8,6 +9,7 @@ import { useState, useEffect } from 'react';
 import { useBookmarks } from '@/lib/hooks/useBookmarks';
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { bookmarkedIds } = useBookmarks();
@@ -24,6 +26,10 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (pathname === '/baca') {
+    return null;
+  }
 
   return (
     <>

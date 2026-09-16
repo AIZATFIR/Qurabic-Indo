@@ -282,243 +282,188 @@ function BacaQuranPageContent() {
   return (
     <div className="min-h-screen transition-colors duration-200 bg-canvas text-ink-primary">
       
-      {/* Mini Top Action Bar: Navigation Link to Home & Index */}
-      <div className="w-full bg-canvas-soft/80 border-b border-hairline py-1.5 px-4 text-center flex items-center justify-between text-[11px] text-ink-mute font-sans">
-        <Link href="/" className="inline-flex items-center space-x-1.5 text-ink-secondary hover:text-primary transition-colors font-medium">
-          <Navigation className="w-3 h-3 text-primary rotate-45" />
-          <span>Beranda Qurabic</span>
-        </Link>
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="inline-flex items-center space-x-1.5 px-3 py-0.5 rounded-full bg-canvas-surface border border-hairline hover:border-primary/40 text-ink-primary hover:text-primary transition-all shadow-subtle text-[11px] font-semibold"
-          title="Ke Awal Surah / Halaman"
-        >
-          <ChevronUp className="w-3 h-3 text-primary" />
-          <span>Awal Surah</span>
-        </button>
-        <div className="hidden sm:flex items-center space-x-3">
-          <Link href="/akar" className="hover:text-primary transition-colors">Indeks Akar</Link>
-          <Link href="/favorit" className="hover:text-primary transition-colors">Tersimpan</Link>
-        </div>
-      </div>
-
-      {/* Sticky Reader Headbar - Always Follows the Screen (Accessible Even at Deep Verses) */}
-      <header className="sticky top-0 z-30 w-full bg-canvas/95 backdrop-blur-md border-b border-hairline transition-all duration-200 shadow-subtle">
-        <div className="max-w-6xl xl:max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:py-2.5 flex flex-wrap items-center justify-between gap-2.5">
+      {/* Sticky Unified Sleek Reader Headbar (Solid Canvas Surface, Zero Blur, Crisp H-14) */}
+      <header
+        id="reader-headbar"
+        className="sticky top-0 z-30 w-full bg-canvas border-b border-hairline transition-all duration-150 shadow-subtle"
+      >
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 h-14 flex items-center justify-between gap-2 font-sans">
           
-          {/* LEFT: Searchable Surah Trigger Button & Quick Jump to Top */}
-          <div className="flex items-center space-x-2">
+          {/* LEFT: Back to Home & Surah Picker */}
+          <div className="flex items-center space-x-1.5 shrink-0">
+            <Link
+              href="/"
+              className="p-1.5 sm:p-2 rounded-xl text-ink-mute hover:text-primary hover:bg-canvas-soft transition-colors flex items-center justify-center"
+              title="Kembali ke Beranda"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </Link>
+
             <button
               onClick={() => setIsSurahModalOpen(true)}
-              className="flex items-center space-x-2 font-medium rounded-xl px-3 py-1.5 text-xs border border-hairline bg-canvas-surface text-ink-primary hover:border-primary/50 transition-all font-sans shadow-subtle group"
-              title="Klik untuk Cari & Ganti Surah"
+              className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-hairline bg-canvas-soft hover:border-primary/40 text-xs font-semibold text-ink-primary shadow-subtle transition-all group"
+              title="Ganti Surah"
             >
               <BookMarked className="w-3.5 h-3.5 text-primary shrink-0" />
-              <span className="font-bold text-ink-primary">
-                {currentSurahMeta.number}. Surah {currentSurahMeta.nameIndo}
+              <span className="font-bold truncate max-w-[110px] xs:max-w-[140px] sm:max-w-none">
+                {currentSurahMeta.number}. {currentSurahMeta.nameIndo}
               </span>
-              <span className="font-arabic font-bold text-sm text-primary" dir="rtl">
+              <span className="font-arabic font-bold text-xs text-primary hidden md:inline" dir="rtl">
                 ({currentSurahMeta.nameArabic})
               </span>
-              <span className="text-[10px] text-ink-mute hidden md:inline">
-                - {currentSurahMeta.ayahsCount} Ayat
-              </span>
-              <ChevronDown className="w-3.5 h-3.5 text-ink-mute group-hover:text-primary transition-colors" />
+              <ChevronDown className="w-3 h-3 text-ink-mute group-hover:text-primary transition-colors shrink-0" />
             </button>
-
-            {/* Quick Ke Atas Button */}
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border border-hairline bg-canvas-surface hover:border-primary/40 text-ink-secondary hover:text-primary transition-all text-xs shadow-subtle"
-              title="Kembali ke Atas / Awal Surah"
-            >
-              <ChevronUp className="w-3.5 h-3.5 text-primary" />
-              <span className="hidden lg:inline text-[11px] font-medium">Ke Atas</span>
-            </button>
-
-            <Link
-              href="/ayat-random"
-              className="hidden xl:inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border border-transparent hover:border-hairline transition-all text-ink-secondary hover:text-primary"
-              title="Buka Ayat Acak"
-            >
-              <Shuffle className="w-3.5 h-3.5 text-primary" />
-              <span>Ayat Acak</span>
-            </Link>
           </div>
 
-          {/* RIGHT: Primary Controls (Mode Baca/Tadabbur, Arti Kata, Terjemahan, Font Size, Theme) */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2 text-xs ml-auto">
-            {/* Mode Switcher: Mode Baca vs Mode Tadabbur */}
-            <div className="flex items-center bg-canvas-soft border border-hairline rounded-xl p-0.5 shadow-subtle">
-              <button
-                onClick={() => setReadingMode('baca')}
-                className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1.5 ${
-                  readingMode === 'baca'
-                    ? 'bg-primary text-white shadow-subtle'
-                    : 'text-ink-secondary hover:text-ink-primary'
-                }`}
-                title="Mode Baca: Tampilan Mushaf Al-Qur'an Alami Mengalir Tanpa Border Kartu"
-              >
-                <BookOpen className="w-3.5 h-3.5 shrink-0" />
-                <span className="hidden xs:inline">Mode Baca</span>
-              </button>
-              <button
-                onClick={() => setReadingMode('tadabbur')}
-                className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1.5 ${
-                  readingMode === 'tadabbur'
-                    ? 'bg-primary text-white shadow-subtle'
-                    : 'text-ink-secondary hover:text-ink-primary'
-                }`}
-                title="Mode Tadabbur: Tampilan Kotak Kata Interaktif dengan Transliterasi & Terjemahan"
-              >
-                <Search className="w-3.5 h-3.5 shrink-0" />
-                <span className="hidden xs:inline">Mode Tadabbur</span>
-              </button>
-            </div>
+          {/* CENTER: Compact Mode Switcher (Pill) */}
+          <div className="flex items-center bg-canvas-soft border border-hairline rounded-xl p-0.5 shadow-subtle text-xs">
+            <button
+              onClick={() => setReadingMode('baca')}
+              className={`px-2 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1.5 ${
+                readingMode === 'baca'
+                  ? 'bg-primary text-white shadow-subtle'
+                  : 'text-ink-secondary hover:text-ink-primary'
+              }`}
+              title="Mode Baca Mushaf Alami"
+            >
+              <BookOpen className="w-3.5 h-3.5 shrink-0" />
+              <span className="hidden xs:inline">Mode Baca</span>
+            </button>
+            <button
+              onClick={() => setReadingMode('tadabbur')}
+              className={`px-2 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1.5 ${
+                readingMode === 'tadabbur'
+                  ? 'bg-primary text-white shadow-subtle'
+                  : 'text-ink-secondary hover:text-ink-primary'
+              }`}
+              title="Mode Tadabbur Kata Interaktif"
+            >
+              <Search className="w-3.5 h-3.5 shrink-0" />
+              <span className="hidden xs:inline">Mode Tadabbur</span>
+            </button>
+          </div>
 
-            {/* Mobile Toggle Button for Headbar Controls */}
+          {/* RIGHT: Quick Ke Atas & Display Settings Popover */}
+          <div className="flex items-center space-x-1 sm:space-x-1.5 text-xs relative">
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="p-1.5 sm:p-2 rounded-xl text-ink-mute hover:text-primary hover:bg-canvas-soft transition-all hidden xs:flex items-center justify-center"
+              title="Kembali ke Awal Surah"
+            >
+              <ChevronUp className="w-4 h-4" />
+            </button>
+
             <button
               onClick={() => setIsMobileControlsOpen(!isMobileControlsOpen)}
-              className={`sm:hidden p-1.5 rounded-xl border border-hairline transition-all ${
+              className={`p-2 rounded-xl border transition-all flex items-center justify-center ${
                 isMobileControlsOpen
-                  ? 'bg-primary text-white border-primary'
-                  : 'bg-canvas-soft text-ink-secondary hover:text-ink-primary'
+                  ? 'bg-primary text-white border-primary shadow-subtle'
+                  : 'bg-canvas-soft border-hairline text-ink-primary hover:border-primary/40'
               }`}
-              title="Buka / Tutup Pengaturan Headbar"
-              aria-label="Pengaturan Headbar"
+              title="Pengaturan Tampilan & Warna Kertas"
+              aria-label="Pengaturan Tampilan"
             >
               <SlidersHorizontal className="w-4 h-4" />
             </button>
 
-            {/* Desktop / Always-Available Controls Container */}
-            <div className="hidden sm:flex items-center space-x-1.5 sm:space-x-2">
-              {/* Inline Word-by-Word Meaning Toggle (Only in Tadabbur mode) */}
-              {readingMode === 'tadabbur' && (
-                <button
-                  onClick={() => setShowInlineMeaning(!showInlineMeaning)}
-                  className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-medium transition-all ${
-                    showInlineMeaning
-                      ? 'bg-primary-subdued text-primary font-semibold ring-1 ring-primary/40'
-                      : 'text-ink-mute hover:bg-canvas-soft border border-hairline/60'
-                  }`}
-                  title="Tampilkan / Sembunyikan Terjemahan Per Kata di Bawah Lafaz"
-                >
-                  Arti Kata
-                </button>
-              )}
+            {/* Floating Display & Theme Popover (Zero layout push, crisp floating card) */}
+            {isMobileControlsOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-40 bg-black/10"
+                  onClick={() => setIsMobileControlsOpen(false)}
+                />
+                <div className="absolute right-0 top-12 z-50 w-72 sm:w-80 p-4 rounded-2xl bg-canvas-surface border border-hairline shadow-hover space-y-4 animate-in fade-in slide-in-from-top-2 duration-150 font-sans">
+                  <div className="flex items-center justify-between border-b border-hairline pb-2.5">
+                    <span className="text-xs font-bold text-ink-primary">Pengaturan Bacaan</span>
+                    <button
+                      onClick={() => setIsMobileControlsOpen(false)}
+                      className="p-1 rounded-lg text-ink-mute hover:text-ink-primary"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
 
-              {/* Translation Toggle */}
-              <button
-                onClick={() => setShowTranslation(!showTranslation)}
-                className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-medium transition-all ${
-                  showTranslation
-                    ? 'bg-primary-subdued text-primary font-semibold ring-1 ring-primary/40'
-                    : 'text-ink-mute hover:bg-canvas-soft border border-hairline/60'
-                }`}
-                title="Sembunyikan / Tampilkan Terjemahan Kemenag"
-              >
-                Terjemahan
-              </button>
+                  {/* Mode Tadabbur Toggles */}
+                  <div className="space-y-2">
+                    <span className="text-[11px] font-semibold text-ink-mute block uppercase tracking-wider">
+                      Tampilan Teks
+                    </span>
+                    <div className="flex items-center gap-2">
+                      {readingMode === 'tadabbur' && (
+                        <button
+                          onClick={() => setShowInlineMeaning(!showInlineMeaning)}
+                          className={`flex-1 py-1.5 px-3 rounded-xl border text-xs transition-all ${
+                            showInlineMeaning
+                              ? 'bg-primary text-white border-primary font-semibold'
+                              : 'bg-canvas-soft border-hairline text-ink-secondary hover:text-ink-primary'
+                          }`}
+                        >
+                          Arti Per Kata
+                        </button>
+                      )}
+                      <button
+                        onClick={() => setShowTranslation(!showTranslation)}
+                        className={`flex-1 py-1.5 px-3 rounded-xl border text-xs transition-all ${
+                          showTranslation
+                            ? 'bg-primary text-white border-primary font-semibold'
+                            : 'bg-canvas-soft border-hairline text-ink-secondary hover:text-ink-primary'
+                        }`}
+                      >
+                        Terjemahan
+                      </button>
+                    </div>
+                  </div>
 
-              {/* Unified Font Size Adjuster (Scales Arabic, Latin transliteration, and translation together) */}
-              <div className="flex items-center bg-canvas-soft border border-hairline rounded-lg p-0.5" title="Ukuran Font (Arab & Latin Terjemahan)">
-                {(['sm', 'md', 'lg', 'xl'] as const).map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setFontSize(size)}
-                    className={`px-2 py-1 rounded text-[11px] font-medium transition-colors ${
-                      fontSize === size
-                        ? 'bg-canvas-surface text-primary shadow-subtle font-bold ring-1 ring-primary/30'
-                        : 'text-ink-mute hover:text-ink-primary'
-                    }`}
-                    title={`Ukuran ${size.toUpperCase()}${size === 'xl' ? ' (133% Paling Besar)' : ''}`}
-                  >
-                    {size.toUpperCase()}
-                  </button>
-                ))}
-              </div>
+                  {/* Font Size Adjuster */}
+                  <div className="space-y-2">
+                    <span className="text-[11px] font-semibold text-ink-mute block uppercase tracking-wider">
+                      Ukuran Teks
+                    </span>
+                    <div className="flex items-center bg-canvas-soft border border-hairline rounded-xl p-1 justify-between">
+                      {(['sm', 'md', 'lg', 'xl'] as const).map((size) => (
+                        <button
+                          key={size}
+                          onClick={() => setFontSize(size)}
+                          className={`flex-1 py-1 rounded-lg text-xs font-semibold transition-all ${
+                            fontSize === size
+                              ? 'bg-canvas-surface text-primary shadow-subtle'
+                              : 'text-ink-mute hover:text-ink-primary'
+                          }`}
+                        >
+                          {size.toUpperCase()}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-              {/* Theme Selectors */}
-              <div className="flex items-center space-x-1 bg-canvas-soft border border-hairline rounded-lg p-0.5">
-                {options.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => setTheme(t.id)}
-                    className={`w-5 h-5 rounded-md transition-all flex items-center justify-center ${
-                      theme === t.id ? 'ring-2 ring-primary ring-offset-1 scale-105' : 'opacity-60 hover:opacity-100'
-                    }`}
-                    style={{ backgroundColor: t.bgHex }}
-                    title={`Tema: ${t.label}`}
-                    aria-label={`Pilih Tema ${t.label}`}
-                  />
-                ))}
-              </div>
-            </div>
+                  {/* Theme / Paper Selector */}
+                  <div className="space-y-2">
+                    <span className="text-[11px] font-semibold text-ink-mute block uppercase tracking-wider">
+                      Warna Kertas
+                    </span>
+                    <div className="flex items-center justify-between gap-1.5 p-1 bg-canvas-soft border border-hairline rounded-xl">
+                      {options.map((t) => (
+                        <button
+                          key={t.id}
+                          onClick={() => setTheme(t.id)}
+                          className={`flex-1 h-7 rounded-lg transition-all border flex items-center justify-center ${
+                            theme === t.id
+                              ? 'border-primary ring-2 ring-primary/30 scale-105 shadow-subtle'
+                              : 'border-transparent opacity-80 hover:opacity-100'
+                          }`}
+                          style={{ backgroundColor: t.bgHex }}
+                          title={t.label}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
         </div>
-
-        {/* Mobile Dropdown Toolbar when toggled */}
-        {isMobileControlsOpen && (
-          <div className="sm:hidden border-t border-hairline px-3 py-2 bg-canvas-surface/95 flex flex-wrap items-center justify-between gap-2 text-xs">
-            <div className="flex items-center space-x-1.5">
-              {readingMode === 'tadabbur' && (
-                <button
-                  onClick={() => setShowInlineMeaning(!showInlineMeaning)}
-                  className={`px-2.5 py-1 rounded-lg font-medium text-xs transition-all ${
-                    showInlineMeaning
-                      ? 'bg-primary text-white font-semibold'
-                      : 'text-ink-mute bg-canvas-soft'
-                  }`}
-                >
-                  Arti Kata
-                </button>
-              )}
-              <button
-                onClick={() => setShowTranslation(!showTranslation)}
-                className={`px-2.5 py-1 rounded-lg font-medium text-xs transition-all ${
-                  showTranslation
-                    ? 'bg-primary text-white font-semibold'
-                    : 'text-ink-mute bg-canvas-soft'
-                }`}
-              >
-                Terjemahan
-              </button>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <div className="flex items-center bg-canvas-soft border border-hairline rounded-lg p-0.5">
-                {(['sm', 'md', 'lg', 'xl'] as const).map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setFontSize(size)}
-                    className={`px-2 py-0.5 rounded text-[11px] font-medium ${
-                      fontSize === size
-                        ? 'bg-canvas-surface text-primary font-bold shadow-subtle'
-                        : 'text-ink-mute'
-                    }`}
-                  >
-                    {size.toUpperCase()}
-                  </button>
-                ))}
-              </div>
-
-              <div className="flex items-center space-x-1 bg-canvas-soft border border-hairline rounded-lg p-0.5">
-                {options.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => setTheme(t.id)}
-                    className={`w-4 h-4 rounded transition-all ${
-                      theme === t.id ? 'ring-2 ring-primary ring-offset-1 scale-105' : 'opacity-60'
-                    }`}
-                    style={{ backgroundColor: t.bgHex }}
-                    title={t.label}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </header>
 
       {/* Main Quran Reader Container (Scaled to 125% Comfortable Look) */}
@@ -756,7 +701,7 @@ function BacaQuranPageContent() {
                   <article
                     key={`${selectedSurah}:${ayah.ayahNumber}`}
                     id={`ayah-${ayah.ayahNumber}`}
-                    className={`scroll-mt-24 sm:scroll-mt-28 md:scroll-mt-32 p-6 sm:p-8 md:p-10 transition-all space-y-5 ${
+                    className={`scroll-mt-14 p-6 sm:p-8 md:p-10 transition-all space-y-5 ${
                       isActiveAyah
                         ? 'bg-primary-subdued/25 border-l-4 border-l-primary shadow-subtle'
                         : isTargetFocused

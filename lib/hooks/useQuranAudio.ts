@@ -83,14 +83,20 @@ export function useQuranAudio({
     }
   }, []);
 
-  // Smooth auto-scroll helper aligned to top of ayah with DOM retry
+  // Smooth auto-scroll helper aligned with precision to the top border of ayah
   const scrollToAyah = useCallback((ayahNum: number) => {
     if (!autoScroll || typeof document === 'undefined') return;
 
     const tryScroll = (attemptsLeft = 4) => {
       const el = document.getElementById(`ayah-${ayahNum}`);
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const header = document.getElementById('reader-headbar');
+        const headerHeight = header ? header.getBoundingClientRect().height : 56;
+        const elementTop = el.getBoundingClientRect().top + window.pageYOffset;
+        window.scrollTo({
+          top: Math.max(0, elementTop - headerHeight),
+          behavior: 'smooth',
+        });
       } else if (attemptsLeft > 0) {
         setTimeout(() => tryScroll(attemptsLeft - 1), 80);
       }

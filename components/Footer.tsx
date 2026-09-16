@@ -2,9 +2,16 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { BookOpen, ShieldCheck, Heart, ExternalLink, Compass } from 'lucide-react';
 
 export default function Footer() {
+  const pathname = usePathname();
+
+  if (pathname === '/baca') {
+    return null;
+  }
+
   return (
     <footer className="border-t border-hairline bg-canvas-surface/80 backdrop-blur-sm text-ink-secondary text-xs font-sans mt-20">
       <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 py-12 sm:py-16 space-y-12">

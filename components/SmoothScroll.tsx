@@ -11,6 +11,13 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       return;
     }
 
+    // On mobile touch devices, native momentum scrolling is 120Hz/60Hz hardware accelerated.
+    // Lenis JS interception on touch screens causes input latency and heavy drag.
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (isTouch) {
+      return;
+    }
+
     const lenis = new Lenis({
       duration: 1.5,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
