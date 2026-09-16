@@ -35,3 +35,4 @@ next-env.d.ts
 data/lexicon/lane/raw/*.sqlite*
 data/lexicon/lane/raw/*.zip
 
+.env*
