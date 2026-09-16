@@ -24,7 +24,7 @@ export interface UseReadingSearchResult {
   totalMatchesCount: number;
   setSearchMode: (mode: ReadingSearchMode) => void;
   setWordQuery: (query: string) => void;
-  selectAndJumpAyah: (targetAyah: number) => void;
+  selectAndJumpAyah: (targetAyah: number, options?: { forceContextWindow?: boolean }) => void;
   clearSearch: () => void;
   loadMoreAyahs: () => void;
 }
@@ -54,7 +54,9 @@ export function useReadingSearch(
   // Visible continuous slice [startAyahNumber, endAyahNumber]
   const [visibleRange, setVisibleRange] = useState<{ start: number; end: number }>({
     start: 1,
-    end: Math.min(chunkSize, totalAyahs || chunkSize),
+    end: initialAyah
+      ? Math.max(chunkSize, Math.min(totalAyahs || chunkSize, Math.ceil(initialAyah / chunkSize) * chunkSize))
+      : Math.min(chunkSize, totalAyahs || chunkSize),
   });
 
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -98,31 +100,43 @@ export function useReadingSearch(
     };
   }, []);
 
-  // Jump to specific ayah with context window (Mode B)
-  const selectAndJumpAyah = useCallback((targetAyah: number) => {
+  // Jump to specific ayah with context window (Mode B) or continuous reading
+  const selectAndJumpAyah = useCallback((targetAyah: number, options?: { forceContextWindow?: boolean }) => {
     if (!targetAyah || targetAyah < 1 || targetAyah > totalAyahs) return;
 
-    setSearchMode('ayah');
-    setSelectedAyah(targetAyah);
-    setFocusedAyah(targetAyah);
+    if (options?.forceContextWindow) {
+      setSearchMode('ayah');
+      setSelectedAyah(targetAyah);
+      setFocusedAyah(targetAyah);
 
-    // Adaptive context window: target + 3 before + 3 after = 7 ayahs (capped at 9 hard max)
-    const start = Math.max(1, targetAyah - CONTEXT_RADIUS);
-    const end = Math.min(totalAyahs, targetAyah + CONTEXT_RADIUS);
-    setVisibleRange({ start, end });
+      // Adaptive context window: target + 3 before + 3 after = 7 ayahs (capped at 9 hard max)
+      const start = Math.max(1, targetAyah - CONTEXT_RADIUS);
+      const end = Math.min(totalAyahs, targetAyah + CONTEXT_RADIUS);
+      setVisibleRange({ start, end });
+    } else {
+      setSelectedAyah(targetAyah);
+      setFocusedAyah(targetAyah);
+      setVisibleRange((prev) => ({
+        start: 1,
+        end: Math.max(prev.end, Math.min(totalAyahs, Math.ceil(targetAyah / chunkSize) * chunkSize)),
+      }));
+    }
 
-    // Smooth scroll and pulse highlight
-    setTimeout(() => {
+    // Smooth scroll and pulse highlight - aligned to top of the verse with DOM retry
+    const tryScrollAndPulse = (attemptsLeft = 5) => {
       const el = document.getElementById(`ayah-${targetAyah}`);
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         el.classList.add('ring-2', 'ring-primary', 'bg-primary-subdued/30');
         setTimeout(() => {
           el.classList.remove('ring-2', 'ring-primary', 'bg-primary-subdued/30');
         }, 3500);
+      } else if (attemptsLeft > 0) {
+        setTimeout(() => tryScrollAndPulse(attemptsLeft - 1), 80);
       }
-    }, 200);
-  }, [totalAyahs]);
+    };
+    setTimeout(() => tryScrollAndPulse(), 120);
+  }, [totalAyahs, chunkSize]);
 
   // Load more ayahs progressively in continuous reading mode
   const loadMoreAyahs = useCallback(() => {

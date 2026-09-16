@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback, useMemo, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import {
   ChevronLeft,
@@ -32,6 +32,7 @@ import { useQuranAudio } from '@/lib/hooks/useQuranAudio';
 import { useReadingSearch } from '@/lib/hooks/useReadingSearch';
 
 function BacaQuranPageContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const surahQuery = searchParams.get('surah');
   const ayahQuery = searchParams.get('ayah');
@@ -143,15 +144,17 @@ function BacaQuranPageContent() {
     );
   }, [wordQuery]);
 
-  // Sync with URL query parameters
+  // Sync with URL query parameters safely without bouncing
+  const prevSurahQueryRef = useRef<string | null>(surahQuery);
   useEffect(() => {
-    if (surahQuery) {
+    if (surahQuery && surahQuery !== prevSurahQueryRef.current) {
+      prevSurahQueryRef.current = surahQuery;
       const sNum = parseInt(surahQuery, 10);
-      if (sNum >= 1 && sNum <= 114 && sNum !== selectedSurah) {
+      if (sNum >= 1 && sNum <= 114) {
         setSelectedSurah(sNum);
       }
     }
-  }, [surahQuery, selectedSurah]);
+  }, [surahQuery]);
 
   // Fetch selected Surah with in-memory caching
   useEffect(() => {
@@ -170,15 +173,20 @@ function BacaQuranPageContent() {
     loadSurahData();
   }, [selectedSurah]);
 
-  // Handle URL Ayah auto-jump
+  // Handle URL Ayah auto-jump once surah data is ready
+  const hasJumpedToUrlAyahRef = useRef<string | null>(null);
   useEffect(() => {
     if (!loading && ayahQuery && ayahs.length > 0) {
-      const target = parseInt(ayahQuery, 10);
-      if (target >= 1 && target <= currentSurahMeta.ayahsCount) {
-        selectAndJumpAyah(target);
+      const jumpKey = `${selectedSurah}:${ayahQuery}`;
+      if (hasJumpedToUrlAyahRef.current !== jumpKey) {
+        hasJumpedToUrlAyahRef.current = jumpKey;
+        const target = parseInt(ayahQuery, 10);
+        if (target >= 1 && target <= currentSurahMeta.ayahsCount) {
+          selectAndJumpAyah(target);
+        }
       }
     }
-  }, [loading, ayahQuery, ayahs.length, currentSurahMeta.ayahsCount, selectAndJumpAyah]);
+  }, [loading, ayahQuery, ayahs.length, selectedSurah, currentSurahMeta.ayahsCount, selectAndJumpAyah]);
 
   // Progressive infinite scroll intersection observer
   useEffect(() => {
@@ -200,13 +208,40 @@ function BacaQuranPageContent() {
     return () => observer.disconnect();
   }, [loading, isFilteringKata, isAyahContextWindow, loadMoreAyahs]);
 
-  // Handle Surah & target Ayah selection from Search Modal
+  // Auto-expand visible range if audio recitation approaches or reaches visible boundary
+  useEffect(() => {
+    if (audio.currentAyah && !isFilteringKata && !isAyahContextWindow) {
+      if (audio.currentAyah >= visibleRange.end - 1 && visibleRange.end < ayahs.length) {
+        loadMoreAyahs();
+      }
+    }
+  }, [audio.currentAyah, visibleRange.end, ayahs.length, isFilteringKata, isAyahContextWindow, loadMoreAyahs]);
+
+  // Handle Surah & target Ayah selection from Search Modal or Navigation buttons
   const handleSelectSurah = (surahNum: number, targetAyah?: number) => {
+    if (surahNum < 1 || surahNum > 114) return;
+    prevSurahQueryRef.current = surahNum.toString();
     setSelectedSurah(surahNum);
+
+    // Synchronize the browser URL cleanly without resetting page state
+    const newUrl = targetAyah 
+      ? `/baca?surah=${surahNum}&ayah=${targetAyah}` 
+      : `/baca?surah=${surahNum}`;
+    
+    try {
+      router.replace(newUrl, { scroll: false });
+    } catch {
+      if (typeof window !== 'undefined') {
+        window.history.pushState(null, '', newUrl);
+      }
+    }
+
     if (targetAyah) {
       setTimeout(() => {
         selectAndJumpAyah(targetAyah);
       }, 350);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -721,7 +756,7 @@ function BacaQuranPageContent() {
                   <article
                     key={`${selectedSurah}:${ayah.ayahNumber}`}
                     id={`ayah-${ayah.ayahNumber}`}
-                    className={`p-6 sm:p-8 md:p-10 transition-all space-y-5 ${
+                    className={`scroll-mt-24 sm:scroll-mt-28 md:scroll-mt-32 p-6 sm:p-8 md:p-10 transition-all space-y-5 ${
                       isActiveAyah
                         ? 'bg-primary-subdued/25 border-l-4 border-l-primary shadow-subtle'
                         : isTargetFocused
@@ -902,6 +937,19 @@ function BacaQuranPageContent() {
                 className="px-5 py-2.5 rounded-xl bg-canvas-surface hover:bg-canvas-page border border-hairline text-xs font-semibold text-primary transition-all shadow-subtle"
               >
                 Muat 26 Ayat Berikutnya (Menampilkan {visibleRange.end} dari {ayahs.length} Ayat)
+              </button>
+            </div>
+          )}
+
+          {/* Context Window Full Surah Expansion Action */}
+          {!loading && isAyahContextWindow && (
+            <div className="p-6 text-center border-t border-hairline bg-canvas-soft/30 space-y-2">
+              <button
+                onClick={clearSearch}
+                className="px-5 py-2.5 rounded-xl bg-primary text-white hover:bg-primary-deep text-xs font-semibold transition-all shadow-subtle inline-flex items-center space-x-2 font-sans"
+              >
+                <span>Tampilkan Seluruh Surah ({ayahs.length} Ayat)</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           )}
