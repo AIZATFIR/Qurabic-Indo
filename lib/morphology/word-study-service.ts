@@ -61,11 +61,90 @@ function parseSyntacticFeatures(rawTag?: string, rawFeatures?: string): SyntaxAn
     if (rawFeatures.includes('MOOD:SUBJ')) features.push('Hala: Manshub (Subjungtif)');
     if (rawFeatures.includes('MOOD:JUS')) features.push('Hala: Majzum (Jusif)');
 
-    if (rawFeatures.includes('M')) features.push('Gender: Mudzakkar (Laki-laki)');
-    if (rawFeatures.includes('F')) features.push('Gender: Mu\'annats (Perempuan)');
-    if (rawFeatures.includes('S')) features.push('Jumlah: Mufrad (Tunggal)');
-    if (rawFeatures.includes('D')) features.push('Jumlah: Mutsanna (Dual)');
-    if (rawFeatures.includes('P')) features.push('Jumlah: Jamak (Plural)');
+    // Parse person, gender, and number precisely using delimited token boundaries
+    const pgnMatch = rawFeatures.match(/(?:^|[|+:\s])(1S|1P|2MS|2FS|2MD|2MP|2FP|3MS|3FS|3MD|3FD|3MP|3FP|MS|FS|MD|FD|MP|FP)(?:[|+:\s]|$)/);
+    if (pgnMatch) {
+      const tag = pgnMatch[1];
+      switch (tag) {
+        case '1S':
+          features.push('Subjek: Dhamir Ana (Orang Pertama Tunggal / Aku)');
+          features.push('Jumlah: Mufrad (Tunggal)');
+          break;
+        case '1P':
+          features.push('Subjek: Dhamir Nahnu (Orang Pertama Jamak / Kami)');
+          features.push('Gender: Musytarak (Laki-laki & Perempuan)');
+          features.push('Jumlah: Jamak (Plural)');
+          break;
+        case '2MS':
+          features.push('Subjek: Dhamir Anta (Orang Kedua Tunggal Pria)');
+          features.push('Gender: Mudzakkar (Laki-laki)');
+          features.push('Jumlah: Mufrad (Tunggal)');
+          break;
+        case '2FS':
+          features.push('Subjek: Dhamir Anti (Orang Kedua Tunggal Wanita)');
+          features.push('Gender: Mu\'annats (Perempuan)');
+          features.push('Jumlah: Mufrad (Tunggal)');
+          break;
+        case '2MD':
+          features.push('Subjek: Dhamir Antuma (Orang Kedua Dual)');
+          features.push('Jumlah: Mutsanna (Dual)');
+          break;
+        case '2MP':
+          features.push('Subjek: Dhamir Antum (Orang Kedua Jamak Pria)');
+          features.push('Gender: Mudzakkar (Laki-laki)');
+          features.push('Jumlah: Jamak (Plural)');
+          break;
+        case '2FP':
+          features.push('Subjek: Dhamir Antunna (Orang Kedua Jamak Wanita)');
+          features.push('Gender: Mu\'annats (Perempuan)');
+          features.push('Jumlah: Jamak (Plural)');
+          break;
+        case '3MS':
+        case 'MS':
+          features.push('Gender: Mudzakkar (Laki-laki)');
+          features.push('Jumlah: Mufrad (Tunggal)');
+          break;
+        case '3FS':
+        case 'FS':
+          features.push('Gender: Mu\'annats (Perempuan)');
+          features.push('Jumlah: Mufrad (Tunggal)');
+          break;
+        case '3MD':
+        case 'MD':
+          features.push('Gender: Mudzakkar (Laki-laki)');
+          features.push('Jumlah: Mutsanna (Dual)');
+          break;
+        case '3FD':
+        case 'FD':
+          features.push('Gender: Mu\'annats (Perempuan)');
+          features.push('Jumlah: Mutsanna (Dual)');
+          break;
+        case '3MP':
+        case 'MP':
+          features.push('Gender: Mudzakkar (Laki-laki)');
+          features.push('Jumlah: Jamak (Plural)');
+          break;
+        case '3FP':
+        case 'FP':
+          features.push('Gender: Mu\'annats (Perempuan)');
+          features.push('Jumlah: Jamak (Plural)');
+          break;
+      }
+    } else {
+      // Discrete fallback checking delimited single letters
+      if (/(?:^|[|+:\s])M(?:[|+:\s]|$)/.test(rawFeatures)) {
+        features.push('Gender: Mudzakkar (Laki-laki)');
+      } else if (/(?:^|[|+:\s])F(?:[|+:\s]|$)/.test(rawFeatures)) {
+        features.push('Gender: Mu\'annats (Perempuan)');
+      }
+      if (/(?:^|[|+:\s])S(?:[|+:\s]|$)/.test(rawFeatures)) {
+        features.push('Jumlah: Mufrad (Tunggal)');
+      } else if (/(?:^|[|+:\s])D(?:[|+:\s]|$)/.test(rawFeatures)) {
+        features.push('Jumlah: Mutsanna (Dual)');
+      } else if (/(?:^|[|+:\s])P(?:[|+:\s]|$)/.test(rawFeatures)) {
+        features.push('Jumlah: Jamak (Plural)');
+      }
+    }
   }
 
   const role = rawTag === 'V'
@@ -257,7 +336,12 @@ export function getWordStudy(
   // 6. Resolve Classical Citation & Root Philosophy
   const classicalCit = getClassicalCitation(rootSlugOrAr);
   const detailedExpl = getWordDetailedExplanation(detail.identity.arabic);
-  const rootPhil = classicalCit?.corePhilosophy || detailedExpl.rootExplanation || detail.lexical.coreMeaning || (detail.lexical.rootArabic ? `Akar kata ${detail.lexical.rootArabic} melandasi pembentukan makna kata ini dalam Al-Qur'an.` : undefined);
+  const rootProfile = rootSlugOrAr ? getRootTranslationProfile(rootSlugOrAr) : null;
+  const cleanCore = (detail.lexical.coreMeaning && !detail.lexical.coreMeaning.includes('memiliki peranan penting') && !detail.lexical.coreMeaning.startsWith('Akar kata '))
+    ? detail.lexical.coreMeaning
+    : undefined;
+
+  const rootPhil = classicalCit?.corePhilosophy || rootProfile?.coreMeaning || detailedExpl.rootExplanation || cleanCore || (detail.lexical.rootArabic ? `Akar kata ${detail.lexical.rootArabic} melandasi pembentukan makna kata ini dalam Al-Qur'an.` : undefined);
 
   // 7. Assemble Provenance Sources
   const provenance = [
@@ -269,8 +353,7 @@ export function getWordStudy(
     provenance.push(SOURCES_REGISTRY.laneLexicon);
   }
 
-  const rootProfile = rootSlugOrAr ? getRootTranslationProfile(rootSlugOrAr) : null;
-  const rootTranslation = rootProfile?.coreMeaning || detail.lexical.coreMeaning || undefined;
+  const rootTranslation = rootProfile?.coreMeaning || cleanCore || classicalCit?.corePhilosophy || undefined;
 
   // 8. Synthesize Kalaam-Style Linguistic Explanation & Grammar Derivation Flow
   const linguisticExplanation = getLinguisticExplanation({

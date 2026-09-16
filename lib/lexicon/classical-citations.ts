@@ -228,6 +228,18 @@ export const CLASSICAL_ROOT_CITATIONS: Record<string, ClassicalCitation> = {
     originalArabic: 'الضَّلَالُ: الْعُدُولُ عَنِ الطَّرِيقِ الْمُسْتَقِيمِ، حَقِيقِيًّا كَانَ ذَلِكَ أَوْ حُكْمِيًّا... وَالضَّالُّونَ هُمُ السَّالِكُونَ طَرِيقًا لَا يُفْضِي إِلَى مَقْصُودِهِمْ.',
     indonesianQuote: 'Adh-Dhalal adalah menyimpang dari jalan yang lurus, baik secara fisik maupun pemikiran. Kaum yang sesat (adh-dhaallin) adalah mereka yang menempuh jalan keliru yang tidak akan pernah menghantarkan mereka ke tujuan keselamatan.',
     corePhilosophy: 'Kesesatan yang timbul akibat kehilangan kompas petunjuk sehingga melangkah dalam kegelapan tanpa arah.'
+  },
+  'w-k-l': {
+    rootSlug: 'w-k-l',
+    rootArabic: 'و ك ل',
+    book: 'Maqāyīs al-Lughah',
+    bookArabic: 'معجم مقاييس اللغة',
+    author: 'Ibnu Fāris (w. 395 H)',
+    authorArabic: 'أحمد بن فارس',
+    volumePage: 'Jilid 6, Hal. 136',
+    originalArabic: 'الْوَاوُ وَالْكَافُ وَاللَّامُ: أَصْلٌ صَحِيحٌ يَدُلُّ عَلَى الِاعْتِمَادِ عَلَى الْغَيْرِ فِي الْأَمْرِ... وَمِنْهُ التَّوَكُّلُ، وَهُوَ تَفْوِيضُ الْأَمْرِ وَالِاعْتِمَادُ عَلَى كِفَايَةِ اللَّهِ تَعَالَى وَحِمَايَتِهِ.',
+    indonesianQuote: 'Akar Wawu, Kaf, dan Lam pada pokoknya menunjukkan landasan makna penyandaran urusan kepada pihak lain yang dipercaya. Dari makna inilah terbentuk kata tawakal, yakni kepasrahan menyerahkan urusan dengan keyakinan penuh pada kecukupan pemeliharaan dan pertolongan Allah.',
+    corePhilosophy: 'Penyerahan urusan, sandaran perlindungan, dan keyakinan berserah diri sepenuhnya kepada pemeliharaan Allah setelah menunaikan ikhtiar.'
   }
 };
 

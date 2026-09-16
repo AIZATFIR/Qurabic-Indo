@@ -606,6 +606,123 @@ export const ROOT_DICTIONARY: Record<string, RootTranslationProfile> = {
       'عَمَايَة': 'Kesesatan / Kebutaan batin',
     },
   },
+
+  // 28. Root w-k-l (و ك ل) — 70 occurrences (QS. 67:29, 3:173, etc.)
+  'w-k-l': {
+    rootArabic: 'و ك ل',
+    rootLatin: 'wkl',
+    titleIndo: 'Akar و ك ل (Tawakal, Perlindungan, Penyerahan Diri)',
+    coreMeaning: 'Penyerahan urusan, sandaran perlindungan, dan keyakinan berserah diri sepenuhnya kepada pemeliharaan Allah.',
+    derivatives: {
+      'وَكِيل': 'Pelindung / Penjamin / Pemelihara',
+      'وَكِيلًا': 'Sebagai Pelindung / Penjamin',
+      'وَكِيلًۭا': 'Sebagai Pelindung / Penjamin',
+      'وَكِيلُ': 'Pelindung / Penjamin',
+      'وَكِيلٍ': 'Pelindung / Penjamin',
+      'تَوَكَّلْ': 'Bertawakallah / Berserah dirilah',
+      'وَتَوَكَّلْ': 'Dan bertawakallah',
+      'فَتَوَكَّلْ': 'Maka bertawakallah',
+      'تَوَكَّلْنَا': 'Kami bertawakal / berserah diri',
+      'تَوَكَّلْتُ': 'Aku bertawakal / berserah diri',
+      'تَوَكَّلُوا۟': 'Bertawakallah kalian',
+      'يَتَوَكَّلِ': 'Dia bertawakal / berserah diri',
+      'يَتَوَكَّلْ': 'Dia bertawakal / berserah diri',
+      'يَتَوَكَّلُ': 'Dia bertawakal / berserah diri',
+      'يَتَوَكَّلُونَ': 'Mereka bertawakal / berserah diri',
+      'فَلْيَتَوَكَّلِ': 'Maka hendaklah dia bertawakal',
+      'فَلْيَتَوَكَّلْ': 'Maka hendaklah bertawakal',
+      'وَعَلَى ٱللَّهِ فَلْيَتَوَكَّلِ': 'Dan hanya kepada Allah bertawakal',
+      'تَتَوَكَّلُوا۟': 'Kalian bertawakal / berserah diri',
+      'نَتَوَكَّلَ': 'Kami bertawakal / berserah diri',
+      'نَتَوَكَّلُ': 'Kami bertawakal / berserah diri',
+      'مُتَوَكِّلُونَ': 'Orang-orang yang bertawakal',
+      'ٱلْمُتَوَكِّلُونَ': 'Orang-orang yang bertawakal',
+      'مُتَوَكِّلِينَ': 'Orang-orang yang bertawakal',
+      'ٱلْمُتَوَكِّلِينَ': 'Orang-orang yang bertawakal',
+      'وَكَّلْنَا': 'Kami serahkan tanggung jawab / percayakan',
+      'وَكَّلْ': 'Serahkanlah tanggung jawab',
+      'وُكِّلَ': 'Diserahi urusan / ditugasi memelihara',
+    },
+  },
+
+  // 29. Root s-l-m (س ل م) — 140 occurrences
+  's-l-m': {
+    rootArabic: 'س ل م',
+    rootLatin: 'slm',
+    titleIndo: 'Akar س ل م (Kedamaian, Keselamatan, Kepasrahan Islam)',
+    coreMeaning: 'Keselamatan dari bahaya, ketenteraman hati, dan kepasrahan lahir-batin secara utuh kepada Allah.',
+    derivatives: {
+      'سَلَٰم': 'Kedamaian / Keselamatan / Sejahtera',
+      'سَلَٰمٌ': 'Kedamaian / Keselamatan',
+      'سَلَام': 'Kedamaian / Keselamatan',
+      'سَلَامًا': 'Kedamaian / Ucapan keselamatan',
+      'ٱلسَّلَٰمُ': 'Kesejahteraan / Keselamatan (As-Salam)',
+      'إِسْلَٰم': 'Kepasrahan total kepada Allah (Islam)',
+      'ٱلْإِسْلَٰمُ': 'Agama kepasrahan kepada Allah (Islam)',
+      'ٱلْإِسْلَٰمِ': 'Agama Islam / Kepasrahan diri',
+      'مُسْلِم': 'Orang yang berserah diri (Muslim)',
+      'مُسْلِمٌ': 'Seorang muslim yang berserah diri',
+      'مُسْلِمِينَ': 'Orang-orang yang berserah diri (Muslimin)',
+      'مُسْلِمُونَ': 'Orang-orang yang berserah diri (Muslimun)',
+      'مُّسْلِمَةٍ': 'Wanita yang berserah diri',
+      'مُسْلِمَٰتٍ': 'Wanita-wanita yang berserah diri',
+      'أَسْلَمَ': 'Dia telah berserah diri',
+      'أَسْلَمْتُ': 'Aku berserah diri',
+      'أَسْلَمْنَا': 'Kami telah berserah diri',
+      'أَسْلِمُوا۟': 'Berserah dirilah kalian',
+      'سَلِيم': 'Hati yang bersih / selamat dari cela',
+      'سَلِيمٍ': 'Hati yang bersih dan lurus',
+      'سُلَّم': 'Tangga menuju langit',
+      'السِّلْم': 'Kedamaian / Masuk Islam seutuhnya',
+    },
+  },
+
+  // 30. Root H-m-d (ح م د) — 68 occurrences
+  'H-m-d': {
+    rootArabic: 'ح م د',
+    rootLatin: 'Hmd',
+    titleIndo: 'Akar ح م د (Pujian, Kesyukuran, Kemuliaan)',
+    coreMeaning: 'Memuji sifat-sifat kesempurnaan dan memuliakan kebaikan atas dasar cinta dan pengagungan.',
+    derivatives: {
+      'حَمْد': 'Pujian / Syukur',
+      'ٱلْحَمْدُ': 'Segala puji bagi Allah',
+      'حَمِيد': 'Maha Terpuji / Kaya akan pujian',
+      'حَمِيدٌ': 'Maha Terpuji',
+      'حَمِيدٍ': 'Yang Terpuji',
+      'مَحْمُود': 'Terpuji (kedudukan yang mulia)',
+      'مَّحْمُودًا': 'Kedudukan yang terpuji',
+      'أَحْمَدُ': 'Ahmad (Yang paling terpuji)',
+      'مُحَمَّد': 'Muhammad (Yang amat terpuji)',
+      'مُّحَمَّدٌ': 'Muhammad Rasulullah SAW',
+      'يَحْمَدُونَ': 'Mereka suka dipuji',
+    },
+  },
+
+  // 31. Root r-z-q (ر ز ق) — 123 occurrences
+  'r-z-q': {
+    rootArabic: 'ر ز ق',
+    rootLatin: 'rzq',
+    titleIndo: 'Akar ر ز ق (Rezeki, Nafkah, Anugerah Kehidupan)',
+    coreMeaning: 'Pemberian karunia, kecukupan nafkah, dan segala anugerah penopang kehidupan materiil maupun spiritual.',
+    derivatives: {
+      'رَزَقَ': 'Dia telah memberi rezeki',
+      'رَزَقَهُمُ': 'Dia menganugerahi mereka rezeki',
+      'رَزَقْنَا': 'Kami anugerahkan rezeki',
+      'رَزَقْنَٰهُمْ': 'Kami anugerahkan rezeki kepada mereka',
+      'رَزَقَكُمُ': 'Allah menganugerahkan rezeki kepadamu',
+      'رِزْق': 'Rezeki / Karunia nafkah',
+      'رِزْقًا': 'Sebagai limpahan rezeki',
+      'رِزْقُ': 'Rezeki / Nafkah penopang',
+      'رِزْقِ': 'Rezeki karunia Allah',
+      'ٱلرَّزَّاقُ': 'Maha Pemberi Rezeki',
+      'يَرْزُقُ': 'Dia melimpahkan rezeki',
+      'يَرْزُقُكُم': 'Dia memberi kalian rezeki',
+      'تَرْزُقُ': 'Engkau melimpahkan rezeki',
+      'نَرْزُقُكَ': 'Kami yang memberi rezeki kepadamu',
+      'نَرْزُقُهُمْ': 'Kami yang memberi rezeki kepada mereka',
+      'تُرْزَقَانِهِ': 'Diberikan rezeki kepadamu berdua',
+    },
+  },
 };
 
 /**
@@ -764,7 +881,7 @@ export function getAuthenticWordMeaning(
           return n.meaningIndo;
         }
       }
-      // Use clean titleIndo or coreMeaning
+      // 5c. Check clean titleIndo, coreMeaning, or meaningsIndonesian from database
       if (dbRoot.titleIndo && !dbRoot.titleIndo.startsWith('Konsep & Turunan')) {
         const cleanTitle = dbRoot.titleIndo.replace(/^Akar\s+[^\(]+\(/, '').replace(/\)$/, '').trim();
         return cleanTitle.charAt(0).toUpperCase() + cleanTitle.slice(1);
@@ -772,12 +889,31 @@ export function getAuthenticWordMeaning(
       if (dbRoot.coreMeaning && !dbRoot.coreMeaning.startsWith('Akar kata ') && !dbRoot.coreMeaning.includes('memiliki peranan penting')) {
         return dbRoot.coreMeaning.split('.')[0].trim();
       }
-      // Generate clean root derivation label instead of bare Arabic
-      const rootAr = dbRoot.rootArabic || dbRoot.rootArabicJoined;
-      if (cleanAr.startsWith('ي') || cleanAr.startsWith('ت') || cleanAr.startsWith('أ') || cleanAr.startsWith('ن')) {
-        return `Bentuk Kata Kerja (Fi'il) dari Akar ${rootAr}`;
+      if (dbRoot.meaningsIndonesian && dbRoot.meaningsIndonesian.length > 0 && !dbRoot.meaningsIndonesian[0].startsWith('Gagasan pokok') && !dbRoot.meaningsIndonesian[0].includes('Ragam makna')) {
+        return dbRoot.meaningsIndonesian[0].trim();
       }
-      return `Bentuk Turunan Kata (Isim) dari Akar ${rootAr}`;
+
+      // 5d. Intelligent grammatical deduction based on morphemes without empty labels
+      const rootAr = dbRoot.rootArabic || dbRoot.rootArabicJoined;
+      if (cleanAr.endsWith('ون') || cleanAr.endsWith('ين')) {
+        return `Golongan / Para Pelaku (${rootAr})`;
+      }
+      if (cleanAr.startsWith('م')) {
+        return `Subjek / Objek (${rootAr})`;
+      }
+      if (cleanAr.startsWith('ي')) {
+        return `Dia bertindak (${rootAr})`;
+      }
+      if (cleanAr.startsWith('ت')) {
+        return `Kamu / Dia bertindak (${rootAr})`;
+      }
+      if (cleanAr.startsWith('ن')) {
+        return `Kami bertindak (${rootAr})`;
+      }
+      if (cleanAr.startsWith('أ') || cleanAr.startsWith('ا')) {
+        return `Aku / Bertindaklah (${rootAr})`;
+      }
+      return `Kosakata Al-Qur'an (${rootAr})`;
     }
   }
 

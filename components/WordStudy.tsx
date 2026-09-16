@@ -59,7 +59,10 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
   const rootProfile = (lexical.rootSlug || lexical.root || lexical.rootArabic)
     ? getRootTranslationProfile(lexical.rootSlug || lexical.root || lexical.rootArabic)
     : null;
-  const rootTrans = lexical.rootTranslation || rootProfile?.coreMeaning || (rootProfile?.titleIndo && !rootProfile.titleIndo.startsWith('Konsep') ? rootProfile.titleIndo.replace(/^Akar\s+[^\(]+\(/, '').replace(/\)$/, '') : undefined);
+  const rawRootTrans = lexical.rootTranslation || rootProfile?.coreMeaning || (rootProfile?.titleIndo && !rootProfile.titleIndo.startsWith('Konsep') ? rootProfile.titleIndo.replace(/^Akar\s+[^\(]+\(/, '').replace(/\)$/, '') : undefined) || lexical.rootPhilosophy;
+  const rootTrans = (rawRootTrans && !rawRootTrans.includes('memiliki peranan penting') && !rawRootTrans.startsWith('Akar kata '))
+    ? rawRootTrans
+    : (lexical.rootPhilosophy && !lexical.rootPhilosophy.includes('memiliki peranan penting') ? lexical.rootPhilosophy : undefined);
 
   const displayTransliteration = (identity.transliteration && !isRawBuckwalterRoot(identity.transliteration))
     ? identity.transliteration
@@ -228,7 +231,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
               onClick={() => openSourceDrawer(primaryMeaning.isEditorialSummary ? 'kemenag-translation' : 'quranic-arabic-corpus')}
               className="text-[11px] px-2.5 py-0.5 rounded-full bg-canvas-surface border border-hairline text-ink-secondary hover:text-primary hover:border-primary transition-colors font-medium inline-flex items-center space-x-1 shadow-subtle"
             >
-              <span>{primaryMeaning.sourceBadge || 'Kemenag RI'}</span>
+              <span>{primaryMeaning.sourceBadge && primaryMeaning.sourceBadge !== 'Terjemahan Kata' ? primaryMeaning.sourceBadge : 'Kemenag RI'}</span>
               <ShieldCheck className="w-3 h-3 text-primary" />
             </button>
           </div>

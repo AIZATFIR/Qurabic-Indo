@@ -223,11 +223,14 @@ export function getGrammarDerivation(params: {
   const defaultLemma = lemmaArabic || (rootClean ? stripArabicHarakat(rootClean) : cleanWord);
   const authenticMeaning = primaryMeaning || getAuthenticWordMeaning(cleanWord, rootSlug);
 
+  // Clean trailing Quranic pause/waqf symbols and annotations
+  const normalizedWord = cleanWord.replace(/[\u06D6-\u06DC\u06DF-\u06E8\u06EA-\u06ED\s]+$/g, '').trim();
+
   // Analyze Morphemes (Prefix, Stem, Suffix)
   const morphemes: MorphemeSegment[] = [];
-  let remaining = cleanWord;
+  let remaining = normalizedWord;
 
-  // Detect common Quranic prefixes
+  // Detect common Quranic sentence prefixes
   if (remaining.startsWith('وَ') && remaining.length > 2) {
     morphemes.push({ text: 'وَ', type: 'prefix', label: 'Wawu Athaf (Kata Sambung Dan)', meaning: 'dan', colorClass: 'text-sky-500 font-bold' });
     remaining = remaining.slice(1);
@@ -242,24 +245,53 @@ export function getGrammarDerivation(params: {
     remaining = remaining.slice(1);
   }
 
+  // Detect Definite Article or Verb Prefix
+  const isPerfVerb = verbType === 'Madhi' || rawFeatures?.includes('PERF') || wazanOrForm?.includes('Madhi');
+  const isFormV = wazanOrForm?.includes('Form V') || rawFeatures?.includes('(V)') || rawFeatures?.includes('FORM:V');
+
   if (remaining.startsWith('ٱلْ') || remaining.startsWith('الْ') || remaining.startsWith('ٱل') || remaining.startsWith('ال')) {
     const alLen = remaining.startsWith('ٱلْ') || remaining.startsWith('الْ') ? 3 : 2;
     morphemes.push({ text: remaining.slice(0, alLen), type: 'prefix', label: 'Alif Lam Ma\'rifah (Definite Article)', meaning: 'penentu definit / yang mulia', colorClass: 'text-indigo-500 font-bold' });
     remaining = remaining.slice(alLen);
-  } else if (isVerb && (remaining.startsWith('يَ') || remaining.startsWith('يُ') || remaining.startsWith('تَ') || remaining.startsWith('تُ') || remaining.startsWith('نَ') || remaining.startsWith('أَ'))) {
+  } else if (isVerb && isPerfVerb && isFormV && (remaining.startsWith('تَ') || remaining.startsWith('تُ'))) {
+    // In Form V Madhi (Tafa''ala), initial Ta is the pattern augment, NOT Huruf Mudhara'ah
+    const taChar = remaining.slice(0, 2);
+    morphemes.push({ text: taChar, type: 'prefix', label: 'Awalan Wazan Form V (Tafa\'\'ala)', meaning: 'penanda bentuk refleksif / kesungguhan bertawakal', colorClass: 'text-amber-500 font-bold' });
+    remaining = remaining.slice(2);
+  } else if (isVerb && !isPerfVerb && (remaining.startsWith('يَ') || remaining.startsWith('يُ') || remaining.startsWith('تَ') || remaining.startsWith('تُ') || remaining.startsWith('نَ') || remaining.startsWith('أَ'))) {
     const mudhChar = remaining.slice(0, 2);
     morphemes.push({ text: mudhChar, type: 'prefix', label: 'Huruf Mudhara\'ah (Awalan Kata Kerja Sekarang/Akan Datang)', meaning: 'penanda subjek / waktu kini', colorClass: 'text-amber-500 font-bold' });
     remaining = remaining.slice(2);
   }
 
-  // Detect common suffixes
+  // Detect common suffixes with harakat-aware regex
   let suffixPart = '';
-  if (remaining.endsWith('ُونَ') || remaining.endsWith('ِينَ')) {
-    suffixPart = remaining.slice(-3);
-    remaining = remaining.slice(0, -3);
-  } else if (remaining.endsWith('كُمْ') || remaining.endsWith('هُمْ') || remaining.endsWith('نَا') || remaining.endsWith('هَا')) {
-    suffixPart = remaining.slice(-2);
-    remaining = remaining.slice(0, -2);
+  let suffixLabel = 'Akhiran Dhamir / Penanda Jamak';
+  let suffixMeaning = 'mereka / kalian / kami';
+
+  const suffixRegex = /(ن[\u064E]?[\u0627\u0670]|ك[\u064F]?م[\u0652]?|ه[\u064F]?م[\u0652]?|ه[\u064E]?[\u0627\u0670]|و[\u064F]?[\u0627\u0670][\u06DF]?|و[\u064F]?ن[\u064E]?|ي[\u0650]?ن[\u064E]?|ت[\u064F\u064E\u0650]?م[\u0652]?|ت[\u064F\u064E\u0650])$/;
+  const sMatch = remaining.match(suffixRegex);
+
+  if (sMatch) {
+    suffixPart = sMatch[0];
+    remaining = remaining.slice(0, -suffixPart.length);
+
+    if (suffixPart.includes('نَا') || suffixPart.includes('نا')) {
+      suffixLabel = 'Akhiran Dhamir Fa\'il (Nahnu / Kami)';
+      suffixMeaning = 'kami (subjek jamak pembicara)';
+    } else if (suffixPart.includes('كُمْ') || suffixPart.includes('كم')) {
+      suffixLabel = 'Akhiran Dhamir Mukhatab (Kalian)';
+      suffixMeaning = 'kalian semua';
+    } else if (suffixPart.includes('هُمْ') || suffixPart.includes('هم')) {
+      suffixLabel = 'Akhiran Dhamir Ghaib (Mereka)';
+      suffixMeaning = 'mereka';
+    } else if (suffixPart.includes('وا')) {
+      suffixLabel = 'Wawu Jama\'ah (Penanda Jamak Pelaku)';
+      suffixMeaning = 'mereka / kalian (jamak)';
+    } else if (suffixPart.includes('ونَ') || suffixPart.includes('ينَ') || suffixPart.includes('ون') || suffixPart.includes('ين')) {
+      suffixLabel = 'Tanda Jamak Mudzakkar Salim';
+      suffixMeaning = 'orang-orang yang';
+    }
   }
 
   // Add root stem
@@ -275,8 +307,8 @@ export function getGrammarDerivation(params: {
     morphemes.push({
       text: suffixPart,
       type: 'suffix',
-      label: 'Akhiran Dhamir / Penanda Jamak',
-      meaning: 'mereka / kalian / kami',
+      label: suffixLabel,
+      meaning: suffixMeaning,
       colorClass: 'text-purple-500 font-bold'
     });
   }
@@ -286,12 +318,23 @@ export function getGrammarDerivation(params: {
   if (isParticle) {
     grammarExplanation = `Kata ${cleanWord} adalah partikel (Harf) yang mabni (tidak berubah harakat akhirnya), berfungsi memperjelas hubungan gramatikal antarkata di dalam ayat.`;
   } else if (isVerb) {
-    const moodNote = rawFeatures?.includes('JUS')
-      ? 'berstatus Majzum (sukun) karena amil penjazam'
-      : (rawFeatures?.includes('SUBJ')
-          ? 'berstatus Manshub (fathah) karena amil penashab'
-          : 'berstatus Marfu\' sebagai hukum asal fi\'il');
-    grammarExplanation = `Kata kerja ini memiliki wazan ${wazanOrForm || 'standar'}, ${moodNote}. Menggabungkan huruf akar dengan morfem konjugasi untuk menyesuaikan subjek dan aspek waktu perbuatan.`;
+    if (isPerfVerb) {
+      const mabniStatus = suffixPart.includes('نَا') || suffixPart.includes('تُ') || suffixPart.includes('تَ')
+        ? 'Mabni atas sukun karena bersambung dengan dhamir rafa\' mutaharrik'
+        : (suffixPart.includes('وا')
+            ? 'Mabni atas dhammah karena bersambung dengan wawu jama\'ah'
+            : 'Mabni atas fathah sebagai hukum asal fi\'il madhi');
+      grammarExplanation = `Kata kerja lampau ini memiliki wazan ${wazanOrForm || 'standar'}, berstatus ${mabniStatus}. Menggabungkan huruf akar dengan morfem konjugasi untuk menegaskan subjek dan kepastian perbuatan.`;
+    } else if (verbType === 'Amr' || rawFeatures?.includes('IMPV')) {
+      grammarExplanation = `Kata kerja perintah (Fi'il Amr) ini berstatus Mabni atas sukun, digunakan untuk seruan ketaatan dan tawakal kepada Allah.`;
+    } else {
+      const moodNote = rawFeatures?.includes('JUS')
+        ? 'berstatus Majzum (sukun) karena amil penjazam'
+        : (rawFeatures?.includes('SUBJ')
+            ? 'berstatus Manshub (fathah) karena amil penashab'
+            : 'berstatus Marfu\' sebagai hukum asal fi\'il mudhari\'');
+      grammarExplanation = `Kata kerja kini/akan datang ini memiliki wazan ${wazanOrForm || 'standar'}, ${moodNote}. Menggabungkan awalan mudhara'ah dengan huruf akar untuk menyesuaikan subjek dan aspek waktu perbuatan.`;
+    }
   } else {
     const caseNote = rawFeatures?.includes('NOM')
       ? 'Marfu\' (dhammah) berkedudukan sebagai Fa\'il, Mubtada\', atau Khabar'

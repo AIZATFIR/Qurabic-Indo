@@ -130,7 +130,7 @@ export default function WordEtymologyModal({
   // Always prioritize authentic meaningIndo from WBW reader as the primary meaning
   if (meaningIndo && meaningIndo.trim()) {
     baseStudy.primaryMeaning.text = meaningIndo.charAt(0).toUpperCase() + meaningIndo.slice(1);
-    baseStudy.primaryMeaning.sourceBadge = 'Terjemahan Kata';
+    baseStudy.primaryMeaning.sourceBadge = 'Kemenag RI';
     baseStudy.primaryMeaning.isEditorialSummary = false;
   }
 
