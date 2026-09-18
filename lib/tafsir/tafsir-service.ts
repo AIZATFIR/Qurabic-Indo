@@ -27,31 +27,37 @@ export async function fetchSurahTafsir(surahNumber: number): Promise<Record<stri
     return TAFSIR_SURAH_CACHE.get(surahNumber)!;
   }
 
-  try {
-    const url = `https://raw.githubusercontent.com/rioastamal/quran-json/master/surah/${surahNumber}.json`;
-    const res = await fetch(url, {
-      next: { revalidate: 604800 } // Cache 7 days on edge
-    });
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const url = `https://raw.githubusercontent.com/rioastamal/quran-json/master/surah/${surahNumber}.json`;
+      const res = await fetch(url, {
+        next: { revalidate: 604800 } // Cache 7 days on edge
+      });
 
-    if (!res.ok) {
-      console.warn(`[TafsirService] Failed to fetch tafsir for Surah ${surahNumber}: HTTP ${res.status}`);
+      if (!res.ok) {
+        console.warn(`[TafsirService] Failed to fetch tafsir for Surah ${surahNumber}: HTTP ${res.status}`);
+        return null;
+      }
+
+      const data = await res.json();
+      const surahData = data[String(surahNumber)];
+      const kemenagTexts: Record<string, string> = surahData?.tafsir?.id?.kemenag?.text || {};
+
+      if (Object.keys(kemenagTexts).length > 0) {
+        TAFSIR_SURAH_CACHE.set(surahNumber, kemenagTexts);
+        return kemenagTexts;
+      }
+
       return null;
+    } catch (error) {
+      if (attempt === 2) {
+        console.error(`[TafsirService] Error fetching tafsir for Surah ${surahNumber}:`, error);
+        return null;
+      }
+      await new Promise((r) => setTimeout(r, 500));
     }
-
-    const data = await res.json();
-    const surahData = data[String(surahNumber)];
-    const kemenagTexts: Record<string, string> = surahData?.tafsir?.id?.kemenag?.text || {};
-
-    if (Object.keys(kemenagTexts).length > 0) {
-      TAFSIR_SURAH_CACHE.set(surahNumber, kemenagTexts);
-      return kemenagTexts;
-    }
-
-    return null;
-  } catch (error) {
-    console.error(`[TafsirService] Error fetching tafsir for Surah ${surahNumber}:`, error);
-    return null;
   }
+  return null;
 }
 
 /**

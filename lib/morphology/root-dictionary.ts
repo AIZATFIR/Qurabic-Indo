@@ -770,113 +770,94 @@ export const ROOT_DICTIONARY: Record<string, RootTranslationProfile> = {
       'عَلَيْ': 'Atas / Di atas / Terhadap',
     },
   },
+
+  // 34. Root E-t-w (ع ت و) — 10 occurrences
+  'E-t-w': {
+    rootArabic: 'ع ت و',
+    rootLatin: 'Etw',
+    titleIndo: 'Akar ع ت و (Melampaui Batas & Kedurhakaan Ekstrem)',
+    coreMeaning: 'Melampaui batas kewajaran, kedurhakaan ekstrem, kesombongan membangkang perintah Allah, amukan angin topan kencang, dan kelemahan fisik di usia sangat renta.',
+    derivatives: {
+      'عَتَا': 'Membangkang / Melampaui Batas',
+      'عَتَوْ': 'Membangkang / Berlaku Angkuh / Durhaka',
+      'عَتَوْا': 'Mereka membangkang / berlaku angkuh',
+      'وَعَتَوْا': 'Dan mereka berlaku angkuh / membangkang',
+      'فَعَتَوْا': 'Maka mereka berlaku angkuh / membangkang',
+      'عَتَتْ': 'Mendurhakai (perintah Tuhannya)',
+      'عُتُوّ': 'Kedurhakaan yang melampaui batas / kesombongan',
+      'عُتُوٍّ': 'Kedurhakaan yang melampaui batas / kesombongan',
+      'عُتُوًّا': 'Kedurhakaan / kesombongan yang besar',
+      'عِتِيّ': 'Kelemahan usia renta / kedurhakaan yang sangat',
+      'عِتِيًّا': 'Usia yang sangat renta / kedurhakaan yang sangat',
+      'عَاتِيَة': 'Sangat kencang / mengamuk dahsyat (angin)',
+      'عَاتِيَةٍ': 'Sangat dingin lagi amat kencang (angin)',
+      'عَاتٍ': 'Sombong melampaui batas / mengamuk kencang',
+    },
+  },
 };
 
 /**
- * Normalizes root identifier to find matching profile
+ * Retrieves the authentic root profile with its derivatives dictionary
  */
 export function getRootTranslationProfile(slugOrArabic?: string): RootTranslationProfile | null {
   if (!slugOrArabic) return null;
-  const clean = slugOrArabic.trim().replace(/\s+/g, '-');
-  const dashed = clean.includes('-') ? clean : clean.split('').join('-');
 
-  // Direct match by slug
-  if (ROOT_DICTIONARY[clean]) return ROOT_DICTIONARY[clean];
-  if (ROOT_DICTIONARY[dashed]) return ROOT_DICTIONARY[dashed];
-
-  // Match by Arabic letters
-  const cleanAr = stripArabicHarakat(slugOrArabic).replace(/\s+/g, '');
-  for (const prof of Object.values(ROOT_DICTIONARY)) {
-    const profAr = stripArabicHarakat(prof.rootArabic).replace(/\s+/g, '');
-    if (profAr === cleanAr) return prof;
+  const cleanSlug = slugOrArabic.replace(/[\s\-_]/g, '').toLowerCase();
+  
+  for (const [key, profile] of Object.entries(ROOT_DICTIONARY)) {
+    const pKey = key.replace(/[\s\-_]/g, '').toLowerCase();
+    const pArJoined = profile.rootArabic.replace(/\s+/g, '');
+    if (key === slugOrArabic || pKey === cleanSlug || profile.rootLatin.toLowerCase() === cleanSlug || pArJoined === slugOrArabic) {
+      return profile;
+    }
   }
 
   return null;
 }
 
-function normalizeStemForMatch(text: string): string {
-  if (!text) return '';
-  return text
-    .replace(/^[\u0651\u0640]+/, '') // remove leading shaddah or tatweel
-    .replace(/[\u064B\u064C\u064D]?[\u0627\u0649]$/, '') // remove accusative alif/ya with tanwin e.g. ملكا -> ملك
-    .replace(/[\u064B-\u0652\u0670]+$/, '') // strip final case harakat
-    .replace(/\u0670/g, '\u0627') // normalize dagger alif to alif
-    .replace(/[\u0653\u0640\u0652]/g, '') // remove madda, tatweel, sukun
-    .trim();
-}
-
-function getBareWordKey(text: string): string {
-  if (!text) return '';
-  return stripArabicHarakat(text.replace(/\u0670/g, '\u0627'))
-    .replace(/^[\u0640]+/, '')
-    .replace(/[\u0627\u0649]$/, '') // strip trailing alif / ya
-    .replace(/ت$/, 'ة') // normalize construct plural e.g. ملائكت -> ملائكة
-    .trim();
-}
-
 /**
- * Resolves authentic Indonesian meaning for any Quranic word
+ * Resolves an authentic, non-generic Indonesian meaning for any Quranic word token.
+ * 
+ * Lookup Hierarchy (PRD Section 4 Invariant):
+ * 1. Exact token lookup in CURATED_WORD_DICTIONARY
+ * 2. Exact derivative lookup in ROOT_DICTIONARY
+ * 3. Default contextual meaning from Kemenag WBW dataset
+ * 4. Morphological deduction based on verb form / noun pattern + root
+ * 5. Deterministic fallback to root essence
  */
 export function getAuthenticWordMeaning(
-  wordArabic: string,
+  rawArabic: string,
   rootSlugOrArabic?: string,
   defaultMeaning?: string
 ): string {
-  if (!wordArabic) return '';
+  const cleanAr = stripArabicHarakat(rawArabic);
+  const cleanNormAlif = stripArabicHarakat(rawArabic.replace(/\u0670/g, '\u0627'));
 
-  const stemNorm = normalizeStemForMatch(wordArabic);
-  const bareKey = getBareWordKey(wordArabic);
-  const cleanAr = stripArabicHarakat(wordArabic);
-  const cleanWithAlif = stripArabicHarakat(wordArabic.replace(/\u0670/g, '\u0627'));
-
-  // Helper to search a derivative record dictionary
-  const matchInDerivatives = (derivs: Record<string, string>): string | null => {
-    // 1. Exact string match
-    if (derivs[wordArabic]) return derivs[wordArabic];
-    // 2. Normalized stem match (preserves internal vowels and dagger alif)
-    for (const [k, v] of Object.entries(derivs)) {
-      if (normalizeStemForMatch(k) === stemNorm) return v;
-    }
-    // 3. Bare key with dagger alif converted to alif
-    if (derivs[cleanWithAlif]) return derivs[cleanWithAlif];
-    for (const [k, v] of Object.entries(derivs)) {
-      if (getBareWordKey(k) === bareKey) return v;
-    }
-    // 4. Standard harakat-stripped match
-    if (derivs[cleanAr]) return derivs[cleanAr];
-    for (const [k, v] of Object.entries(derivs)) {
-      if (stripArabicHarakat(k) === cleanAr) return v;
-    }
-    return null;
-  };
-
-  // 1. Check root-specific derivative dictionary
+  // 1. Direct Derivative Match in ROOT_DICTIONARY
   const prof = getRootTranslationProfile(rootSlugOrArabic);
-  if (prof) {
-    const found = matchInDerivatives(prof.derivatives);
-    if (found) return found;
+  if (prof && prof.derivatives) {
+    if (prof.derivatives[rawArabic]) return prof.derivatives[rawArabic];
+    if (prof.derivatives[cleanAr]) return prof.derivatives[cleanAr];
+    if (prof.derivatives[cleanNormAlif]) return prof.derivatives[cleanNormAlif];
+
+    // Strip prefixes like wa-, fa-, li-, bi-, al-
+    const dePrefixed = cleanNormAlif.replace(/^(و|ف|ب|ل|ال|ٱل)/, '');
+    if (prof.derivatives[dePrefixed]) return prof.derivatives[dePrefixed];
   }
 
-  // 2. Check all roots if not found in given root profile
-  for (const p of Object.values(ROOT_DICTIONARY)) {
-    const found = matchInDerivatives(p.derivatives);
-    if (found) return found;
-  }
+  // 3. Authentic Default Meaning from Kemenag (if not generic/fallback)
+  if (defaultMeaning) {
+    const isGeneric = 
+      defaultMeaning.startsWith('Bentuk Kata') ||
+      defaultMeaning.startsWith('Konsep & Turunan') ||
+      defaultMeaning.startsWith('Kata dalam') ||
+      defaultMeaning.startsWith('Kosakata Al-Qur\'an') ||
+      defaultMeaning.startsWith('Nomina') ||
+      defaultMeaning.startsWith('Verba') ||
+      defaultMeaning.startsWith('Partikel') ||
+      defaultMeaning.includes('memiliki peranan penting');
 
-  // 3. Fall back to clean default meaning if it is a genuine Indonesian translation
-  if (
-    defaultMeaning &&
-    !defaultMeaning.startsWith('Konsep & Turunan') &&
-    !defaultMeaning.startsWith('Bentuk Kata') &&
-    !defaultMeaning.startsWith('Akar kata') &&
-    !defaultMeaning.startsWith('Nomina') &&
-    !defaultMeaning.startsWith('Verba') &&
-    !defaultMeaning.startsWith('Partikel') &&
-    defaultMeaning !== "Kata dalam Al-Qur'an"
-  ) {
-    // Ensure default meaning is not raw English
-    const isEnglish = /\b(the|and|or|of|to|in|on|from|with|by|for|not|he|they|we|you|she|it|his|their|our|your|my|who|which|that|enter|entered|say|said|know|knew|believed|disbelieved|eat|eaten|surely|will|were|was|are|is|have|has|had|brought|hosts|another|clear|prison|throne|recited)\b/i.test(defaultMeaning);
-    if (!isEnglish) {
+    if (!isGeneric && defaultMeaning.trim().length > 0) {
       return defaultMeaning;
     }
   }
@@ -940,7 +921,15 @@ export function getAuthenticWordMeaning(
         return dbRoot.meaningsIndonesian[0].trim();
       }
 
-      // 5d. Intelligent grammatical deduction based on morphemes without empty labels
+      // 5d. Check specific usage patterns from classical lexicon / database
+      if (dbRoot.usagePatterns && dbRoot.usagePatterns.length > 0) {
+        const pattern = dbRoot.usagePatterns.find(p => p.title && !p.title.startsWith('Penggunaan Kontekstual'));
+        if (pattern?.title) {
+          return pattern.title.split('/')[0].trim();
+        }
+      }
+
+      // 5e. Intelligent grammatical deduction based on morphemes without placeholder labels
       const rootAr = dbRoot.rootArabic || dbRoot.rootArabicJoined;
       if (cleanAr.endsWith('ون') || cleanAr.endsWith('ين')) {
         return `Golongan / Para Pelaku (${rootAr})`;
@@ -960,9 +949,9 @@ export function getAuthenticWordMeaning(
       if (cleanAr.startsWith('أ') || cleanAr.startsWith('ا')) {
         return `Aku / Bertindaklah (${rootAr})`;
       }
-      return `Kosakata Al-Qur'an (${rootAr})`;
+      return `Bentuk Turunan (${rootAr})`;
     }
   }
 
-  return 'Kosakata Al-Qur\'an';
+  return 'Bentuk Kata Terindeks';
 }

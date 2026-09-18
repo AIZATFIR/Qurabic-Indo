@@ -864,6 +864,35 @@ export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
       'Peringatan dan bimbingan wahyu Al-Qur\'an (Adz-Dzikr)',
       'Kemuliaan dan reputasi terpuji bagi orang-orang beriman'
     ]
+  },
+
+  // 31. E-t-w (ع ت و) - Kedurhakaan Ekstrem, Kebangkangan, dan Kelemahan Usia Renta (10 occurrences)
+  'E-t-w': {
+    titleIndo: 'Melampaui Batas / Kedurhakaan Ekstrem / Kesombongan (Etw)',
+    coreMeaning: 'Akar ع ت و berpusat pada makna leksikal melampaui batas kewajaran, kedurhakaan ekstrem, dan kesombongan yang membangkang terhadap perintah Allah (عَتَوْا عَنْ أَمْرِ رَبِّهِمْ). Di samping itu, akar ini secara balaghah melukiskan dahsyatnya angin kencang yang mengamuk (عَاتِيَةٍ) serta kerapuhan fisik manusia yang telah mencapai usia teramat senja/renta (عِتِيًّا).',
+    usagePatterns: [
+      {
+        title: 'Kebangkangan dan Kedurhakaan Melampaui Batas (Eataw / Utuw)',
+        description: 'Digunakan untuk mencela sikap kaum durhaka yang menentang peringatan para rasul secara angkuh dan melampaui batas kezaliman.',
+        examples: ['فَعَقَرُوا۟ ٱلنَّاقَةَ وَعَتَوْا۟ عَنْ أَمْرِ رَبِّهِمْ', 'بَل لَّجُّوا۟ فِى عُتُوٍّۢ وَنُفُورٍ']
+      },
+      {
+        title: 'Kedahsyatan Angin yang Mengamuk (Reeyah \'Atiyah)',
+        description: 'Bentuk sifat (fa\'ilah) untuk menggambarkan angin topan dingin yang bertiup kencang membinasakan kaum \'Ad.',
+        examples: ['بِرِيحٍۢ صَرْصَرٍ عَاتِيَةٍۢ']
+      },
+      {
+        title: 'Kelemahan dan Kerapuhan Usia Senja (\'Itiyya)',
+        description: 'Ungkapan Nabi Zakaria \'alaihissalam ketika bermunajat memohon keturunan saat fisiknya telah mencapai usia sangat tua dan rapuh.',
+        examples: ['وَقَدْ بَلَغْتُ مِنَ ٱلْكِبَرِ عِتِيًّۭا']
+      }
+    ],
+    meaningsIndonesian: [
+      'Kedurhakaan dan kesombongan yang melampaui batas (Utuw)',
+      'Tindakan membangkang terhadap perintah Tuhan (Eataw)',
+      'Kedahsyatan amukan angin kencang (\'Atiyah)',
+      'Kerapuhan fisik di puncak usia renta (\'Itiyya)'
+    ]
   }
 };
 
@@ -914,13 +943,13 @@ export function getRootSemanticProfile(rootBw: string, rootArabic?: string): Roo
 
     let synthesized = '';
     if (sampleVerbs.length > 0 && sampleNouns.length > 0) {
-      synthesized = `Akar kata ${dbRoot.rootArabic} melandasi pembentukan kata kerja seperti ${sampleVerbs.join(', ')} dan kata benda ${sampleNouns.join(', ')} dalam Al-Qur'an, yang secara kontekstual menyampaikan pesan ketuhanan, penguatan keimanan, serta bimbingan amal kebajikan.`;
+      synthesized = `Akar kata ${dbRoot.rootArabic} melandasi pembentukan ragam kata Al-Qur'an seperti verba ${sampleVerbs.join(', ')} serta nomina ${sampleNouns.join(', ')}, yang masing-masing mengemban nuansa makna leksikal definitif sesuai wazan sharaf dan konteks ayat penuturannya.`;
     } else if (sampleVerbs.length > 0) {
       synthesized = `Akar kata ${dbRoot.rootArabic} hadir dalam Al-Qur'an melalui ragam konjugasi kata kerja seperti ${sampleVerbs.join(', ')} yang menggambarkan dinamika tindakan, keadilan, dan ketetapan ilahi di dalam ayat.`;
     } else if (sampleNouns.length > 0) {
-      synthesized = `Akar kata ${dbRoot.rootArabic} termanifestasi dalam Al-Qur'an melalui nomina substantif seperti ${sampleNouns.join(', ')} yang menjadi pilar makna untuk menegaskan hakikat pesan yang diuraikan ayat.`;
+      synthesized = `Akar kata ${dbRoot.rootArabic} termanifestasi dalam Al-Qur'an melalui nomina substantif seperti ${sampleNouns.join(', ')} yang menjadi pilar leksikal untuk menegaskan hakikat pesan yang diuraikan ayat.`;
     } else {
-      synthesized = `Akar kata ${dbRoot.rootArabic} merupakan salah satu unsur morfologis yang memperkaya keindahan bahasa dan kedalaman pesan wahyu dalam Al-Qur'an.`;
+      synthesized = `Akar kata ${dbRoot.rootArabic} merupakan pilar leksikal bahasa Arab klasik yang memperkaya keindahan sastra dan kedalaman pesan wahyu dalam Al-Qur'an.`;
     }
 
     const cleanTitle = dbRoot.titleIndo && !dbRoot.titleIndo.startsWith('Konsep')
