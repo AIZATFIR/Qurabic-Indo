@@ -1,7 +1,8 @@
 import { ROOT_DATABASE } from '../data/roots';
-import { stripArabicHarakat, findBestMatchingRoot, extractArabicRootLetters, inferGrammarRole } from './root-search';
+import { stripArabicHarakat, findBestMatchingRoot, extractArabicRootLetters, inferGrammarRole, isQuranicParticle } from './root-search';
 import { getQuranicParticleInfo } from '../morphology/particles-dictionary';
 import { getAuthenticWordMeaning } from '../morphology/root-dictionary';
+import { getRootSemanticProfile } from '../data/root-semantics';
 
 export interface WordDetailedInfo {
   wordArabic: string;
@@ -987,9 +988,16 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
       ...filteredMeanings.filter((m) => m !== cleanedMeaning)
     ];
 
-    let safeExplanation = matchedRoot.coreMeaning || '';
-    if (safeExplanation.includes('memiliki peranan penting dalam kosakata Al-Qur\'an dengan berbagai bentuk turunan verba')) {
-      safeExplanation = `Akar kata ${matchedRoot.rootArabic} (${matchedRoot.rootLatin}) memiliki frekuensi ${matchedRoot.totalOccurrences} kemunculan morfologis dalam Al-Qur'an (${matchedRoot.verbsCount} verba, ${matchedRoot.nounsCount} nomina).`;
+    const semProfile = getRootSemanticProfile(matchedRoot.id, matchedRoot.rootArabic);
+    let safeExplanation = semProfile?.coreMeaning || matchedRoot.coreMeaning || '';
+    if (!safeExplanation || safeExplanation.includes('memiliki peranan penting dalam kosakata Al-Qur\'an')) {
+      const sampleVerbs = (matchedRoot.verbs || []).filter(v => v.arabic && !v.arabic.includes('(')).slice(0, 2).map(v => v.arabic);
+      const sampleNouns = (matchedRoot.nouns || []).filter(n => n.arabic && !n.arabic.includes('(')).slice(0, 2).map(n => n.arabic);
+      if (sampleVerbs.length > 0 && sampleNouns.length > 0) {
+        safeExplanation = `Akar kata ${matchedRoot.rootArabic} melandasi pembentukan kata kerja seperti ${sampleVerbs.join(', ')} dan kata benda ${sampleNouns.join(', ')} dalam Al-Qur'an, yang secara kontekstual menyampaikan pesan ketuhanan, penguatan keimanan, serta bimbingan amal kebajikan.`;
+      } else {
+        safeExplanation = `Akar kata ${matchedRoot.rootArabic} merupakan salah satu unsur morfologis yang memperkaya keindahan bahasa dan kedalaman pesan wahyu dalam Al-Qur'an.`;
+      }
     }
 
     return {
@@ -999,7 +1007,7 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
       rootLatin: matchedRoot.rootLatin,
       primaryMeaning: cleanedMeaning,
       meanings: safeMeanings.length > 0 ? safeMeanings : [cleanedMeaning],
-      rootExplanation: safeExplanation || `Akar kata ${matchedRoot.rootArabic} (${matchedRoot.rootLatin}) memiliki ${matchedRoot.totalOccurrences} kemunculan morfologis dalam Al-Qur'an.`,
+      rootExplanation: safeExplanation,
       grammaticalRole: grammar.posDetail,
       posTag: grammar.posCategory,
       wazanOrForm: grammar.wazanOrPattern,
@@ -1011,11 +1019,12 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
 
   // 3. Dynamic generic fallback for unindexed words / particles
   const primaryFallback = cleanGlossToIndonesian(defaultMeaningIndo, 'Kata dalam Al-Qur\'an');
-  const rootExplanation = grammar.posCategory === 'Harf'
-    ? 'Kata ini tergolong sebagai partikel / kata tugas (Harf) dan tidak memiliki akar kata triliteral.'
+  const isHarfWord = grammar.posCategory === 'Harf' || isQuranicParticle(wordArabic);
+  const rootExplanation = isHarfWord
+    ? 'Kata ini tergolong sebagai partikel kata tugas (Harf) yang berkedudukan mabni tanpa proses derivasi akar kata triliteral.'
     : extractedRoot
-    ? `Akar kata ${extractedRoot} terindeks dalam Quranic Arabic Corpus.`
-    : 'Data morfologi akar kata tidak teridentifikasi.';
+    ? `Akar kata ${extractedRoot} melandasi makna leksikal kata ini dalam struktur kebahasaan Al-Qur'an.`
+    : 'Bentuk kata mandiri dalam struktur kalimat Al-Qur\'an.';
 
   return {
     wordArabic,

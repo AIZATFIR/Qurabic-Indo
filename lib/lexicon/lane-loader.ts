@@ -92,7 +92,11 @@ function getRootKeyVariants(rootBw: string): string[] {
 /**
  * Retrieves direct Lemma / Headword entry from Lane (supports particles, prepositions, and specific lemmas)
  */
-export function getLaneLemmaRecord(lemmaBw?: string, lemmaArabic?: string): LaneEntryRecord | null {
+export function getLaneLemmaRecord(
+  lemmaBw?: string,
+  lemmaArabic?: string,
+  options?: { isParticle?: boolean; pos?: string }
+): LaneEntryRecord | null {
   if (!lemmaBw && !lemmaArabic) return null;
 
   const lookupKeys: string[] = [];
@@ -119,25 +123,77 @@ export function getLaneLemmaRecord(lemmaBw?: string, lemmaArabic?: string): Lane
     }
   }
 
+  const cleanAr = lemmaArabic ? lemmaArabic.replace(/[\u0610-\u061A\u0640\u064B-\u065F\u0670\u06D6-\u06ED]/g, '').trim() : '';
+  const queryHasShaddah = (lemmaArabic && lemmaArabic.includes('\u0651')) || (lemmaBw && lemmaBw.includes('~'));
+  const queryHasHamzaBelow = lemmaArabic && lemmaArabic.includes('إ');
+
+  let bestEntry: LaneEntryRecord | null = null;
+  let highestScore = -1;
+
   for (const k of lookupKeys) {
     const chunkFilename = MANIFEST[k];
     if (chunkFilename) {
       const chunk = loadChunk(chunkFilename);
       if (chunk) {
-        // Match entry by headword
-        const match = chunk.find(e => {
-          if (lemmaArabic && normalizeArabicKey(e.headwordArabic) === normalizeArabicKey(lemmaArabic)) return true;
-          if (lemmaArabic && e.bareword && normalizeArabicKey(e.bareword) === normalizeArabicKey(lemmaArabic)) return true;
-          if (lemmaBw && e.headwordBw === lemmaBw) return true;
-          if (lemmaBw && e.headwordBw.replace(/[{`~]/g, '') === lemmaBw.replace(/[{`~]/g, '')) return true;
-          return false;
-        });
-        if (match) return match;
+        for (const e of chunk) {
+          const eNorm = normalizeArabicKey(e.headwordArabic);
+          const bNorm = e.bareword ? normalizeArabicKey(e.bareword) : '';
+          const targetNorm = lemmaArabic ? normalizeArabicKey(lemmaArabic) : (lemmaBw ? normalizeArabicKey(buckwalterToArabic(lemmaBw)) : '');
+
+          if (targetNorm && eNorm !== targetNorm && bNorm !== targetNorm) continue;
+
+          let score = 0;
+          const eBare = e.bareword || e.headwordArabic.replace(/[\u0610-\u061A\u0640\u064B-\u065F\u0670\u06D6-\u06ED]/g, '').trim();
+          const eHasShaddah = (e.headwordArabic && e.headwordArabic.includes('\u0651')) || (e.headwordBw && e.headwordBw.includes('~'));
+
+          // 1. Shaddah agreement
+          if (queryHasShaddah === eHasShaddah) {
+            score += 40;
+          } else if (options?.isParticle) {
+            score -= 50; // Severe penalty: particles without shaddah must not match verbs/words with shaddah
+          }
+
+          // 2. Hamza orientation agreement (إ vs أ vs ا)
+          if (cleanAr && eBare) {
+            if (cleanAr === eBare) {
+              score += 60;
+            } else if (queryHasHamzaBelow && (eBare.startsWith('إ') || e.headwordBw?.startsWith('A_i') || e.headwordBw?.startsWith('<'))) {
+              score += 40;
+            } else if (queryHasHamzaBelow && (eBare.startsWith('أ') || e.headwordBw?.startsWith('A^') || e.headwordBw?.startsWith('>'))) {
+              score -= 60; // Severe penalty: <in must never match A^an~a
+            } else if (!queryHasHamzaBelow && (eBare.startsWith('أ') || e.headwordBw?.startsWith('A^'))) {
+              score += 20;
+            }
+          }
+
+          // 3. POS / Verb Form agreement
+          if (options?.isParticle) {
+            if (!e.itype) {
+              score += 30; // Prepositions and particles have no verb itype
+            } else {
+              score -= 50; // Particles should not resolve to Form 1/2/etc. verbs
+            }
+          }
+
+          // 4. Buckwalter match
+          if (lemmaBw && e.headwordBw) {
+            if (e.headwordBw === lemmaBw) {
+              score += 50;
+            } else if (e.headwordBw.replace(/[{`~]/g, '') === lemmaBw.replace(/[{`~]/g, '')) {
+              score += 35;
+            }
+          }
+
+          if (score > highestScore) {
+            highestScore = score;
+            bestEntry = e;
+          }
+        }
       }
     }
   }
 
-  return null;
+  return highestScore >= 50 ? bestEntry : null;
 }
 
 /**

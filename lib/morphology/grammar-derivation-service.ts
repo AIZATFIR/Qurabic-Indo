@@ -218,10 +218,41 @@ export function getGrammarDerivation(params: {
   // --------------------------------------------------------------------------
   // Dynamic General Generator: Intelligently analyzes any Arabic word
   // --------------------------------------------------------------------------
+  const PARTICLE_BASE_MEANINGS: Record<string, string> = {
+    'علي': 'Atas / Di atas / Terhadap',
+    'الي': 'Kepada / Menuju',
+    'في': 'Di dalam / Pada',
+    'من': 'Dari / Sebagian dari',
+    'عن': 'Dari / Tentang',
+    'مع': 'Beserta / Bersama',
+    'ب': 'Dengan / Demi',
+    'ل': 'Untuk / Bagi / Milik',
+    'ك': 'Bagaikan / Seperti',
+    'حتي': 'Hingga / Sampai',
+    'ان': 'Tidak / Tiada / Bukan',
+    'ما': 'Tidak / Bukan',
+    'لا': 'Tidak / Jangan',
+    'لم': 'Belum / Tidak pernah',
+    'لن': 'Tidak akan pernah',
+    'ثم': 'Kemudian / Lalu',
+    'او': 'Atau',
+    'اذا': 'Apabila / Ketika',
+    'اذ': 'Ketika / Ingatlah ketika',
+    'قد': 'Sungguh / Benar-benar',
+    'سوف': 'Kelak'
+  };
+
   const isVerb = pos === "Fi'il" || rawTag === 'V';
-  const isParticle = pos === 'Harf' || rawTag === 'P' || rawTag === 'PRP';
+  const isParticle = pos === 'Harf' || rawTag === 'P' || rawTag === 'PRP' || rawTag === 'NEG' || rawTag === 'COND' || rawTag === 'RES' || rawTag === 'SUB' || rawFeatures?.includes('POS:NEG') || rawFeatures?.includes('POS:COND') || rawFeatures?.includes('POS:P') || rawFeatures?.includes('POS:CONJ');
   const defaultLemma = lemmaArabic || (rootClean ? stripArabicHarakat(rootClean) : cleanWord);
-  const authenticMeaning = primaryMeaning || getAuthenticWordMeaning(cleanWord, rootSlug);
+  
+  const particleBaseMeaning = isParticle 
+    ? (PARTICLE_BASE_MEANINGS[stripArabicHarakat(defaultLemma)] || PARTICLE_BASE_MEANINGS[stripArabicHarakat(lemmaArabic || '')])
+    : undefined;
+
+  const authenticMeaning = (isParticle && (rawTag === 'NEG' || rawFeatures?.includes('NEG')))
+    ? (primaryMeaning || 'Tidak / Tiada / Bukan (Penyangkal / Negasi)')
+    : (primaryMeaning || getAuthenticWordMeaning(cleanWord, rootSlug));
 
   // Clean trailing Quranic pause/waqf symbols and annotations
   const normalizedWord = cleanWord.replace(/[\u06D6-\u06DC\u06DF-\u06E8\u06EA-\u06ED\s]+$/g, '').trim();
@@ -264,12 +295,12 @@ export function getGrammarDerivation(params: {
     remaining = remaining.slice(2);
   }
 
-  // Detect common suffixes with harakat-aware regex
+  // Detect common suffixes with harakat-aware regex (supports kasrah/dhammah variants like hum/him)
   let suffixPart = '';
   let suffixLabel = 'Akhiran Dhamir / Penanda Jamak';
   let suffixMeaning = 'mereka / kalian / kami';
 
-  const suffixRegex = /(ن[\u064E]?[\u0627\u0670]|ك[\u064F]?م[\u0652]?|ه[\u064F]?م[\u0652]?|ه[\u064E]?[\u0627\u0670]|و[\u064F]?[\u0627\u0670][\u06DF]?|و[\u064F]?ن[\u064E]?|ي[\u0650]?ن[\u064E]?|ت[\u064F\u064E\u0650]?م[\u0652]?|ت[\u064F\u064E\u0650])$/;
+  const suffixRegex = /(ن[\u064E]?[\u0627\u0670]|ك[\u064F\u0650]?م[\u0652]?|ه[\u064F\u0650]?م[\u0652]?|ه[\u064F\u0650]?نَّ?|ه[\u064F\u0650]?م[\u064E\u0627\u0670]?|ه[\u064E\u0650\u064F]?[\u0627\u0670]|ه[\u064F\u0650]|و[\u064F]?[\u0627\u0670][\u06DF]?|و[\u064F]?ن[\u064E]?|ي[\u0650]?ن[\u064E]?|ت[\u064F\u064E\u0650]?م[\u0652]?|ت[\u064F\u064E\u0650])$/;
   const sMatch = remaining.match(suffixRegex);
 
   if (sMatch) {
@@ -277,29 +308,45 @@ export function getGrammarDerivation(params: {
     remaining = remaining.slice(0, -suffixPart.length);
 
     if (suffixPart.includes('نَا') || suffixPart.includes('نا')) {
-      suffixLabel = 'Akhiran Dhamir Fa\'il (Nahnu / Kami)';
-      suffixMeaning = 'kami (subjek jamak pembicara)';
+      suffixLabel = isParticle ? 'Dhamir Muttashil (Kata Ganti Kami)' : 'Akhiran Dhamir Fa\'il (Nahnu / Kami)';
+      suffixMeaning = 'kami (subjek / objek majrur)';
     } else if (suffixPart.includes('كُمْ') || suffixPart.includes('كم')) {
-      suffixLabel = 'Akhiran Dhamir Mukhatab (Kalian)';
+      suffixLabel = isParticle ? 'Dhamir Muttashil (Kata Ganti Kalian)' : 'Akhiran Dhamir Mukhatab (Kalian)';
       suffixMeaning = 'kalian semua';
-    } else if (suffixPart.includes('هُمْ') || suffixPart.includes('هم')) {
-      suffixLabel = 'Akhiran Dhamir Ghaib (Mereka)';
-      suffixMeaning = 'mereka';
+    } else if (suffixPart.includes('هُمْ') || suffixPart.includes('هِمْ') || suffixPart.includes('هم')) {
+      suffixLabel = isParticle ? 'Dhamir Muttashil (Kata Ganti Mereka)' : 'Akhiran Dhamir Ghaib (Mereka)';
+      suffixMeaning = 'mereka (jamak ghaib)';
     } else if (suffixPart.includes('وا')) {
       suffixLabel = 'Wawu Jama\'ah (Penanda Jamak Pelaku)';
       suffixMeaning = 'mereka / kalian (jamak)';
     } else if (suffixPart.includes('ونَ') || suffixPart.includes('ينَ') || suffixPart.includes('ون') || suffixPart.includes('ين')) {
       suffixLabel = 'Tanda Jamak Mudzakkar Salim';
       suffixMeaning = 'orang-orang yang';
+    } else if (suffixPart.includes('هُ') || suffixPart.includes('هِ')) {
+      suffixLabel = isParticle ? 'Dhamir Muttashil (Kata Ganti Dia)' : 'Akhiran Dhamir Ghaib (Dia)';
+      suffixMeaning = 'dia / nya';
+    } else if (suffixPart.includes('هَا') || suffixPart.includes('ها')) {
+      suffixLabel = isParticle ? 'Dhamir Muttashil (Kata Ganti Dia Perempuan)' : 'Akhiran Dhamir Ghaibah (Dia)';
+      suffixMeaning = 'dia / nya (feminin)';
     }
   }
 
-  // Add root stem
+  // Add stem morpheme
+  let stemLabel = rootSpaced ? `Inti Huruf Akar (${rootSpaced})` : 'Batang Kata Utama (Stem)';
+  let stemMeaning = authenticMeaning;
+
+  if (isParticle) {
+    const isPrep = rawTag === 'P' || rawTag === 'PRP' || rawFeatures?.includes('POS:P') || rawFeatures?.includes('POS:PRP') || ['علي', 'الي', 'في', 'من', 'عن', 'مع', 'ل', 'ب'].includes(stripArabicHarakat(remaining));
+    stemLabel = isPrep ? 'Huruf Jar (Kata Depan)' : 'Partikel Utama (Harf)';
+    const cleanRem = stripArabicHarakat(remaining);
+    stemMeaning = PARTICLE_BASE_MEANINGS[cleanRem] || (isPrep ? 'atas / di dalam / kepada' : 'partikel kata tugas');
+  }
+
   morphemes.push({
     text: remaining,
     type: 'stem',
-    label: rootSpaced ? `Inti Huruf Akar (${rootSpaced})` : 'Batang Kata Utama (Stem)',
-    meaning: authenticMeaning,
+    label: stemLabel,
+    meaning: stemMeaning,
     colorClass: 'text-emerald-600 dark:text-emerald-400 font-bold'
   });
 
@@ -316,7 +363,22 @@ export function getGrammarDerivation(params: {
   // Generate clear Nahwu Explanation
   let grammarExplanation = '';
   if (isParticle) {
-    grammarExplanation = `Kata ${cleanWord} adalah partikel (Harf) yang mabni (tidak berubah harakat akhirnya), berfungsi memperjelas hubungan gramatikal antarkata di dalam ayat.`;
+    const isCompoundPrep = (rawTag === 'P' || rawTag === 'PRP' || rawFeatures?.includes('POS:P') || ['علي', 'الي', 'في', 'من', 'عن', 'مع', 'ل', 'ب'].includes(stripArabicHarakat(remaining))) && Boolean(suffixPart);
+    if (isCompoundPrep) {
+      grammarExplanation = `Kata ${cleanWord} merupakan rangkaian kata depan (Harf Jarr) yang bersambung dengan kata ganti (Dhamir Muttashil). Dhamir ini berkedudukan fī maḥalli jarr (menempati posisi majrur), membentuk susunan frasa jar-majrur (syibhul jumlah) yang memperjelas sasaran hubungan gramatikal di dalam ayat.`;
+    } else if (rawTag === 'NEG' || rawFeatures?.includes('NEG')) {
+      grammarExplanation = `Kata ${cleanWord} adalah partikel penyangkal/negasi (Harf Nafi) yang mabni atas sukun. Berfungsi menafikan pernyataan di dalam kalimat, sering dipadukan dengan partikel pembatasan (seperti إِلَّا atau لَمَّا) untuk menegaskan kepastian makna ayat.`;
+    } else if (rawTag === 'COND' || rawFeatures?.includes('COND')) {
+      grammarExplanation = `Kata ${cleanWord} adalah partikel bersyarat (Harf Syarat) yang mabni atas sukun. Berfungsi mengikat keterjadian peristiwa syarat dengan jawabannya di dalam ayat.`;
+    } else if (rawTag === 'ACC' || rawFeatures?.includes('ACC')) {
+      grammarExplanation = `Kata ${cleanWord} adalah partikel penegas (Harf Taukid) yang mabni atas fathah, berfungsi menghilangkan keraguan dan mengukuhkan kebenaran pesan ayat.`;
+    } else if (rawTag === 'RES' || rawFeatures?.includes('RES')) {
+      grammarExplanation = `Kata ${cleanWord} adalah partikel pengecualian (Harf Istitsna) yang mabni atas sukun, membatasi dan menegaskan ketunggalan hukum pada yang dikecualikan.`;
+    } else if (rawTag === 'P' || rawTag === 'PRP' || rawFeatures?.includes('POS:P')) {
+      grammarExplanation = `Kata ${cleanWord} adalah kata depan (Harf Jarr) yang mabni, menghubungkan kata kerja atau makna kalimat dengan isim setelahnya yang berstatus majrur.`;
+    } else {
+      grammarExplanation = `Kata ${cleanWord} adalah partikel (Harf) yang mabni (tidak berubah harakat akhirnya), berfungsi memperjelas hubungan gramatikal antarkata di dalam ayat.`;
+    }
   } else if (isVerb) {
     if (isPerfVerb) {
       const mabniStatus = suffixPart.includes('نَا') || suffixPart.includes('تُ') || suffixPart.includes('تَ')
@@ -346,15 +408,39 @@ export function getGrammarDerivation(params: {
     grammarExplanation = `Kata benda (isim) ini berada dalam kondisi ${caseNote} di dalam struktur kalimat ayat Al-Qur'an.`;
   }
 
+  // Determine appropriate posType label for Card 1
+  let basePosType = 'Kata Benda Dasar (Isim Asal)';
+  if (isVerb) {
+    basePosType = 'Kata Kerja Dasar (Fi\'il Madhi)';
+  } else if (isParticle) {
+    if (rawTag === 'P' || rawTag === 'PRP' || rawFeatures?.includes('POS:P') || ['علي', 'الي', 'في', 'من', 'عن', 'مع', 'ل', 'ب'].includes(stripArabicHarakat(defaultLemma))) {
+      basePosType = 'Kata Depan (Harf Jarr)';
+    } else if (rawTag === 'NEG' || rawFeatures?.includes('NEG')) {
+      basePosType = 'Penyangkal (Harf Nafi)';
+    } else if (rawTag === 'COND' || rawFeatures?.includes('COND')) {
+      basePosType = 'Kondisional (Harf Syarat)';
+    } else if (rawTag === 'ACC' || rawFeatures?.includes('ACC')) {
+      basePosType = 'Penegas (Harf Taukid)';
+    } else {
+      basePosType = 'Partikel (Harf Mabni)';
+    }
+  }
+
   return {
     baseLemma: {
       arabic: defaultLemma,
       transliteration: transliterateArabic(defaultLemma),
-      meaning: authenticMeaning,
-      formationNote: isVerb
-        ? `Menghubungkan huruf akar ${rootSpaced} untuk membentuk kata kerja dasar (fi'il madhi).`
-        : `Bentuk kata asal (nomina dasar/masdar) dari akar ${rootSpaced}.`,
-      posType: isVerb ? 'Kata Kerja Dasar (Fi\'il Madhi)' : (isParticle ? 'Partikel (Harf Mabni)' : 'Kata Benda Dasar (Isim Asal)')
+      meaning: particleBaseMeaning || authenticMeaning,
+      formationNote: isParticle
+        ? ((rawTag === 'P' || rawTag === 'PRP' || rawFeatures?.includes('POS:P') || ['علي', 'الي', 'في', 'من', 'عن', 'مع', 'ل', 'ب'].includes(stripArabicHarakat(defaultLemma)))
+            ? 'Partikel kata depan (Harf Jarr) yang mabni, berfungsi menghubungkan kata kerja atau makna kalimat dengan isim/dhamir setelahnya.'
+            : 'Partikel fungsional (Harf Mabni) berbentuk tetap tanpa proses derivasi akar kata.')
+        : (isVerb
+            ? `Menghubungkan huruf akar ${rootSpaced} untuk membentuk kata kerja dasar (fi'il madhi).`
+            : (rootSpaced
+                ? `Bentuk kata asal (nomina dasar/masdar) dari akar ${rootSpaced}.`
+                : 'Bentuk kata benda mandiri (isim) dalam struktur tata bahasa Al-Qur\'an.')),
+      posType: basePosType
     },
     verseForm: {
       arabic: cleanWord,

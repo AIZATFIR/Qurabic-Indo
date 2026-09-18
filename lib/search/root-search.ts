@@ -37,6 +37,10 @@ export function isQuranicParticle(text: string): boolean {
   const clean = stripArabicHarakat(text);
   if (QURANIC_PARTICLES.has(clean)) return true;
   if (PREFIXED_QURANIC_PARTICLES.has(clean)) return true;
+  // Compound prepositions + attached pronouns (e.g. عليهم, فيهم, اليهم, بهم, لهم, منهم, etc.)
+  if (/^(علي|الي|في|من|عن|مع|ل|ب|ك)(هم|كم|نا|ه|ها|هما|هن|كن|ي)$/.test(clean)) {
+    return true;
+  }
   return false;
 }
 
@@ -258,9 +262,10 @@ export function inferGrammarRole(wordArabic: string, meaningIndo?: string): {
 
   // 1. Pure Quranic Particles (Harf) - Top priority to prevent particles like كلا / لما from being misidentified
   if (isQuranicParticle(wordArabic)) {
+    const isCompoundPreposition = /^(علي|الي|في|من|عن|مع|ل|ب|ك)(هم|كم|نا|ه|ها|هما|هن|كن|ي)$/.test(clean);
     return {
       posCategory: 'Harf',
-      posDetail: 'Harf (Kata Tugas)',
+      posDetail: isCompoundPreposition ? 'Harf Jarr + Dhamir Muttashil (Kata Depan & Kata Ganti)' : 'Harf (Kata Tugas)',
       wazanOrPattern: 'Mabni (Tetap)'
     };
   }

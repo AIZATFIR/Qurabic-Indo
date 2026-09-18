@@ -440,6 +440,22 @@ export const QURANIC_PARTICLES_DICTIONARY: Record<string, QuranicParticleInfo> =
   },
 
   // Partikel Syarat & Pengecualian
+  'ان_nafi': {
+    arabic: 'إِنْ',
+    cleanArabic: 'ان',
+    transliteration: 'in',
+    particleCategory: 'Harf Nafi',
+    grammaticalRole: "Harf Nafi Mabni 'alas-Sukun",
+    primaryMeaning: 'Tidak / Tiada / Bukan (Penyangkal / Negasi)',
+    meanings: [
+      'An-Nāfiyah: Meniadakan keterjadian peristiwa atau pernyataan dalam kalimat (tidak / tiada)',
+      'Sering dipadukan dengan illā atau lammā untuk menghasilkan pembatasan dan penegasan mutlak (hashr): "tidaklah ... melainkan ..."'
+    ],
+    syntaxExplanation: "Harf Nafi yang berstatus Mabni 'alas-sukun. Masuk ke jumlah ismiyyah maupun fi'liyyah tanpa mengubah i'rab kata setelahnya.",
+    quranicNuances: [
+      'Menegaskan kepastian pengawasan Allah atas setiap jiwa: "In kullu nafsin lammā \'alaihā hāfizh" (QS. At-Tariq: 4)'
+    ]
+  },
   'ان_syarat': {
     arabic: 'إِنْ',
     cleanArabic: 'ان',
@@ -642,9 +658,26 @@ export const QURANIC_PARTICLES_DICTIONARY: Record<string, QuranicParticleInfo> =
 /**
  * Resolves any Quranic word token to check if it matches a known particle / kata tugas.
  */
-export function getQuranicParticleInfo(token: string): QuranicParticleInfo | null {
+export function getQuranicParticleInfo(token: string, tag?: string): QuranicParticleInfo | null {
   if (!token) return null;
   const clean = stripArabicHarakat(token).trim();
+
+  // Differentiate between in (Nafi vs Syarat) and inna (Taukid)
+  if (clean === 'ان') {
+    if (tag === 'NEG') {
+      return QURANIC_PARTICLES_DICTIONARY['ان_nafi'];
+    }
+    if (tag === 'COND' || tag === 'SUB') {
+      return QURANIC_PARTICLES_DICTIONARY['ان_syarat'];
+    }
+    if (tag === 'ACC' || token.includes('\u0651')) {
+      return QURANIC_PARTICLES_DICTIONARY['ان'];
+    }
+    // Check diacritics: if starts with kasrah or hamza below without shaddah, it is in (Nafi)
+    if (token.includes('إِ') || (token.startsWith('إ') && !token.includes('\u0651'))) {
+      return QURANIC_PARTICLES_DICTIONARY['ان_nafi'];
+    }
+  }
 
   if (QURANIC_PARTICLES_DICTIONARY[clean]) {
     return QURANIC_PARTICLES_DICTIONARY[clean];

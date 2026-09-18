@@ -723,6 +723,53 @@ export const ROOT_DICTIONARY: Record<string, RootTranslationProfile> = {
       'تُرْزَقَانِهِ': 'Diberikan rezeki kepadamu berdua',
     },
   },
+
+  // 32. Root $-y-A (ش ي ا) — 519 occurrences
+  '$-y-A': {
+    rootArabic: 'ش ي ا',
+    rootLatin: '$yA',
+    titleIndo: 'Akar ش ي ا (Kehendak Mutlak & Segala Sesuatu)',
+    coreMeaning: 'Kehendak mutlak ilahi (masyi\'ah), ketetapan takdir, dan pewujudan segala entitas ciptaan (syai\').',
+    derivatives: {
+      'شَآءَ': 'Berkehendak / Menghendaki',
+      'شَاْءَ': 'Berkehendak / Menghendaki',
+      'شَاءَ': 'Berkehendak / Menghendaki',
+      'يَشَآءُ': 'Dia berkehendak',
+      'يَشَاءُ': 'Dia berkehendak',
+      'نَشَآءُ': 'Kami berkehendak',
+      'نَشَاءُ': 'Kami berkehendak',
+      'تَشَآءُ': 'Kamu berkehendak',
+      'تَشَاءُ': 'Kamu berkehendak',
+      'شِئْتَ': 'Engkau kehendaki',
+      'شِئْنَا': 'Kami kehendaki',
+      'شِئْتُمْ': 'Kamu kehendaki',
+      'شَىْء': 'Sesuatu / Suatu hal',
+      'شَيْء': 'Sesuatu / Segala sesuatu',
+      'شَيْءٍۢ': 'Sesuatu / Segala hal',
+      'شَيْـًٔا': 'Sesuatu apa pun',
+      'أَشْيَآءَ': 'Sesuatu-sesuatu / Hal-hal (jamak)',
+    },
+  },
+
+  // 33. Root E-l-y (ع ل ي) — 215 occurrences
+  'E-l-y': {
+    rootArabic: 'ع ل ي',
+    rootLatin: 'Ely',
+    titleIndo: 'Akar ع ل ي (Ketinggian Martabat & Keluhuran)',
+    coreMeaning: 'Ketinggian derajat, keluhuran martabat ilahi, dan posisi unggul di atas segalanya.',
+    derivatives: {
+      'عَلَا': 'Tinggi / Menjulang / Menyombongkan diri',
+      'يَعْلُو': 'Tinggi / Unggul',
+      'عَلِىّ': 'Maha Tinggi / Luhur',
+      'ٱلْعَلِىُّ': 'Yang Maha Luhur / Maha Tinggi',
+      'ٱلْأَعْلَىٰ': 'Yang Paling Tinggi / Maha Luhur',
+      'عَالِيَة': 'Tinggi (derajat surga)',
+      'عِلِّيِّينَ': 'Tempat tertinggi penuh kemuliaan',
+      'عُلُوّ': 'Ketinggian / Keangkuhan',
+      'عَلَىٰ': 'Atas / Di atas / Terhadap',
+      'عَلَيْ': 'Atas / Di atas / Terhadap',
+    },
+  },
 };
 
 /**

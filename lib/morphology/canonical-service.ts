@@ -312,7 +312,22 @@ export function getCanonicalWordDetail(
   }
 
   const particleTags = ['P', 'CONJ', 'SUB', 'NEG', 'T', 'REM', 'AVR', 'EXP', 'ANS', 'INC', 'AMD', 'INTG', 'EXL', 'VOC', 'SUP', 'CERT', 'RET', 'PRP', 'SUR', 'ACC', 'RES', 'EQ', 'INT', 'CAUS'];
-  const isParticle = isParticleInput || (!matchedRoot && particleTags.includes(tag));
+  const isParticle = isParticleInput || isQuranicParticle(cleanArabic) || isQuranicParticle(displayArabic) || particleTags.includes(tag);
+
+  let particleGrammarRole = 'Harf / Kata Tugas dalam Kaidah Nahwu';
+  if (tag === 'P' || tag === 'PRP' || rawFeatures.includes('POS:P|') || rawFeatures.includes('POS:P+')) {
+    particleGrammarRole = 'Harf Jarr (Kata Depan / Preposisi)';
+  } else if (tag === 'NEG' || rawFeatures.includes('POS:NEG')) {
+    particleGrammarRole = 'Harf Nafi (Kata Penyangkal / Negasi)';
+  } else if (tag === 'COND' || tag === 'SUB' || rawFeatures.includes('POS:SUB') || rawFeatures.includes('POS:COND')) {
+    particleGrammarRole = 'Harf Syarat (Kata Hubung Bersyarat)';
+  } else if (tag === 'ACC' || rawFeatures.includes('POS:ACC')) {
+    particleGrammarRole = 'Harf Taukid (Kata Penegas)';
+  } else if (tag === 'CONJ' || rawFeatures.includes('POS:CONJ')) {
+    particleGrammarRole = 'Harf Athaf (Kata Sambung / Konjungsi)';
+  } else if (tag === 'RES' || rawFeatures.includes('POS:RES')) {
+    particleGrammarRole = 'Harf Istitsna (Kata Pengecualian)';
+  }
 
   // 4. Morphological Analysis
   const morphInfo = isParticle
@@ -320,7 +335,7 @@ export function getCanonicalWordDetail(
         pos: 'Harf' as const,
         posLabelIndo: 'Harf (Kata Tugas)',
         wazanOrForm: 'Mabni (Tetap)',
-        grammaticalRole: 'Harf / Kata Tugas dalam Kaidah Nahwu',
+        grammaticalRole: particleGrammarRole,
         isParticle: true
       }
     : (stemRecord ? mapQACFeaturesToIndo(tag, rawFeatures) : (qacLookup ? {
@@ -350,7 +365,7 @@ export function getCanonicalWordDetail(
   const normCleanArabic = cleanArabic.replace(/^[وفلبك]/, '');
   const curatedDict = CURATED_WORD_DICTIONARY[cleanArabic] || CURATED_WORD_DICTIONARY[normCleanArabic] || CURATED_WORD_DICTIONARY[displayArabic];
   const detailedExplanation = getWordDetailedExplanation(displayArabic);
-  const particleInfo = isParticle ? (getQuranicParticleInfo(cleanArabic) || getQuranicParticleInfo(displayArabic)) : null;
+  const particleInfo = isParticle ? (getQuranicParticleInfo(cleanArabic, tag) || getQuranicParticleInfo(displayArabic, tag)) : null;
   const semanticProfile = matchedRoot ? getRootSemanticProfile(matchedRoot.id) : null;
 
   let primaryMeaning = (context?.meaningIndo && context.meaningIndo.trim()) ? context.meaningIndo.trim() : curatedDict?.primaryMeaning;
@@ -368,7 +383,7 @@ export function getCanonicalWordDetail(
     } else if (matchedRoot?.meaningsIndonesian && matchedRoot.meaningsIndonesian.length > 0 && !matchedRoot.meaningsIndonesian[0].startsWith('Gagasan pokok') && !matchedRoot.meaningsIndonesian[0].startsWith('Ragam makna')) {
       primaryMeaning = matchedRoot.meaningsIndonesian[0];
     } else if (isParticle) {
-      primaryMeaning = 'Partikel / Kata Tugas (Harf)';
+      primaryMeaning = tag === 'NEG' ? 'Tidak / Tiada / Bukan (Penyangkal / Negasi)' : 'Partikel / Kata Tugas (Harf)';
     }
   }
 
@@ -379,14 +394,16 @@ export function getCanonicalWordDetail(
   let meanings = curatedDict?.meanings ||
     (particleInfo
       ? particleInfo.meanings
-      : (isParticle
-          ? [
-              'Partikel / kata tugas (Harf) yang menghubungkan makna antar-kata dalam ayat',
-              'Memiliki hukum i\'rab Mabni (bentuk harakat akhir tetap)'
-            ]
-          : (detailedExplanation.meanings.length > 1
-              ? detailedExplanation.meanings
-              : (semanticProfile?.meaningsIndonesian || (primaryMeaning ? [primaryMeaning] : [])))));
+      : (detailedExplanation.meanings.length > 0
+          ? detailedExplanation.meanings
+          : (semanticProfile?.meaningsIndonesian && semanticProfile.meaningsIndonesian.length > 0
+              ? semanticProfile.meaningsIndonesian
+              : (matchedRoot?.meaningsIndonesian || []))));
+
+  // Fallback meanings array ensure non-empty
+  if (!meanings || meanings.length === 0) {
+    meanings = [primaryMeaning];
+  }
 
   // Occurrences
   const occurrences = matchedRoot
@@ -421,7 +438,10 @@ export function getCanonicalWordDetail(
   const lemmaArabic = cleanLemmaBw ? buckwalterToArabic(cleanLemmaBw) : undefined;
 
   // Step 1: Direct Lemma / Preposition / Headword match in Lane
-  const laneLemma = getLaneLemmaRecord(cleanLemmaBw, lemmaArabic || cleanInput || cleanArabic);
+  const laneLemma = getLaneLemmaRecord(cleanLemmaBw, lemmaArabic || cleanInput || cleanArabic, {
+    isParticle,
+    pos: morphInfo.pos
+  });
 
   if (laneLemma && laneLemma.senses && laneLemma.senses.length > 0) {
     lexiconResult = {
@@ -525,12 +545,12 @@ export function getCanonicalWordDetail(
     } else {
       lexiconResult = {
         hasLexicalData: false,
-        source: "Lane's Arabic-English Lexicon",
-        rootArabic: matchedRoot?.rootArabic || (rootBw ? buckwalterToArabic(rootBw).split('').join(' ') : undefined),
-        rootBw,
+        source: isParticle ? "The Quranic Arabic Corpus v0.4" : "Lane's Arabic-English Lexicon",
+        rootArabic: isParticle ? undefined : (matchedRoot?.rootArabic || (rootBw ? buckwalterToArabic(rootBw).split('').join(' ') : undefined)),
+        rootBw: isParticle ? undefined : rootBw,
         senses: [],
-        sourceCitation: "Lane's Arabic-English Lexicon (Perseus Digital Library)",
-        message: 'Makna leksikal belum tersedia.'
+        sourceCitation: isParticle ? "The Quranic Arabic Corpus v0.4 (University of Leeds)" : "Lane's Arabic-English Lexicon (Perseus Digital Library)",
+        message: isParticle ? 'Partikel / Harf (Bentuk tetap/mabni tanpa entri leksikon verbal)' : 'Makna leksikal belum tersedia.'
       };
     }
   } else {
@@ -558,12 +578,12 @@ export function getCanonicalWordDetail(
       root: isParticle ? undefined : rootBw,
       rootArabic: isParticle ? undefined : (matchedRoot?.rootArabic || (rootBw ? buckwalterToArabic(rootBw).split('').join(' ') : undefined)),
       rootSlug: isParticle ? undefined : matchedRoot?.id,
-      coreMeaning: curatedDict?.rootExplanation || semanticProfile?.coreMeaning || matchedRoot?.coreMeaning
+      coreMeaning: isParticle ? undefined : (curatedDict?.rootExplanation || semanticProfile?.coreMeaning || matchedRoot?.coreMeaning)
     },
     morphology: {
       ...morphInfo,
-      wazanOrForm: curatedDict?.wazanOrForm || morphInfo.wazanOrForm,
-      grammaticalRole: curatedDict?.grammaticalRole || morphInfo.grammaticalRole,
+      wazanOrForm: isParticle ? 'Mabni (Tetap)' : (curatedDict?.wazanOrForm || morphInfo.wazanOrForm),
+      grammaticalRole: isParticle ? (particleInfo?.grammaticalRole || morphInfo.grammaticalRole) : (curatedDict?.grammaticalRole || morphInfo.grammaticalRole),
       rawTag: stemRecord?.rawTag,
       rawFeatures: stemRecord?.rawFeatures,
       isParticle
