@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, BookOpen, ArrowRight, Check, Hash } from 'lucide-react';
 import { SURAH_LIST, searchSurahs, SurahMeta } from '@/lib/data/surah-list';
+import { useModalBackHandler } from '@/lib/hooks/useModalBackHandler';
 
 interface SurahSearchModalProps {
   isOpen: boolean;
@@ -22,6 +23,8 @@ export default function SurahSearchModal({
   const [results, setResults] = useState<SurahMeta[]>(SURAH_LIST);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const { handleClose } = useModalBackHandler(isOpen, onClose, { modalName: 'surah_search' });
+
   useEffect(() => {
     if (isOpen) {
       setQuery('');
@@ -34,7 +37,7 @@ export default function SurahSearchModal({
 
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
-          onClose();
+          handleClose();
         }
       };
 
@@ -45,7 +48,7 @@ export default function SurahSearchModal({
         window.removeEventListener('keydown', handleKeyDown);
       };
     }
-  }, [isOpen, onClose]);
+  }, [isOpen, handleClose]);
 
   useEffect(() => {
     setResults(searchSurahs(query));
@@ -58,12 +61,12 @@ export default function SurahSearchModal({
   const handleSelect = (surahNumber: number) => {
     const ayahNum = parseInt(targetAyahInput, 10);
     onSelectSurah(surahNumber, !isNaN(ayahNum) && ayahNum > 0 ? ayahNum : undefined);
-    onClose();
+    handleClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-12 sm:pt-20 p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150 overscroll-contain">
-      <div className="fixed inset-0" onClick={onClose} />
+      <div className="fixed inset-0" onClick={handleClose} />
 
       <div
         data-lenis-prevent="true"
@@ -81,7 +84,7 @@ export default function SurahSearchModal({
               </span>
             </div>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="p-1 rounded-full text-ink-mute hover:text-ink-primary hover:bg-canvas-soft transition-colors"
             >
               <X className="w-4 h-4" />

@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import { X, ExternalLink, BookOpen, User, Compass } from 'lucide-react';
 import { CuratedVideo } from '@/lib/data/curated-videos';
 import Link from 'next/link';
+import { useModalBackHandler } from '@/lib/hooks/useModalBackHandler';
 
 interface VideoTheaterModalProps {
   video: CuratedVideo | null;
@@ -11,6 +12,9 @@ interface VideoTheaterModalProps {
 }
 
 export default function VideoTheaterModal({ video, onClose }: VideoTheaterModalProps) {
+  const isOpen = Boolean(video);
+  const { handleClose } = useModalBackHandler(isOpen, onClose, { modalName: 'video_theater' });
+
   useEffect(() => {
     if (!video) return;
 
@@ -19,7 +23,7 @@ export default function VideoTheaterModal({ video, onClose }: VideoTheaterModalP
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose();
+        handleClose();
       }
     };
 
@@ -29,14 +33,14 @@ export default function VideoTheaterModal({ video, onClose }: VideoTheaterModalP
       document.body.style.overflow = originalOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [video, onClose]);
+  }, [video, handleClose]);
 
   if (!video) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-200 overscroll-contain font-sans">
       {/* Backdrop Dismiss */}
-      <div className="fixed inset-0" onClick={onClose} />
+      <div className="fixed inset-0" onClick={handleClose} />
 
       {/* Theater Container */}
       <div className="relative w-full max-w-4xl bg-canvas-surface border border-hairline rounded-3xl shadow-2xl overflow-hidden z-10 flex flex-col max-h-[92vh] animate-in zoom-in-95 duration-200">
@@ -63,7 +67,7 @@ export default function VideoTheaterModal({ video, onClose }: VideoTheaterModalP
               <ExternalLink className="w-4 h-4" />
             </a>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="p-1.5 rounded-full text-ink-mute hover:text-ink-primary hover:bg-canvas-soft transition-colors"
               title="Tutup (ESC)"
             >

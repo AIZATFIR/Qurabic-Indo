@@ -7,6 +7,7 @@ import { getLinguisticExplanation } from '@/lib/morphology/linguistic-explanatio
 import { getGrammarDerivation } from '@/lib/morphology/grammar-derivation-service';
 import WordStudy from './WordStudy';
 import { WordStudyViewModel } from '@/lib/lexicon/types';
+import { useModalBackHandler } from '@/lib/hooks/useModalBackHandler';
 
 interface WordEtymologyModalProps {
   isOpen: boolean;
@@ -81,6 +82,9 @@ export default function WordEtymologyModal({
     };
   }, [isOpen, wordArabic, surahNumber, ayahNumber, wordIndex, meaningIndo]);
 
+  // Mobile Back Button / Browser History Interception
+  const { handleClose } = useModalBackHandler(isOpen, onClose, { modalName: 'word_study' });
+
   // Body scroll lock & ESC keyboard dismissal
   useEffect(() => {
     if (!isOpen) return;
@@ -90,7 +94,7 @@ export default function WordEtymologyModal({
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose();
+        handleClose();
       }
     };
 
@@ -100,7 +104,7 @@ export default function WordEtymologyModal({
       document.body.style.overflow = originalOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, handleClose]);
 
   if (!isOpen) return null;
 
@@ -198,7 +202,7 @@ export default function WordEtymologyModal({
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-ink-primary/60 backdrop-blur-md animate-fade-in font-sans"
       dir="ltr"
-      onClick={onClose}
+      onClick={handleClose}
     >
       <div
         role="dialog"
@@ -223,7 +227,7 @@ export default function WordEtymologyModal({
             ) : null}
           </div>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="p-1.5 sm:px-3 sm:py-1.5 rounded-full hover:bg-canvas-soft text-ink-mute hover:text-ink-primary transition-all border border-hairline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary flex items-center space-x-1"
             title="Tutup jendela (ESC)"
             aria-label="Tutup Jendela Eksplorasi Kata"
@@ -234,7 +238,7 @@ export default function WordEtymologyModal({
         </div>
 
         {/* Main Word Study Card */}
-        <WordStudy study={study} onClose={onClose} isModalMode={true} />
+        <WordStudy study={study} onClose={handleClose} isModalMode={true} />
       </div>
     </div>
   );

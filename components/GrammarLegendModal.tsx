@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X, BookOpen, ShieldCheck } from 'lucide-react';
+import { useModalBackHandler } from '@/lib/hooks/useModalBackHandler';
 
 interface GrammarLegendModalProps {
   isOpen: boolean;
@@ -45,11 +46,39 @@ const GRAMMAR_RULES = [
 ];
 
 export default function GrammarLegendModal({ isOpen, onClose, selectedTagCode }: GrammarLegendModalProps) {
+  const { handleClose } = useModalBackHandler(isOpen, onClose, { modalName: 'grammar_legend' });
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, handleClose]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-primary/40 backdrop-blur-sm animate-fade-in">
-      <div className="bg-canvas-surface rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-hairline relative space-y-5">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-primary/40 backdrop-blur-sm animate-fade-in"
+      onClick={handleClose}
+    >
+      <div
+        className="bg-canvas-surface rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-hairline relative space-y-5"
+        onClick={(e) => e.stopPropagation()}
+      >
         
         {/* Header */}
         <div className="flex items-center justify-between border-b border-hairline pb-4">
@@ -68,7 +97,7 @@ export default function GrammarLegendModal({ isOpen, onClose, selectedTagCode }:
           </div>
 
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="p-2 rounded-full text-ink-mute hover:text-ink-primary hover:bg-canvas-soft transition-colors"
           >
             <X className="w-4 h-4" />
@@ -120,13 +149,13 @@ export default function GrammarLegendModal({ isOpen, onClose, selectedTagCode }:
           <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
             <a
               href="/morfologi"
-              onClick={onClose}
+              onClick={handleClose}
               className="px-3.5 py-1.5 bg-canvas-soft hover:bg-primary-fixed border border-hairline text-ink-primary hover:text-primary text-xs font-semibold rounded-full transition-all font-sans"
             >
               Lihat Katalog Morfologi
             </a>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="px-4 py-1.5 bg-primary hover:bg-primary-deep text-white text-xs font-semibold rounded-full shadow-subtle transition-all font-sans"
             >
               Tutup

@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X, ShieldCheck, ExternalLink, BookOpen, Layers, Award } from 'lucide-react';
 import { SourceRegistry } from '@/lib/lexicon/types';
+import { useModalBackHandler } from '@/lib/hooks/useModalBackHandler';
 
 interface SourceDrawerProps {
   isOpen: boolean;
@@ -17,13 +18,35 @@ export default function SourceDrawer({
   sources,
   initialSourceId
 }: SourceDrawerProps) {
+  const { handleClose } = useModalBackHandler(isOpen, onClose, { modalName: 'source_drawer' });
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, handleClose]);
+
   if (!isOpen) return null;
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-ink-primary/50 backdrop-blur-sm animate-fade-in font-sans"
       dir="ltr"
-      onClick={onClose}
+      onClick={handleClose}
     >
       <div
         data-lenis-prevent="true"
@@ -40,7 +63,7 @@ export default function SourceDrawer({
             </h3>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="p-1.5 rounded-full hover:bg-canvas-soft text-ink-mute hover:text-ink-primary transition-colors border border-hairline"
             title="Tutup"
           >
