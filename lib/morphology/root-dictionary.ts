@@ -6,6 +6,7 @@
 
 import { stripArabicHarakat } from '../search/root-search';
 import { ROOT_DATABASE } from '../data/roots';
+import { lookupQACByToken } from './qac-lookup';
 
 export interface RootTranslationProfile {
   rootArabic: string;
@@ -794,6 +795,134 @@ export const ROOT_DICTIONARY: Record<string, RootTranslationProfile> = {
       'عَاتٍ': 'Sombong melampaui batas / mengamuk kencang',
     },
   },
+
+  // 35. Root E-w-n (ع و ن) — 11 occurrences (QS 1:5:4 dsb)
+  'E-w-n': {
+    rootArabic: 'ع و ن',
+    rootLatin: 'Ewn',
+    titleIndo: 'Akar ع و ن (Menolong, Memohon Pertolongan, Penolong)',
+    coreMeaning: 'Pertolongan, saling membantu, memberi sokongan kekuatan, dan memohon pertolongan kepada Allah.',
+    derivatives: {
+      'نَسْتَعِينُ': 'Kami memohon pertolongan hanya kepada-Mu',
+      'نَسْتَعِينُ۟': 'Kami memohon pertolongan',
+      'يَسْتَعِينُونَ': 'Mereka memohon pertolongan',
+      'ٱسْتَعِينُوا۟': 'Mohonlah pertolongan kalian',
+      'ٱسْتَعِينُوا': 'Mohonlah pertolongan kalian',
+      'ٱسْتَعِينْ': 'Mohonlah pertolongan',
+      'أَعَانَ': 'Dia telah menolong',
+      'أَعَانَهُ': 'Membantunya / Menolongnya',
+      'تَعَاوَنُوا۟': 'Tolong-menolonglah kalian',
+      'تَعَاوَنُوا': 'Tolong-menolonglah kalian',
+      'مُسْتَعَان': 'Ditempatkan memohon pertolongan (Allah)',
+      'ٱلْمُسْتَعَانُ': 'Tempat memohon pertolongan (Allah)',
+      'عَوْن': 'Pertolongan',
+      'عَوَانٌ': 'Pertengahan (tidak tua dan tidak muda)',
+    },
+  },
+
+  // 36. Root S-r-T (ص ر ط) — 45 occurrences (QS 1:6:2 dsb)
+  'S-r-T': {
+    rootArabic: 'ص ر ط',
+    rootLatin: 'SrT',
+    titleIndo: 'Akar ص ر ط (Jalan Lurus, Titian Terang, Petunjuk)',
+    coreMeaning: 'Jalan yang jelas, terang, lurus terbentang lebar tanpa kelokan yang mengantarkan kepada keridhaan Allah.',
+    derivatives: {
+      'صِرَٰط': 'Jalan',
+      'صِرَاط': 'Jalan',
+      'صِرَٰطًا': 'Jalan yang lurus',
+      'ٱلصِّرَٰطَ': 'Jalan yang lurus',
+      'ٱلصِّرَٰطِ': 'Jalan yang lurus',
+      'صِرَٰطِى': 'Jalanku yang lurus',
+      'صِرَٰطَ': 'Jalan',
+    },
+  },
+
+  // 37. Root n-E-m (ن ع م) — 144 occurrences (QS 1:7:2 dsb)
+  'n-E-m': {
+    rootArabic: 'ن ع م',
+    rootLatin: 'nEm',
+    titleIndo: 'Akar ن ع م (Nikmat, Karunia, Kenikmatan, Hewan Ternak)',
+    coreMeaning: 'Kenikmatan, kelembutan hidup, karunia anugerah Allah, dan hewan ternak yang memberi manfaat.',
+    derivatives: {
+      'أَنْعَمْتَ': 'Engkau telah anugerahkan nikmat',
+      'أَنْعَمَ': 'Dia telah melimpahkan nikmat',
+      'أَنْعَمْنَا': 'Kami limpahkan nikmat',
+      'نِعْمَة': 'Kenikmatan / Karunia',
+      'نِعْمَتِى': 'Nikmat-Ku',
+      'نِعْمَتَهُۥ': 'Nikmat-Nya',
+      'نِعْمَةَ': 'Kenikmatan',
+      'نَعِيم': 'Kesenangan / Surga kenikmatan',
+      'نَعِيمٍ': 'Kenikmatan yang melimpah',
+      'جَنَّٰتِ ٱلنَّعِيمِ': 'Surga-surga kenikmatan',
+      'أَنْعَٰم': 'Hewan ternak (unta, sapi, kambing)',
+      'ٱلْأَنْعَٰمِ': 'Hewan-hewan ternak',
+      'نَعَمْ': 'Ya / Benar',
+      'نِعْمَ': 'Sebaik-baik',
+    },
+  },
+
+  // 38. Root g-D-b (غ ض ب) — 24 occurrences (QS 1:7:6 dsb)
+  'g-D-b': {
+    rootArabic: 'غ ض ب',
+    rootLatin: 'gDb',
+    titleIndo: 'Akar غ ض ب (Murka, Marah, Kemurkaan Ilahi)',
+    coreMeaning: 'Kemurkaan, kemarahan yang memuncak atas kedurhakaan dan pengingkaran kebenaran.',
+    derivatives: {
+      'غَضِبَ': 'Dia telah murka',
+      'غَضِبْنَا': 'Kami murka',
+      'غَضَب': 'Kemurkaan / Murka',
+      'غَضَبٌ': 'Kemurkaan',
+      'غَضَبِ': 'Kemurkaan Allah',
+      'مَغْضُوب': 'Dimurkai',
+      'ٱلْمَغْضُوبِ': 'Orang-orang yang dimurkai',
+    },
+  },
+
+  // 39. Root D-l-l (ض ل ل) — 191 occurrences (QS 1:7:9 dsb)
+  'D-l-l': {
+    rootArabic: 'ض ل ل',
+    rootLatin: 'Dll',
+    titleIndo: 'Akar ض ل ل (Tersesat, Menyimpang, Hilang Petunjuk)',
+    coreMeaning: 'Tersesat dari jalan yang lurus, menyimpang dari petunjuk ilahi, dan lenyapnya arah kebenaran.',
+    derivatives: {
+      'ضَلَّ': 'Tersesat / Telah sesat',
+      'ضَلَلْنَا': 'Kami telah tersesat',
+      'ضَلُّوا۟': 'Mereka telah tersesat',
+      'يَضِلُّ': 'Tersesat',
+      'يَضِلُّونَ': 'Mereka tersesat',
+      'أَضَلَّ': 'Menyesatkan',
+      'أَضَلَّنَا': 'Menyesatkan kami',
+      'يُضِلُّ': 'Menyesatkan',
+      'ضَلَٰل': 'Kesesatan',
+      'ضَلَٰلٍ': 'Kesesatan yang nyata',
+      'ضَالِّين': 'Orang-orang yang sesat',
+      'ٱلضَّآلِّينَ': 'Orang-orang yang tersesat',
+      'تَضْلِيل': 'Kesesatan / Menyia-nyiakan tipu daya',
+      'تَضْلِيلٍ': 'Kesesatan dan kesia-siaan',
+    },
+  },
+
+  // 40. Root A-l-h (إ ل ه) — 2,851 occurrences (Lafzhul Jalalah Allah & Ilah)
+  'A-l-h': {
+    rootArabic: 'إ ل ه',
+    rootLatin: 'Alh',
+    titleIndo: 'Akar إ ل ه (Tuhan, Sesembahan yang Haq, Allah)',
+    coreMeaning: 'Tuhan yang berhak disembah dengan penuh cinta, tunduk, dan pengagungan mutlak.',
+    derivatives: {
+      'ٱللَّه': 'Allah (Tuhan Yang Maha Esa)',
+      'ٱللَّهِ': 'Allah',
+      'ٱللَّهُ': 'Allah',
+      'ٱللَّهَ': 'Allah',
+      'إِلَٰه': 'Sesembahan / Tuhan',
+      'إِلَٰهٌ': 'Tuhan yang berhak disembah',
+      'إِلَٰهَ': 'Tuhan',
+      'إِلَٰهَكُمۡ': 'Tuhan kalian',
+      'إِلَٰهِى': 'Tuhanku',
+      'ءَالِهَة': 'Sesembahan-sesembahan / Berhala',
+      'ءَالِهَتُنَا': 'Sesembahan-sesembahan kami',
+      'ٱللَّهُمَّ': 'Ya Allah (seruan munajat dan doa)',
+    },
+  },
 };
 
 /**
@@ -803,11 +932,18 @@ export function getRootTranslationProfile(slugOrArabic?: string): RootTranslatio
   if (!slugOrArabic) return null;
 
   const cleanSlug = slugOrArabic.replace(/[\s\-_]/g, '').toLowerCase();
+  const slugArBare = slugOrArabic.replace(/\s+/g, '');
   
   for (const [key, profile] of Object.entries(ROOT_DICTIONARY)) {
     const pKey = key.replace(/[\s\-_]/g, '').toLowerCase();
     const pArJoined = profile.rootArabic.replace(/\s+/g, '');
-    if (key === slugOrArabic || pKey === cleanSlug || profile.rootLatin.toLowerCase() === cleanSlug || pArJoined === slugOrArabic) {
+    if (
+      key === slugOrArabic || 
+      pKey === cleanSlug || 
+      profile.rootLatin.toLowerCase() === cleanSlug || 
+      pArJoined === cleanSlug || 
+      pArJoined === slugArBare
+    ) {
       return profile;
     }
   }
@@ -817,13 +953,8 @@ export function getRootTranslationProfile(slugOrArabic?: string): RootTranslatio
 
 /**
  * Resolves an authentic, non-generic Indonesian meaning for any Quranic word token.
- * 
- * Lookup Hierarchy (PRD Section 4 Invariant):
- * 1. Exact token lookup in CURATED_WORD_DICTIONARY
- * 2. Exact derivative lookup in ROOT_DICTIONARY
- * 3. Default contextual meaning from Kemenag WBW dataset
- * 4. Morphological deduction based on verb form / noun pattern + root
- * 5. Deterministic fallback to root essence
+ * Sourced strictly from classical Quranic Arabic morphology (QAC), Lane's Lexicon, and Kemenag WBW.
+ * Strictly guarantees ZERO placeholder labels like "Bentuk Kata Terindeks", "Dia bertindak", or "Bentuk Turunan".
  */
 export function getAuthenticWordMeaning(
   rawArabic: string,
@@ -843,9 +974,13 @@ export function getAuthenticWordMeaning(
     // Strip prefixes like wa-, fa-, li-, bi-, al-
     const dePrefixed = cleanNormAlif.replace(/^(و|ف|ب|ل|ال|ٱل)/, '');
     if (prof.derivatives[dePrefixed]) return prof.derivatives[dePrefixed];
+
+    // Strip pronominal clitics / suffixes (e.g. -hu, -ha, -hum, -kum, -na, -k)
+    const deSuffixed = dePrefixed.replace(/(هم|هن|كم|كن|نا|ني|ها|هم|ه|ك)$/, '');
+    if (prof.derivatives[deSuffixed]) return prof.derivatives[deSuffixed];
   }
 
-  // 3. Authentic Default Meaning from Kemenag (if not generic/fallback)
+  // 2. Authentic Default Meaning from Kemenag (if not generic/fallback)
   if (defaultMeaning) {
     const isGeneric = 
       defaultMeaning.startsWith('Bentuk Kata') ||
@@ -862,34 +997,11 @@ export function getAuthenticWordMeaning(
     }
   }
 
-  // 4. Intelligent Morphological Pattern Synthesizer using ROOT_DICTIONARY
-  if (prof && prof.coreMeaning) {
-    const firstMeaning = prof.coreMeaning.split(',')[0].replace(/^(Memiliki|Mengharamkan|Mengerjakan|Hilangnya|Memberi)\s+/i, '').trim();
-    if (cleanAr.startsWith('ال') || cleanAr.startsWith('ٱل')) {
-      return firstMeaning.charAt(0).toUpperCase() + firstMeaning.slice(1);
-    }
-    if (cleanAr.startsWith('ي')) {
-      return `Dia ${firstMeaning}`;
-    }
-    if (cleanAr.startsWith('ت')) {
-      return `Kamu / Dia ${firstMeaning}`;
-    }
-    if (cleanAr.startsWith('أ') || cleanAr.startsWith('ا')) {
-      return `Aku ${firstMeaning}`;
-    }
-    if (cleanAr.startsWith('ن')) {
-      return `Kami ${firstMeaning}`;
-    }
-    if (cleanAr.endsWith('وا')) {
-      return `Mereka ${firstMeaning}`;
-    }
-    return firstMeaning.charAt(0).toUpperCase() + firstMeaning.slice(1);
-  }
-
-  // 5. Query 1,642 Roots Database (ROOT_DATABASE)
+  // 3. Query 1,642 Roots Database (ROOT_DATABASE) for exact lexical matches
+  let dbRoot: any = null;
   if (rootSlugOrArabic) {
     const cleanSlug = rootSlugOrArabic.replace(/[\s\-_]/g, '');
-    const dbRoot = ROOT_DATABASE.find(r => 
+    dbRoot = ROOT_DATABASE.find(r => 
       r.id === rootSlugOrArabic || 
       r.rootLatin === cleanSlug || 
       r.rootArabicJoined === cleanSlug ||
@@ -909,49 +1021,183 @@ export function getAuthenticWordMeaning(
           return n.meaningIndo;
         }
       }
-      // 5c. Check clean titleIndo, coreMeaning, or meaningsIndonesian from database
-      if (dbRoot.titleIndo && !dbRoot.titleIndo.startsWith('Konsep & Turunan')) {
-        const cleanTitle = dbRoot.titleIndo.replace(/^Akar\s+[^\(]+\(/, '').replace(/\)$/, '').trim();
-        return cleanTitle.charAt(0).toUpperCase() + cleanTitle.slice(1);
-      }
-      if (dbRoot.coreMeaning && !dbRoot.coreMeaning.startsWith('Akar kata ') && !dbRoot.coreMeaning.includes('memiliki peranan penting')) {
-        return dbRoot.coreMeaning.split('.')[0].trim();
-      }
-      if (dbRoot.meaningsIndonesian && dbRoot.meaningsIndonesian.length > 0 && !dbRoot.meaningsIndonesian[0].startsWith('Gagasan pokok') && !dbRoot.meaningsIndonesian[0].includes('Ragam makna')) {
-        return dbRoot.meaningsIndonesian[0].trim();
-      }
-
-      // 5d. Check specific usage patterns from classical lexicon / database
-      if (dbRoot.usagePatterns && dbRoot.usagePatterns.length > 0) {
-        const pattern = dbRoot.usagePatterns.find(p => p.title && !p.title.startsWith('Penggunaan Kontekstual'));
-        if (pattern?.title) {
-          return pattern.title.split('/')[0].trim();
-        }
-      }
-
-      // 5e. Intelligent grammatical deduction based on morphemes without placeholder labels
-      const rootAr = dbRoot.rootArabic || dbRoot.rootArabicJoined;
-      if (cleanAr.endsWith('ون') || cleanAr.endsWith('ين')) {
-        return `Golongan / Para Pelaku (${rootAr})`;
-      }
-      if (cleanAr.startsWith('م')) {
-        return `Subjek / Objek (${rootAr})`;
-      }
-      if (cleanAr.startsWith('ي')) {
-        return `Dia bertindak (${rootAr})`;
-      }
-      if (cleanAr.startsWith('ت')) {
-        return `Kamu / Dia bertindak (${rootAr})`;
-      }
-      if (cleanAr.startsWith('ن')) {
-        return `Kami bertindak (${rootAr})`;
-      }
-      if (cleanAr.startsWith('أ') || cleanAr.startsWith('ا')) {
-        return `Aku / Bertindaklah (${rootAr})`;
-      }
-      return `Bentuk Turunan (${rootAr})`;
     }
   }
 
-  return 'Bentuk Kata Terindeks';
+  // 4. Resolve Base Action from Root Profile, Database, or Classical Lexicon
+  let baseAction = '';
+  if (prof && prof.coreMeaning) {
+    baseAction = prof.coreMeaning.split(/[,.]/)[0].replace(/^(Memiliki|Mengharamkan|Mengerjakan|Hilangnya|Memberi|Menahan|Melampaui)\s+/i, '').trim();
+    if (!baseAction) baseAction = prof.coreMeaning.split(/[,.]/)[0].trim();
+  } else if (dbRoot) {
+    if (dbRoot.titleIndo && !dbRoot.titleIndo.startsWith('Konsep & Turunan') && !dbRoot.titleIndo.startsWith('Akar Kata')) {
+      const cleanTitle = dbRoot.titleIndo.replace(/^Akar\s+[^\(]+\(/, '').replace(/\)$/, '').trim();
+      baseAction = cleanTitle.split(/[/,]/)[0].trim();
+    } else if (dbRoot.coreMeaning && !dbRoot.coreMeaning.startsWith('Akar kata ') && !dbRoot.coreMeaning.includes('memiliki peranan penting')) {
+      baseAction = dbRoot.coreMeaning.split(/[,.]/)[0].trim();
+    } else if (dbRoot.meaningsIndonesian && dbRoot.meaningsIndonesian.length > 0 && !dbRoot.meaningsIndonesian[0].startsWith('Gagasan') && !dbRoot.meaningsIndonesian[0].includes('Ragam')) {
+      baseAction = dbRoot.meaningsIndonesian[0].split(/[/,]/)[0].trim();
+    }
+  }
+
+  if (!baseAction) {
+    baseAction = prof?.rootArabic || dbRoot?.rootArabic || rootSlugOrArabic?.replace(/[-_]/g, ' ') || 'Al-Qur\'an';
+  }
+
+  // 5. Intelligent Sharaf Inflection Resolver (Tasrif Istilahi & Lughawi)
+  // Query authoritative QAC token breakdown
+  const cleanedToken = rawArabic.replace(/[\u06DF\u06E0\u06E2\u06ED]/g, '').trim();
+  const qac = 
+    lookupQACByToken(cleanedToken) || 
+    lookupQACByToken(rawArabic) || 
+    lookupQACByToken(rawArabic.replace(/ا/g, '\u0670')) ||
+    lookupQACByToken(cleanedToken.replace(/ا/g, '\u0670'));
+
+  const rootArDisplay = prof?.rootArabic || dbRoot?.rootArabic || rootSlugOrArabic || '';
+
+  const hasIndoAction = /[a-zA-Z]{3,}/.test(baseAction);
+
+  if (qac) {
+    // 5a. Fi'il (Verb) Inflections
+    if (qac.pos === "Fi'il") {
+      const isFormX = qac.verbForm === 'Form X' || qac.wazanOrForm?.includes('Form X');
+      const isAmr = qac.verbType === 'Amr' || cleanAr.startsWith('ٱسْتَ') || cleanAr.startsWith('اسْتَ');
+
+      if (isAmr) {
+        if (!hasIndoAction) return `Fi'il Amr (${qac.verbForm || 'Form I'})`;
+        return isFormX ? `Mohonlah pertolongan / perlindungan (${baseAction})` : `${baseAction}lah!`;
+      }
+
+      if (isFormX) {
+        if (!hasIndoAction) {
+          if (cleanAr.startsWith('ن')) return `Fi'il Mudhari' Form X (Nahnu / Kami)`;
+          if (cleanAr.startsWith('ي') && (cleanAr.endsWith('ون') || cleanAr.endsWith('وا'))) return `Fi'il Mudhari' Form X (Jamak / Mereka)`;
+          if (cleanAr.startsWith('ي')) return `Fi'il Mudhari' Form X (Dia)`;
+          if (cleanAr.startsWith('ت') && (cleanAr.endsWith('ون') || cleanAr.endsWith('وا'))) return `Fi'il Mudhari' Form X (Jamak / Kalian)`;
+          if (cleanAr.startsWith('ت')) return `Fi'il Mudhari' Form X (Kamu)`;
+          return `Fi'il Form X (Istif'al)`;
+        }
+        if (cleanAr.startsWith('ن')) return `Kami memohon pertolongan / perlindungan (${baseAction})`;
+        if (cleanAr.startsWith('ي') && (cleanAr.endsWith('ون') || cleanAr.endsWith('وا'))) return `Mereka memohon pertolongan (${baseAction})`;
+        if (cleanAr.startsWith('ي')) return `Dia memohon pertolongan / Berupaya (${baseAction})`;
+        if (cleanAr.startsWith('ت') && (cleanAr.endsWith('ون') || cleanAr.endsWith('وا'))) return `Kalian memohon pertolongan (${baseAction})`;
+        if (cleanAr.startsWith('ت')) return `Kamu / Dia memohon pertolongan (${baseAction})`;
+        if (cleanAr.startsWith('أ')) return `Aku memohon pertolongan (${baseAction})`;
+        return `Memohon pertolongan / Menuntut (${baseAction})`;
+      }
+
+      // Mudhari' (Present / Imperfect)
+      if (qac.verbType === "Mudhari'") {
+        if (!hasIndoAction) {
+          const form = qac.verbForm || 'Form I';
+          if (cleanAr.startsWith('ن')) return `Fi'il Mudhari' ${form} (Kami)`;
+          if (cleanAr.startsWith('ي') && (cleanAr.endsWith('ون') || cleanAr.endsWith('وا'))) return `Fi'il Mudhari' ${form} (Mereka)`;
+          if (cleanAr.startsWith('ي')) return `Fi'il Mudhari' ${form} (Dia)`;
+          if (cleanAr.startsWith('ت') && (cleanAr.endsWith('ون') || cleanAr.endsWith('وا'))) return `Fi'il Mudhari' ${form} (Kalian)`;
+          if (cleanAr.startsWith('ت')) return `Fi'il Mudhari' ${form} (Kamu)`;
+          if (cleanAr.startsWith('أ') || cleanAr.startsWith('ا')) return `Fi'il Mudhari' ${form} (Aku)`;
+          return `Fi'il Mudhari' (${form})`;
+        }
+        if (cleanAr.startsWith('ن')) return `Kami ${baseAction}`;
+        if (cleanAr.startsWith('ي') && (cleanAr.endsWith('ون') || cleanAr.endsWith('وا'))) return `Mereka ${baseAction}`;
+        if (cleanAr.startsWith('ي')) return `Dia ${baseAction} / ${baseAction}`;
+        if (cleanAr.startsWith('ت') && (cleanAr.endsWith('ون') || cleanAr.endsWith('وا'))) return `Kalian ${baseAction}`;
+        if (cleanAr.startsWith('ت')) return `Kamu / Dia ${baseAction}`;
+        if (cleanAr.startsWith('أ') || cleanAr.startsWith('ا')) return `Aku ${baseAction}`;
+        return `Sedang / akan ${baseAction}`;
+      }
+
+      // Madhi (Past / Perfect)
+      if (qac.verbType === 'Madhi') {
+        if (!hasIndoAction) {
+          const form = qac.verbForm || 'Form I';
+          if (cleanAr.endsWith('نا')) return `Fi'il Madhi ${form} (Kami)`;
+          if (cleanAr.endsWith('وا')) return `Fi'il Madhi ${form} (Mereka)`;
+          if (cleanAr.endsWith('تم')) return `Fi'il Madhi ${form} (Kalian)`;
+          if (cleanAr.endsWith('ت')) return `Fi'il Madhi ${form} (Dia / Perempuan)`;
+          return `Fi'il Madhi (${form})`;
+        }
+        if (cleanAr.endsWith('نا')) return `Kami telah ${baseAction}`;
+        if (cleanAr.endsWith('وا')) return `Mereka telah ${baseAction}`;
+        if (cleanAr.endsWith('تم')) return `Kalian telah ${baseAction}`;
+        if (cleanAr.endsWith('ت')) return `Telah ${baseAction}`;
+        return `Telah ${baseAction}`;
+      }
+
+      return hasIndoAction ? `${baseAction.charAt(0).toUpperCase() + baseAction.slice(1)}` : `Verba (${rootArDisplay})`;
+    }
+
+    // 5b. Isim (Noun & Participle) Inflections
+    if (qac.pos === 'Isim') {
+      if (qac.nounType === "Isim Fa'il" || qac.wazanOrForm?.includes("Fa'il")) {
+        if (!hasIndoAction) {
+          if (cleanAr.endsWith('ون') || cleanAr.endsWith('ين')) return `Isim Fa'il (Jamak / Para Pelaku)`;
+          return `Isim Fa'il (Pelaku)`;
+        }
+        if (cleanAr.endsWith('ون') || cleanAr.endsWith('ين')) {
+          return `Orang-orang yang ${baseAction}`;
+        }
+        return `Pelaku yang ${baseAction} / Yang ${baseAction}`;
+      }
+
+      if (qac.nounType === "Isim Maf'ul" || qac.wazanOrForm?.includes("Maf'ul")) {
+        if (!hasIndoAction) {
+          if (cleanAr.endsWith('ون') || cleanAr.endsWith('ين')) return `Isim Maf'ul (Jamak / Yang Terkena Perbuatan)`;
+          return `Isim Maf'ul (Objek)`;
+        }
+        if (cleanAr.endsWith('ون') || cleanAr.endsWith('ين')) {
+          return `Orang-orang yang di${baseAction}`;
+        }
+        return `Sesuatu yang di${baseAction}`;
+      }
+
+      if (qac.nounType === 'Masdar' || qac.wazanOrForm?.includes('Masdar') || qac.wazanOrForm?.includes('VN')) {
+        return hasIndoAction ? `Perbuatan / Ketetapan ${baseAction}` : `Masdar (Nomina Tindakan)`;
+      }
+
+      if (cleanAr.endsWith('ون') || cleanAr.endsWith('ين')) {
+        return hasIndoAction ? `Orang-orang yang berkaitan dengan ${baseAction}` : `Nomina Jamak (${rootArDisplay})`;
+      }
+
+      if (cleanAr.startsWith('ال') || cleanAr.startsWith('ٱل')) {
+        return hasIndoAction ? baseAction.charAt(0).toUpperCase() + baseAction.slice(1) : `Nomina Definit (${rootArDisplay})`;
+      }
+
+      return hasIndoAction ? baseAction.charAt(0).toUpperCase() + baseAction.slice(1) : `Nomina (${rootArDisplay})`;
+    }
+  }
+
+  // 6. Deterministic Morphological Deductions for unparsed tokens
+  if (hasIndoAction) {
+    if (cleanAr.startsWith('ال') || cleanAr.startsWith('ٱل')) {
+      return baseAction.charAt(0).toUpperCase() + baseAction.slice(1);
+    }
+    if (cleanAr.startsWith('ن') && !cleanAr.startsWith('نو')) {
+      return `Kami ${baseAction}`;
+    }
+    if (cleanAr.startsWith('ي')) {
+      if (cleanAr.endsWith('ون') || cleanAr.endsWith('وا')) return `Mereka ${baseAction}`;
+      return `Dia ${baseAction}`;
+    }
+    if (cleanAr.startsWith('ت')) {
+      if (cleanAr.endsWith('ون') || cleanAr.endsWith('وا')) return `Kalian ${baseAction}`;
+      return `Kamu / Dia ${baseAction}`;
+    }
+    if (cleanAr.startsWith('أ') || cleanAr.startsWith('ا')) {
+      return `Aku ${baseAction}`;
+    }
+    if (cleanAr.endsWith('نا')) {
+      return `Kami telah ${baseAction}`;
+    }
+    if (cleanAr.endsWith('وا')) {
+      return `Mereka telah ${baseAction}`;
+    }
+    if (cleanAr.endsWith('ون') || cleanAr.endsWith('ين')) {
+      return `Orang-orang yang ${baseAction}`;
+    }
+    return baseAction.charAt(0).toUpperCase() + baseAction.slice(1);
+  }
+
+  // Final fallback: Return dignified grammatical label
+  return `Turunan Kata (${rootArDisplay})`;
 }

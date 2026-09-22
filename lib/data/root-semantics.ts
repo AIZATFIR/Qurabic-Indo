@@ -1,5 +1,6 @@
 import { QuranicUsagePattern } from '../types/morphology';
 import { ROOT_DATABASE } from './roots';
+import { getLaneRootRecord } from '../lexicon/lane-loader';
 
 export interface RootSemanticProfile {
   titleIndo: string;
@@ -918,7 +919,7 @@ export function getRootSemanticProfile(rootBw: string, rootArabic?: string): Roo
     }
   }
 
-  // Intelligent, dignified synthesis for uncurated roots using actual Quranic derivatives
+  // 1. Check curated roots database if it has authentic human-curated meaning
   const dbRoot = ROOT_DATABASE.find(r => 
     r.id === cleanBw || 
     r.id === dashedId || 
@@ -937,30 +938,74 @@ export function getRootSemanticProfile(rootBw: string, rootArabic?: string): Roo
         meaningsIndonesian: dbRoot.meaningsIndonesian || []
       };
     }
+  }
 
-    const sampleVerbs = (dbRoot.verbs || []).filter(v => v.arabic && !v.arabic.includes('(')).slice(0, 2).map(v => v.arabic);
-    const sampleNouns = (dbRoot.nouns || []).filter(n => n.arabic && !n.arabic.includes('(')).slice(0, 2).map(n => n.arabic);
+  // 2. Query Lane's Arabic-English Lexicon (Book I, Perseus Digital Library)
+  const laneRoot = getLaneRootRecord(normalizedId) || getLaneRootRecord(cleanBw);
+  const rootArDisplay = rootArabic || laneRoot?.rootArabic || dbRoot?.rootArabic || cleanBw;
 
-    let synthesized = '';
-    if (sampleVerbs.length > 0 && sampleNouns.length > 0) {
-      synthesized = `Akar kata ${dbRoot.rootArabic} melandasi pembentukan ragam kata Al-Qur'an seperti verba ${sampleVerbs.join(', ')} serta nomina ${sampleNouns.join(', ')}, yang masing-masing mengemban nuansa makna leksikal definitif sesuai wazan sharaf dan konteks ayat penuturannya.`;
-    } else if (sampleVerbs.length > 0) {
-      synthesized = `Akar kata ${dbRoot.rootArabic} hadir dalam Al-Qur'an melalui ragam konjugasi kata kerja seperti ${sampleVerbs.join(', ')} yang menggambarkan dinamika tindakan, keadilan, dan ketetapan ilahi di dalam ayat.`;
-    } else if (sampleNouns.length > 0) {
-      synthesized = `Akar kata ${dbRoot.rootArabic} termanifestasi dalam Al-Qur'an melalui nomina substantif seperti ${sampleNouns.join(', ')} yang menjadi pilar leksikal untuk menegaskan hakikat pesan yang diuraikan ayat.`;
-    } else {
-      synthesized = `Akar kata ${dbRoot.rootArabic} merupakan pilar leksikal bahasa Arab klasik yang memperkaya keindahan sastra dan kedalaman pesan wahyu dalam Al-Qur'an.`;
-    }
+  const sampleVerbs = (dbRoot?.verbs || []).filter(v => v.arabic && !v.arabic.includes('('));
+  const sampleNouns = (dbRoot?.nouns || []).filter(n => n.arabic && !n.arabic.includes('('));
 
-    const cleanTitle = dbRoot.titleIndo && !dbRoot.titleIndo.startsWith('Konsep')
+  const usagePatterns: QuranicUsagePattern[] = [];
+  if (sampleVerbs.length > 0) {
+    usagePatterns.push({
+      title: `Ragam Verba (Fi'il) dari Akar ${rootArDisplay}`,
+      description: `Hadir dalam Al-Qur'an melalui konjugasi kata kerja yang menyatakan dinamika perbuatan dan ketetapan.`,
+      examples: sampleVerbs.slice(0, 4).map(v => v.arabic)
+    });
+  }
+  if (sampleNouns.length > 0) {
+    usagePatterns.push({
+      title: `Ragam Nomina (Isim) dari Akar ${rootArDisplay}`,
+      description: `Hadir dalam Al-Qur'an sebagai kata benda substantif, konsep dasar, atau sifat.`,
+      examples: sampleNouns.slice(0, 4).map(n => n.arabic)
+    });
+  }
+
+  if (laneRoot && laneRoot.entries && laneRoot.entries.length > 0) {
+    const entry = laneRoot.entries[0];
+    const text = entry.definition || entry.sourceDefinition || entry.senses?.[0]?.text || '';
+    const m = text.match(/\b(He [a-zA-Z\s,;'\-\(\)]+?|It [a-zA-Z\s,;'\-\(\)]+|The act of [a-zA-Z\s,;'\-\(\)]+|signifies [a-zA-Z\s,;'\-\(\)]+)(?=[.;—―\n]|,\s*\([A-Z])/);
+    let englishDef = m ? m[1].replace(/\([A-Z\s,]+\)/g, '').replace(/\s+/g, ' ').trim() : '';
+    englishDef = englishDef.replace(/^[,\s;]+|[,\s;]+$/g, '');
+
+    const coreMeaning = englishDef
+      ? `Menurut catatan leksikografi bahasa Arab klasik (Edward William Lane, An Arabic-English Lexicon, Jilid ${laneRoot.volume}, hlm. ${laneRoot.page}, merujuk pada kamus induk Ash-Shihah & Al-Qamus Al-Muhith), pilar makna dasar akar ${rootArDisplay} berpusat pada: "${englishDef}". Dari pilar makna leksikal ini diturunkan ragam wazan sharaf yang digunakan secara presisi dalam Al-Qur'an.`
+      : `Akar ${rootArDisplay} tercatat dalam leksikon bahasa Arab klasik (Edward William Lane, An Arabic-English Lexicon, Jilid ${laneRoot.volume}, hlm. ${laneRoot.page}) dengan ragam derivasi wazan sharaf yang terabadikan dalam ayat-ayat Al-Qur'an.`;
+
+    const cleanTitle = dbRoot?.titleIndo && !dbRoot.titleIndo.startsWith('Konsep')
       ? dbRoot.titleIndo.replace(/^Akar\s+[^\(]+\(/, '').replace(/\)$/, '').trim()
-      : (sampleNouns[0] || sampleVerbs[0] || `Akar ${dbRoot.rootArabic}`);
+      : `Akar ${rootArDisplay}`;
+
+    const meaningsList = englishDef ? [englishDef] : [];
+    sampleNouns.slice(0, 3).forEach(n => { if (n.arabic && !meaningsList.includes(n.arabic)) meaningsList.push(n.arabic); });
+    sampleVerbs.slice(0, 3).forEach(v => { if (v.arabic && !meaningsList.includes(v.arabic)) meaningsList.push(v.arabic); });
 
     return {
       titleIndo: cleanTitle,
-      coreMeaning: synthesized,
-      usagePatterns: dbRoot.usagePatterns || [],
-      meaningsIndonesian: [cleanTitle]
+      coreMeaning,
+      usagePatterns,
+      contextualNote: `Rujukan leksikografi: Edward William Lane, An Arabic-English Lexicon, Jilid ${laneRoot.volume}, hlm. ${laneRoot.page}. Membandingkan kamus otoritatif Ash-Shihah (Al-Jauhari), Al-Qamus Al-Muhith (Al-Fairuzabadi), dan Tajul 'Arus (Az-Zabidi).`,
+      meaningsIndonesian: meaningsList.length > 0 ? meaningsList : [`Akar ${rootArDisplay}`]
+    };
+  }
+
+  // 3. Fallback for unindexed roots without Lane's entry
+  if (dbRoot) {
+    const allExamples = sampleVerbs.concat(sampleNouns).slice(0, 4).map(x => x.arabic);
+    const cleanTitle = dbRoot.titleIndo && !dbRoot.titleIndo.startsWith('Konsep')
+      ? dbRoot.titleIndo.replace(/^Akar\s+[^\(]+\(/, '').replace(/\)$/, '').trim()
+      : `Akar ${rootArDisplay}`;
+
+    return {
+      titleIndo: cleanTitle,
+      coreMeaning: allExamples.length > 0
+        ? `Akar ${rootArDisplay} membentuk kosakata Al-Qur'an yang mencakup bentuk kata ${allExamples.join(', ')} sebagaimana terindeks secara kanonikal dalam The Quranic Arabic Corpus.`
+        : `Akar ${rootArDisplay} terindeks dalam leksikografi bahasa Arab Al-Qur'an dengan ragam wazan sharaf yang terdistribusi di dalam mushaf.`,
+      usagePatterns,
+      contextualNote: `Data morfologi bersumber dari The Quranic Arabic Corpus (University of Leeds).`,
+      meaningsIndonesian: allExamples.length > 0 ? allExamples : [`Akar ${rootArDisplay}`]
     };
   }
 
