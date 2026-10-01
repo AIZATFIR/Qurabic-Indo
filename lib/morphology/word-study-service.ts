@@ -24,6 +24,7 @@ import { transliterateArabic, isRawBuckwalterRoot } from './transliteration';
 import { getAuthenticWordMeaning, getRootTranslationProfile } from './root-dictionary';
 import { getLinguisticExplanation } from './linguistic-explanation-service';
 import { getGrammarDerivation } from './grammar-derivation-service';
+import { getRootOccurrencesFromChunk } from './morphology-service';
 
 /**
  * Maps raw QAC morphological features string to detailed Indonesian syntactic breakdown
@@ -300,7 +301,11 @@ export function getWordStudy(
     primaryText = context.meaningIndo.trim();
     sourceBadge = 'Terjemahan Kata';
     isEditorial = false;
-  } else if (authenticIndo && authenticIndo !== "Kosakata Al-Qur'an" && !authenticIndo.startsWith('Keluarga kata:')) {
+  } else if (detail.morphology.isParticle && detail.translation.primaryMeaning && !detail.translation.primaryMeaning.startsWith('Partikel / Kata')) {
+    primaryText = detail.translation.primaryMeaning;
+    sourceBadge = 'QAC Nahwu';
+    isEditorial = true;
+  } else if (authenticIndo && authenticIndo !== "Kosakata Al-Qur'an" && authenticIndo.toLowerCase() !== "al-qur'an" && !authenticIndo.startsWith('Keluarga kata:')) {
     primaryText = authenticIndo;
     sourceBadge = detail.morphology.isParticle ? 'QAC Nahwu' : 'Kamus Qurabic';
     isEditorial = true;
@@ -320,7 +325,7 @@ export function getWordStudy(
     primaryText = 'Partikel / Kata Tugas (Harf)';
     sourceBadge = 'QAC Nahwu';
     isEditorial = false;
-  } else if (authenticIndo && authenticIndo !== "Kosakata Al-Qur'an") {
+  } else if (authenticIndo && authenticIndo !== "Kosakata Al-Qur'an" && authenticIndo.toLowerCase() !== "al-qur'an") {
     primaryText = authenticIndo;
     sourceBadge = 'Kamus Qurabic';
     isEditorial = true;
@@ -431,18 +436,20 @@ export function getWordStudy(
       page: lex?.page,
       rootPhilosophy: rootPhil,
       rootTranslation,
-      meanings: detailedExpl.meanings.length > 0 ? detailedExpl.meanings : detail.translation.meanings,
+      meanings: (detail.morphology.isParticle && detail.translation.meanings.length > 0)
+        ? detail.translation.meanings
+        : (detailedExpl.meanings.length > 0 ? detailedExpl.meanings : detail.translation.meanings),
       classicalCitation: classicalCit,
       usageNuances: detailedExpl.quranicNuances
     },
     wordFamily,
     occurrences: {
-      totalCount: detail.totalRootOccurrences || detail.relatedOccurrences.length,
-      items: detail.relatedOccurrences
+      totalCount: totalOccCount,
+      items: effectiveOccItems
     },
     syntax,
     provenance,
-    context: detail.context,
+    context: resolvedContext,
     linguisticExplanation,
     grammarDerivation
   };

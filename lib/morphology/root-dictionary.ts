@@ -4,9 +4,10 @@
  * Guarantees zero empty or placeholder definitions across all root families and words.
  */
 
-import { stripArabicHarakat } from '../search/root-search';
+import { stripArabicHarakat, isQuranicParticle } from '../search/root-search';
 import { ROOT_DATABASE } from '../data/roots';
 import { lookupQACByToken } from './qac-lookup';
+import { getQuranicParticleInfo } from './particles-dictionary';
 
 export interface RootTranslationProfile {
   rootArabic: string;
@@ -964,6 +965,15 @@ export function getAuthenticWordMeaning(
   const cleanAr = stripArabicHarakat(rawArabic);
   const cleanNormAlif = stripArabicHarakat(rawArabic.replace(/\u0670/g, '\u0627'));
 
+  // 0. Check Quranic Particle (Harf / Kata Tugas) Dictionary first
+  const particleInfo = getQuranicParticleInfo(rawArabic) || getQuranicParticleInfo(cleanAr) || getQuranicParticleInfo(cleanNormAlif);
+  if (particleInfo) {
+    return particleInfo.primaryMeaning;
+  }
+  if (isQuranicParticle(cleanAr) || isQuranicParticle(cleanNormAlif)) {
+    return 'Partikel / Kata Tugas (Harf)';
+  }
+
   // 1. Direct Derivative Match in ROOT_DICTIONARY
   const prof = getRootTranslationProfile(rootSlugOrArabic);
   if (prof && prof.derivatives) {
@@ -1041,7 +1051,7 @@ export function getAuthenticWordMeaning(
   }
 
   if (!baseAction) {
-    baseAction = prof?.rootArabic || dbRoot?.rootArabic || rootSlugOrArabic?.replace(/[-_]/g, ' ') || 'Al-Qur\'an';
+    baseAction = prof?.rootArabic || dbRoot?.rootArabic || (rootSlugOrArabic && !rootSlugOrArabic.startsWith('harf') ? rootSlugOrArabic.replace(/[-_]/g, ' ') : '');
   }
 
   // 5. Intelligent Sharaf Inflection Resolver (Tasrif Istilahi & Lughawi)
@@ -1055,7 +1065,7 @@ export function getAuthenticWordMeaning(
 
   const rootArDisplay = prof?.rootArabic || dbRoot?.rootArabic || rootSlugOrArabic || '';
 
-  const hasIndoAction = /[a-zA-Z]{3,}/.test(baseAction);
+  const hasIndoAction = /[a-zA-Z]{3,}/.test(baseAction) && baseAction.toLowerCase() !== "al-qur'an" && baseAction.toLowerCase() !== "al-quran";
 
   if (qac) {
     // 5a. Fi'il (Verb) Inflections
@@ -1198,6 +1208,9 @@ export function getAuthenticWordMeaning(
     return baseAction.charAt(0).toUpperCase() + baseAction.slice(1);
   }
 
-  // Final fallback: Return dignified grammatical label
-  return `Turunan Kata (${rootArDisplay})`;
+  // Final fallback: Return default meaning or dignified grammatical label
+  if (defaultMeaning && !defaultMeaning.startsWith('Bentuk Kata') && !defaultMeaning.startsWith('Konsep & Turunan')) {
+    return defaultMeaning;
+  }
+  return rootArDisplay ? `Turunan Kata (${rootArDisplay})` : `Kosakata Al-Qur'an`;
 }

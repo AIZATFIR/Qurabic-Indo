@@ -34,6 +34,17 @@ export function buckwalterToArabic(bw: string): string {
 }
 
 /**
+ * Converts Arabic Unicode string to Buckwalter transliteration string
+ */
+export function arabicToBuckwalter(ar: string): string {
+  if (!ar) return '';
+  return ar
+    .split('')
+    .map((c) => ARABIC_TO_BUCKWALTER_MAP[c] || c)
+    .join('');
+}
+
+/**
  * Normalizes Arabic text for tolerant lexical matching
  */
 export function normalizeArabicForComparison(text: string): string {

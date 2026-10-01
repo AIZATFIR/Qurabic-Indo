@@ -689,5 +689,37 @@ export function getQuranicParticleInfo(token: string, tag?: string): QuranicPart
   if (clean === 'الى' || clean === 'الي') return QURANIC_PARTICLES_DICTIONARY['الى'];
   if (clean === 'حتي') return QURANIC_PARTICLES_DICTIONARY['حتى'];
 
+  // Handle compound prepositions + attached pronouns (e.g. فيهم, عليهم, منه, علينا, etc.)
+  const compoundMatch = clean.match(/^(علي|الي|في|من|عن|مع|ل|ب|ك)(هم|كم|نا|ه|ها|هما|هن|كن|ي)$/);
+  if (compoundMatch) {
+    const basePrep = compoundMatch[1];
+    const pronoun = compoundMatch[2];
+    const baseInfo = QURANIC_PARTICLES_DICTIONARY[basePrep] || 
+      (basePrep === 'علي' ? QURANIC_PARTICLES_DICTIONARY['على'] : 
+      (basePrep === 'الي' ? QURANIC_PARTICLES_DICTIONARY['الى'] : null));
+    if (baseInfo) {
+      const pronounMap: Record<string, string> = {
+        'هم': 'mereka',
+        'كم': 'kalian',
+        'نا': 'kami',
+        'ه': 'dia / -nya',
+        'ها': 'dia (wanita) / -nya',
+        'هما': 'mereka berdua',
+        'هن': 'mereka (wanita)',
+        'كن': 'kalian (wanita)',
+        'ي': 'aku / -ku'
+      };
+      const pronText = pronounMap[pronoun] || pronoun;
+      const baseShort = baseInfo.primaryMeaning.split(/[/(\\]/)[0].trim();
+      return {
+        ...baseInfo,
+        arabic: token,
+        cleanArabic: clean,
+        primaryMeaning: `${baseShort} ${pronText}`,
+        grammaticalRole: `${baseInfo.particleCategory} + Dhamir Muttashil (${pronText})`
+      };
+    }
+  }
+
   return null;
 }
