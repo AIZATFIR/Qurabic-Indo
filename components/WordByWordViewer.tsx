@@ -8,9 +8,21 @@ import WordEtymologyModal from './WordEtymologyModal';
 
 interface WordByWordViewerProps {
   segments: WordSegment[];
+  surahNumber?: number;
+  ayahNumber?: number;
+  surahNameIndo?: string;
+  ayahArabic?: string;
+  ayahIndo?: string;
 }
 
-export default function WordByWordViewer({ segments }: WordByWordViewerProps) {
+export default function WordByWordViewer({
+  segments,
+  surahNumber: propSurahNumber,
+  ayahNumber: propAyahNumber,
+  surahNameIndo,
+  ayahArabic,
+  ayahIndo
+}: WordByWordViewerProps) {
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const [selectedWord, setSelectedWord] = useState<WordSegment | null>(null);
 
@@ -129,9 +141,12 @@ export default function WordByWordViewer({ segments }: WordByWordViewerProps) {
             meaningIndo={selectedWord.meaningIndo}
             posTag={selectedWord.posTag}
             rootLetters={selectedWord.rootArabic}
-            surahNumber={surahNumber}
-            ayahNumber={ayahNumber}
+            surahNumber={surahNumber || propSurahNumber}
+            ayahNumber={ayahNumber || propAyahNumber}
             wordIndex={wordIndex || selectedWord.wordIndex}
+            surahNameIndo={surahNameIndo}
+            ayahArabic={ayahArabic}
+            ayahIndo={ayahIndo}
           />
         );
       })()}

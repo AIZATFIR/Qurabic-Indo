@@ -82,17 +82,31 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
     ? identity.transliteration
     : transliterateArabic(identity.arabic);
 
-  const rootLettersList = lexical.rootArabic ? lexical.rootArabic.split(/\s+/).filter(Boolean) : [];
+  const rawRootLetters = lexical.rootArabic ? lexical.rootArabic.trim() : '';
+  const rootLettersList = rawRootLetters.includes(' ')
+    ? rawRootLetters.split(/\s+/).filter(Boolean)
+    : rawRootLetters.split('').filter(ch => !/[\u0610-\u061A\u0640\u064B-\u065F\u0670\u06D6-\u06ED\s]/.test(ch));
   const cleanActiveArabic = stripArabicHarakat(identity.arabic.replace(/\u0670/g, '\u0627'));
+
+  // Fallback context resolution from occurrences if direct ayahArabic/ayahIndo not provided
+  const fallbackOccurrence = (context?.surahNumber && context?.ayahNumber)
+    ? occurrences.items.find(o => o.surahNumber === context.surahNumber && o.ayahNumber === context.ayahNumber)
+    : (occurrences.items && occurrences.items.length > 0 ? occurrences.items[0] : undefined);
+
+  const resolvedAyahArabic = context?.ayahArabic || fallbackOccurrence?.verseArabic;
+  const resolvedAyahIndo = context?.ayahIndo || fallbackOccurrence?.verseIndo;
+  const resolvedSurahNumber = context?.surahNumber || fallbackOccurrence?.surahNumber;
+  const resolvedAyahNumber = context?.ayahNumber || fallbackOccurrence?.ayahNumber;
+  const resolvedSurahNameIndo = context?.surahNameIndo || fallbackOccurrence?.surahNameIndo;
 
   const handlePlayAudio = () => {
     if (isPlayingAudio) return;
     setIsPlayingAudio(true);
 
     let audioSrc = '';
-    if (context?.surahNumber && context?.ayahNumber && context?.wordIndex) {
-      const sPad = String(context.surahNumber).padStart(3, '0');
-      const aPad = String(context.ayahNumber).padStart(3, '0');
+    if (resolvedSurahNumber && resolvedAyahNumber && context?.wordIndex) {
+      const sPad = String(resolvedSurahNumber).padStart(3, '0');
+      const aPad = String(resolvedAyahNumber).padStart(3, '0');
       const wPad = String(context.wordIndex).padStart(3, '0');
       audioSrc = `https://audio.qurancdn.com/wbw/${sPad}_${aPad}_${wPad}.mp3`;
     } else {
@@ -146,7 +160,8 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       return <span>&ldquo;{cleanVerse}&rdquo;</span>;
     }
 
-    const regex = new RegExp(`(${matchedToken})`, 'gi');
+    const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${escapeRegex(matchedToken)})`, 'gi');
     const parts = cleanVerse.split(regex);
 
     return (
@@ -426,30 +441,30 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       {/* ========================================================================= */}
       {/* 4. KONTEKS AYAT LENGKAP DENGAN PENANDA KATA AKTIF                          */}
       {/* ========================================================================= */}
-      {context?.ayahArabic && context?.ayahIndo && (
+      {resolvedAyahArabic && resolvedAyahIndo && (
         <section className="p-6 sm:p-7 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle text-left space-y-4">
           <div className="flex items-center justify-between text-xs sm:text-sm text-ink-mute border-b border-hairline pb-3">
             <span className="font-bold text-primary flex items-center space-x-2 text-sm sm:text-base">
               <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-              <span>Konteks Ayat (QS. {context.surahNameIndo || `Surah ${context.surahNumber}`}: {context.ayahNumber})</span>
+              <span>Konteks Ayat (QS. {resolvedSurahNameIndo || (resolvedSurahNumber ? `Surah ${resolvedSurahNumber}` : '')}: {resolvedAyahNumber})</span>
             </span>
             <span className="text-xs font-sans font-medium px-2.5 py-0.5 rounded-md bg-canvas-soft border border-hairline text-ink-secondary">
               Mushaf Kemenag RI
             </span>
           </div>
           <p className="font-arabic text-3xl sm:text-4xl leading-[2.6] sm:leading-[2.8] text-right text-ink-primary select-text" dir="rtl">
-            {context.ayahArabic}
+            {resolvedAyahArabic}
           </p>
           <div className="text-base sm:text-lg text-ink-secondary leading-relaxed pt-2 border-t border-hairline/60 font-sans select-text">
-            {renderHighlightedVerseIndo(context.ayahIndo, primaryMeaning.text)}
+            {renderHighlightedVerseIndo(resolvedAyahIndo, primaryMeaning.text)}
           </div>
-          {context.surahNumber && context.ayahNumber && (
+          {resolvedSurahNumber && resolvedAyahNumber && (
             <div className="pt-2 flex justify-end">
               <Link
-                href={`/baca?surah=${context.surahNumber}&ayah=${context.ayahNumber}`}
+                href={`/baca?surah=${resolvedSurahNumber}&ayah=${resolvedAyahNumber}`}
                 className="px-5 py-2.5 rounded-full bg-primary hover:bg-primary-deep text-white text-xs sm:text-sm font-semibold shadow-subtle transition-all inline-flex items-center space-x-2"
               >
-                <span>Buka di Mushaf (QS. {context.surahNumber}:{context.ayahNumber})</span>
+                <span>Buka di Mushaf (QS. {resolvedSurahNumber}:{resolvedAyahNumber})</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>

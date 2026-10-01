@@ -32,9 +32,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const isCoordinate = /^\d+:\d+(:\d+)?$/.test(targetInput);
+    const isCoordinate = /^\d+:\d+(:\d+)?(:\d+)?$/.test(targetInput);
     const hasArabic = /[\u0600-\u06FF]/.test(targetInput);
-    const isRootCandidate = /^[a-zA-Z\-]{1,10}$/.test(targetInput);
+    const isRootCandidate = /^[a-zA-Z'\-`~><&}{*$^]{1,15}$/.test(targetInput);
 
     if (!isCoordinate && !hasArabic && !isRootCandidate) {
       return NextResponse.json(
@@ -45,12 +45,18 @@ export async function GET(request: NextRequest) {
 
     const rawMeaning = searchParams.get('meaning') || searchParams.get('meaningIndo') || '';
     const meaningIndo = rawMeaning.trim() ? rawMeaning.trim() : undefined;
+    const surahNameIndo = searchParams.get('surahNameIndo')?.trim() || undefined;
+    const ayahArabic = searchParams.get('ayahArabic')?.trim() || undefined;
+    const ayahIndo = searchParams.get('ayahIndo')?.trim() || undefined;
 
     const context = {
       surahNumber: (surahNumber && surahNumber >= 1 && surahNumber <= 114) ? surahNumber : undefined,
       ayahNumber: (ayahNumber && ayahNumber >= 1) ? ayahNumber : undefined,
       wordIndex: (wordIndex && wordIndex >= 1) ? wordIndex : undefined,
       meaningIndo,
+      surahNameIndo,
+      ayahArabic,
+      ayahIndo
     };
 
     const detail = getCanonicalWordDetail(targetInput, context);

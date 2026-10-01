@@ -32,6 +32,10 @@ export function getLexiconEnrichedWordDetail(
 
   // 2. Particle Guardrail
   if (wordModel.morphology.isParticle || wordModel.morphology.pos === 'Harf' || !wordModel.lexical.root) {
+    if (wordModel.lexicon && wordModel.lexicon.hasLexicalData) {
+      return wordModel as LexiconEnrichedWordDetail;
+    }
+
     const particleResult: LexicalLookupResult = {
       hasLexicalData: false,
       source: "The Quranic Arabic Corpus v0.4",

@@ -1,6 +1,6 @@
 import { LaneRootLexicon, LaneEntryRecord, LexicalLookupResult } from './types';
 import manifestData from './data/manifest.json';
-import { buckwalterToArabic } from '../morphology/buckwalter';
+import { buckwalterToArabic, arabicToBuckwalter } from '../morphology/buckwalter';
 
 declare const __non_webpack_require__: any;
 
@@ -67,7 +67,14 @@ function loadChunk(chunkFilename: string): LaneEntryRecord[] | null {
  * Generates classical root key candidate variants (e.g. geminate ungeminated, weak letters)
  */
 function getRootKeyVariants(rootBw: string): string[] {
-  const clean = rootBw.trim().replace(/-/g, '');
+  let clean = rootBw.trim().replace(/-/g, '');
+  if (/[\u0600-\u06FF]/.test(clean)) {
+    const fromAr = arabicToBuckwalter(clean.replace(/\s+/g, ''));
+    if (fromAr && !/[\u0600-\u06FF]/.test(fromAr)) {
+      clean = fromAr;
+    }
+  }
+
   const variants: string[] = [clean];
 
   // 1. Weak letter Alif Maqsura (QAC 'y' -> Lane 'Y')
@@ -197,25 +204,32 @@ export function getLaneLemmaRecord(
 }
 
 /**
- * Retrieves the raw verified Lane Lexicon record for a given Buckwalter root
- * @param rootBw Case-sensitive Buckwalter root identifier (e.g. "Ewn", "Sbr", "xlT", "ryb", "Dmm", "hdy")
+ * Retrieves the raw verified Lane Lexicon record for a given Buckwalter or Arabic root
+ * @param rootBw Case-sensitive Buckwalter root identifier (e.g. "Ewn", "Sbr", "xlT", "ryb", "Dmm", "hdy") or Arabic root
  */
 export function getLaneRootRecord(rootBw: string): LaneRootLexicon | null {
   if (!rootBw) return null;
   const candidates = getRootKeyVariants(rootBw);
 
   for (const cand of candidates) {
-    const manifestKey = `root_bw:${cand}`;
-    const chunkFilename = MANIFEST[manifestKey];
+    const chunkFilename =
+      MANIFEST[`root_bw:${cand}`] ||
+      MANIFEST[`root_ar:${cand}`] ||
+      MANIFEST[`root_norm:${normalizeArabicKey(cand)}`];
+
     if (chunkFilename) {
       const chunk = loadChunk(chunkFilename);
       if (chunk) {
-        const rootEntries = chunk.filter(e => e.rootBw === cand || candidates.includes(e.rootBw));
+        const rootEntries = chunk.filter(e =>
+          e.rootBw === cand ||
+          candidates.includes(e.rootBw) ||
+          (e.rootArabic && (e.rootArabic === cand || normalizeArabicKey(e.rootArabic) === normalizeArabicKey(cand)))
+        );
         if (rootEntries.length > 0) {
           const first = rootEntries[0];
           return {
             rootArabic: first.rootArabic || buckwalterToArabic(rootBw),
-            rootBw,
+            rootBw: first.rootBw || rootBw,
             volume: first.volume,
             page: first.page,
             entries: rootEntries,

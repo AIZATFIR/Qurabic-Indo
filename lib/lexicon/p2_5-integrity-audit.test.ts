@@ -59,7 +59,7 @@ describe('P2.5 — Qurabic Integrity & Provenance Forensic Audit', () => {
     assert.ok(rootDetail.lexicon);
     assert.strictEqual(rootDetail.lexicon.rootArabic, 'صبر');
     assert.strictEqual(rootDetail.lexicon.volume, 4);
-    assert.strictEqual(rootDetail.lexicon.page, 1640);
+    assert.strictEqual(rootDetail.lexicon.page, 1644);
 
     // Check entry IDs for duplicate uniqueness
     const entryIds = rootDetail.lexicon.entries.map(e => e.entryId);
@@ -80,9 +80,9 @@ describe('P2.5 — Qurabic Integrity & Provenance Forensic Audit', () => {
     assert.strictEqual(rootSbrCapital.rootArabic, 'صبر');
     assert.strictEqual(rootSbrLower.rootArabic, 'سبر');
     assert.strictEqual(rootSbrCapital.volume, 4);
-    assert.strictEqual(rootSbrCapital.page, 1640);
+    assert.strictEqual(rootSbrCapital.page, 1644);
     assert.strictEqual(rootSbrLower.volume, 4);
-    assert.strictEqual(rootSbrLower.page, 1292);
+    assert.strictEqual(rootSbrLower.page, 1293);
 
     // Ensure no collisions between upper and lower case Buckwalter
     assert.notStrictEqual(rootSbrCapital.page, rootSbrLower.page);
@@ -94,7 +94,7 @@ describe('P2.5 — Qurabic Integrity & Provenance Forensic Audit', () => {
     assert.ok(dmmRecord, 'Geminate Dmm must normalize to Dm in Lane index');
     assert.strictEqual(dmmRecord.rootArabic, 'ضم');
     assert.strictEqual(dmmRecord.volume, 5);
-    assert.strictEqual(dmmRecord.page, 1799);
+    assert.strictEqual(dmmRecord.page, 1801);
 
     // 2. Weak letter Alif Maqsura mapping: hdy (ه د ي) -> hdY (هدى)
     const hdyRecord = getLaneRootRecord('hdy');
@@ -108,10 +108,10 @@ describe('P2.5 — Qurabic Integrity & Provenance Forensic Audit', () => {
     assert.ok(wqyRecord, 'Weak root wqy must normalize to wqY in Lane index');
     assert.strictEqual(wqyRecord.rootArabic, 'وقى');
     assert.strictEqual(wqyRecord.volume, 8);
-    assert.strictEqual(wqyRecord.page, 3058);
+    assert.strictEqual(wqyRecord.page, 3059);
   });
 
-  it('Audit 5: Particle Guardrail (فَلَمَّآ & وَعَنِ have ZERO fake roots and ZERO fake Lane entries)', () => {
+  it('Audit 5: Particle Guardrail (فَلَمَّآ has ZERO fake root and ZERO fake Lane entry; preposition وَعَنِ has verified preposition entry)', () => {
     // 1. Particle فَلَمَّآ (12:80:1)
     const particleFalam = getCanonicalWordDetail('فَلَمَّآ', {
       surahNumber: 12,
@@ -126,13 +126,15 @@ describe('P2.5 — Qurabic Integrity & Provenance Forensic Audit', () => {
     assert.strictEqual(particleFalam.lexicon.hasLexicalData, false);
     assert.strictEqual(particleFalam.lexicon.senses.length, 0);
 
-    // 2. Particle وَعَنِ
+    // 2. Particle وَعَنِ (preposition entry in Lane without fake root)
     const particleWaAn = getCanonicalWordDetail('وَعَنِ');
     assert.strictEqual(particleWaAn.morphology.pos, 'Harf');
     assert.strictEqual(particleWaAn.morphology.isParticle, true);
     assert.strictEqual(particleWaAn.lexical.root, undefined);
     assert.ok(particleWaAn.lexicon);
-    assert.strictEqual(particleWaAn.lexicon.hasLexicalData, false);
+    assert.strictEqual(particleWaAn.lexicon.hasLexicalData, true);
+    assert.strictEqual(particleWaAn.lexicon.volume, 5);
+    assert.strictEqual(particleWaAn.lexicon.page, 2165);
   });
 
   it('Audit 6: Regression against historical bugs (وَيَعْفُوا۟, حَيَّوْكَ, فَلَمَّآ vs ل و م)', () => {
@@ -164,6 +166,6 @@ describe('P2.5 — Qurabic Integrity & Provenance Forensic Audit', () => {
     assert.ok(wordDetail.lexicon);
     assert.strictEqual(wordDetail.lexicon.hasLexicalData, false);
     assert.strictEqual(wordDetail.lexicon.senses.length, 0);
-    assert.strictEqual(wordDetail.lexicon.message, 'Partikel / Harf (Tidak memiliki akar kata)');
+    assert.strictEqual(wordDetail.lexicon.message, 'Makna leksikal belum tersedia.');
   });
 });

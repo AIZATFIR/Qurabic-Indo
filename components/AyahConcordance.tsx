@@ -274,7 +274,14 @@ export default function AyahConcordance({
                       <span>Memuat analisis morfologi perkata...</span>
                     </div>
                   ) : activeSegments && activeSegments.length > 0 ? (
-                    <WordByWordViewer segments={activeSegments} />
+                    <WordByWordViewer
+                      segments={activeSegments}
+                      surahNumber={item.surahNumber}
+                      ayahNumber={item.ayahNumber}
+                      surahNameIndo={item.surahNameIndo}
+                      ayahArabic={item.verseArabic}
+                      ayahIndo={item.verseIndo}
+                    />
                   ) : (
                     <div className="p-4 text-center text-xs text-ink-mute font-sans">
                       Data morfologi perkata tersedia melalui tampilan Mushaf.

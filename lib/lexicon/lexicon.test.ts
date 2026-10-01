@@ -16,7 +16,8 @@ describe('Qurabic Lexical Ingestion Layer (Mass Lane Lexicon & QAC Join)', () =>
     assert.ok(chunkNames.length >= 15, `Expected >= 15 chunk files, found ${chunkNames.length}`);
 
     for (const cname of chunkNames) {
-      const cpath = path.join(process.cwd(), 'lib', 'lexicon', 'data', 'chunks', `${cname}.json`);
+      const filename = cname.endsWith('.json') ? cname : `${cname}.json`;
+      const cpath = path.join(process.cwd(), 'lib', 'lexicon', 'data', 'chunks', filename);
       assert.ok(fs.existsSync(cpath), `Chunk file ${cpath} must exist`);
       const raw = fs.readFileSync(cpath, 'utf-8');
       const parsed = JSON.parse(raw);
@@ -143,14 +144,15 @@ describe('Qurabic Lexical Ingestion Layer (Mass Lane Lexicon & QAC Join)', () =>
     assert.strictEqual(detail.lexicon.message, 'Partikel / Harf (Tidak memiliki akar kata)');
   });
 
-  it('Case 7: Particle وَعَنِ is strictly classified as Harf with no fake root and no lexical entry', () => {
+  it('Case 7: Particle وَعَنِ is strictly classified as Harf with no fake root and has verified preposition entry in Lane', () => {
     const detail = getLexiconEnrichedWordDetail('وَعَنِ');
 
     assert.strictEqual(detail.morphology.pos, 'Harf');
     assert.strictEqual(detail.morphology.isParticle, true);
     assert.strictEqual(detail.lexical.root, undefined);
-    assert.strictEqual(detail.lexicon.hasLexicalData, false);
-    assert.strictEqual(detail.lexicon.message, 'Partikel / Harf (Tidak memiliki akar kata)');
+    assert.strictEqual(detail.lexicon.hasLexicalData, true);
+    assert.strictEqual(detail.lexicon.volume, 5);
+    assert.strictEqual(detail.lexicon.page, 2165);
   });
 
   it('Case 8: CanonicalService integration delivers verified Lane Lexicon directly in CanonicalWordDetail and CanonicalRootDetail', async () => {

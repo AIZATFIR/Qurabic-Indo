@@ -71,13 +71,55 @@ export function getRootOccurrencesFromChunk(slug: string): VerseOccurrence[] {
     const fs = nodeReq('fs');
     const path = nodeReq('path');
     const clean = slug.trim();
-    const filePath = path.join(process.cwd(), 'lib/data/occurrences', `${clean}.json`);
-    if (fs.existsSync(filePath)) {
-      return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+
+    // 1. Generate candidate slug keys
+    const candidates: string[] = [clean];
+    if (clean.includes('-')) {
+      candidates.push(clean.replace(/-/g, ''));
+    } else {
+      candidates.push(clean.split('').join('-'));
     }
-    const lowerPath = path.join(process.cwd(), 'lib/data/occurrences', `${clean.toLowerCase()}.json`);
-    if (fs.existsSync(lowerPath)) {
-      return JSON.parse(fs.readFileSync(lowerPath, 'utf8'));
+
+    // 2. Resolve from ROOT_DATABASE for cross-format robustness (Arabic, Latin, Slug)
+    const matchedRoot = ROOT_DATABASE.find(r => 
+      r.id === clean || 
+      r.id.replace(/-/g, '') === clean.replace(/-/g, '') ||
+      r.rootLatin.toLowerCase() === clean.toLowerCase() ||
+      r.rootArabic === clean ||
+      r.rootArabicJoined === clean.replace(/\s+/g, '')
+    );
+    if (matchedRoot) {
+      if (!candidates.includes(matchedRoot.id)) candidates.push(matchedRoot.id);
+      if (!candidates.includes(matchedRoot.rootLatin)) candidates.push(matchedRoot.rootLatin);
+    }
+
+    // Also add lower-cased versions
+    const allCandidateKeys = new Set<string>();
+    for (const c of candidates) {
+      if (c) {
+        allCandidateKeys.add(c);
+        allCandidateKeys.add(c.toLowerCase());
+      }
+    }
+
+    // Candidate base directories (supporting diverse bundling/runtime CWDs)
+    const baseDirs = [
+      path.join(process.cwd(), 'lib/data/occurrences'),
+      path.join(__dirname, '..', 'data', 'occurrences')
+    ];
+
+    for (const dir of baseDirs) {
+      try {
+        if (fs.existsSync(dir)) {
+          for (const key of allCandidateKeys) {
+            const filePath = path.join(dir, `${key}.json`);
+            if (fs.existsSync(filePath)) {
+              const raw = fs.readFileSync(filePath, 'utf8');
+              return JSON.parse(raw);
+            }
+          }
+        }
+      } catch {}
     }
   } catch (e) {}
   return [];

@@ -391,6 +391,24 @@ export function getWordStudy(
     wordIndex: detail.context?.wordIndex
   });
 
+  const effectiveOccItems = detail.relatedOccurrences.length > 0
+    ? detail.relatedOccurrences
+    : (!detail.morphology.isParticle && (detail.lexical.rootSlug || detail.lexical.root)
+        ? getRootOccurrencesFromChunk(detail.lexical.rootSlug || detail.lexical.root || '')
+        : []);
+
+  const totalOccCount = detail.totalRootOccurrences || effectiveOccItems.length;
+
+  const resolvedContext = { ...(detail.context || {}) };
+  if ((!resolvedContext.ayahArabic || !resolvedContext.ayahIndo) && resolvedContext.surahNumber && resolvedContext.ayahNumber) {
+    const matched = effectiveOccItems.find(o => o.surahNumber === resolvedContext.surahNumber && o.ayahNumber === resolvedContext.ayahNumber);
+    if (matched) {
+      if (!resolvedContext.ayahArabic) resolvedContext.ayahArabic = matched.verseArabic;
+      if (!resolvedContext.ayahIndo) resolvedContext.ayahIndo = matched.verseIndo;
+      if (!resolvedContext.surahNameIndo) resolvedContext.surahNameIndo = matched.surahNameIndo;
+    }
+  }
+
   return {
     identity: {
       coordinate: detail.identity.coordinate,
