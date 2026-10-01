@@ -467,7 +467,7 @@ function BacaQuranPageContent() {
       </header>
 
       {/* Main Quran Reader Container (Scaled to 125% Comfortable Look) */}
-      <main className="max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
+      <div className="max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
         
         {/* Continuous Scholarly Reading Surface */}
         <div className="bg-canvas-surface rounded-2xl border border-hairline shadow-subtle overflow-hidden">
@@ -927,7 +927,7 @@ function BacaQuranPageContent() {
           ) : <div />}
         </nav>
 
-      </main>
+      </div>
 
       {/* Floating Minimalist Audio Player */}
       <QuranAudioPlayer

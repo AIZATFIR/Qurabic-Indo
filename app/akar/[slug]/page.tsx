@@ -50,6 +50,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${rootAr} (${translit}) — Bedah Akar Kata & Leksikon`,
     description: `Eksplorasi linguistik akar kata Al-Qur'an ${rootAr} (${translit}). Makna dasar: "${meaning}". Muncul ${occ} kali di Al-Qur'an melintasi ${lemmas} lemma unik. Dilengkapi leksikon klasik Lane's Lexicon dan konkordansi ayat.`,
+    alternates: {
+      canonical: `/akar/${rootModel.id}`,
+    },
     openGraph: {
       title: `${rootAr} (${translit}) — Bedah Akar Kata Al-Qur'an | Qurabic`,
       description: `Makna dasar: "${meaning}". Total ${occ} kemunculan dalam Al-Qur'an. Analisis morfologi dan leksikon klasik terpercaya.`,

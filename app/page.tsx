@@ -180,7 +180,7 @@ export default function HomePage() {
       </section>
 
       {/* 4. CATALOG SECTION: EXPLORE ROOT WORDS */}
-      <main className="max-w-7xl mx-auto px-6 sm:px-12 space-y-12">
+      <section className="max-w-7xl mx-auto px-6 sm:px-12 space-y-12">
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 border-b border-hairline pb-4">
           <div>
             <h2 className="text-2xl sm:text-3xl font-light text-ink-primary tracking-tight font-sans">
@@ -372,7 +372,7 @@ export default function HomePage() {
           </div>
         </section>
 
-      </main>
+      </section>
 
       {/* Global OmniSearch Modal Dialog */}
       <OmniSearch

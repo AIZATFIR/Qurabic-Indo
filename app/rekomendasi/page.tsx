@@ -94,7 +94,8 @@ export default function RekomendasiPage() {
 
       {/* TAB 1: CURATED VIDEOS */}
       {activeTab === 'videos' && (
-        <div className="space-y-8 animate-in fade-in duration-200">
+        <section aria-labelledby="videos-heading" className="space-y-8 animate-in fade-in duration-200">
+          <h2 id="videos-heading" className="sr-only">Daftar Kajian Video Pilihan</h2>
           
           {/* Filter Bar & Search */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-canvas-surface p-4 rounded-2xl border border-hairline shadow-subtle">
@@ -137,10 +138,11 @@ export default function RekomendasiPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-              {filteredVideos.map((video) => (
+              {filteredVideos.map((video, index) => (
                 <VideoCard
                   key={video.id}
                   video={video}
+                  priority={index < 2}
                   onSelectVideo={(v) => setActiveTheaterVideo(v)}
                 />
               ))}
@@ -152,14 +154,15 @@ export default function RekomendasiPage() {
             video={activeTheaterVideo}
             onClose={() => setActiveTheaterVideo(null)}
           />
-        </div>
+        </section>
       )}
 
       {/* TAB 2: RECOMMENDED APPS (KALAAM APP SHOWCASE) */}
       {activeTab === 'apps' && (
-        <div className="animate-in fade-in duration-200 pt-4">
+        <section aria-labelledby="apps-heading" className="animate-in fade-in duration-200 pt-4">
+          <h2 id="apps-heading" className="sr-only">Rekomendasi Aplikasi Belajar Al-Qur&apos;an</h2>
           <KalaamShowcaseFrame />
-        </div>
+        </section>
       )}
 
     </div>

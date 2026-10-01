@@ -43,6 +43,9 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
   return {
     title: `${wordArabic} (${translit}) — Bedah Kata & Morfologi`,
     description: `Bedah kata Al-Qur'an ${wordArabic} (${translit}): "${meaning}". ${rootText}. Dilengkapi analisis morfologi QAC, wazan, wacana leksikal klasik, dan ayat-ayat terkait.`,
+    alternates: {
+      canonical: `/kata/${encodeURIComponent(rawSlug)}`,
+    },
     openGraph: {
       title: `${wordArabic} — Bedah Kata & Morfologi Al-Qur'an | Qurabic`,
       description: `Analisis kata ${wordArabic} (${translit}): "${meaning}". Dilengkapi morfologi QAC dan leksikon klasik.`,

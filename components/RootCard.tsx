@@ -86,6 +86,7 @@ export default function RootCard({ root }: RootCardProps) {
 
         <Link
           href={`/akar/${root.id}`}
+          aria-label={`Bedah morfologi akar kata ${root.rootArabic} (${root.rootLatin})`}
           className="inline-flex items-center space-x-1 text-xs font-semibold text-primary hover:underline transition-colors font-sans"
         >
           <span>Bedah Morfologi</span>

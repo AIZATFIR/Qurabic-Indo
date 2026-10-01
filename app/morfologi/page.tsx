@@ -17,6 +17,7 @@ export default function MorfologiPage() {
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'high_verbs' | 'high_nouns'>('all');
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>('frequency_desc');
+  const [visibleCount, setVisibleCount] = useState(48);
 
   let filteredRoots = searchRoots(filterQuery);
 
@@ -154,10 +155,11 @@ export default function MorfologiPage() {
       </div>
 
       {/* Root Grid Header with Sort Controls */}
-      <div className="space-y-4">
+      <section aria-labelledby="katalog-heading" className="space-y-4">
+        <h2 id="katalog-heading" className="sr-only">Daftar Indeks Akar Kata</h2>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs font-sans border-b border-hairline pb-3">
           <span className="text-ink-secondary">
-            Menampilkan <strong className="text-ink-primary">{filteredRoots.length}</strong> akar kata
+            Menampilkan <strong className="text-ink-primary">{Math.min(visibleCount, filteredRoots.length)}</strong> dari <strong className="text-ink-primary">{filteredRoots.length}</strong> akar kata
           </span>
 
           {/* Sort Dropdown */}
@@ -166,7 +168,10 @@ export default function MorfologiPage() {
             <span className="text-ink-mute font-medium">Urutkan:</span>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as SortOption)}
+              onChange={(e) => {
+                setSortBy(e.target.value as SortOption);
+                setVisibleCount(48);
+              }}
               className="bg-canvas-surface border border-hairline rounded-xl px-3 py-1.5 text-xs text-ink-primary font-sans font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-subtle"
             >
               <option value="frequency_desc">Kemunculan Terbanyak</option>
@@ -183,11 +188,24 @@ export default function MorfologiPage() {
             Tidak ada akar kata yang cocok dengan filter. Cobalah reset huruf abjad atau kata kunci pencarian.
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredRoots.map((root) => (
-              <RootCard key={root.id} root={root} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredRoots.slice(0, visibleCount).map((root) => (
+                <RootCard key={root.id} root={root} />
+              ))}
+            </div>
+
+            {visibleCount < filteredRoots.length && (
+              <div className="pt-6 flex justify-center">
+                <button
+                  onClick={() => setVisibleCount((prev) => prev + 48)}
+                  className="px-6 py-2.5 rounded-xl bg-canvas-surface border border-hairline hover:border-primary/40 text-primary text-xs sm:text-sm font-semibold shadow-subtle hover:shadow-hover transition-all"
+                >
+                  Muat Lebih Banyak ({filteredRoots.length - visibleCount} akar tersisa)
+                </button>
+              </div>
+            )}
+          </>
         )}
 
         {/* Subtle Citation Badge */}
@@ -197,7 +215,7 @@ export default function MorfologiPage() {
             <span>Sumber: Morfologi Quranic Arabic Corpus (Univ. of Leeds) &amp; Lisan al-&apos;Arab</span>
           </span>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

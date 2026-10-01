@@ -56,7 +56,8 @@ export default function VirtualQuranSearchResults({
   }, [activeFilter, matchingSurahs, initialRoots, liveRoot]);
 
   return (
-    <div className="space-y-6 font-sans">
+    <section aria-labelledby="search-results-heading" className="space-y-6 font-sans">
+      <h2 id="search-results-heading" className="sr-only">Daftar Hasil Pencarian</h2>
       
       {/* Search Filter Tabs */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline pb-4">
@@ -122,6 +123,7 @@ export default function VirtualQuranSearchResults({
                   <div className="pb-4" key={`surah-${surah.number}`}>
                     <Link
                       href={`/baca?surah=${surah.number}`}
+                      aria-label={`Buka Surah ${surah.number}. ${surah.nameIndo} (${surah.translationId})`}
                       className="p-5 rounded-2xl bg-canvas-surface border border-hairline hover:border-primary/40 hover:shadow-subtle transition-all flex items-center justify-between group"
                     >
                       <div className="flex items-center space-x-4">
@@ -130,9 +132,9 @@ export default function VirtualQuranSearchResults({
                         </div>
                         <div>
                           <div className="flex items-center space-x-2">
-                            <h4 className="font-bold text-ink-primary group-hover:text-primary transition-colors text-sm">
+                            <h3 className="font-bold text-ink-primary group-hover:text-primary transition-colors text-sm">
                               Surah {surah.nameIndo}
-                            </h4>
+                            </h3>
                             <span className="text-[11px] text-ink-mute">({surah.translationId})</span>
                           </div>
                           <p className="text-xs text-ink-mute mt-0.5">
@@ -169,6 +171,6 @@ export default function VirtualQuranSearchResults({
         </div>
       )}
 
-    </div>
+    </section>
   );
 }

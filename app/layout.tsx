@@ -55,10 +55,16 @@ export default function RootLayout({
   return (
     <html lang="id" className="scroll-smooth" data-theme="bookpaper">
       <body className="min-h-screen flex flex-col bg-canvas text-ink-primary selection:bg-primary-subdued selection:text-primary-deep font-sans pb-16 md:pb-0">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary font-sans text-sm font-semibold"
+        >
+          Lewati ke konten utama
+        </a>
         <ThemeProvider>
           <SmoothScroll>
             <Navbar />
-            <main className="flex-1 w-full">
+            <main className="flex-1 w-full" id="main-content">
               {children}
             </main>
             <Footer />

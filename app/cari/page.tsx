@@ -91,28 +91,28 @@ export default async function SearchResultsPage({ searchParams }: PageProps) {
 
       {/* Live API Root Special Result */}
       {liveRoot && (
-        <div className="space-y-6">
+        <section aria-labelledby="live-root-heading" className="space-y-6">
           <div className="p-6 bg-primary-fixed/50 border border-primary/20 rounded-3xl text-ink-primary space-y-2">
             <div className="flex items-center space-x-2 text-xs font-bold text-primary">
               <Radio className="w-4 h-4 text-primary animate-pulse" />
               <span>Ditemukan dari Korpus Al-Qur&apos;an Live</span>
             </div>
-            <h3 className="text-xl font-bold font-sans">{liveRoot.titleIndo}</h3>
+            <h2 id="live-root-heading" className="text-xl font-bold font-sans">{liveRoot.titleIndo}</h2>
             <p className="text-xs text-ink-secondary leading-relaxed font-sans">{liveRoot.etymologyNote}</p>
           </div>
 
           <div className="space-y-4">
-            <h2 className="text-2xl font-light text-ink-primary tracking-tight flex items-center space-x-2 font-sans">
+            <h3 className="text-2xl font-light text-ink-primary tracking-tight flex items-center space-x-2 font-sans">
               <BookOpen className="w-5 h-5 text-primary" />
               <span>Ayat Kemunculan dalam Al-Qur&apos;an</span>
-            </h2>
+            </h3>
             <AyahConcordance
               occurrences={liveRoot.occurrences}
               rootArabic={liveRoot.rootArabic}
               rootLatin={liveRoot.rootLatin}
             />
           </div>
-        </div>
+        </section>
       )}
 
       {/* Virtualized Multi-dimensional Search Results */}

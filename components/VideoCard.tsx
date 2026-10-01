@@ -8,23 +8,36 @@ import Link from 'next/link';
 interface VideoCardProps {
   video: CuratedVideo;
   onSelectVideo: (video: CuratedVideo) => void;
+  priority?: boolean;
 }
 
-export default function VideoCard({ video, onSelectVideo }: VideoCardProps) {
+export default function VideoCard({ video, onSelectVideo, priority = false }: VideoCardProps) {
   const thumbnailUrl = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
 
   return (
     <div
       onClick={() => onSelectVideo(video)}
-      className="group bg-canvas-surface border border-hairline rounded-3xl overflow-hidden shadow-subtle hover:border-primary/40 hover:shadow-hover transition-all cursor-pointer flex flex-col justify-between font-sans"
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onSelectVideo(video);
+        }
+      }}
+      tabIndex={0}
+      role="button"
+      aria-label={`Buka pemutar video: ${video.title}`}
+      className="group bg-canvas-surface border border-hairline rounded-3xl overflow-hidden shadow-subtle hover:border-primary/40 hover:shadow-hover transition-all cursor-pointer flex flex-col justify-between font-sans focus:outline-none focus:ring-2 focus:ring-primary/40"
     >
       {/* Thumbnail Container */}
       <div className="relative aspect-video w-full overflow-hidden bg-canvas-soft">
         <img
           src={thumbnailUrl}
-          alt={video.title}
+          alt={`Thumbnail video ${video.title}`}
+          width={480}
+          height={360}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          loading="lazy"
+          loading={priority ? 'eager' : 'lazy'}
+          decoding="async"
         />
 
         {/* Dark Scrim */}
@@ -81,6 +94,7 @@ export default function VideoCard({ video, onSelectVideo }: VideoCardProps) {
               onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center space-x-1 text-[11px] font-medium text-ink-secondary hover:text-primary bg-canvas-soft px-2.5 py-1 rounded-full border border-hairline hover:border-primary/40 transition-colors"
               title={`Buka akar kata ${video.relatedRootSlug}`}
+              aria-label={`Pelajari akar kata ${video.relatedRootArabic} (${video.relatedRootSlug})`}
             >
               <BookOpen className="w-3 h-3 text-primary" />
               <span>Akar {video.relatedRootArabic}</span>
