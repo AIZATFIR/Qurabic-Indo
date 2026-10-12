@@ -19,7 +19,8 @@ import {
   SlidersHorizontal,
   X,
   ArrowRight,
-  BookOpen
+  BookOpen,
+  Headphones
 } from 'lucide-react';
 import QuranWordInteractive, { QuranWordClickData } from '@/components/QuranWordInteractive';
 import WordEtymologyModal from '@/components/WordEtymologyModal';
@@ -81,11 +82,21 @@ function BacaQuranPageContent() {
     debounceMs: 180,
   });
 
-  // Quran Audio Recitation Hook (Ayah-by-Ayah with Auto-Advance & Sync)
+  // Translation lookup for Tadarus Handsfree
+  const getAyahTranslation = useCallback(
+    (ayahNum: number) => {
+      const found = ayahs.find((a) => a.ayahNumber === ayahNum);
+      return found?.textIndo;
+    },
+    [ayahs]
+  );
+
+  // Quran Audio Recitation Hook (Ayah-by-Ayah with Tadarus Handsfree & Sync)
   const audio = useQuranAudio({
     surahNumber: selectedSurah,
     totalAyahs: currentSurahMeta.ayahsCount,
     autoScroll: true,
+    getAyahTranslation,
   });
 
   // Tafsir per-Ayat state & handler
@@ -489,8 +500,8 @@ function BacaQuranPageContent() {
               Arti: &ldquo;{currentSurahMeta.translationId}&rdquo;
             </p>
 
-            {/* Audio Recitation Trigger */}
-            <div className="pt-2 flex items-center justify-center space-x-3">
+            {/* Audio Recitation & Tadarus Handsfree Trigger */}
+            <div className="pt-2 flex flex-wrap items-center justify-center gap-2.5">
               <button
                 onClick={audio.togglePlayPause}
                 className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary-deep text-white text-xs font-semibold shadow-subtle transition-all font-sans"
@@ -504,6 +515,28 @@ function BacaQuranPageContent() {
                   <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
                 )}
                 <span>{audio.isPlaying ? 'Jeda Tilawah' : 'Putar Tilawah'}</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  if (!audio.isTranslationReadingEnabled) {
+                    audio.setTranslationReadingEnabled(true);
+                    if (!audio.isPlaying) {
+                      audio.playAyah(audio.currentAyah || 1);
+                    }
+                  } else {
+                    audio.toggleTranslationReading();
+                  }
+                }}
+                className={`inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl border text-xs font-semibold transition-all font-sans shadow-subtle ${
+                  audio.isTranslationReadingEnabled
+                    ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 font-bold'
+                    : 'bg-canvas-soft hover:bg-canvas-page text-ink-secondary hover:text-primary border-hairline'
+                }`}
+                title="Tadarus Handsfree: Putar audio murottal Arab lalu otomatis dengar pembacaan terjemahan Indonesia per ayat"
+              >
+                <Headphones className="w-3.5 h-3.5" />
+                <span>Tadarus Handsfree {audio.isTranslationReadingEnabled ? '(Aktif)' : ''}</span>
               </button>
             </div>
           </div>
@@ -740,12 +773,20 @@ function BacaQuranPageContent() {
                         >
                           {isActiveAyah && audio.isLoading ? (
                             <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+                          ) : isActiveAyah && audio.isReadingTranslation ? (
+                            <Headphones className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 animate-pulse" />
                           ) : isActiveAyah && audio.isPlaying ? (
                             <Pause className="w-3.5 h-3.5 fill-current" />
                           ) : (
                             <Volume2 className="w-3.5 h-3.5" />
                           )}
                         </button>
+
+                        {isActiveAyah && audio.isReadingTranslation && (
+                          <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-md font-semibold animate-pulse hidden sm:inline-flex">
+                            Membacakan Terjemahan ID
+                          </span>
+                        )}
 
                         <button
                           onClick={() => handleToggleTafsir(ayah.ayahNumber)}

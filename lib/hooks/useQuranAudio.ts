@@ -2,6 +2,13 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { getAyahAudioUrl, getAudioCandidateUrls } from '../api/audio';
+import {
+  speakIndonesianTranslation,
+  cancelSpeechSynthesis,
+  pauseSpeechSynthesis,
+  resumeSpeechSynthesis,
+  isSpeechSynthesisSupported,
+} from '../audio/speech-translation';
 
 export type PlaybackState = 'idle' | 'loading' | 'playing' | 'paused' | 'ended' | 'error';
 export type RepeatMode = 'off' | 'ayah' | 'surah';
@@ -10,6 +17,7 @@ export interface UseQuranAudioOptions {
   surahNumber: number;
   totalAyahs: number;
   autoScroll?: boolean;
+  getAyahTranslation?: (ayahNumber: number) => string | undefined;
 }
 
 export interface UseQuranAudioReturn {
@@ -23,6 +31,12 @@ export interface UseQuranAudioReturn {
   repeatMode: RepeatMode;
   autoNext: boolean;
   error: string | null;
+  // Tadarus Handsfree (Indonesian Translation Speech)
+  isTranslationReadingEnabled: boolean;
+  isReadingTranslation: boolean;
+  translationSpeechSupported: boolean;
+  toggleTranslationReading: () => void;
+  setTranslationReadingEnabled: (enabled: boolean) => void;
   playAyah: (ayahNumber: number) => void;
   togglePlayPause: () => void;
   pause: () => void;
@@ -41,6 +55,7 @@ export function useQuranAudio({
   surahNumber,
   totalAyahs,
   autoScroll = true,
+  getAyahTranslation,
 }: UseQuranAudioOptions): UseQuranAudioReturn {
   const [currentAyah, setCurrentAyah] = useState<number | null>(null);
   const [playbackState, setPlaybackState] = useState<PlaybackState>('idle');
@@ -49,6 +64,11 @@ export function useQuranAudio({
   const [repeatMode, setRepeatMode] = useState<RepeatMode>('off');
   const [autoNext, setAutoNext] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Tadarus Handsfree state
+  const [isTranslationReadingEnabled, setIsTranslationReadingEnabled] = useState<boolean>(false);
+  const [isReadingTranslation, setIsReadingTranslation] = useState<boolean>(false);
+  const [translationSpeechSupported, setTranslationSpeechSupported] = useState<boolean>(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const requestIdRef = useRef<number>(0);
@@ -71,9 +91,26 @@ export function useQuranAudio({
   const autoNextRef = useRef<boolean>(autoNext);
   autoNextRef.current = autoNext;
 
+  const isTranslationReadingEnabledRef = useRef<boolean>(isTranslationReadingEnabled);
+  isTranslationReadingEnabledRef.current = isTranslationReadingEnabled;
+
+  const isReadingTranslationRef = useRef<boolean>(isReadingTranslation);
+  isReadingTranslationRef.current = isReadingTranslation;
+
+  const getAyahTranslationRef = useRef<((ayahNumber: number) => string | undefined) | undefined>(
+    getAyahTranslation
+  );
+  getAyahTranslationRef.current = getAyahTranslation;
+
   // Forward refs to eliminate circular dependencies and hook warnings
   const playAyahInternalRef = useRef<(ayahNum: number) => void>(() => {});
   const tryNextCandidateRef = useRef<(reqId: number, ayahNum: number) => void>(() => {});
+  const advanceAfterAyahRef = useRef<() => void>(() => {});
+
+  // Check speech synthesis support on mount
+  useEffect(() => {
+    setTranslationSpeechSupported(isSpeechSynthesisSupported());
+  }, []);
 
   // Clear watchdog timer helper
   const clearWatchdog = useCallback(() => {
@@ -84,92 +121,142 @@ export function useQuranAudio({
   }, []);
 
   // Smooth auto-scroll helper aligned with precision to the top border of ayah
-  const scrollToAyah = useCallback((ayahNum: number) => {
-    if (!autoScroll || typeof document === 'undefined') return;
+  const scrollToAyah = useCallback(
+    (ayahNum: number) => {
+      if (!autoScroll || typeof document === 'undefined') return;
 
-    const tryScroll = (attemptsLeft = 4) => {
-      const el = document.getElementById(`ayah-${ayahNum}`);
-      if (el) {
-        const header = document.getElementById('reader-headbar');
-        const headerHeight = header ? header.getBoundingClientRect().height : 56;
-        const elementTop = el.getBoundingClientRect().top + window.pageYOffset;
-        window.scrollTo({
-          top: Math.max(0, elementTop - headerHeight),
-          behavior: 'smooth',
-        });
-      } else if (attemptsLeft > 0) {
-        setTimeout(() => tryScroll(attemptsLeft - 1), 80);
-      }
-    };
+      const tryScroll = (attemptsLeft = 4) => {
+        const el = document.getElementById(`ayah-${ayahNum}`);
+        if (el) {
+          const header = document.getElementById('reader-headbar');
+          const headerHeight = header ? header.getBoundingClientRect().height : 56;
+          const elementTop = el.getBoundingClientRect().top + window.pageYOffset;
+          window.scrollTo({
+            top: Math.max(0, elementTop - headerHeight),
+            behavior: 'smooth',
+          });
+        } else if (attemptsLeft > 0) {
+          setTimeout(() => tryScroll(attemptsLeft - 1), 80);
+        }
+      };
 
-    requestAnimationFrame(() => tryScroll());
-  }, [autoScroll]);
+      requestAnimationFrame(() => tryScroll());
+    },
+    [autoScroll]
+  );
 
-  // Load a candidate URL with timeout watchdog & race-condition protection
-  const loadCandidate = useCallback((index: number, reqId: number, ayahNum: number) => {
-    clearWatchdog();
+  // Helper to advance after Ayah cycle completes (either Arabic audio only or Arabic + Translation)
+  const advanceAfterAyah = useCallback(() => {
+    const current = activeAyahRef.current;
+    const total = totalAyahsRef.current;
+    const mode = repeatModeRef.current;
+    const isAutoNext = autoNextRef.current;
 
-    const audio = audioRef.current;
-    if (!audio) return;
+    if (current === null) return;
 
-    const urls = candidateUrlsRef.current;
-    if (index >= urls.length) {
-      setPlaybackState('error');
-      setError('Audio tilawah tidak tersedia. Ketuk untuk mencoba lagi.');
+    // 1. AYAH Repeat Mode
+    if (mode === 'ayah') {
+      playAyahInternalRef.current(current);
       return;
     }
 
-    candidateIndexRef.current = index;
-    const targetUrl = urls[index];
-
-    audio.src = targetUrl;
-    audio.load();
-
-    const playPromise = audio.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          if (requestIdRef.current !== reqId) return;
-          clearWatchdog();
-          setPlaybackState('playing');
-          setError(null);
-          scrollToAyah(ayahNum);
-        })
-        .catch((err) => {
-          if (requestIdRef.current !== reqId) return;
-          if (err.name === 'NotAllowedError') {
-            // Browser autoplay restricted; keep in paused state ready for user tap
-            clearWatchdog();
-            setPlaybackState('paused');
-          } else if (err.name !== 'AbortError') {
-            console.warn(`[Qurabic Audio] Failed candidate ${index}: ${err.message}`);
-            // Fallback immediately to next candidate
-            tryNextCandidateRef.current(reqId, ayahNum);
-          }
-        });
+    // 2. Next Ayah within Surah
+    if (current < total) {
+      if (isAutoNext) {
+        playAyahInternalRef.current(current + 1);
+      } else {
+        setPlaybackState('paused');
+      }
+      return;
     }
 
-    // Watchdog timer: If audio doesn't start playing within 4.5s (e.g. stalled connection), failover
-    loadTimeoutRef.current = setTimeout(() => {
-      if (requestIdRef.current !== reqId) return;
-      if (audio.paused || audio.readyState < 2) {
-        console.warn(`[Qurabic Audio] Watchdog triggered on candidate ${index}, trying next candidate CDN...`);
-        tryNextCandidateRef.current(reqId, ayahNum);
+    // 3. Final Ayah of Surah reached
+    if (current >= total) {
+      if (mode === 'surah') {
+        // Loop back to Ayah 1 of the same surah
+        playAyahInternalRef.current(1);
+      } else {
+        // Stop at final ayah, keep selected
+        setPlaybackState('ended');
       }
-    }, 4500);
-  }, [clearWatchdog, scrollToAyah]);
+    }
+  }, []);
+
+  advanceAfterAyahRef.current = advanceAfterAyah;
+
+  // Load a candidate URL with timeout watchdog & race-condition protection
+  const loadCandidate = useCallback(
+    (index: number, reqId: number, ayahNum: number) => {
+      clearWatchdog();
+
+      const audio = audioRef.current;
+      if (!audio) return;
+
+      const urls = candidateUrlsRef.current;
+      if (index >= urls.length) {
+        setPlaybackState('error');
+        setError('Audio tilawah tidak tersedia. Ketuk untuk mencoba lagi.');
+        return;
+      }
+
+      candidateIndexRef.current = index;
+      const targetUrl = urls[index];
+
+      audio.src = targetUrl;
+      audio.load();
+
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            if (requestIdRef.current !== reqId) return;
+            clearWatchdog();
+            setPlaybackState('playing');
+            setError(null);
+            scrollToAyah(ayahNum);
+          })
+          .catch((err) => {
+            if (requestIdRef.current !== reqId) return;
+            if (err.name === 'NotAllowedError') {
+              // Browser autoplay restricted; keep in paused state ready for user tap
+              clearWatchdog();
+              setPlaybackState('paused');
+            } else if (err.name !== 'AbortError') {
+              console.warn(`[Qurabic Audio] Failed candidate ${index}: ${err.message}`);
+              // Fallback immediately to next candidate
+              tryNextCandidateRef.current(reqId, ayahNum);
+            }
+          });
+      }
+
+      // Watchdog timer: If audio doesn't start playing within 4.5s (e.g. stalled connection), failover
+      loadTimeoutRef.current = setTimeout(() => {
+        if (requestIdRef.current !== reqId) return;
+        if (audio.paused || audio.readyState < 2) {
+          console.warn(
+            `[Qurabic Audio] Watchdog triggered on candidate ${index}, trying next candidate CDN...`
+          );
+          tryNextCandidateRef.current(reqId, ayahNum);
+        }
+      }, 4500);
+    },
+    [clearWatchdog, scrollToAyah]
+  );
 
   // Failover to next candidate in chain
-  const tryNextCandidate = useCallback((reqId: number, ayahNum: number) => {
-    const nextIndex = candidateIndexRef.current + 1;
-    if (nextIndex < candidateUrlsRef.current.length) {
-      loadCandidate(nextIndex, reqId, ayahNum);
-    } else {
-      clearWatchdog();
-      setPlaybackState('error');
-      setError('Koneksi audio tilawah terputus. Ketuk untuk mencoba lagi.');
-    }
-  }, [loadCandidate, clearWatchdog]);
+  const tryNextCandidate = useCallback(
+    (reqId: number, ayahNum: number) => {
+      const nextIndex = candidateIndexRef.current + 1;
+      if (nextIndex < candidateUrlsRef.current.length) {
+        loadCandidate(nextIndex, reqId, ayahNum);
+      } else {
+        clearWatchdog();
+        setPlaybackState('error');
+        setError('Koneksi audio tilawah terputus. Ketuk untuk mencoba lagi.');
+      }
+    },
+    [loadCandidate, clearWatchdog]
+  );
 
   tryNextCandidateRef.current = tryNextCandidate;
 
@@ -192,6 +279,9 @@ export function useQuranAudio({
     };
 
     const handlePause = () => {
+      // If currently reading translation, keep in playing state unless explicitly paused
+      if (isReadingTranslationRef.current) return;
+
       if (audio.ended) {
         setPlaybackState('ended');
       } else {
@@ -214,15 +304,19 @@ export function useQuranAudio({
     };
 
     const handleWaiting = () => {
-      setPlaybackState('loading');
+      if (!isReadingTranslationRef.current) {
+        setPlaybackState('loading');
+      }
     };
 
     const handleCanPlay = () => {
       clearWatchdog();
-      if (audio.paused) {
-        setPlaybackState((prev) => (prev === 'loading' ? 'paused' : prev));
-      } else {
-        setPlaybackState('playing');
+      if (!isReadingTranslationRef.current) {
+        if (audio.paused) {
+          setPlaybackState((prev) => (prev === 'loading' ? 'paused' : prev));
+        } else {
+          setPlaybackState('playing');
+        }
       }
     };
 
@@ -237,41 +331,35 @@ export function useQuranAudio({
       }
     };
 
-    // Ayah Autoplay & Repeat Logic
+    // Ayah Autoplay & Handsfree Flow Logic
     const handleEnded = () => {
       const current = activeAyahRef.current;
-      const total = totalAyahsRef.current;
-      const mode = repeatModeRef.current;
-      const isAutoNext = autoNextRef.current;
-
       if (current === null) return;
 
-      // 1. AYAH Repeat Mode
-      if (mode === 'ayah') {
-        playAyahInternalRef.current(current);
+      const shouldReadTranslation = isTranslationReadingEnabledRef.current;
+      const translationText = getAyahTranslationRef.current?.(current);
+
+      // TADARUS HANDSFREE: Play Indonesian translation after Arabic audio completes
+      if (shouldReadTranslation && translationText && isSpeechSynthesisSupported()) {
+        setIsReadingTranslation(true);
+        setPlaybackState('playing');
+
+        speakIndonesianTranslation(translationText, {
+          onEnd: () => {
+            setIsReadingTranslation(false);
+            advanceAfterAyahRef.current();
+          },
+          onError: (err) => {
+            console.warn('[Qurabic TTS] Error reading translation:', err);
+            setIsReadingTranslation(false);
+            advanceAfterAyahRef.current();
+          },
+        });
         return;
       }
 
-      // 2. Next Ayah within Surah
-      if (current < total) {
-        if (isAutoNext) {
-          playAyahInternalRef.current(current + 1);
-        } else {
-          setPlaybackState('paused');
-        }
-        return;
-      }
-
-      // 3. Final Ayah of Surah reached
-      if (current >= total) {
-        if (mode === 'surah') {
-          // Loop back to Ayah 1 of the same surah
-          playAyahInternalRef.current(1);
-        } else {
-          // Stop at final ayah, keep selected
-          setPlaybackState('ended');
-        }
-      }
+      // Default audio flow without translation reader
+      advanceAfterAyahRef.current();
     };
 
     audio.addEventListener('play', handlePlay);
@@ -294,15 +382,18 @@ export function useQuranAudio({
       audio.removeEventListener('ended', handleEnded);
 
       clearWatchdog();
+      cancelSpeechSynthesis();
       audio.pause();
       audio.src = '';
     };
   }, [clearWatchdog]);
 
-  // When selected surah changes, reset audio state cleanly
+  // When selected surah changes, reset audio & TTS state cleanly
   useEffect(() => {
     requestIdRef.current++;
     clearWatchdog();
+    cancelSpeechSynthesis();
+    setIsReadingTranslation(false);
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.src = '';
@@ -315,33 +406,55 @@ export function useQuranAudio({
   }, [surahNumber, clearWatchdog]);
 
   // Core internal function to load and play a specific Ayah with Race Condition protection
-  const playAyahInternal = useCallback((ayahNum: number) => {
-    const audio = audioRef.current;
-    if (!audio) return;
+  const playAyahInternal = useCallback(
+    (ayahNum: number) => {
+      const audio = audioRef.current;
+      if (!audio) return;
 
-    const currentRequestId = ++requestIdRef.current;
-    const candidates = getAudioCandidateUrls(surahNumberRef.current, ayahNum);
-    candidateUrlsRef.current = candidates;
+      // Cancel any ongoing translation reading
+      cancelSpeechSynthesis();
+      setIsReadingTranslation(false);
 
-    setCurrentAyah(ayahNum);
-    setPlaybackState('loading');
-    setError(null);
-    setCurrentTime(0);
-    setDuration(0);
+      const currentRequestId = ++requestIdRef.current;
+      const candidates = getAudioCandidateUrls(surahNumberRef.current, ayahNum);
+      candidateUrlsRef.current = candidates;
 
-    loadCandidate(0, currentRequestId, ayahNum);
-  }, [loadCandidate]);
+      setCurrentAyah(ayahNum);
+      setPlaybackState('loading');
+      setError(null);
+      setCurrentTime(0);
+      setDuration(0);
+
+      loadCandidate(0, currentRequestId, ayahNum);
+    },
+    [loadCandidate]
+  );
 
   playAyahInternalRef.current = playAyahInternal;
 
   // Public: Play a specific Ayah
-  const playAyah = useCallback((ayahNum: number) => {
-    if (ayahNum < 1 || ayahNum > totalAyahs) return;
-    playAyahInternal(ayahNum);
-  }, [playAyahInternal, totalAyahs]);
+  const playAyah = useCallback(
+    (ayahNum: number) => {
+      if (ayahNum < 1 || ayahNum > totalAyahs) return;
+      playAyahInternal(ayahNum);
+    },
+    [playAyahInternal, totalAyahs]
+  );
 
   // Public: Toggle Play / Pause
   const togglePlayPause = useCallback(() => {
+    // If currently speaking Indonesian translation in Handsfree mode
+    if (isReadingTranslationRef.current) {
+      if (playbackState === 'paused') {
+        resumeSpeechSynthesis();
+        setPlaybackState('playing');
+      } else {
+        pauseSpeechSynthesis();
+        setPlaybackState('paused');
+      }
+      return;
+    }
+
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -361,6 +474,12 @@ export function useQuranAudio({
 
   // Public: Pause
   const pause = useCallback(() => {
+    if (isReadingTranslationRef.current) {
+      pauseSpeechSynthesis();
+      setPlaybackState('paused');
+      return;
+    }
+
     if (audioRef.current && playbackState === 'playing') {
       audioRef.current.pause();
       setPlaybackState('paused');
@@ -369,6 +488,12 @@ export function useQuranAudio({
 
   // Public: Resume
   const resume = useCallback(() => {
+    if (isReadingTranslationRef.current) {
+      resumeSpeechSynthesis();
+      setPlaybackState('playing');
+      return;
+    }
+
     if (audioRef.current && currentAyah !== null) {
       audioRef.current.play().catch(() => {});
       setPlaybackState('playing');
@@ -377,6 +502,9 @@ export function useQuranAudio({
 
   // Public: Next Ayah
   const nextAyah = useCallback(() => {
+    cancelSpeechSynthesis();
+    setIsReadingTranslation(false);
+
     const current = currentAyah || 0;
     if (current < totalAyahs) {
       playAyahInternal(current + 1);
@@ -385,6 +513,9 @@ export function useQuranAudio({
 
   // Public: Prev Ayah
   const prevAyah = useCallback(() => {
+    cancelSpeechSynthesis();
+    setIsReadingTranslation(false);
+
     const audio = audioRef.current;
     if (!audio || currentAyah === null) return;
 
@@ -412,8 +543,33 @@ export function useQuranAudio({
     setAutoNext((prev) => !prev);
   }, []);
 
+  // Public: Toggle Tadarus Handsfree Translation Reading
+  const toggleTranslationReading = useCallback(() => {
+    setIsTranslationReadingEnabled((prev) => {
+      const next = !prev;
+      // If toggling off while translation is currently playing, immediately cancel and advance
+      if (!next && isReadingTranslationRef.current) {
+        cancelSpeechSynthesis();
+        setIsReadingTranslation(false);
+        advanceAfterAyahRef.current();
+      }
+      return next;
+    });
+  }, []);
+
+  const setTranslationReadingEnabled = useCallback((enabled: boolean) => {
+    setIsTranslationReadingEnabled(enabled);
+    if (!enabled && isReadingTranslationRef.current) {
+      cancelSpeechSynthesis();
+      setIsReadingTranslation(false);
+      advanceAfterAyahRef.current();
+    }
+  }, []);
+
   // Public: Seek current ayah progress
   const seek = useCallback((progressRatio: number) => {
+    if (isReadingTranslationRef.current) return;
+
     const audio = audioRef.current;
     if (!audio || !audio.duration || isNaN(audio.duration)) return;
 
@@ -425,6 +581,10 @@ export function useQuranAudio({
   // Public: Stop playback
   const stop = useCallback(() => {
     requestIdRef.current++;
+    clearWatchdog();
+    cancelSpeechSynthesis();
+    setIsReadingTranslation(false);
+
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
@@ -432,7 +592,7 @@ export function useQuranAudio({
     setPlaybackState('idle');
     setCurrentTime(0);
     setCurrentAyah(null);
-  }, []);
+  }, [clearWatchdog]);
 
   // Keyboard shortcuts (Space = play/pause, ArrowRight = next, ArrowLeft = prev)
   useEffect(() => {
@@ -479,6 +639,11 @@ export function useQuranAudio({
     repeatMode,
     autoNext,
     error,
+    isTranslationReadingEnabled,
+    isReadingTranslation,
+    translationSpeechSupported,
+    toggleTranslationReading,
+    setTranslationReadingEnabled,
     playAyah,
     togglePlayPause,
     pause,

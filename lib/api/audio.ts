@@ -44,6 +44,7 @@ export function getAudioCandidateUrls(surahNumber: number, ayahNumber: number): 
     `https://verses.quran.com/Alafasy/mp3/${s}${a}.mp3`,
     `https://audio.qurancdn.com/Alafasy/mp3/${s}${a}.mp3`,
     `https://everyayah.com/data/Alafasy_128kbps/${s}${a}.mp3`,
+    `https://equran.nos.wjv-1.neo.id/audio-partial/Misyari-Rasyid-Al-Afasi/${s}${a}.mp3`,
   ];
 }
 

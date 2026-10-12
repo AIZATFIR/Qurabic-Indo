@@ -8,6 +8,9 @@ import EtymologyCard from '@/components/EtymologyCard';
 import DerivativesGrid from '@/components/DerivativesGrid';
 import AyahConcordance from '@/components/AyahConcordance';
 import MorphologyDistribution from '@/components/MorphologyDistribution';
+import SharafParadigmVisualizer from '@/components/SharafParadigmVisualizer';
+import BalaghahNuanceCard from '@/components/BalaghahNuanceCard';
+import RootFamilyTree from '@/components/RootFamilyTree';
 import Link from 'next/link';
 import { ArrowLeft, BookOpen, Layers, ShieldCheck, Database, Radio, BarChart3, BookMarked } from 'lucide-react';
 
@@ -266,6 +269,13 @@ export default async function RootDetailPage({ params }: PageProps) {
             </p>
           </div>
         )}
+      </section>
+
+      {/* 2.1 Matriks Tasrif Sharaf & Tadabbur Balaghah */}
+      <section id="sharaf-balaghah" className="scroll-mt-24 space-y-6">
+        <SharafParadigmVisualizer rootSlug={rootModel.id} rootArabic={rootModel.rootArabic} />
+        <RootFamilyTree rootSlug={rootModel.id} rootArabic={rootModel.rootArabic} />
+        <BalaghahNuanceCard rootSlug={rootModel.id} />
       </section>
 
       {/* 3. Distribusi Morfologi & Frekuensi Korpus */}

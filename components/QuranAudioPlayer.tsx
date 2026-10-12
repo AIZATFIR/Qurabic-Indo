@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Play, Pause, SkipBack, SkipForward, X, AlertCircle, Loader2 } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, X, AlertCircle, Loader2, Headphones, Volume2 } from 'lucide-react';
 import { UseQuranAudioReturn } from '@/lib/hooks/useQuranAudio';
 
 interface QuranAudioPlayerProps {
@@ -27,6 +27,9 @@ export default function QuranAudioPlayer({
     progress,
     repeatMode,
     error,
+    isTranslationReadingEnabled,
+    isReadingTranslation,
+    toggleTranslationReading,
     togglePlayPause,
     nextAyah,
     prevAyah,
@@ -51,6 +54,7 @@ export default function QuranAudioPlayer({
   const activeAyahNum = currentAyah || 1;
 
   const handleProgressBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isReadingTranslation) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const ratio = Math.max(0, Math.min(1, clickX / rect.width));
@@ -59,20 +63,26 @@ export default function QuranAudioPlayer({
 
   return (
     <aside
-      aria-label="Pemutar Audio Tilawah Al-Qur'an"
-      className="fixed bottom-3 inset-x-3 sm:bottom-6 sm:right-6 sm:inset-x-auto sm:w-[420px] z-40 bg-canvas-surface border border-hairline rounded-2xl shadow-hover transition-all duration-200 text-ink-primary font-sans animate-in slide-in-from-bottom-4"
+      aria-label="Pemutar Audio Tilawah Al-Qur'an dan Tadarus Handsfree"
+      className="fixed bottom-3 inset-x-3 sm:bottom-6 sm:right-6 sm:inset-x-auto sm:w-[440px] z-40 bg-canvas-surface border border-hairline rounded-2xl shadow-hover transition-all duration-200 text-ink-primary font-sans animate-in slide-in-from-bottom-4"
     >
-      {/* Subtle Progress Bar along top edge of player */}
+      {/* Progress Bar along top edge of player */}
       <div
         onClick={handleProgressBarClick}
         className="w-full h-1 bg-canvas-soft cursor-pointer relative overflow-hidden rounded-t-2xl group"
-        title="Klik untuk loncat durasi"
+        title={isReadingTranslation ? 'Sedang membacakan terjemahan Indonesia' : 'Klik untuk loncat durasi'}
       >
         <div
-          className="h-full bg-primary transition-all duration-100 ease-out"
-          style={{ width: `${progress * 100}%` }}
+          className={`h-full transition-all duration-100 ease-out ${
+            isReadingTranslation
+              ? 'bg-emerald-500 w-full animate-pulse'
+              : 'bg-primary'
+          }`}
+          style={!isReadingTranslation ? { width: `${progress * 100}%` } : undefined}
         />
-        <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+        {!isReadingTranslation && (
+          <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+        )}
       </div>
 
       <div className="p-3.5 sm:p-4 space-y-2">
@@ -84,21 +94,56 @@ export default function QuranAudioPlayer({
               <span className="font-semibold text-xs text-ink-primary truncate">
                 {surahNameIndo}
               </span>
-              <span className="text-[11px] text-ink-mute font-medium">
+              <span className="text-[11px] text-ink-mute font-medium shrink-0">
                 Ayat {activeAyahNum} / {totalAyahs}
               </span>
             </div>
 
-            {/* Time Indicator & Reciter */}
-            <div className="flex items-center space-x-2 text-[10px] text-ink-mute font-medium mt-0.5">
-              <span>{formatTime(currentTime)} / {formatTime(duration)}</span>
-              <span>•</span>
-              <span className="truncate">Syaikh Mishary Al-Afasy</span>
-            </div>
+            {/* Subtitle Status: Reading Translation vs Arabic Audio */}
+            {isReadingTranslation ? (
+              <div className="flex items-center space-x-1.5 text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5 truncate animate-pulse">
+                <Volume2 className="w-3 h-3 shrink-0" />
+                <span className="truncate">Membacakan Terjemahan (ID)...</span>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2 text-[10px] text-ink-mute font-medium mt-0.5 truncate">
+                <span>{formatTime(currentTime)} / {formatTime(duration)}</span>
+                <span>•</span>
+                <span className="truncate">Syaikh Mishary Al-Afasy</span>
+                {isTranslationReadingEnabled && (
+                  <span className="text-emerald-600 dark:text-emerald-400 font-bold hidden xs:inline">
+                    • Handsfree ON
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Right: Primary Controls */}
           <div className="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
+            {/* Toggle Tadarus Handsfree (Murottal Arab + Terjemahan Indonesia) */}
+            <button
+              onClick={(e) => {
+                e.currentTarget.blur();
+                toggleTranslationReading();
+              }}
+              className={`p-1.5 rounded-lg text-xs font-semibold font-sans transition-all flex items-center space-x-1 border ${
+                isTranslationReadingEnabled
+                  ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                  : 'text-ink-mute hover:text-ink-primary hover:bg-canvas-soft border-transparent'
+              }`}
+              title={
+                isTranslationReadingEnabled
+                  ? 'Tadarus Handsfree: Terjemahan ID Aktif (Ketuk untuk Mematikan)'
+                  : 'Tadarus Handsfree: Putar Murottal lalu Terjemahan ID (Ketuk untuk Mengaktifkan)'
+              }
+              aria-label="Tadarus Handsfree"
+              aria-pressed={isTranslationReadingEnabled}
+            >
+              <Headphones className="w-3.5 h-3.5 shrink-0" />
+              <span className="text-[10px] hidden sm:inline">Handsfree</span>
+            </button>
+
             {/* Repeat Mode Button */}
             <button
               onClick={(e) => {
@@ -130,7 +175,7 @@ export default function QuranAudioPlayer({
                 e.currentTarget.blur();
                 prevAyah();
               }}
-              disabled={activeAyahNum <= 1 && currentTime <= 3}
+              disabled={activeAyahNum <= 1 && currentTime <= 3 && !isReadingTranslation}
               className="p-1.5 rounded-lg text-ink-secondary hover:text-ink-primary hover:bg-canvas-soft disabled:opacity-40 transition-colors"
               title="Ayat Sebelumnya (Arrow Left)"
               aria-label="Ayat Sebelumnya"

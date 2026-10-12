@@ -17,14 +17,20 @@ import {
   Check,
   Copy,
   ArrowDown,
-  Info
+  Info,
+  Bookmark
 } from 'lucide-react';
 import { WordStudyViewModel } from '@/lib/lexicon/types';
 import { parseLexiconSenseTokens } from '@/lib/lexicon/lexicon-formatter';
 import { getAuthenticWordMeaning, getRootTranslationProfile } from '@/lib/morphology/root-dictionary';
 import { isRawBuckwalterRoot, transliterateArabic } from '@/lib/morphology/transliteration';
 import { stripArabicHarakat } from '@/lib/search/root-search';
+import { useBookmarks } from '@/lib/hooks/useBookmarks';
 import SourceDrawer from './SourceDrawer';
+import SharafParadigmVisualizer from './SharafParadigmVisualizer';
+import BalaghahNuanceCard from './BalaghahNuanceCard';
+import RootFamilyTree from './RootFamilyTree';
+import { Sparkles as SparklesIcon } from 'lucide-react';
 
 interface WordStudyProps {
   study: WordStudyViewModel;
@@ -40,6 +46,9 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
   const [isCopied, setIsCopied] = useState(false);
   const [isSourceDrawerOpen, setIsSourceDrawerOpen] = useState(false);
   const [selectedSourceId, setSelectedSourceId] = useState<string | undefined>();
+  const { isBookmarked, toggleBookmark } = useBookmarks();
+  const activeBookmarkSlug = study.lexical.rootSlug;
+  const isSavedBookmark = activeBookmarkSlug ? isBookmarked(activeBookmarkSlug) : false;
 
   const {
     identity,
@@ -207,6 +216,22 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
           </div>
 
           <div className="flex items-center space-x-2">
+            {activeBookmarkSlug && (
+              <button
+                onClick={() => toggleBookmark(activeBookmarkSlug, lexical.rootArabic || identity.arabic)}
+                title={isSavedBookmark ? "Dihapus dari Tersimpan" : "Simpan Akar Kata Ini"}
+                className={`p-2.5 sm:px-3.5 sm:py-2 rounded-2xl transition-all duration-200 border flex items-center space-x-1.5 ${
+                  isSavedBookmark
+                    ? 'bg-primary text-white border-primary shadow-subtle'
+                    : 'bg-canvas-soft hover:bg-canvas-page text-ink-mute hover:text-primary border-hairline shadow-xs'
+                }`}
+              >
+                <Bookmark className={`w-4 h-4 sm:w-5 sm:h-5 ${isSavedBookmark ? 'fill-current' : ''}`} />
+                <span className="text-xs font-semibold hidden sm:inline">
+                  {isSavedBookmark ? 'Tersimpan' : 'Simpan'}
+                </span>
+              </button>
+            )}
             <button
               onClick={handlePlayAudio}
               disabled={isPlayingAudio}
@@ -677,6 +702,44 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
           )}
         </section>
       )}
+
+      {/* ========================================================================= */}
+      {/* 6.1 MATRIKS TASRIF SHARAF, SILSILAH DERIVASI & TADABBUR BALAGHAH           */}
+      {/* ========================================================================= */}
+      {!morphology.isParticle && (
+        <SharafParadigmVisualizer rootSlug={lexical.rootSlug} rootArabic={lexical.rootArabic} />
+      )}
+
+      {!morphology.isParticle && (
+        <RootFamilyTree rootSlug={lexical.rootSlug} rootArabic={lexical.rootArabic} />
+      )}
+
+      {!morphology.isParticle && lexical.rootSlug && (
+        <BalaghahNuanceCard rootSlug={lexical.rootSlug} />
+      )}
+
+      {/* Interaktif CTA ke Modul Latihan */}
+      <div className="p-5 bg-gradient-to-r from-primary/10 via-canvas-soft to-primary/5 border border-primary/20 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4 font-sans shadow-subtle">
+        <div className="flex items-center space-x-3 text-center sm:text-left">
+          <div className="w-10 h-10 rounded-2xl bg-primary text-white flex items-center justify-center shrink-0 shadow-subtle">
+            <SparklesIcon className="w-5 h-5" />
+          </div>
+          <div>
+            <h4 className="text-sm font-bold text-ink-primary">
+              Uji Pemahaman Morfologi &amp; Akar Kata Ini!
+            </h4>
+            <p className="text-xs text-ink-mute">
+              Praktikkan kuis interaktif dan hafalkan wazan Sharaf di Modul Latihan Qurabic.
+            </p>
+          </div>
+        </div>
+        <Link
+          href="/latihan"
+          className="px-5 py-2.5 rounded-full bg-primary hover:bg-primary-deep text-white text-xs font-semibold shadow-subtle transition-all whitespace-nowrap"
+        >
+          Mulai Latihan Interaktif &rarr;
+        </Link>
+      </div>
 
       {/* ========================================================================= */}
       {/* 7. SEMUA KEMUNCULAN DI AL-QUR'AN (CONCORDANCE OCCURRENCES)                */}

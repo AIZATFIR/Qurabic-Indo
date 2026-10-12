@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BookOpen, Search, Bookmark, BookMarked, Shuffle, Compass } from 'lucide-react';
+import { BookOpen, Search, Bookmark, BookMarked, Shuffle, Compass, Sparkles } from 'lucide-react';
 import OmniSearch from './OmniSearch';
 import ThemeSelector from './ThemeSelector';
 import { useState, useEffect } from 'react';
@@ -93,6 +93,14 @@ export default function Navbar() {
               >
                 <Compass className="w-3.5 h-3.5 text-primary" />
                 <span>Rekomendasi</span>
+              </Link>
+
+              <Link
+                href="/latihan"
+                className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-lg hover:bg-canvas-surface/80"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                <span>Latihan Interaktif</span>
               </Link>
 
               <Link
