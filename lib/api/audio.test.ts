@@ -1,4 +1,11 @@
-import { getAyahAudioUrl, getFormattedAyahKey, getAudioCandidateUrls } from './audio';
+import {
+  getAyahAudioUrl,
+  getFormattedAyahKey,
+  getAudioCandidateUrls,
+  getHumanTranslationAudioUrl,
+  getTranslationTtsAudioUrl,
+  getTranslationAudioCandidateUrls,
+} from './audio';
 import { cleanTranslationForSpeech, isSpeechSynthesisSupported } from '../audio/speech-translation';
 
 // Test suite for Quran Audio URL, Multi-CDN, and Tadarus Handsfree Abstraction
@@ -67,5 +74,29 @@ if (emptyCleaned !== '') {
   throw new Error(`Expected empty string for empty input, got '${emptyCleaned}'`);
 }
 console.log('✅ Test 7 Passed: Speech translation cleaning safely handles empty string');
+
+// Test 8: Human Translation Audio URL Generator
+const humanAudioUrl = getHumanTranslationAudioUrl(1, 1);
+if (!humanAudioUrl.includes('001001.mp3') || !humanAudioUrl.includes('archive.org')) {
+  throw new Error(`Expected archive.org 001001.mp3 URL, got ${humanAudioUrl}`);
+}
+console.log('✅ Test 8 Passed: Human translation audio generator creates padded 6-digit MP3 URL (001001.mp3)');
+
+// Test 9: Translation TTS Stream API URL Generator
+const ttsUrl = getTranslationTtsAudioUrl('Segala puji bagi Allah', 1, 2);
+if (!ttsUrl.startsWith('/api/audio-translation') || !ttsUrl.includes('surah=1') || !ttsUrl.includes('ayah=2')) {
+  throw new Error(`Expected /api/audio-translation endpoint with params, got ${ttsUrl}`);
+}
+console.log('✅ Test 9 Passed: Translation TTS audio generator creates clean API route URL');
+
+// Test 10: Prioritized Translation Audio Candidate Chain
+const translationCandidates = getTranslationAudioCandidateUrls(2, 255, 'Allah, tidak ada tuhan selain Dia');
+if (!Array.isArray(translationCandidates) || translationCandidates.length < 2) {
+  throw new Error('Expected at least 2 translation audio candidate sources');
+}
+if (!translationCandidates[0].includes('002255.mp3') || !translationCandidates[1].includes('/api/audio-translation')) {
+  throw new Error(`Expected human audio as primary and TTS as secondary, got ${JSON.stringify(translationCandidates)}`);
+}
+console.log('✅ Test 10 Passed: Translation audio candidate chain prioritizes human recording with TTS fallback');
 
 console.log('🎉 ALL QURAN AUDIO & TADARUS HANDSFREE UNIT TESTS PASSED!');

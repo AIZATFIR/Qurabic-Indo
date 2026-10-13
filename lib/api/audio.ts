@@ -56,3 +56,38 @@ export function getFallbackAyahAudioUrl(surahNumber: number, ayahNumber: number)
   const a = padDigits(ayahNumber, 3);
   return `https://audio.qurancdn.com/Alafasy/mp3/${s}${a}.mp3`;
 }
+
+/**
+ * Resolves human-recorded Indonesian translation audio URLs from high-availability Archive.org mirror
+ */
+export function getHumanTranslationAudioUrl(surahNumber: number, ayahNumber: number): string {
+  const s = padDigits(surahNumber, 3);
+  const a = padDigits(ayahNumber, 3);
+  return `https://archive.org/download/AlQuran-terjemahan-indonesia-tanpa-bahasa-arab/${s}${a}.mp3`;
+}
+
+/**
+ * Resolves streaming TTS audio endpoint for Indonesian translation
+ */
+export function getTranslationTtsAudioUrl(text?: string, surahNumber?: number, ayahNumber?: number): string {
+  const params = new URLSearchParams();
+  if (text) params.set('text', text);
+  if (surahNumber) params.set('surah', String(surahNumber));
+  if (ayahNumber) params.set('ayah', String(ayahNumber));
+  return `/api/audio-translation?${params.toString()}`;
+}
+
+/**
+ * Returns prioritized candidate list for Indonesian translation audio:
+ * 1. Human recording from Archive.org
+ * 2. High-availability streaming TTS API route
+ */
+export function getTranslationAudioCandidateUrls(
+  surahNumber: number,
+  ayahNumber: number,
+  translationText?: string
+): string[] {
+  const humanUrl = getHumanTranslationAudioUrl(surahNumber, ayahNumber);
+  const ttsUrl = getTranslationTtsAudioUrl(translationText, surahNumber, ayahNumber);
+  return [humanUrl, ttsUrl];
+}
