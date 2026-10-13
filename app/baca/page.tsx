@@ -31,6 +31,7 @@ import { SURAH_LIST, getSurahByNumber } from '@/lib/data/surah-list';
 import { useTheme } from '@/lib/context/ThemeContext';
 import { useQuranAudio } from '@/lib/hooks/useQuranAudio';
 import { useReadingSearch } from '@/lib/hooks/useReadingSearch';
+import { preloadUpcomingAyahs } from '@/lib/audio/audio-preloader';
 
 function BacaQuranPageContent() {
   const router = useRouter();
@@ -174,6 +175,8 @@ function BacaQuranPageContent() {
       try {
         const data = await fetchSurahWithWBW(selectedSurah);
         setAyahs(data);
+        // Instant audio & translation warm-up ("ngeload sekalian terjemahan")
+        preloadUpcomingAyahs(selectedSurah, 1, data.length, (n) => data.find((a) => a.ayahNumber === n)?.textIndo);
       } catch (err) {
         console.error('Error fetching surah data:', err);
       } finally {

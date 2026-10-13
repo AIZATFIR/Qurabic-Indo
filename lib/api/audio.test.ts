@@ -99,4 +99,63 @@ if (!translationCandidates[0].includes('002255.mp3') || !translationCandidates[1
 }
 console.log('✅ Test 10 Passed: Translation audio candidate chain prioritizes human recording with TTS fallback');
 
+// Test 11: Audio Preloader cache lookup handles uncached items safely
+import {
+  getCachedAudioUrl,
+  getCachedTranslationUrl,
+  preloadUpcomingAyahs,
+} from '../audio/audio-preloader';
+
+const uncached = getCachedAudioUrl('https://verses.quran.com/Alafasy/mp3/001001.mp3');
+if (uncached !== undefined) {
+  throw new Error(`Expected undefined for initial uncached lookup, got ${uncached}`);
+}
+console.log('✅ Test 11 Passed: getCachedAudioUrl safely returns undefined for cold cache');
+
+// Test 12: Translation cache lookup handles uncached candidates
+const uncachedTrans = getCachedTranslationUrl(1, 1, 'Dengan nama Allah');
+if (uncachedTrans !== undefined) {
+  throw new Error(`Expected undefined for cold translation cache, got ${uncachedTrans}`);
+}
+console.log('✅ Test 12 Passed: getCachedTranslationUrl safely checks candidate list');
+
+// Test 13: Preload upcoming ayahs runs cleanly without errors in SSR/Node
+try {
+  preloadUpcomingAyahs(1, 1, 7, () => 'Dengan nama Allah');
+  console.log('✅ Test 13 Passed: preloadUpcomingAyahs runs safely in SSR/Node without exception');
+} catch (err: any) {
+  throw new Error(`preloadUpcomingAyahs failed in SSR: ${err?.message}`);
+}
+
+// Test 14: Multi-Qari support includes Yasser Al-Dossary
+import { AVAILABLE_QARIS, TRANSLATION_VOICE_OPTIONS } from './audio';
+
+const yasserCandidate = getAudioCandidateUrls(1, 1, 'yasser_dossary');
+if (!yasserCandidate.some((url) => url.includes('Yasser_Ad-Dussary_128kbps/001001.mp3'))) {
+  throw new Error(`Expected Yasser Dossary EveryAyah URL in candidates, got ${JSON.stringify(yasserCandidate)}`);
+}
+const hasYasser = AVAILABLE_QARIS.some((q) => q.id === 'yasser_dossary');
+if (!hasYasser) {
+  throw new Error('AVAILABLE_QARIS must contain yasser_dossary');
+}
+console.log('✅ Test 14 Passed: Yasser Al-Dossary audio URLs and metadata registered correctly');
+
+// Test 15: Translation voice mode 'tts' prioritizes TTS API endpoint
+const ttsModeCandidates = getTranslationAudioCandidateUrls(1, 1, 'Dengan nama Allah', 'tts');
+if (!ttsModeCandidates[0].startsWith('/api/audio-translation')) {
+  throw new Error(`Expected /api/audio-translation as primary candidate in 'tts' mode, got ${ttsModeCandidates[0]}`);
+}
+console.log('✅ Test 15 Passed: Translation mode "tts" prioritizes TTS streaming endpoint');
+
+// Test 16: Translation voice mode 'off' disables translation audio candidates
+const offModeCandidates = getTranslationAudioCandidateUrls(1, 1, 'Dengan nama Allah', 'off');
+if (offModeCandidates.length !== 0) {
+  throw new Error(`Expected 0 candidates in 'off' mode, got ${offModeCandidates.length}`);
+}
+const hasTranslationOptions = TRANSLATION_VOICE_OPTIONS.length >= 3;
+if (!hasTranslationOptions) {
+  throw new Error('TRANSLATION_VOICE_OPTIONS must include human, tts, and off');
+}
+console.log('✅ Test 16 Passed: Translation mode "off" cleanly returns empty candidate array');
+
 console.log('🎉 ALL QURAN AUDIO & TADARUS HANDSFREE UNIT TESTS PASSED!');

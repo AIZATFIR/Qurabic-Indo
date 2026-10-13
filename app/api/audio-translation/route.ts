@@ -27,6 +27,18 @@ function splitIntoTtsChunks(text: string, maxLen = 160): string[] {
   return chunks;
 }
 
+// In-memory cache for ultra-fast subsequent lookups
+const ttsBufferCache = new Map<string, Buffer>();
+const MAX_CACHE_ENTRIES = 300;
+
+function setTtsCache(key: string, buffer: Buffer) {
+  if (ttsBufferCache.size >= MAX_CACHE_ENTRIES) {
+    const oldestKey = ttsBufferCache.keys().next().value;
+    if (oldestKey) ttsBufferCache.delete(oldestKey);
+  }
+  ttsBufferCache.set(key, buffer);
+}
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   let text = searchParams.get('text');
@@ -59,17 +71,34 @@ export async function GET(request: NextRequest) {
     return new NextResponse('Empty text after normalization', { status: 400 });
   }
 
+  // Check in-memory cache for instant < 1ms response
+  const cacheKey = cleaned.toLowerCase();
+  if (ttsBufferCache.has(cacheKey)) {
+    const cached = ttsBufferCache.get(cacheKey)!;
+    return new NextResponse(new Uint8Array(cached), {
+      status: 200,
+      headers: {
+        'Content-Type': 'audio/mpeg',
+        'Content-Length': String(cached.length),
+        'Cache-Control': 'public, max-age=604800, s-maxage=604800, stale-while-revalidate=86400',
+        'Accept-Ranges': 'bytes',
+        'X-Cache': 'HIT',
+      },
+    });
+  }
+
   try {
     const chunks = splitIntoTtsChunks(cleaned, 160);
-    const buffers: Buffer[] = [];
 
-    for (const chunk of chunks) {
+    // Parallel synthesis across all chunks
+    const fetchPromises = chunks.map(async (chunk) => {
       const url = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=id&q=${encodeURIComponent(chunk)}`;
       const res = await fetch(url, {
         headers: {
           'User-Agent':
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         },
+        signal: AbortSignal.timeout(6000),
         next: { revalidate: 604800 },
       });
 
@@ -78,18 +107,22 @@ export async function GET(request: NextRequest) {
       }
 
       const ab = await res.arrayBuffer();
-      buffers.push(Buffer.from(ab));
-    }
+      return Buffer.from(ab);
+    });
 
+    const buffers = await Promise.all(fetchPromises);
     const combined = Buffer.concat(buffers);
 
-    return new NextResponse(combined, {
+    setTtsCache(cacheKey, combined);
+
+    return new NextResponse(new Uint8Array(combined), {
       status: 200,
       headers: {
         'Content-Type': 'audio/mpeg',
         'Content-Length': String(combined.length),
         'Cache-Control': 'public, max-age=604800, s-maxage=604800, stale-while-revalidate=86400',
         'Accept-Ranges': 'bytes',
+        'X-Cache': 'MISS',
       },
     });
   } catch (error: any) {

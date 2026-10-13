@@ -1,7 +1,19 @@
 'use client';
 
-import React from 'react';
-import { Play, Pause, SkipBack, SkipForward, X, AlertCircle, Loader2, Headphones, Volume2 } from 'lucide-react';
+import React, { useState } from 'react';
+import {
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  X,
+  AlertCircle,
+  Loader2,
+  Headphones,
+  Volume2,
+  Settings2,
+  Check,
+} from 'lucide-react';
 import { UseQuranAudioReturn } from '@/lib/hooks/useQuranAudio';
 
 interface QuranAudioPlayerProps {
@@ -27,6 +39,13 @@ export default function QuranAudioPlayer({
     progress,
     repeatMode,
     error,
+    selectedQari,
+    setSelectedQari,
+    currentQariMeta,
+    availableQaris,
+    translationVoiceMode,
+    setTranslationVoiceMode,
+    translationVoiceOptions,
     isTranslationReadingEnabled,
     isReadingTranslation,
     toggleTranslationReading,
@@ -37,6 +56,8 @@ export default function QuranAudioPlayer({
     seek,
     stop,
   } = audio;
+
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // Format mm:ss
   const formatTime = (seconds: number) => {
@@ -64,7 +85,7 @@ export default function QuranAudioPlayer({
   return (
     <aside
       aria-label="Pemutar Audio Tilawah Al-Qur'an dan Tadarus Handsfree"
-      className="fixed bottom-3 inset-x-3 sm:bottom-6 sm:right-6 sm:inset-x-auto sm:w-[440px] z-40 bg-canvas-surface border border-hairline rounded-2xl shadow-hover transition-all duration-200 text-ink-primary font-sans animate-in slide-in-from-bottom-4"
+      className="fixed bottom-3 inset-x-3 sm:bottom-6 sm:right-6 sm:inset-x-auto sm:w-[460px] z-40 bg-canvas-surface border border-hairline rounded-2xl shadow-hover transition-all duration-200 text-ink-primary font-sans animate-in slide-in-from-bottom-4"
     >
       {/* Progress Bar along top edge of player */}
       <div
@@ -85,6 +106,79 @@ export default function QuranAudioPlayer({
         )}
       </div>
 
+      {/* Audio Settings Panel (Modal/Dropdown) */}
+      {isSettingsOpen && (
+        <div className="p-3.5 border-b border-hairline bg-canvas-soft/80 backdrop-blur-sm rounded-t-2xl space-y-3 animate-in fade-in slide-in-from-top-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-ink-primary flex items-center space-x-1.5">
+              <Settings2 className="w-3.5 h-3.5 text-primary" />
+              <span>Pengaturan Qari & Terjemahan</span>
+            </span>
+            <button
+              onClick={() => setIsSettingsOpen(false)}
+              className="text-ink-mute hover:text-ink-primary p-1 rounded-md"
+              title="Tutup Pengaturan"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* Section 1: Pilihan Qari */}
+          <div className="space-y-1.5">
+            <label className="text-[11px] font-semibold text-ink-secondary flex items-center justify-between">
+              <span>Pilihan Qari / Pembaca Arab</span>
+              <span className="text-[10px] text-ink-mute font-normal">{availableQaris.length} Pilihan</span>
+            </label>
+            <div className="relative">
+              <select
+                value={selectedQari}
+                onChange={(e) => setSelectedQari(e.target.value)}
+                className="w-full text-xs bg-canvas-surface border border-hairline rounded-lg px-2.5 py-1.5 text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary appearance-none font-medium cursor-pointer"
+              >
+                {availableQaris.map((q) => (
+                  <option key={q.id} value={q.id}>
+                    {q.name} ({q.style})
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-ink-mute text-xs">
+                ▼
+              </div>
+            </div>
+            <div className="text-[10px] text-ink-mute flex items-center justify-between px-0.5">
+              <span>Gaya: {currentQariMeta.style}</span>
+              <span className="font-amiri text-xs text-ink-secondary">{currentQariMeta.arabicName}</span>
+            </div>
+          </div>
+
+          {/* Section 2: Audio Terjemahan Indonesia */}
+          <div className="space-y-1.5 pt-1">
+            <label className="text-[11px] font-semibold text-ink-secondary">
+              Audio Terjemahan Indonesia (Handsfree)
+            </label>
+            <div className="grid grid-cols-3 gap-1.5">
+              {translationVoiceOptions.map((opt) => {
+                const isSelected = translationVoiceMode === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => setTranslationVoiceMode(opt.id)}
+                    className={`px-2 py-1.5 rounded-lg text-[10px] font-semibold transition-all border text-left flex items-center justify-between ${
+                      isSelected
+                        ? 'bg-primary-subdued text-primary border-primary/40 shadow-sm'
+                        : 'bg-canvas-surface text-ink-secondary border-hairline hover:bg-canvas-soft'
+                    }`}
+                  >
+                    <span className="truncate">{opt.name.replace('Rekaman ', '').replace('Suara ', '')}</span>
+                    {isSelected && <Check className="w-3 h-3 text-primary shrink-0 ml-1" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="p-3.5 sm:p-4 space-y-2">
         <div className="flex items-center justify-between gap-3">
           
@@ -103,16 +197,20 @@ export default function QuranAudioPlayer({
             {isReadingTranslation ? (
               <div className="flex items-center space-x-1.5 text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5 truncate animate-pulse">
                 <Volume2 className="w-3 h-3 shrink-0" />
-                <span className="truncate">Membacakan Terjemahan (ID)...</span>
+                <span className="truncate">
+                  Terjemahan ({translationVoiceMode === 'tts' ? 'TTS Digital' : 'Suara Manusia'})...
+                </span>
               </div>
             ) : (
               <div className="flex items-center space-x-2 text-[10px] text-ink-mute font-medium mt-0.5 truncate">
                 <span>{formatTime(currentTime)} / {formatTime(duration)}</span>
                 <span>•</span>
-                <span className="truncate">Syaikh Mishary Al-Afasy</span>
+                <span className="truncate max-w-[140px] xs:max-w-[180px]" title={currentQariMeta.name}>
+                  {currentQariMeta.name.replace('Syaikh ', '')}
+                </span>
                 {isTranslationReadingEnabled && (
                   <span className="text-emerald-600 dark:text-emerald-400 font-bold hidden xs:inline">
-                    • Handsfree ON
+                    • Handsfree
                   </span>
                 )}
               </div>
@@ -121,6 +219,21 @@ export default function QuranAudioPlayer({
 
           {/* Right: Primary Controls */}
           <div className="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
+            {/* Audio & Qari Settings Button */}
+            <button
+              onClick={() => setIsSettingsOpen((prev) => !prev)}
+              className={`p-1.5 rounded-lg text-xs font-semibold font-sans transition-all flex items-center space-x-1 border ${
+                isSettingsOpen
+                  ? 'bg-primary-subdued text-primary border-primary/40'
+                  : 'text-ink-mute hover:text-ink-primary hover:bg-canvas-soft border-transparent'
+              }`}
+              title="Pengaturan Qari & Opsi Audio Terjemahan"
+              aria-label="Pengaturan Qari & Audio"
+              aria-expanded={isSettingsOpen}
+            >
+              <Settings2 className="w-3.5 h-3.5 shrink-0" />
+            </button>
+
             {/* Toggle Tadarus Handsfree (Murottal Arab + Terjemahan Indonesia) */}
             <button
               onClick={(e) => {

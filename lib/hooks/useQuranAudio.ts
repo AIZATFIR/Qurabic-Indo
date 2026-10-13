@@ -5,7 +5,19 @@ import {
   getAyahAudioUrl,
   getAudioCandidateUrls,
   getTranslationAudioCandidateUrls,
+  AVAILABLE_QARIS,
+  QariMeta,
+  TranslationVoiceMode,
+  TRANSLATION_VOICE_OPTIONS,
+  TranslationVoiceOption,
 } from '../api/audio';
+import {
+  getCachedAudioUrl,
+  getCachedTranslationUrl,
+  preloadUpcomingAyahs,
+  preloadArabicAudio,
+  preloadTranslationAudio,
+} from '../audio/audio-preloader';
 
 export type PlaybackState = 'idle' | 'loading' | 'playing' | 'paused' | 'ended' | 'error';
 export type RepeatMode = 'off' | 'ayah' | 'surah';
@@ -28,6 +40,15 @@ export interface UseQuranAudioReturn {
   repeatMode: RepeatMode;
   autoNext: boolean;
   error: string | null;
+  // Multi-Qari Selection
+  selectedQari: string;
+  setSelectedQari: (qariId: string) => void;
+  currentQariMeta: QariMeta;
+  availableQaris: QariMeta[];
+  // Translation Voice Options
+  translationVoiceMode: TranslationVoiceMode;
+  setTranslationVoiceMode: (mode: TranslationVoiceMode) => void;
+  translationVoiceOptions: TranslationVoiceOption[];
   // Tadarus Handsfree (Indonesian Translation Speech)
   isTranslationReadingEnabled: boolean;
   isReadingTranslation: boolean;
@@ -62,6 +83,12 @@ export function useQuranAudio({
   const [autoNext, setAutoNext] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Multi-Qari state (defaults to Alafasy, persists in localStorage)
+  const [selectedQari, setSelectedQariState] = useState<string>('alafasy');
+
+  // Translation Voice Mode state ('human' | 'tts' | 'off')
+  const [translationVoiceMode, setTranslationVoiceModeState] = useState<TranslationVoiceMode>('human');
+
   // Tadarus Handsfree state
   const [isTranslationReadingEnabled, setIsTranslationReadingEnabled] = useState<boolean>(false);
   const [isReadingTranslation, setIsReadingTranslation] = useState<boolean>(false);
@@ -73,6 +100,12 @@ export function useQuranAudio({
   const candidateUrlsRef = useRef<string[]>([]);
   const loadTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const activePhaseRef = useRef<'arabic' | 'translation'>('arabic');
+
+  const selectedQariRef = useRef<string>(selectedQari);
+  selectedQariRef.current = selectedQari;
+
+  const translationVoiceModeRef = useRef<TranslationVoiceMode>(translationVoiceMode);
+  translationVoiceModeRef.current = translationVoiceMode;
 
   const activeAyahRef = useRef<number | null>(null);
   activeAyahRef.current = currentAyah;
@@ -106,8 +139,32 @@ export function useQuranAudio({
   const tryNextCandidateRef = useRef<(reqId: number, ayahNum: number) => void>(() => {});
   const advanceAfterAyahRef = useRef<() => void>(() => {});
 
+  // Load preferences from localStorage on mount
   useEffect(() => {
     setTranslationSpeechSupported(true);
+    if (typeof window === 'undefined') return;
+    try {
+      const savedQari = localStorage.getItem('qurabic_audio_qari');
+      if (savedQari && AVAILABLE_QARIS.some((q) => q.id === savedQari)) {
+        setSelectedQariState(savedQari);
+        selectedQariRef.current = savedQari;
+      }
+
+      const savedVoice = localStorage.getItem('qurabic_audio_translation_voice') as TranslationVoiceMode;
+      if (savedVoice && ['human', 'tts', 'off'].includes(savedVoice)) {
+        setTranslationVoiceModeState(savedVoice);
+        translationVoiceModeRef.current = savedVoice;
+        if (savedVoice === 'off') {
+          setIsTranslationReadingEnabled(false);
+          isTranslationReadingEnabledRef.current = false;
+        } else {
+          setIsTranslationReadingEnabled(true);
+          isTranslationReadingEnabledRef.current = true;
+        }
+      }
+    } catch {
+      // ignore
+    }
   }, []);
 
   // Clear watchdog timer helper
@@ -205,7 +262,11 @@ export function useQuranAudio({
       candidateIndexRef.current = index;
       const targetUrl = urls[index];
 
-      audio.src = targetUrl;
+      // Instant 0ms start if preloaded into memory blob
+      const cachedBlob = getCachedAudioUrl(targetUrl);
+      const effectiveUrl = cachedBlob || targetUrl;
+
+      audio.src = effectiveUrl;
       audio.load();
 
       const playPromise = audio.play();
@@ -398,7 +459,17 @@ export function useQuranAudio({
     setCurrentTime(0);
     setDuration(0);
     setError(null);
-  }, [surahNumber, clearWatchdog]);
+
+    // Warm-up Ayah 1 bundle (Arabic + Translation) immediately on surah selection
+    preloadUpcomingAyahs(
+      surahNumber,
+      1,
+      totalAyahs,
+      getAyahTranslationRef.current,
+      selectedQariRef.current,
+      translationVoiceModeRef.current
+    );
+  }, [surahNumber, totalAyahs, clearWatchdog]);
 
   // Core internal function to load and play Arabic recitation of an Ayah
   const playAyahInternal = useCallback(
@@ -410,7 +481,17 @@ export function useQuranAudio({
       setIsReadingTranslation(false);
 
       const currentRequestId = ++requestIdRef.current;
-      const candidates = getAudioCandidateUrls(surahNumberRef.current, ayahNum);
+      const candidates = getAudioCandidateUrls(
+        surahNumberRef.current,
+        ayahNum,
+        selectedQariRef.current
+      );
+
+      // Prepend preloaded blob for instant 0ms start
+      const cachedArabic = getCachedAudioUrl(candidates[0]);
+      if (cachedArabic) {
+        candidates.unshift(cachedArabic);
+      }
       candidateUrlsRef.current = candidates;
 
       setCurrentAyah(ayahNum);
@@ -420,6 +501,16 @@ export function useQuranAudio({
       setDuration(0);
 
       loadCandidate(0, currentRequestId, ayahNum);
+
+      // Proactively preload translation and upcoming ayahs simultaneously
+      preloadUpcomingAyahs(
+        surahNumberRef.current,
+        ayahNum,
+        totalAyahsRef.current,
+        getAyahTranslationRef.current,
+        selectedQariRef.current,
+        translationVoiceModeRef.current
+      );
     },
     [loadCandidate]
   );
@@ -440,8 +531,20 @@ export function useQuranAudio({
       const candidates = getTranslationAudioCandidateUrls(
         surahNumberRef.current,
         ayahNum,
-        translationText
+        translationText,
+        translationVoiceModeRef.current
       );
+
+      // Check if translation audio was already preloaded into memory blob
+      const cachedTranslation = getCachedTranslationUrl(
+        surahNumberRef.current,
+        ayahNum,
+        translationText,
+        translationVoiceModeRef.current
+      );
+      if (cachedTranslation) {
+        candidates.unshift(cachedTranslation);
+      }
       candidateUrlsRef.current = candidates;
 
       setPlaybackState('loading');
@@ -450,6 +553,20 @@ export function useQuranAudio({
       setDuration(0);
 
       loadCandidate(0, currentRequestId, ayahNum);
+
+      // Preload next ayah Arabic + translation while current translation is playing
+      if (ayahNum < totalAyahsRef.current) {
+        const nextAyah = ayahNum + 1;
+        preloadArabicAudio(surahNumberRef.current, nextAyah, selectedQariRef.current).catch(() => {});
+        if (translationVoiceModeRef.current !== 'off') {
+          preloadTranslationAudio(
+            surahNumberRef.current,
+            nextAyah,
+            getAyahTranslationRef.current?.(nextAyah),
+            translationVoiceModeRef.current
+          ).catch(() => {});
+        }
+      }
     },
     [loadCandidate]
   );
@@ -543,10 +660,82 @@ export function useQuranAudio({
     setAutoNext((prev) => !prev);
   }, []);
 
+  // Public: Set Active Qari (persists in localStorage & updates current ayah playback)
+  const setSelectedQari = useCallback((qariId: string) => {
+    setSelectedQariState(qariId);
+    selectedQariRef.current = qariId;
+    try {
+      localStorage.setItem('qurabic_audio_qari', qariId);
+    } catch {}
+
+    // If currently on an ayah and playing Arabic, reload with new qari immediately
+    const current = activeAyahRef.current;
+    if (current !== null && activePhaseRef.current === 'arabic') {
+      playAyahInternalRef.current(current);
+    }
+  }, []);
+
+  // Public: Set Translation Voice Mode ('human' | 'tts' | 'off')
+  const setTranslationVoiceMode = useCallback((mode: TranslationVoiceMode) => {
+    setTranslationVoiceModeState(mode);
+    translationVoiceModeRef.current = mode;
+    try {
+      localStorage.setItem('qurabic_audio_translation_voice', mode);
+    } catch {}
+
+    if (mode === 'off') {
+      setIsTranslationReadingEnabled(false);
+      isTranslationReadingEnabledRef.current = false;
+      if (activePhaseRef.current === 'translation') {
+        activePhaseRef.current = 'arabic';
+        setIsReadingTranslation(false);
+        advanceAfterAyahRef.current();
+      }
+    } else {
+      setIsTranslationReadingEnabled(true);
+      isTranslationReadingEnabledRef.current = true;
+      const target = activeAyahRef.current || 1;
+      preloadUpcomingAyahs(
+        surahNumberRef.current,
+        target,
+        totalAyahsRef.current,
+        getAyahTranslationRef.current,
+        selectedQariRef.current,
+        mode
+      );
+    }
+  }, []);
+
   // Public: Toggle Tadarus Handsfree Translation Reading
   const toggleTranslationReading = useCallback(() => {
     setIsTranslationReadingEnabled((prev) => {
       const next = !prev;
+      if (next) {
+        const nextMode =
+          translationVoiceModeRef.current === 'off' ? 'human' : translationVoiceModeRef.current;
+        setTranslationVoiceModeState(nextMode);
+        translationVoiceModeRef.current = nextMode;
+        try {
+          localStorage.setItem('qurabic_audio_translation_voice', nextMode);
+        } catch {}
+
+        const targetAyah = activeAyahRef.current || 1;
+        preloadUpcomingAyahs(
+          surahNumberRef.current,
+          targetAyah,
+          totalAyahsRef.current,
+          getAyahTranslationRef.current,
+          selectedQariRef.current,
+          nextMode
+        );
+      } else {
+        setTranslationVoiceModeState('off');
+        translationVoiceModeRef.current = 'off';
+        try {
+          localStorage.setItem('qurabic_audio_translation_voice', 'off');
+        } catch {}
+      }
+
       // If toggling off while translation is currently playing, skip translation and advance
       if (!next && activePhaseRef.current === 'translation') {
         activePhaseRef.current = 'arabic';
@@ -559,10 +748,37 @@ export function useQuranAudio({
 
   const setTranslationReadingEnabled = useCallback((enabled: boolean) => {
     setIsTranslationReadingEnabled(enabled);
-    if (!enabled && activePhaseRef.current === 'translation') {
-      activePhaseRef.current = 'arabic';
-      setIsReadingTranslation(false);
-      advanceAfterAyahRef.current();
+    isTranslationReadingEnabledRef.current = enabled;
+    if (enabled) {
+      const nextMode =
+        translationVoiceModeRef.current === 'off' ? 'human' : translationVoiceModeRef.current;
+      setTranslationVoiceModeState(nextMode);
+      translationVoiceModeRef.current = nextMode;
+      try {
+        localStorage.setItem('qurabic_audio_translation_voice', nextMode);
+      } catch {}
+
+      const targetAyah = activeAyahRef.current || 1;
+      preloadUpcomingAyahs(
+        surahNumberRef.current,
+        targetAyah,
+        totalAyahsRef.current,
+        getAyahTranslationRef.current,
+        selectedQariRef.current,
+        nextMode
+      );
+    } else {
+      setTranslationVoiceModeState('off');
+      translationVoiceModeRef.current = 'off';
+      try {
+        localStorage.setItem('qurabic_audio_translation_voice', 'off');
+      } catch {}
+
+      if (activePhaseRef.current === 'translation') {
+        activePhaseRef.current = 'arabic';
+        setIsReadingTranslation(false);
+        advanceAfterAyahRef.current();
+      }
     }
   }, []);
 
@@ -627,6 +843,9 @@ export function useQuranAudio({
   const isPlaying = playbackState === 'playing';
   const isLoading = playbackState === 'loading';
 
+  const currentQariMeta =
+    AVAILABLE_QARIS.find((q) => q.id === selectedQari) || AVAILABLE_QARIS[0];
+
   return {
     currentAyah,
     playbackState,
@@ -638,6 +857,16 @@ export function useQuranAudio({
     repeatMode,
     autoNext,
     error,
+    // Multi-Qari Selection
+    selectedQari,
+    setSelectedQari,
+    currentQariMeta,
+    availableQaris: AVAILABLE_QARIS,
+    // Translation Voice Options
+    translationVoiceMode,
+    setTranslationVoiceMode,
+    translationVoiceOptions: TRANSLATION_VOICE_OPTIONS,
+    // Tadarus Handsfree
     isTranslationReadingEnabled,
     isReadingTranslation,
     translationSpeechSupported,
