@@ -1,0 +1,2 @@
+description = "Apple HIG UI/UX review, craft lens design audit and simplification"
+prompt = "Activate the apple-design skill. Apply Apple Human Interface Guidelines and design craft to audit and improve the user interface: review typography, spacing, navigation, tactile feedback, and eliminate decorative clutter to Apple HIG standards. Target: {{args}}"
