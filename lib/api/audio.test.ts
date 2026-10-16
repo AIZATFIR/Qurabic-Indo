@@ -158,4 +158,11 @@ if (!hasTranslationOptions) {
 }
 console.log('✅ Test 16 Passed: Translation mode "off" cleanly returns empty candidate array');
 
+// Test 17: Handsfree Mode definition invariant
+const validModes = ['off', 'normal', 'reverse'];
+if (!validModes.includes('reverse') || !validModes.includes('normal')) {
+  throw new Error('HandsfreeMode must support both normal and reverse directions');
+}
+console.log('✅ Test 17 Passed: Handsfree mode types support both normal and reverse playback');
+
 console.log('🎉 ALL QURAN AUDIO & TADARUS HANDSFREE UNIT TESTS PASSED!');

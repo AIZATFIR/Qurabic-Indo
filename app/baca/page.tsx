@@ -19,6 +19,8 @@ import {
   SlidersHorizontal,
   X,
   ArrowRight,
+  ArrowLeft,
+  Check,
   BookOpen,
   Headphones
 } from 'lucide-react';
@@ -99,6 +101,21 @@ function BacaQuranPageContent() {
     autoScroll: true,
     getAyahTranslation,
   });
+
+  const [isHeaderHandsfreeOpen, setIsHeaderHandsfreeOpen] = useState(false);
+  const headerHandsfreeRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (headerHandsfreeRef.current && !headerHandsfreeRef.current.contains(e.target as Node)) {
+        setIsHeaderHandsfreeOpen(false);
+      }
+    };
+    if (isHeaderHandsfreeOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isHeaderHandsfreeOpen]);
 
   // Tafsir per-Ayat state & handler
   const [expandedTafsirAyah, setExpandedTafsirAyah] = useState<number | null>(null);
@@ -520,27 +537,124 @@ function BacaQuranPageContent() {
                 <span>{audio.isPlaying ? 'Jeda Tilawah' : 'Putar Tilawah'}</span>
               </button>
 
-              <button
-                onClick={() => {
-                  if (!audio.isTranslationReadingEnabled) {
-                    audio.setTranslationReadingEnabled(true);
-                    if (!audio.isPlaying) {
-                      audio.playAyah(audio.currentAyah || 1);
-                    }
-                  } else {
-                    audio.toggleTranslationReading();
-                  }
-                }}
-                className={`inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl border text-xs font-semibold transition-all font-sans shadow-subtle ${
-                  audio.isTranslationReadingEnabled
-                    ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 font-bold'
-                    : 'bg-canvas-soft hover:bg-canvas-page text-ink-secondary hover:text-primary border-hairline'
-                }`}
-                title="Tadarus Handsfree: Putar audio murottal Arab lalu otomatis dengar pembacaan terjemahan Indonesia per ayat"
-              >
-                <Headphones className="w-3.5 h-3.5" />
-                <span>Tadarus Handsfree {audio.isTranslationReadingEnabled ? '(Aktif)' : ''}</span>
-              </button>
+              <div className="relative" ref={headerHandsfreeRef}>
+                <button
+                  onClick={() => setIsHeaderHandsfreeOpen((prev) => !prev)}
+                  className={`inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl border text-xs font-semibold transition-all font-sans shadow-subtle ${
+                    audio.handsfreeMode !== 'off'
+                      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 font-bold'
+                      : 'bg-canvas-soft hover:bg-canvas-page text-ink-secondary hover:text-primary border-hairline'
+                  }`}
+                  title="Tadarus Handsfree: Klik untuk Buka Pilihan Mode (Arab ⇄ Makna)"
+                  aria-label="Tadarus Handsfree"
+                  aria-haspopup="true"
+                  aria-expanded={isHeaderHandsfreeOpen}
+                >
+                  <Headphones className="w-3.5 h-3.5 shrink-0" />
+                  {audio.handsfreeMode === 'normal' && (
+                    <ArrowRight className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  )}
+                  {audio.handsfreeMode === 'reverse' && (
+                    <ArrowLeft className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  )}
+                  <span>
+                    {audio.handsfreeMode === 'normal'
+                      ? 'Handsfree: Arab → Makna'
+                      : audio.handsfreeMode === 'reverse'
+                      ? 'Handsfree: Makna → Arab'
+                      : 'Tadarus Handsfree'}
+                  </span>
+                </button>
+
+                {/* Pop-up Switcher in Header */}
+                {isHeaderHandsfreeOpen && (
+                  <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 sm:left-auto sm:right-0 sm:translate-x-0 w-72 p-3 bg-canvas-surface/95 backdrop-blur-xl border border-hairline rounded-2xl shadow-hover z-50 animate-in fade-in zoom-in-95 duration-150 font-sans space-y-2 text-left">
+                    <div className="flex items-center justify-between pb-2 border-b border-hairline">
+                      <div className="flex items-center space-x-1.5">
+                        <Headphones className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                        <span className="text-xs font-semibold text-ink-primary">Mode Tadarus Handsfree</span>
+                      </div>
+                      {audio.handsfreeMode !== 'off' && (
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider">
+                          Aktif
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-1.5">
+                      {/* Tombol Panah Kanan: Arab -> Makna (Normal) */}
+                      <button
+                        onClick={() => {
+                          audio.setHandsfreeMode('normal');
+                          setIsHeaderHandsfreeOpen(false);
+                          if (!audio.isPlaying) {
+                            audio.playAyah(audio.currentAyah || 1);
+                          }
+                        }}
+                        className={`w-full p-2 rounded-xl text-left transition-all flex items-center justify-between border ${
+                          audio.handsfreeMode === 'normal'
+                            ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-800 dark:text-emerald-200 font-medium'
+                            : 'hover:bg-canvas-soft border-transparent text-ink-secondary hover:text-ink-primary'
+                        }`}
+                      >
+                        <div className="flex items-center space-x-2.5">
+                          <div className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+                            <ArrowRight className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-semibold">Arab → Makna</div>
+                            <div className="text-[10px] text-ink-mute">Tilawah Arab dulu, baru terjemahan</div>
+                          </div>
+                        </div>
+                        {audio.handsfreeMode === 'normal' && <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
+                      </button>
+
+                      {/* Tombol Panah Kiri: Makna -> Arab (Reverse) */}
+                      <button
+                        onClick={() => {
+                          audio.setHandsfreeMode('reverse');
+                          setIsHeaderHandsfreeOpen(false);
+                          if (!audio.isPlaying) {
+                            audio.playAyah(audio.currentAyah || 1);
+                          }
+                        }}
+                        className={`w-full p-2 rounded-xl text-left transition-all flex items-center justify-between border ${
+                          audio.handsfreeMode === 'reverse'
+                            ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-800 dark:text-emerald-200 font-medium'
+                            : 'hover:bg-canvas-soft border-transparent text-ink-secondary hover:text-ink-primary'
+                        }`}
+                      >
+                        <div className="flex items-center space-x-2.5">
+                          <div className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+                            <ArrowLeft className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-semibold">Makna → Arab (Reverse)</div>
+                            <div className="text-[10px] text-ink-mute">Terjemahan dibacakan dulu, baru Arab</div>
+                          </div>
+                        </div>
+                        {audio.handsfreeMode === 'reverse' && <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
+                      </button>
+                    </div>
+
+                    <div className="pt-1.5 border-t border-hairline">
+                      <button
+                        onClick={() => {
+                          audio.setHandsfreeMode('off');
+                          setIsHeaderHandsfreeOpen(false);
+                        }}
+                        className={`w-full py-1.5 px-2 rounded-lg text-xs font-medium text-center transition-colors ${
+                          audio.handsfreeMode === 'off'
+                            ? 'bg-canvas-soft text-ink-mute font-semibold'
+                            : 'text-ink-mute hover:text-rose-600 hover:bg-rose-500/10'
+                        }`}
+                      >
+                        {audio.handsfreeMode === 'off' ? 'Handsfree Nonaktif' : 'Matikan Mode Handsfree'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -787,7 +901,9 @@ function BacaQuranPageContent() {
 
                         {isActiveAyah && audio.isReadingTranslation && (
                           <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-md font-semibold animate-pulse hidden sm:inline-flex">
-                            Membacakan Terjemahan ID
+                            {audio.handsfreeMode === 'reverse'
+                              ? 'Makna Terjemahan (ID) Dulu'
+                              : 'Membacakan Terjemahan ID'}
                           </span>
                         )}
 

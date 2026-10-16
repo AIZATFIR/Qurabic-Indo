@@ -84,6 +84,8 @@ export function getIndonesianVoice(): SpeechSynthesisVoice | null {
   }
 }
 
+let activeUtterance: SpeechSynthesisUtterance | null = null;
+
 /**
  * Speaks Indonesian translation of an Ayah using SpeechSynthesisUtterance
  */
@@ -104,9 +106,11 @@ export function speakIndonesianTranslation(
 
   try {
     // Cancel any previous utterance to prevent queue pile-up
-    window.speechSynthesis.cancel();
+    cancelSpeechSynthesis();
 
     const utterance = new window.SpeechSynthesisUtterance(cleaned);
+    activeUtterance = utterance;
+
     utterance.lang = 'id-ID';
     utterance.rate = options.rate ?? 0.95; // Calm, respectful pace for Quranic translation
     utterance.pitch = options.pitch ?? 1.0;
@@ -122,10 +126,16 @@ export function speakIndonesianTranslation(
     }
 
     utterance.onend = () => {
+      if (activeUtterance === utterance) {
+        activeUtterance = null;
+      }
       options.onEnd?.();
     };
 
     utterance.onerror = (e) => {
+      if (activeUtterance === utterance) {
+        activeUtterance = null;
+      }
       // In Chromium, cancelling speech triggers an 'interrupted' or 'canceled' error, which is benign
       if (e.error === 'interrupted' || e.error === 'canceled') {
         return;
@@ -136,6 +146,7 @@ export function speakIndonesianTranslation(
     window.speechSynthesis.speak(utterance);
     return utterance;
   } catch (err) {
+    activeUtterance = null;
     options.onError?.(err);
     return null;
   }
@@ -147,6 +158,12 @@ export function speakIndonesianTranslation(
 export function cancelSpeechSynthesis(): void {
   if (isSpeechSynthesisSupported()) {
     try {
+      if (activeUtterance) {
+        activeUtterance.onstart = null;
+        activeUtterance.onend = null;
+        activeUtterance.onerror = null;
+        activeUtterance = null;
+      }
       window.speechSynthesis.cancel();
     } catch {
       // Ignore

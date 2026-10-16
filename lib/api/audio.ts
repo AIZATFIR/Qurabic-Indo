@@ -192,7 +192,7 @@ export function getAudioCandidateUrls(
   // 3. Mirror fallback for default Alafasy
   if (qari.id === 'alafasy') {
     candidates.push(
-      `https://equran.nos.wjv-1.neo.id/audio-partial/Misyari-Rasyid-Al-Afasi/${s}${a}.mp3`
+      `https://cdn.equran.id/audio-partial/Misyari-Rasyid-Al-Afasi/${s}${a}.mp3`
     );
   }
 
