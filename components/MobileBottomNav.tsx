@@ -15,7 +15,7 @@ export default function MobileBottomNav() {
   const navItems = [
     { label: 'Beranda', href: '/', icon: Home },
     { label: 'Baca', href: '/baca', icon: BookMarked },
-    { label: 'Latihan', href: '/latihan', icon: Sparkles },
+    { label: 'Rahm', href: '/rahm', icon: Compass },
     { label: 'Katalog', href: '/morfologi', icon: BookOpen },
     { label: 'Tersimpan', href: '/favorit', icon: Bookmark, badge: bookmarkedIds.length },
   ];

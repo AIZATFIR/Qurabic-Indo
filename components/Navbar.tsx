@@ -104,6 +104,16 @@ export default function Navbar() {
               </Link>
 
               <Link
+                href="/rahm"
+                className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-lg hover:bg-canvas-surface/80"
+              >
+                <span className="w-3.5 h-3.5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center">
+                  ر
+                </span>
+                <span className="font-semibold text-primary">Rahm</span>
+              </Link>
+
+              <Link
                 href="/favorit"
                 className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-lg hover:bg-canvas-surface/80 relative"
               >
