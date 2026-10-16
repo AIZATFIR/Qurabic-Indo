@@ -8,7 +8,7 @@ import {
   NAFS_STAGES,
   getNafsStage,
 } from '../lib/spiritual-framework';
-import { ArrowRight, Sparkles, BookOpen, Heart, Shield, RefreshCw } from 'lucide-react';
+import { ArrowRight, Sun, BookOpen, Heart, Shield, RefreshCw } from 'lucide-react';
 
 interface SadarModuleProps {
   className?: string;
@@ -134,7 +134,7 @@ export default function SadarModule({ className = '', onSelectAyah }: SadarModul
           {/* 3. Siddhi (Nur Ilahi) */}
           <div className="p-3.5 rounded-xl bg-emerald-500/5 border border-emerald-500/20 space-y-1">
             <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider flex items-center">
-              <Sparkles className="w-3 h-3 mr-1" />
+              <Sun className="w-3 h-3 mr-1" />
               Nur (Siddhi / Kesempurnaan)
             </span>
             <div className="text-xs font-bold text-ink-primary">{activeTransmutation.siddhi}</div>

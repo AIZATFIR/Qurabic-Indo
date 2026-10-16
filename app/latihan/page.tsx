@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import {
-  Sparkles,
+  GraduationCap,
   Trophy,
   RotateCcw,
   CheckCircle2,
@@ -112,7 +112,7 @@ export default function LatihanPage() {
       {/* Hero Header */}
       <div className="text-center space-y-4 bg-canvas-surface border border-hairline p-6 sm:p-8 rounded-3xl shadow-subtle">
         <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mx-auto shadow-subtle">
-          <Sparkles className="w-6 h-6" />
+          <GraduationCap className="w-6 h-6" />
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold text-ink-primary font-sans">
           Latihan &amp; Hafalan Morfologi Al-Qur&apos;an

@@ -6,7 +6,8 @@ import {
   Search,
   BookOpen,
   Clock,
-  Sparkles,
+  Layers,
+  Sun,
   Heart,
   Calendar,
   X,
@@ -155,7 +156,7 @@ export default function RahmLauncher({
         title: 'Eksplorasi Morfologi & Akar Kata',
         subtitle: 'Pencarian 1.642 akar kata Al-Qur\'an dan analisis sharaf',
         category: 'Quran',
-        icon: <Sparkles className="w-4 h-4 text-purple-500" />,
+        icon: <Layers className="w-4 h-4 text-primary" />,
         action: () => {
           onClose();
           router.push('/morfologi');
@@ -224,7 +225,7 @@ export default function RahmLauncher({
           title: `${item.arabic} (${item.transliteration})`,
           subtitle: `${item.meaningId} • Kategori ${item.category}`,
           category: 'Asmaul Husna',
-          icon: <Sparkles className="w-4 h-4 text-amber-500" />,
+          icon: <Sun className="w-4 h-4 text-amber-500" />,
           action: () => {
             onClose();
             router.push(`/rahm?asma=${item.number}`);

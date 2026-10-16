@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { GitBranch, Layers, ArrowRight, Sparkles, BookOpen } from 'lucide-react';
+import { GitBranch, Layers, ArrowRight, BookOpen } from 'lucide-react';
 
 export interface DerivativeNode {
   category: 'Madhi' | 'Mudhari' | 'Amr' | 'Masdar' | 'IsimFa\'il' | 'IsimMaf\'ul' | 'Lainnya';

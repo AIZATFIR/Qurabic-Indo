@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Compass,
-  Sparkles,
   Clock,
   Heart,
   Search,
@@ -93,16 +92,16 @@ export default function RahmPage() {
               <span className="hidden sm:inline">Qurabic</span>
             </Link>
             <div className="h-4 w-px bg-hairline" />
-            <div className="flex items-center space-x-2">
-              <span className="w-7 h-7 rounded-xl bg-gradient-to-tr from-primary to-primary-light text-white flex items-center justify-center font-serif text-sm font-bold shadow-subtle">
+            <div className="flex items-center space-x-2.5">
+              <span className="w-7 h-7 rounded-xl bg-canvas-soft border border-hairline/80 flex items-center justify-center font-serif text-sm font-bold text-primary shadow-subtle">
                 ر
               </span>
               <div>
-                <h1 className="text-sm font-bold tracking-tight text-ink-primary flex items-center gap-1.5">
-                  Rahm <span className="text-[10px] font-normal px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">Spiritual Engine</span>
+                <h1 className="text-sm font-bold tracking-tight text-ink-primary">
+                  Rahm
                 </h1>
                 <p className="text-[10px] text-ink-mute hidden sm:block">
-                  Tazkiyatun Nafs &amp; Kesadaran Batin Terpadu
+                  Tazkiyatun Nafs &amp; Kesadaran Batin
                 </p>
               </div>
             </div>
@@ -157,7 +156,7 @@ export default function RahmPage() {
                   : 'text-ink-mute hover:text-ink-primary'
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5" />
+              <Heart className="w-3.5 h-3.5" />
               <span>Asmaul Husna</span>
             </button>
             <button
@@ -308,11 +307,11 @@ export default function RahmPage() {
         {activeTab === 'prayer' && (
           <div className="space-y-6 animate-fadeIn">
             {/* Prayer Times Showcase */}
-            <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-primary/10 via-canvas-surface to-canvas-surface border border-primary/20 shadow-subtle">
+            <div className="p-5 sm:p-6 rounded-3xl bg-canvas-surface border border-hairline/80 shadow-subtle">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
-                    Ritme Kosmik &amp; Waktu Shalat
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">
+                    Waktu Shalat &amp; Kalender Hijriyah
                   </span>
                   <h2 className="text-lg sm:text-xl font-bold text-ink-primary mt-0.5">
                     {prayerData?.locationName || 'Jakarta'} &bull; {prayerData?.dateHijri || '1448 H'}
@@ -320,8 +319,8 @@ export default function RahmPage() {
                   <p className="text-xs text-ink-mute">{prayerData?.dateGregorian}</p>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="inline-flex items-center space-x-1 text-xs text-ink-mute bg-canvas-surface px-2.5 py-1 rounded-full border border-hairline">
-                    <Sun className="w-3.5 h-3.5 text-amber-500" />
+                  <span className="inline-flex items-center space-x-1 text-xs text-ink-mute bg-canvas-soft px-2.5 py-1 rounded-full border border-hairline">
+                    <Sun className="w-3.5 h-3.5 text-ink-secondary" />
                     <span>Metode Kemenag RI</span>
                   </span>
                 </div>

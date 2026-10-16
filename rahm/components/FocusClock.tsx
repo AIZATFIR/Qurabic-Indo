@@ -1,7 +1,6 @@
 'use client';
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Play, Pause, RotateCcw, Wind, Bell, CheckCircle2, Volume2, VolumeX, Sparkles } from 'lucide-react';
+import { Play, Pause, RotateCcw, Wind, Bell, CheckCircle2, Volume2, VolumeX } from 'lucide-react';
 
 interface FocusClockProps {
   onSessionComplete?: (durationMinutes: number) => void;
@@ -265,13 +264,14 @@ export default function FocusClock({ onSessionComplete, className = '' }: FocusC
         </button>
 
         {/* Tactile Dhikr Tap Pad */}
+        {/* Tactile Dhikr Tap Pad */}
         <button
           onClick={handleManualDhikrTap}
-          className="p-3 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 transition-transform duration-100 active:scale-90 flex items-center justify-center font-bold text-xs"
+          className="px-4 py-3 rounded-2xl bg-canvas-soft hover:bg-canvas-page text-ink-primary border border-hairline transition-all active:scale-95 flex items-center justify-center font-mono font-medium text-xs shadow-subtle"
           title="Hitung Dzikir (Tap)"
         >
-          <Sparkles className="w-4 h-4 mr-1" />
-          <span>{dhikrCount}</span>
+          <span className="text-[10px] text-ink-mute uppercase tracking-wider mr-1.5 font-sans font-medium">Dzikir</span>
+          <span className="text-primary font-bold">{dhikrCount}</span>
         </button>
       </div>
     </div>

@@ -30,7 +30,7 @@ import SourceDrawer from './SourceDrawer';
 import SharafParadigmVisualizer from './SharafParadigmVisualizer';
 import BalaghahNuanceCard from './BalaghahNuanceCard';
 import RootFamilyTree from './RootFamilyTree';
-import { Sparkles as SparklesIcon } from 'lucide-react';
+import { GraduationCap as LearnIcon } from 'lucide-react';
 
 interface WordStudyProps {
   study: WordStudyViewModel;
@@ -722,7 +722,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       <div className="p-5 bg-gradient-to-r from-primary/10 via-canvas-soft to-primary/5 border border-primary/20 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4 font-sans shadow-subtle">
         <div className="flex items-center space-x-3 text-center sm:text-left">
           <div className="w-10 h-10 rounded-2xl bg-primary text-white flex items-center justify-center shrink-0 shadow-subtle">
-            <SparklesIcon className="w-5 h-5" />
+            <LearnIcon className="w-5 h-5" />
           </div>
           <div>
             <h4 className="text-sm font-bold text-ink-primary">

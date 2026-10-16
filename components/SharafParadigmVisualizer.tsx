@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Layers, Volume2, ArrowRight, Sparkles, BookOpen, CheckCircle2, HelpCircle } from 'lucide-react';
+import { Layers, Volume2, ArrowRight, BookOpen, CheckCircle2, HelpCircle } from 'lucide-react';
 import { getSharafParadigms, SharafForm } from '@/lib/morphology/sharaf-paradigms';
 
 export type { SharafForm };

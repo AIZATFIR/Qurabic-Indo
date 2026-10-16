@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Compass, Sparkles, BookOpen, ChevronRight, HelpCircle, GitFork } from 'lucide-react';
+import { Compass, BookOpen, ChevronRight, HelpCircle, GitFork } from 'lucide-react';
 import { getBalaghahComparison, SynonymComparison } from '@/lib/morphology/balaghah-database';
 
 export type { SynonymComparison };

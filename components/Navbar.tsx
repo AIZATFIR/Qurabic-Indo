@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BookOpen, Search, Bookmark, BookMarked, Shuffle, Compass, Sparkles } from 'lucide-react';
+import { BookOpen, Search, Bookmark, BookMarked, Shuffle, Compass, GraduationCap, Sun } from 'lucide-react';
 import OmniSearch from './OmniSearch';
 import ThemeSelector from './ThemeSelector';
 import { useState, useEffect } from 'react';
@@ -99,7 +99,7 @@ export default function Navbar() {
                 href="/latihan"
                 className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-lg hover:bg-canvas-surface/80"
               >
-                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                <GraduationCap className="w-3.5 h-3.5 text-primary" />
                 <span>Latihan Interaktif</span>
               </Link>
 
@@ -107,10 +107,8 @@ export default function Navbar() {
                 href="/rahm"
                 className="hover:text-primary transition-colors flex items-center space-x-1.5 px-3 py-1.5 rounded-lg hover:bg-canvas-surface/80"
               >
-                <span className="w-3.5 h-3.5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center">
-                  ر
-                </span>
-                <span className="font-semibold text-primary">Rahm</span>
+                <Sun className="w-3.5 h-3.5 text-primary" />
+                <span>Rahm</span>
               </Link>
 
               <Link
