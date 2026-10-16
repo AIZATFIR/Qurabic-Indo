@@ -92,11 +92,13 @@ export async function GET(request: NextRequest) {
 
     // Parallel synthesis across all chunks
     const fetchPromises = chunks.map(async (chunk) => {
-      const url = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=id&q=${encodeURIComponent(chunk)}`;
+      const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(
+        chunk
+      )}&tl=id&total=1&idx=0&textlen=${chunk.length}&client=tw-ob&prev=input`;
       const res = await fetch(url, {
         headers: {
-          'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          Referer: 'http://translate.google.com/',
+          'User-Agent': 'stagefright/1.2 (Linux;Android 5.0)',
         },
         signal: AbortSignal.timeout(6000),
         next: { revalidate: 604800 },
@@ -107,6 +109,9 @@ export async function GET(request: NextRequest) {
       }
 
       const ab = await res.arrayBuffer();
+      if (ab.byteLength === 0) {
+        throw new Error('Google TTS returned empty audio buffer');
+      }
       return Buffer.from(ab);
     });
 

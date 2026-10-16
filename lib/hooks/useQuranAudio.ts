@@ -330,10 +330,14 @@ export function useQuranAudio({
       } else {
         clearWatchdog();
         if (activePhaseRef.current === 'translation') {
-          console.warn('[Qurabic Audio] All translation CDNs failed, advancing to next ayah...');
+          console.warn('[Qurabic Audio] All translation CDNs failed, advancing to next phase...');
           activePhaseRef.current = 'arabic';
           setIsReadingTranslation(false);
-          advanceAfterAyahRef.current();
+          if (handsfreeModeRef.current === 'reverse') {
+            playArabicCandidateRef.current(ayahNum);
+          } else {
+            advanceAfterAyahRef.current();
+          }
           return;
         }
         setPlaybackState('error');
@@ -409,43 +413,43 @@ export function useQuranAudio({
       }
     };
 
-    // Ayah Autoplay & Handsfree Flow Logic
+    // Ayah Autoplay & Handsfree Dual-Phase Flow Logic
     const handleEnded = () => {
       const current = activeAyahRef.current;
       if (current === null) return;
 
       const currentMode = handsfreeModeRef.current;
 
-      // In Reverse mode, the translation was ALREADY spoken before Arabic audio.
-      // So when Arabic audio ends, this ayah is complete -> advance!
-      if (currentMode === 'reverse') {
+      // 1. If Indonesian translation audio just completed
+      if (activePhaseRef.current === 'translation') {
+        setIsReadingTranslation(false);
+
+        // In Reverse mode, translation was phase 1 -> now play Arabic audio of the same ayah!
+        if (currentMode === 'reverse') {
+          activePhaseRef.current = 'arabic';
+          playArabicCandidateRef.current(current);
+          return;
+        }
+
+        // In Normal mode, translation was phase 2 -> this ayah is complete -> advance!
+        activePhaseRef.current = 'arabic';
         advanceAfterAyahRef.current();
         return;
       }
 
-      // In Normal mode, Arabic audio just completed -> speak Indonesian translation
-      if (currentMode === 'normal') {
-        const translationText = getAyahTranslationRef.current?.(current);
-        if (translationText && isSpeechSynthesisSupported()) {
-          setIsReadingTranslation(true);
-          setPlaybackState('playing');
-
-          speakIndonesianTranslation(translationText, {
-            onEnd: () => {
-              setIsReadingTranslation(false);
-              advanceAfterAyahRef.current();
-            },
-            onError: (err) => {
-              console.warn('[Qurabic TTS] Error reading translation:', err);
-              setIsReadingTranslation(false);
-              advanceAfterAyahRef.current();
-            },
-          });
+      // 2. If Arabic audio just completed
+      if (activePhaseRef.current === 'arabic') {
+        // In Normal mode, Arabic was phase 1 -> now play Indonesian translation!
+        if (currentMode === 'normal') {
+          playTranslationInternalRef.current(current);
           return;
         }
+
+        // In Reverse mode (or Off mode), Arabic was the final phase -> advance!
+        advanceAfterAyahRef.current();
+        return;
       }
 
-      // Default audio flow without translation reader (mode === 'off' or unsupported)
       advanceAfterAyahRef.current();
     };
 
@@ -555,34 +559,14 @@ export function useQuranAudio({
 
       // TADARUS HANDSFREE REVERSE MODE: Read Indonesian translation FIRST, then Arabic audio
       if (handsfreeModeRef.current === 'reverse') {
-        const translationText = getAyahTranslationRef.current?.(ayahNum);
-        if (translationText && isSpeechSynthesisSupported()) {
-          setCurrentAyah(ayahNum);
-          setPlaybackState('playing');
-          setIsReadingTranslation(true);
-          setError(null);
-          scrollToAyah(ayahNum);
-
-          speakIndonesianTranslation(translationText, {
-            onEnd: () => {
-              setIsReadingTranslation(false);
-              // Now play Arabic audio for this ayah!
-              playArabicCandidateRef.current(ayahNum);
-            },
-            onError: (err) => {
-              console.warn('[Qurabic TTS] Error in reverse mode translation:', err);
-              setIsReadingTranslation(false);
-              playArabicCandidateRef.current(ayahNum);
-            },
-          });
-          return;
-        }
+        playTranslationInternalRef.current(ayahNum);
+        return;
       }
 
       // Default or Normal mode: play Arabic audio candidate directly
       playArabicCandidate(ayahNum);
     },
-    [clearWatchdog, playArabicCandidate, scrollToAyah]
+    [clearWatchdog, playArabicCandidate]
   );
 
   playAyahInternalRef.current = playAyahInternal;
@@ -595,14 +579,18 @@ export function useQuranAudio({
 
       activePhaseRef.current = 'translation';
       setIsReadingTranslation(true);
+      setCurrentAyah(ayahNum);
+      scrollToAyah(ayahNum);
 
       const currentRequestId = ++requestIdRef.current;
       const translationText = getAyahTranslationRef.current?.(ayahNum);
+      const voiceMode =
+        translationVoiceModeRef.current === 'off' ? 'human' : translationVoiceModeRef.current;
       const candidates = getTranslationAudioCandidateUrls(
         surahNumberRef.current,
         ayahNum,
         translationText,
-        translationVoiceModeRef.current
+        voiceMode
       );
 
       // Check if translation audio was already preloaded into memory blob
@@ -610,7 +598,7 @@ export function useQuranAudio({
         surahNumberRef.current,
         ayahNum,
         translationText,
-        translationVoiceModeRef.current
+        voiceMode
       );
       if (cachedTranslation) {
         candidates.unshift(cachedTranslation);
@@ -638,7 +626,7 @@ export function useQuranAudio({
         }
       }
     },
-    [loadCandidate]
+    [loadCandidate, scrollToAyah]
   );
 
   playTranslationInternalRef.current = playTranslationInternal;
@@ -759,9 +747,19 @@ export function useQuranAudio({
     const prevMode = handsfreeModeRef.current;
     setHandsfreeModeState(mode);
     handsfreeModeRef.current = mode;
+
+    if (mode !== 'off' && translationVoiceModeRef.current === 'off') {
+      setTranslationVoiceModeState('human');
+      translationVoiceModeRef.current = 'human';
+      try {
+        localStorage.setItem('qurabic_audio_translation_voice', 'human');
+      } catch {}
+    }
+
     if (mode === 'off' && isReadingTranslationRef.current) {
       cancelSpeechSynthesis();
       setIsReadingTranslation(false);
+      activePhaseRef.current = 'arabic';
       if (prevMode === 'reverse') {
         const current = activeAyahRef.current;
         if (current !== null) {
@@ -777,9 +775,17 @@ export function useQuranAudio({
   const toggleTranslationReading = useCallback(() => {
     setHandsfreeModeState((prev) => {
       const next: HandsfreeMode = prev === 'off' ? 'normal' : 'off';
+      if (next !== 'off' && translationVoiceModeRef.current === 'off') {
+        setTranslationVoiceModeState('human');
+        translationVoiceModeRef.current = 'human';
+        try {
+          localStorage.setItem('qurabic_audio_translation_voice', 'human');
+        } catch {}
+      }
       if (next === 'off' && isReadingTranslationRef.current) {
         cancelSpeechSynthesis();
         setIsReadingTranslation(false);
+        activePhaseRef.current = 'arabic';
         if (prev === 'reverse') {
           const current = activeAyahRef.current;
           if (current !== null) {

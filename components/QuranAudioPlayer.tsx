@@ -14,6 +14,8 @@ import {
   ArrowRight,
   ArrowLeft,
   Check,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { UseQuranAudioReturn } from '@/lib/hooks/useQuranAudio';
 
@@ -60,6 +62,7 @@ export default function QuranAudioPlayer({
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isHandsfreeMenuOpen, setIsHandsfreeMenuOpen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
   const handsfreeMenuRef = useRef<HTMLDivElement>(null);
 
   // Close handsfree popup on outside click
@@ -97,6 +100,61 @@ export default function QuranAudioPlayer({
     const ratio = Math.max(0, Math.min(1, clickX / rect.width));
     seek(ratio);
   };
+
+  if (isMinimized) {
+    return (
+      <aside
+        aria-label="Pemutar Audio Tilawah (Mode Ringkas)"
+        className="fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-40 bg-canvas-surface/95 backdrop-blur-xl border border-hairline rounded-2xl shadow-hover p-2 flex items-center space-x-2 text-ink-primary font-sans animate-in slide-in-from-bottom-2"
+      >
+        <button
+          onClick={(e) => {
+            e.currentTarget.blur();
+            togglePlayPause();
+          }}
+          className="p-2 rounded-xl bg-primary hover:bg-primary-deep text-white shadow-subtle transition-all active:scale-95 flex items-center justify-center shrink-0"
+          title={isPlaying ? 'Jeda (Space)' : 'Putar (Space)'}
+          aria-label={isPlaying ? 'Jeda' : 'Putar'}
+        >
+          {isLoading ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : isPlaying ? (
+            <Pause className="w-3.5 h-3.5 fill-current" />
+          ) : (
+            <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
+          )}
+        </button>
+
+        <div
+          onClick={() => setIsMinimized(false)}
+          className="cursor-pointer px-1 min-w-0 max-w-[180px] sm:max-w-[220px]"
+          title="Klik untuk Memperbesar Pemutar Audio"
+        >
+          <div className="text-xs font-semibold text-ink-primary truncate">
+            {surahNameIndo} : {activeAyahNum}
+          </div>
+          <div className="text-[10px] text-ink-mute truncate">
+            {isReadingTranslation ? (
+              <span className="text-emerald-600 dark:text-emerald-400 font-semibold animate-pulse">
+                {handsfreeMode === 'reverse' ? 'Makna ID (1/2)' : 'Makna ID (2/2)'}
+              </span>
+            ) : (
+              <span>{formatTime(currentTime)} / {formatTime(duration)}</span>
+            )}
+          </div>
+        </div>
+
+        <button
+          onClick={() => setIsMinimized(false)}
+          className="p-1.5 rounded-lg text-ink-mute hover:text-ink-primary hover:bg-canvas-soft transition-colors shrink-0"
+          title="Perbesar Pemutar Audio"
+          aria-label="Perbesar Pemutar Audio"
+        >
+          <ChevronUp className="w-4 h-4" />
+        </button>
+      </aside>
+    );
+  }
 
   return (
     <aside
@@ -455,17 +513,17 @@ export default function QuranAudioPlayer({
               <SkipForward className="w-4 h-4" />
             </button>
 
-            {/* Dismiss / Stop Player */}
+            {/* Minimize Player Button */}
             <button
               onClick={(e) => {
                 e.currentTarget.blur();
-                stop();
+                setIsMinimized(true);
               }}
               className="p-1.5 rounded-lg text-ink-mute hover:text-ink-primary hover:bg-canvas-soft transition-colors ml-1"
-              title="Tutup Pemutar Audio"
-              aria-label="Tutup Pemutar Audio"
+              title="Minimize Pemutar Audio"
+              aria-label="Minimize Pemutar Audio"
             >
-              <X className="w-4 h-4" />
+              <ChevronDown className="w-4 h-4" />
             </button>
           </div>
 
