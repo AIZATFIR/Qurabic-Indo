@@ -89,15 +89,21 @@ if (!ttsUrl.startsWith('/api/audio-translation') || !ttsUrl.includes('surah=1') 
 }
 console.log('✅ Test 9 Passed: Translation TTS audio generator creates clean API route URL');
 
-// Test 10: Prioritized Translation Audio Candidate Chain
-const translationCandidates = getTranslationAudioCandidateUrls(2, 255, 'Allah, tidak ada tuhan selain Dia');
+// Test 10: Pure Human Translation Audio Candidate Chain
+const translationCandidates = getTranslationAudioCandidateUrls(2, 255, 'Allah, tidak ada tuhan selain Dia', 'human', true);
 if (!Array.isArray(translationCandidates) || translationCandidates.length < 2) {
-  throw new Error('Expected at least 2 translation audio candidate sources');
+  throw new Error('Expected at least 2 translation audio candidate sources when fallback is enabled');
 }
 if (!translationCandidates[0].includes('002255.mp3') || !translationCandidates[1].includes('/api/audio-translation')) {
   throw new Error(`Expected human audio as primary and TTS as secondary, got ${JSON.stringify(translationCandidates)}`);
 }
-console.log('✅ Test 10 Passed: Translation audio candidate chain prioritizes human recording with TTS fallback');
+
+// In default pure human mode without fallback, surahs without human audio return empty array
+const surah3HumanCandidates = getTranslationAudioCandidateUrls(3, 1, 'Alif Lam Mim', 'human', false);
+if (surah3HumanCandidates.length !== 0) {
+  throw new Error(`Expected empty candidates for Surah 3 in human mode (preventing TTS robot fallback), got ${JSON.stringify(surah3HumanCandidates)}`);
+}
+console.log('✅ Test 10 Passed: Translation audio candidate chain strictly preserves pure human mode without unwanted TTS robot fallback');
 
 // Test 11: Audio Preloader cache lookup handles uncached items safely
 import {
@@ -128,7 +134,7 @@ try {
 }
 
 // Test 14: Multi-Qari support includes Yasser Al-Dossary
-import { AVAILABLE_QARIS, TRANSLATION_VOICE_OPTIONS } from './audio';
+import { AVAILABLE_QARIS, TRANSLATION_VOICE_OPTIONS, isHumanTranslationAvailable } from './audio';
 
 const yasserCandidate = getAudioCandidateUrls(1, 1, 'yasser_dossary');
 if (!yasserCandidate.some((url) => url.includes('Yasser_Ad-Dussary_128kbps/001001.mp3'))) {
@@ -164,5 +170,28 @@ if (!validModes.includes('reverse') || !validModes.includes('normal')) {
   throw new Error('HandsfreeMode must support both normal and reverse directions');
 }
 console.log('✅ Test 17 Passed: Handsfree mode types support both normal and reverse playback');
+
+// Test 18: Syaikh Muhammad Al-Luhaidan registered with high-availability CDN
+const luhaidan = AVAILABLE_QARIS.find((q) => q.id === 'al_luhaidan');
+if (!luhaidan) {
+  throw new Error('AVAILABLE_QARIS must contain al_luhaidan');
+}
+if (!luhaidan.surahAudioBaseUrl?.includes('mp3quran.net') || !luhaidan.isSurahLevel) {
+  throw new Error(`Expected Luhaidan to have MP3Quran base URL and isSurahLevel=true, got ${JSON.stringify(luhaidan)}`);
+}
+const luhaidanUrls = getAudioCandidateUrls(1, 1, 'al_luhaidan');
+if (!luhaidanUrls[0].includes('001.mp3') || !luhaidanUrls[0].includes('muhammad-luhaidan')) {
+  throw new Error(`Expected Luhaidan CDN URL in candidates, got ${JSON.stringify(luhaidanUrls)}`);
+}
+console.log('✅ Test 18 Passed: Syaikh Muhammad Al-Luhaidan audio engine & candidate CDN verified');
+
+// Test 19: Human translation availability registry correctly flags surahs
+if (!isHumanTranslationAvailable(1) || !isHumanTranslationAvailable(2) || !isHumanTranslationAvailable(114)) {
+  throw new Error('Surahs 1, 2, and 114 must be flagged as having human translation');
+}
+if (isHumanTranslationAvailable(3) || isHumanTranslationAvailable(18) || isHumanTranslationAvailable(36)) {
+  throw new Error('Surahs 3, 18, and 36 must be flagged as not having human translation per-ayah audio');
+}
+console.log('✅ Test 19 Passed: Human translation availability registry accurately reflects public archive coverage');
 
 console.log('🎉 ALL QURAN AUDIO & TADARUS HANDSFREE UNIT TESTS PASSED!');

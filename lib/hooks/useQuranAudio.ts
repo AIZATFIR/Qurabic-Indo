@@ -5,6 +5,7 @@ import {
   getAyahAudioUrl,
   getAudioCandidateUrls,
   getTranslationAudioCandidateUrls,
+  isHumanTranslationAvailable,
   AVAILABLE_QARIS,
   QariMeta,
   TranslationVoiceMode,
@@ -55,6 +56,7 @@ export interface UseQuranAudioReturn {
   translationVoiceMode: TranslationVoiceMode;
   setTranslationVoiceMode: (mode: TranslationVoiceMode) => void;
   translationVoiceOptions: TranslationVoiceOption[];
+  isHumanTranslationAvailableForCurrentSurah: boolean;
   // Tadarus Handsfree (Indonesian Translation Speech)
   handsfreeMode: HandsfreeMode;
   isTranslationReadingEnabled: boolean; // boolean compatibility alias (handsfreeMode !== 'off')
@@ -420,6 +422,18 @@ export function useQuranAudio({
 
       const currentMode = handsfreeModeRef.current;
 
+      // Special handling for surah-level reciters (e.g. Syaikh Muhammad Al-Luhaidan)
+      const qari = AVAILABLE_QARIS.find((q) => q.id === selectedQariRef.current);
+      if (qari?.isSurahLevel && activePhaseRef.current === 'arabic') {
+        if (repeatModeRef.current === 'surah') {
+          playAyahInternalRef.current(1);
+        } else {
+          setPlaybackState('ended');
+          setCurrentAyah(null);
+        }
+        return;
+      }
+
       // 1. If Indonesian translation audio just completed
       if (activePhaseRef.current === 'translation') {
         setIsReadingTranslation(false);
@@ -604,6 +618,14 @@ export function useQuranAudio({
         candidates.unshift(cachedTranslation);
       }
       candidateUrlsRef.current = candidates;
+
+      // If no translation candidates available (e.g. human mode for surahs where human recording wasn't made)
+      if (candidates.length === 0) {
+        activePhaseRef.current = 'arabic';
+        setIsReadingTranslation(false);
+        advanceAfterAyahRef.current();
+        return;
+      }
 
       setPlaybackState('loading');
       setError(null);
@@ -891,6 +913,7 @@ export function useQuranAudio({
     translationVoiceMode,
     setTranslationVoiceMode,
     translationVoiceOptions: TRANSLATION_VOICE_OPTIONS,
+    isHumanTranslationAvailableForCurrentSurah: isHumanTranslationAvailable(surahNumber),
     // Tadarus Handsfree
     handsfreeMode,
     isTranslationReadingEnabled,

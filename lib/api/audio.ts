@@ -11,6 +11,8 @@ export interface QariMeta {
   style: string;
   everyAyahFolder: string;
   quranComSlug?: string;
+  surahAudioBaseUrl?: string;
+  isSurahLevel?: boolean;
 }
 
 export const AVAILABLE_QARIS: QariMeta[] = [
@@ -21,6 +23,15 @@ export const AVAILABLE_QARIS: QariMeta[] = [
     style: 'Murattal Merdu (Default)',
     everyAyahFolder: 'Alafasy_128kbps',
     quranComSlug: 'Alafasy',
+  },
+  {
+    id: 'al_luhaidan',
+    name: 'Syaikh Muhammad Al-Luhaidan',
+    arabicName: 'محمد اللحيدان',
+    style: 'Tartil Emosional & Mengharukan',
+    everyAyahFolder: 'Muhammad_Al-Luhaidan',
+    surahAudioBaseUrl: 'https://cdn.mp3quran.net/audio/muhammad-luhaidan/r1',
+    isSurahLevel: true,
   },
   {
     id: 'yasser_dossary',
@@ -112,13 +123,13 @@ export interface TranslationVoiceOption {
 export const TRANSLATION_VOICE_OPTIONS: TranslationVoiceOption[] = [
   {
     id: 'human',
-    name: 'Rekaman Suara Manusia',
-    description: 'Pembaca asli Bahasa Indonesia (Archive.org dengan failover TTS)',
+    name: 'Rekaman Suara Manusia (Asli)',
+    description: 'Suara asli manusia (Tersedia untuk 76 surat, tanpa sisipan suara robot)',
   },
   {
     id: 'tts',
     name: 'Suara Digital (TTS AI)',
-    description: 'Sintesis vokal Bahasa Indonesia jernih & stabil (/api/audio-translation)',
+    description: 'Sintesis vokal Bahasa Indonesia untuk seluruh 114 surat',
   },
   {
     id: 'off',
@@ -126,6 +137,22 @@ export const TRANSLATION_VOICE_OPTIONS: TranslationVoiceOption[] = [
     description: 'Hanya murottal qari bahasa Arab (tanpa terjemahan)',
   },
 ];
+
+/**
+ * Set of Surahs with authentic human-recorded Indonesian translation available in the public archive.
+ * (76 Surahs total: Al-Fatihah, Al-Baqarah, and Surahs 40-41, 43-114).
+ * Surahs 3 to 39 and 42 were not produced in the per-ayah recording archive.
+ */
+export const HUMAN_TRANSLATION_AVAILABLE_SURAHS = new Set<number>([
+  1, 2, 40, 41, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61,
+  62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+  84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104,
+  105, 106, 107, 108, 109, 110, 111, 112, 113, 114,
+]);
+
+export function isHumanTranslationAvailable(surahNumber: number): boolean {
+  return HUMAN_TRANSLATION_AVAILABLE_SURAHS.has(surahNumber);
+}
 
 export interface AyahAudioMeta {
   surahNumber: number;
@@ -160,6 +187,9 @@ export function getAyahAudioUrl(
   const a = padDigits(ayahNumber, 3);
   const qari = AVAILABLE_QARIS.find((q) => q.id === qariId) || AVAILABLE_QARIS[0];
 
+  if (qari.surahAudioBaseUrl) {
+    return `${qari.surahAudioBaseUrl}/${s}.mp3`;
+  }
   if (qari.quranComSlug) {
     return `https://verses.quran.com/${qari.quranComSlug}/mp3/${s}${a}.mp3`;
   }
@@ -180,16 +210,23 @@ export function getAudioCandidateUrls(
 
   const candidates: string[] = [];
 
-  // 1. If Quran.com CDN is available for this reciter
+  // 1. If Surah-level audio CDN is configured (e.g. Syaikh Muhammad Al-Luhaidan)
+  if (qari.surahAudioBaseUrl) {
+    candidates.push(`${qari.surahAudioBaseUrl}/${s}.mp3`);
+    candidates.push(`https://server8.mp3quran.net/lhdan/${s}.mp3`);
+    return candidates;
+  }
+
+  // 2. If Quran.com CDN is available for this reciter
   if (qari.quranComSlug) {
     candidates.push(`https://verses.quran.com/${qari.quranComSlug}/mp3/${s}${a}.mp3`);
     candidates.push(`https://audio.qurancdn.com/${qari.quranComSlug}/mp3/${s}${a}.mp3`);
   }
 
-  // 2. High-availability EveryAyah CDN mirror (CORS-enabled BunnyCDN)
+  // 3. High-availability EveryAyah CDN mirror (CORS-enabled BunnyCDN)
   candidates.push(`https://everyayah.com/data/${qari.everyAyahFolder}/${s}${a}.mp3`);
 
-  // 3. Mirror fallback for default Alafasy
+  // 4. Mirror fallback for default Alafasy
   if (qari.id === 'alafasy') {
     candidates.push(
       `https://cdn.equran.id/audio-partial/Misyari-Rasyid-Al-Afasi/${s}${a}.mp3`
@@ -211,6 +248,9 @@ export function getFallbackAyahAudioUrl(
   const a = padDigits(ayahNumber, 3);
   const qari = AVAILABLE_QARIS.find((q) => q.id === qariId) || AVAILABLE_QARIS[0];
 
+  if (qari.surahAudioBaseUrl) {
+    return `${qari.surahAudioBaseUrl}/${s}.mp3`;
+  }
   if (qari.quranComSlug) {
     return `https://audio.qurancdn.com/${qari.quranComSlug}/mp3/${s}${a}.mp3`;
   }
@@ -243,23 +283,36 @@ export function getTranslationTtsAudioUrl(
 
 /**
  * Returns prioritized candidate list for Indonesian translation audio based on user preference:
- * - 'human': [Human recording, TTS API fallback]
- * - 'tts': [TTS API, Human recording fallback]
+ * - 'human': Pure human voice without robotic TTS interruptions.
+ *            Returns [humanUrl] if surah is supported (76 surahs available).
+ *            Returns [] if surah human audio is not available, preventing awkward TTS pop-in.
+ * - 'tts': [TTS API endpoint] for 114 surah universal AI voice synthesis.
  * - 'off': []
  */
 export function getTranslationAudioCandidateUrls(
   surahNumber: number,
   ayahNumber: number,
   translationText?: string,
-  mode: TranslationVoiceMode = 'human'
+  mode: TranslationVoiceMode = 'human',
+  allowTtsFallback: boolean = false
 ): string[] {
   if (mode === 'off') return [];
 
+  const humanAvailable = isHumanTranslationAvailable(surahNumber);
   const humanUrl = getHumanTranslationAudioUrl(surahNumber, ayahNumber);
   const ttsUrl = getTranslationTtsAudioUrl(translationText, surahNumber, ayahNumber);
 
-  if (mode === 'tts') {
-    return [ttsUrl, humanUrl];
+  if (mode === 'human') {
+    if (!humanAvailable) {
+      // In human-only mode, never unexpectedly switch to robotic Google TTS
+      return allowTtsFallback ? [ttsUrl] : [];
+    }
+    return allowTtsFallback ? [humanUrl, ttsUrl] : [humanUrl];
   }
-  return [humanUrl, ttsUrl];
+
+  if (mode === 'tts') {
+    return humanAvailable ? [ttsUrl, humanUrl] : [ttsUrl];
+  }
+
+  return [];
 }

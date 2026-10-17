@@ -49,6 +49,7 @@ export default function QuranAudioPlayer({
     setTranslationVoiceMode,
     translationVoiceOptions,
     handsfreeMode,
+    isHumanTranslationAvailableForCurrentSurah,
     isTranslationReadingEnabled,
     isReadingTranslation,
     setHandsfreeMode,
@@ -223,6 +224,11 @@ export default function QuranAudioPlayer({
               <span>Gaya: {currentQariMeta.style}</span>
               <span className="font-amiri text-xs text-ink-secondary">{currentQariMeta.arabicName}</span>
             </div>
+            {currentQariMeta.isSurahLevel && (
+              <p className="text-[10px] text-amber-600 dark:text-amber-400 flex items-center gap-1 pt-0.5">
+                <span>Audio Syaikh Muhammad Al-Luhaidan diputar per-surat penuh secara tartil & syahdu.</span>
+              </p>
+            )}
           </div>
 
           {/* Section 2: Audio Terjemahan Indonesia */}
@@ -249,6 +255,16 @@ export default function QuranAudioPlayer({
                 );
               })}
             </div>
+            {translationVoiceMode === 'human' && (
+              <div className="text-[10px] text-ink-mute flex items-start gap-1.5 pt-0.5 leading-tight">
+                <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-1 ${isHumanTranslationAvailableForCurrentSurah ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                <span>
+                  {isHumanTranslationAvailableForCurrentSurah
+                    ? 'Rekaman suara manusia aktif untuk surat ini (tanpa sisipan suara robotik).'
+                    : 'Surat ini belum memiliki rekaman manusia per-ayat (arsip publik hanya 76 surat). Tilawah lanjut hening tanpa beralih ke suara robot.'}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       )}
