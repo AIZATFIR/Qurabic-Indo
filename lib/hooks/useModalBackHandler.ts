@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useCallback } from 'react';
+import { showRespectfulInterstitial } from '@/lib/ads/admob';
 
 export interface UseModalBackHandlerOptions {
   modalName?: string;
@@ -25,6 +26,13 @@ export function useModalBackHandler(
   const isHistoryPushedRef = useRef(false);
   const initialPathnameRef = useRef<string>('');
 
+  const triggerRespectfulAdIfAllowed = useCallback(() => {
+    const isReadingModal = ['word_study', 'grammar_legend', 'surah_search'].includes(modalName);
+    if (!isReadingModal) {
+      showRespectfulInterstitial('modal_back').catch(() => {});
+    }
+  }, [modalName]);
+
   // Primary close function to be called by UI elements (X button, backdrop, ESC key)
   const handleClose = useCallback(() => {
     if (isHistoryPushedRef.current) {
@@ -35,8 +43,9 @@ export function useModalBackHandler(
         }
       } catch {}
     }
+    triggerRespectfulAdIfAllowed();
     onCloseRef.current();
-  }, []);
+  }, [triggerRespectfulAdIfAllowed]);
 
   useEffect(() => {
     if (!isOpen || typeof window === 'undefined') return;
@@ -59,6 +68,7 @@ export function useModalBackHandler(
       // User pressed mobile hardware back button or browser back
       if (isHistoryPushedRef.current) {
         isHistoryPushedRef.current = false;
+        triggerRespectfulAdIfAllowed();
         onCloseRef.current();
       }
     };
@@ -77,7 +87,7 @@ export function useModalBackHandler(
         } catch {}
       }
     };
-  }, [isOpen, modalName]);
+  }, [isOpen, modalName, triggerRespectfulAdIfAllowed]);
 
   return { handleClose };
 }

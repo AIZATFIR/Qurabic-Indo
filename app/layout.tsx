@@ -6,6 +6,7 @@ import SmoothScroll from '@/components/SmoothScroll';
 import Footer from '@/components/Footer';
 import { ThemeProvider } from '@/lib/context/ThemeContext';
 import { Toaster } from 'sonner';
+import AdsController from '@/components/AdsController';
 
 export const viewport: Viewport = {
   themeColor: '#fbf8f1',
@@ -70,6 +71,7 @@ export default function RootLayout({
             <Footer />
             <MobileBottomNav />
           </SmoothScroll>
+          <AdsController />
 
           {/* Sonner Global Notifications */}
           <Toaster

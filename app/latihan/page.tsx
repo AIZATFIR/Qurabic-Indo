@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import WordEtymologyModal from '@/components/WordEtymologyModal';
 import { QUIZ_BANK, FLASHCARD_BANK, QuizQuestion, MorphologyFlashcard } from '@/lib/data/latihan-bank';
+import { showRespectfulInterstitial } from '@/lib/ads/admob';
 
 export default function LatihanPage() {
   const [activeTab, setActiveTab] = useState<'kuis' | 'flashcard'>('kuis');
@@ -72,6 +73,7 @@ export default function LatihanPage() {
       setIsSubmitted(false);
     } else {
       setIsFinished(true);
+      showRespectfulInterstitial('quiz_completed', '/latihan').catch(() => {});
     }
   };
 
