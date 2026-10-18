@@ -33,6 +33,12 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths"></meta-data>
         </provider>
+
+        <!-- Google AdMob Application ID (Official Google Test App ID for Development & Safe Testing) -->
+        <!-- Ganti dengan App ID AdMob asli Anda saat rilis produksi -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713"/>
     </application>
 
     <!-- Permissions -->
