@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Qurabic</title>
+  <meta http-equiv="refresh" content="0; url=https://qurabic-indo-corpus.vercel.app/baca">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0d1b14;
+      color: #e5e7eb;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+    .loader {
+      width: 44px;
+      height: 44px;
+      border: 3px solid rgba(16, 185, 129, 0.2);
+      border-radius: 50%;
+      border-top-color: #10b981;
+      animation: spin 0.9s ease-in-out infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="loader"></div>
+  <p style="margin-top: 16px; font-size: 14px; color: #9ca3af; letter-spacing: 0.05em;">Memuat Qurabic...</p>
+  <script>
+    if (window.location.protocol === 'file:') {
+      window.location.href = "https://qurabic-indo-corpus.vercel.app/baca";
+    }
+  </script>
+</body>
+</html>
