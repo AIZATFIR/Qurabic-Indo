@@ -1,0 +1,582 @@
+{
+  "98:1": [
+    {
+      "location": "98:1:1",
+      "arabic": "لَمْ",
+      "transliteration": "lam",
+      "meaningIndo": "tidak"
+    },
+    {
+      "location": "98:1:2",
+      "arabic": "يَكُنِ",
+      "transliteration": "yakuni",
+      "meaningIndo": "ada"
+    },
+    {
+      "location": "98:1:3",
+      "arabic": "ٱلَّذِينَ",
+      "transliteration": "alladhīna",
+      "meaningIndo": "orang-orang yang"
+    },
+    {
+      "location": "98:1:4",
+      "arabic": "كَفَرُوا۟",
+      "transliteration": "kafarū",
+      "meaningIndo": "kafir/ingkar"
+    },
+    {
+      "location": "98:1:5",
+      "arabic": "مِنْ",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "98:1:6",
+      "arabic": "أَهْلِ",
+      "transliteration": "ahli",
+      "meaningIndo": "ahli"
+    },
+    {
+      "location": "98:1:7",
+      "arabic": "ٱلْكِتَـٰبِ",
+      "transliteration": "l-kitābi",
+      "meaningIndo": "kitab"
+    },
+    {
+      "location": "98:1:8",
+      "arabic": "وَٱلْمُشْرِكِينَ",
+      "transliteration": "wal-mush'rikīna",
+      "meaningIndo": "dan orang-orang musyrik"
+    },
+    {
+      "location": "98:1:9",
+      "arabic": "مُنفَكِّينَ",
+      "transliteration": "munfakkīna",
+      "meaningIndo": "melepaskan/meninggalkan"
+    },
+    {
+      "location": "98:1:10",
+      "arabic": "حَتَّىٰ",
+      "transliteration": "ḥattā",
+      "meaningIndo": "sehingga"
+    },
+    {
+      "location": "98:1:11",
+      "arabic": "تَأْتِيَهُمُ",
+      "transliteration": "tatiyahumu",
+      "meaningIndo": "datang kepada mereka"
+    },
+    {
+      "location": "98:1:12",
+      "arabic": "ٱلْبَيِّنَةُ",
+      "transliteration": "l-bayinatu",
+      "meaningIndo": "bukti nyata"
+    }
+  ],
+  "98:2": [
+    {
+      "location": "98:2:1",
+      "arabic": "رَسُولٌۭ",
+      "transliteration": "rasūlun",
+      "meaningIndo": "seorang rasul"
+    },
+    {
+      "location": "98:2:2",
+      "arabic": "مِّنَ",
+      "transliteration": "mina",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "98:2:3",
+      "arabic": "ٱللَّهِ",
+      "transliteration": "l-lahi",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "98:2:4",
+      "arabic": "يَتْلُوا۟",
+      "transliteration": "yatlū",
+      "meaningIndo": "dia membacakan"
+    },
+    {
+      "location": "98:2:5",
+      "arabic": "صُحُفًۭا",
+      "transliteration": "ṣuḥufan",
+      "meaningIndo": "lebaran-lembaran"
+    },
+    {
+      "location": "98:2:6",
+      "arabic": "مُّطَهَّرَةًۭ",
+      "transliteration": "muṭahharatan",
+      "meaningIndo": "suci"
+    }
+  ],
+  "98:3": [
+    {
+      "location": "98:3:1",
+      "arabic": "فِيهَا",
+      "transliteration": "fīhā",
+      "meaningIndo": "di dalamnya"
+    },
+    {
+      "location": "98:3:2",
+      "arabic": "كُتُبٌۭ",
+      "transliteration": "kutubun",
+      "meaningIndo": "kitab-kitab"
+    },
+    {
+      "location": "98:3:3",
+      "arabic": "قَيِّمَةٌۭ",
+      "transliteration": "qayyimatun",
+      "meaningIndo": "yang lurus"
+    }
+  ],
+  "98:4": [
+    {
+      "location": "98:4:1",
+      "arabic": "وَمَا",
+      "transliteration": "wamā",
+      "meaningIndo": "dan tidak"
+    },
+    {
+      "location": "98:4:2",
+      "arabic": "تَفَرَّقَ",
+      "transliteration": "tafarraqa",
+      "meaningIndo": "berpecah-belah"
+    },
+    {
+      "location": "98:4:3",
+      "arabic": "ٱلَّذِينَ",
+      "transliteration": "alladhīna",
+      "meaningIndo": "orang-orang yang"
+    },
+    {
+      "location": "98:4:4",
+      "arabic": "أُوتُوا۟",
+      "transliteration": "ūtū",
+      "meaningIndo": "mereka diberi"
+    },
+    {
+      "location": "98:4:5",
+      "arabic": "ٱلْكِتَـٰبَ",
+      "transliteration": "l-kitāba",
+      "meaningIndo": "Al Kitab"
+    },
+    {
+      "location": "98:4:6",
+      "arabic": "إِلَّا",
+      "transliteration": "illā",
+      "meaningIndo": "kecuali"
+    },
+    {
+      "location": "98:4:7",
+      "arabic": "مِنۢ",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "98:4:8",
+      "arabic": "بَعْدِ",
+      "transliteration": "baʿdi",
+      "meaningIndo": "setelah"
+    },
+    {
+      "location": "98:4:9",
+      "arabic": "مَا",
+      "transliteration": "mā",
+      "meaningIndo": "apa"
+    },
+    {
+      "location": "98:4:10",
+      "arabic": "جَآءَتْهُمُ",
+      "transliteration": "jāathumu",
+      "meaningIndo": "datang kepada mereka"
+    },
+    {
+      "location": "98:4:11",
+      "arabic": "ٱلْبَيِّنَةُ",
+      "transliteration": "l-bayinatu",
+      "meaningIndo": "bukti nyata"
+    }
+  ],
+  "98:5": [
+    {
+      "location": "98:5:1",
+      "arabic": "وَمَآ",
+      "transliteration": "wamā",
+      "meaningIndo": "dan tidak"
+    },
+    {
+      "location": "98:5:2",
+      "arabic": "أُمِرُوٓا۟",
+      "transliteration": "umirū",
+      "meaningIndo": "diperintahkan"
+    },
+    {
+      "location": "98:5:3",
+      "arabic": "إِلَّا",
+      "transliteration": "illā",
+      "meaningIndo": "kecuali"
+    },
+    {
+      "location": "98:5:4",
+      "arabic": "لِيَعْبُدُوا۟",
+      "transliteration": "liyaʿbudū",
+      "meaningIndo": "supaya mereka menyembah"
+    },
+    {
+      "location": "98:5:5",
+      "arabic": "ٱللَّهَ",
+      "transliteration": "l-laha",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "98:5:6",
+      "arabic": "مُخْلِصِينَ",
+      "transliteration": "mukh'liṣīna",
+      "meaningIndo": "mengikhlaskan/memurnikan"
+    },
+    {
+      "location": "98:5:7",
+      "arabic": "لَهُ",
+      "transliteration": "lahu",
+      "meaningIndo": "bagiNya"
+    },
+    {
+      "location": "98:5:8",
+      "arabic": "ٱلدِّينَ",
+      "transliteration": "l-dīna",
+      "meaningIndo": "agama"
+    },
+    {
+      "location": "98:5:9",
+      "arabic": "حُنَفَآءَ",
+      "transliteration": "ḥunafāa",
+      "meaningIndo": "ikhlas/lurus"
+    },
+    {
+      "location": "98:5:10",
+      "arabic": "وَيُقِيمُوا۟",
+      "transliteration": "wayuqīmū",
+      "meaningIndo": "dan mereka mendirikan"
+    },
+    {
+      "location": "98:5:11",
+      "arabic": "ٱلصَّلَوٰةَ",
+      "transliteration": "l-ṣalata",
+      "meaningIndo": "sholat"
+    },
+    {
+      "location": "98:5:12",
+      "arabic": "وَيُؤْتُوا۟",
+      "transliteration": "wayu'tū",
+      "meaningIndo": "dan mereka menunaikan"
+    },
+    {
+      "location": "98:5:13",
+      "arabic": "ٱلزَّكَوٰةَ ۚ",
+      "transliteration": "l-zakata",
+      "meaningIndo": "zakat"
+    },
+    {
+      "location": "98:5:14",
+      "arabic": "وَذَٰلِكَ",
+      "transliteration": "wadhālika",
+      "meaningIndo": "dan demikian itu"
+    },
+    {
+      "location": "98:5:15",
+      "arabic": "دِينُ",
+      "transliteration": "dīnu",
+      "meaningIndo": "agama"
+    },
+    {
+      "location": "98:5:16",
+      "arabic": "ٱلْقَيِّمَةِ",
+      "transliteration": "l-qayimati",
+      "meaningIndo": "betul/lurus"
+    }
+  ],
+  "98:6": [
+    {
+      "location": "98:6:1",
+      "arabic": "إِنَّ",
+      "transliteration": "inna",
+      "meaningIndo": "sesungguhnya"
+    },
+    {
+      "location": "98:6:2",
+      "arabic": "ٱلَّذِينَ",
+      "transliteration": "alladhīna",
+      "meaningIndo": "orang-orang yang"
+    },
+    {
+      "location": "98:6:3",
+      "arabic": "كَفَرُوا۟",
+      "transliteration": "kafarū",
+      "meaningIndo": "kafir/ingkar"
+    },
+    {
+      "location": "98:6:4",
+      "arabic": "مِنْ",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "98:6:5",
+      "arabic": "أَهْلِ",
+      "transliteration": "ahli",
+      "meaningIndo": "ahli"
+    },
+    {
+      "location": "98:6:6",
+      "arabic": "ٱلْكِتَـٰبِ",
+      "transliteration": "l-kitābi",
+      "meaningIndo": "kitab"
+    },
+    {
+      "location": "98:6:7",
+      "arabic": "وَٱلْمُشْرِكِينَ",
+      "transliteration": "wal-mush'rikīna",
+      "meaningIndo": "dan orang-orang musyrik"
+    },
+    {
+      "location": "98:6:8",
+      "arabic": "فِى",
+      "transliteration": "fī",
+      "meaningIndo": "dalam"
+    },
+    {
+      "location": "98:6:9",
+      "arabic": "نَارِ",
+      "transliteration": "nāri",
+      "meaningIndo": "neraka"
+    },
+    {
+      "location": "98:6:10",
+      "arabic": "جَهَنَّمَ",
+      "transliteration": "jahannama",
+      "meaningIndo": "jahanam"
+    },
+    {
+      "location": "98:6:11",
+      "arabic": "خَـٰلِدِينَ",
+      "transliteration": "khālidīna",
+      "meaningIndo": "mereka kekal"
+    },
+    {
+      "location": "98:6:12",
+      "arabic": "فِيهَآ ۚ",
+      "transliteration": "fīhā",
+      "meaningIndo": "di dalammnya"
+    },
+    {
+      "location": "98:6:13",
+      "arabic": "أُو۟لَـٰٓئِكَ",
+      "transliteration": "ulāika",
+      "meaningIndo": "mereka itu"
+    },
+    {
+      "location": "98:6:14",
+      "arabic": "هُمْ",
+      "transliteration": "hum",
+      "meaningIndo": "mereka"
+    },
+    {
+      "location": "98:6:15",
+      "arabic": "شَرُّ",
+      "transliteration": "sharru",
+      "meaningIndo": "seburuk-buruk"
+    },
+    {
+      "location": "98:6:16",
+      "arabic": "ٱلْبَرِيَّةِ",
+      "transliteration": "l-bariyati",
+      "meaningIndo": "makhluk"
+    }
+  ],
+  "98:7": [
+    {
+      "location": "98:7:1",
+      "arabic": "إِنَّ",
+      "transliteration": "inna",
+      "meaningIndo": "sesungguhnya"
+    },
+    {
+      "location": "98:7:2",
+      "arabic": "ٱلَّذِينَ",
+      "transliteration": "alladhīna",
+      "meaningIndo": "orang-orang yang"
+    },
+    {
+      "location": "98:7:3",
+      "arabic": "ءَامَنُوا۟",
+      "transliteration": "āmanū",
+      "meaningIndo": "beriman"
+    },
+    {
+      "location": "98:7:4",
+      "arabic": "وَعَمِلُوا۟",
+      "transliteration": "waʿamilū",
+      "meaningIndo": "dan mereka berbuat/beramal"
+    },
+    {
+      "location": "98:7:5",
+      "arabic": "ٱلصَّـٰلِحَـٰتِ",
+      "transliteration": "l-ṣāliḥāti",
+      "meaningIndo": "kebajikan/saleh"
+    },
+    {
+      "location": "98:7:6",
+      "arabic": "أُو۟لَـٰٓئِكَ",
+      "transliteration": "ulāika",
+      "meaningIndo": "mereka itu"
+    },
+    {
+      "location": "98:7:7",
+      "arabic": "هُمْ",
+      "transliteration": "hum",
+      "meaningIndo": "mereka"
+    },
+    {
+      "location": "98:7:8",
+      "arabic": "خَيْرُ",
+      "transliteration": "khayru",
+      "meaningIndo": "sebaik-baik"
+    },
+    {
+      "location": "98:7:9",
+      "arabic": "ٱلْبَرِيَّةِ",
+      "transliteration": "l-bariyati",
+      "meaningIndo": "makhluk"
+    }
+  ],
+  "98:8": [
+    {
+      "location": "98:8:1",
+      "arabic": "جَزَآؤُهُمْ",
+      "transliteration": "jazāuhum",
+      "meaningIndo": "balasan mereka"
+    },
+    {
+      "location": "98:8:2",
+      "arabic": "عِندَ",
+      "transliteration": "ʿinda",
+      "meaningIndo": "disisi"
+    },
+    {
+      "location": "98:8:3",
+      "arabic": "رَبِّهِمْ",
+      "transliteration": "rabbihim",
+      "meaningIndo": "Tuhan mereka"
+    },
+    {
+      "location": "98:8:4",
+      "arabic": "جَنَّـٰتُ",
+      "transliteration": "jannātu",
+      "meaningIndo": "surga"
+    },
+    {
+      "location": "98:8:5",
+      "arabic": "عَدْنٍۢ",
+      "transliteration": "ʿadnin",
+      "meaningIndo": "'Adn"
+    },
+    {
+      "location": "98:8:6",
+      "arabic": "تَجْرِى",
+      "transliteration": "tajrī",
+      "meaningIndo": "mengalir"
+    },
+    {
+      "location": "98:8:7",
+      "arabic": "مِن",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "98:8:8",
+      "arabic": "تَحْتِهَا",
+      "transliteration": "taḥtihā",
+      "meaningIndo": "bawah"
+    },
+    {
+      "location": "98:8:9",
+      "arabic": "ٱلْأَنْهَـٰرُ",
+      "transliteration": "l-anhāru",
+      "meaningIndo": "sungai"
+    },
+    {
+      "location": "98:8:10",
+      "arabic": "خَـٰلِدِينَ",
+      "transliteration": "khālidīna",
+      "meaningIndo": "mereka kekal"
+    },
+    {
+      "location": "98:8:11",
+      "arabic": "فِيهَآ",
+      "transliteration": "fīhā",
+      "meaningIndo": "didalamnya"
+    },
+    {
+      "location": "98:8:12",
+      "arabic": "أَبَدًۭا ۖ",
+      "transliteration": "abadan",
+      "meaningIndo": "selamanya"
+    },
+    {
+      "location": "98:8:13",
+      "arabic": "رَّضِىَ",
+      "transliteration": "raḍiya",
+      "meaningIndo": "suka/rida/puas"
+    },
+    {
+      "location": "98:8:14",
+      "arabic": "ٱللَّهُ",
+      "transliteration": "l-lahu",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "98:8:15",
+      "arabic": "عَنْهُمْ",
+      "transliteration": "ʿanhum",
+      "meaningIndo": "terhadap mereka"
+    },
+    {
+      "location": "98:8:16",
+      "arabic": "وَرَضُوا۟",
+      "transliteration": "waraḍū",
+      "meaningIndo": "dan mereka suka/rida/puas"
+    },
+    {
+      "location": "98:8:17",
+      "arabic": "عَنْهُ ۚ",
+      "transliteration": "ʿanhu",
+      "meaningIndo": "dari pada-Nya/kepada-Nya"
+    },
+    {
+      "location": "98:8:18",
+      "arabic": "ذَٰلِكَ",
+      "transliteration": "dhālika",
+      "meaningIndo": "demikian itu"
+    },
+    {
+      "location": "98:8:19",
+      "arabic": "لِمَنْ",
+      "transliteration": "liman",
+      "meaningIndo": "bagi orang"
+    },
+    {
+      "location": "98:8:20",
+      "arabic": "خَشِىَ",
+      "transliteration": "khashiya",
+      "meaningIndo": "ia takut"
+    },
+    {
+      "location": "98:8:21",
+      "arabic": "رَبَّهُۥ",
+      "transliteration": "rabbahu",
+      "meaningIndo": "Tuhannya"
+    }
+  ]
+}

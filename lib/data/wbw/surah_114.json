@@ -1,0 +1,134 @@
+{
+  "114:1": [
+    {
+      "location": "114:1:1",
+      "arabic": "قُلْ",
+      "transliteration": "qul",
+      "meaningIndo": "katakanlah"
+    },
+    {
+      "location": "114:1:2",
+      "arabic": "أَعُوذُ",
+      "transliteration": "aʿūdhu",
+      "meaningIndo": "aku berlindung"
+    },
+    {
+      "location": "114:1:3",
+      "arabic": "بِرَبِّ",
+      "transliteration": "birabbi",
+      "meaningIndo": "Tuhannya"
+    },
+    {
+      "location": "114:1:4",
+      "arabic": "ٱلنَّاسِ",
+      "transliteration": "l-nāsi",
+      "meaningIndo": "manusia"
+    }
+  ],
+  "114:2": [
+    {
+      "location": "114:2:1",
+      "arabic": "مَلِكِ",
+      "transliteration": "maliki",
+      "meaningIndo": "Rajanya"
+    },
+    {
+      "location": "114:2:2",
+      "arabic": "ٱلنَّاسِ",
+      "transliteration": "l-nāsi",
+      "meaningIndo": "manusia"
+    }
+  ],
+  "114:3": [
+    {
+      "location": "114:3:1",
+      "arabic": "إِلَـٰهِ",
+      "transliteration": "ilāhi",
+      "meaningIndo": "Tuhannya"
+    },
+    {
+      "location": "114:3:2",
+      "arabic": "ٱلنَّاسِ",
+      "transliteration": "l-nāsi",
+      "meaningIndo": "manusia"
+    }
+  ],
+  "114:4": [
+    {
+      "location": "114:4:1",
+      "arabic": "مِن",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "114:4:2",
+      "arabic": "شَرِّ",
+      "transliteration": "sharri",
+      "meaningIndo": "kejahatan"
+    },
+    {
+      "location": "114:4:3",
+      "arabic": "ٱلْوَسْوَاسِ",
+      "transliteration": "l-waswāsi",
+      "meaningIndo": "bisikkan"
+    },
+    {
+      "location": "114:4:4",
+      "arabic": "ٱلْخَنَّاسِ",
+      "transliteration": "l-khanāsi",
+      "meaningIndo": "menunggu-nunggu/bersembunyi"
+    }
+  ],
+  "114:5": [
+    {
+      "location": "114:5:1",
+      "arabic": "ٱلَّذِى",
+      "transliteration": "alladhī",
+      "meaningIndo": "yang"
+    },
+    {
+      "location": "114:5:2",
+      "arabic": "يُوَسْوِسُ",
+      "transliteration": "yuwaswisu",
+      "meaningIndo": "membisik-bisikan"
+    },
+    {
+      "location": "114:5:3",
+      "arabic": "فِى",
+      "transliteration": "fī",
+      "meaningIndo": "dalam"
+    },
+    {
+      "location": "114:5:4",
+      "arabic": "صُدُورِ",
+      "transliteration": "ṣudūri",
+      "meaningIndo": "dada"
+    },
+    {
+      "location": "114:5:5",
+      "arabic": "ٱلنَّاسِ",
+      "transliteration": "l-nāsi",
+      "meaningIndo": "manusia"
+    }
+  ],
+  "114:6": [
+    {
+      "location": "114:6:1",
+      "arabic": "مِنَ",
+      "transliteration": "mina",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "114:6:2",
+      "arabic": "ٱلْجِنَّةِ",
+      "transliteration": "l-jinati",
+      "meaningIndo": "jin"
+    },
+    {
+      "location": "114:6:3",
+      "arabic": "وَٱلنَّاسِ",
+      "transliteration": "wal-nāsi",
+      "meaningIndo": "dan manusia"
+    }
+  ]
+}

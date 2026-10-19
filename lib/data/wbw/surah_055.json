@@ -1,0 +1,2264 @@
+{
+  "55:1": [
+    {
+      "location": "55:1:1",
+      "arabic": "ٱلرَّحْمَـٰنُ",
+      "transliteration": "al-raḥmānu",
+      "meaningIndo": "Yang Maha Pengasih"
+    }
+  ],
+  "55:2": [
+    {
+      "location": "55:2:1",
+      "arabic": "عَلَّمَ",
+      "transliteration": "ʿallama",
+      "meaningIndo": "Dia telah mengajarkan"
+    },
+    {
+      "location": "55:2:2",
+      "arabic": "ٱلْقُرْءَانَ",
+      "transliteration": "l-qur'āna",
+      "meaningIndo": "Al Quran"
+    }
+  ],
+  "55:3": [
+    {
+      "location": "55:3:1",
+      "arabic": "خَلَقَ",
+      "transliteration": "khalaqa",
+      "meaningIndo": "Dia telah menciptakan"
+    },
+    {
+      "location": "55:3:2",
+      "arabic": "ٱلْإِنسَـٰنَ",
+      "transliteration": "l-insāna",
+      "meaningIndo": "manusia"
+    }
+  ],
+  "55:4": [
+    {
+      "location": "55:4:1",
+      "arabic": "عَلَّمَهُ",
+      "transliteration": "ʿallamahu",
+      "meaningIndo": "Dia mengajarkannya"
+    },
+    {
+      "location": "55:4:2",
+      "arabic": "ٱلْبَيَانَ",
+      "transliteration": "l-bayāna",
+      "meaningIndo": "jelas/terang"
+    }
+  ],
+  "55:5": [
+    {
+      "location": "55:5:1",
+      "arabic": "ٱلشَّمْسُ",
+      "transliteration": "al-shamsu",
+      "meaningIndo": "matahari"
+    },
+    {
+      "location": "55:5:2",
+      "arabic": "وَٱلْقَمَرُ",
+      "transliteration": "wal-qamaru",
+      "meaningIndo": "dan bulan"
+    },
+    {
+      "location": "55:5:3",
+      "arabic": "بِحُسْبَانٍۢ",
+      "transliteration": "biḥus'bānin",
+      "meaningIndo": "dengan/menurut perhitungan"
+    }
+  ],
+  "55:6": [
+    {
+      "location": "55:6:1",
+      "arabic": "وَٱلنَّجْمُ",
+      "transliteration": "wal-najmu",
+      "meaningIndo": "dan bintang/tumbuh-tumbuhan"
+    },
+    {
+      "location": "55:6:2",
+      "arabic": "وَٱلشَّجَرُ",
+      "transliteration": "wal-shajaru",
+      "meaningIndo": "dan pohon-pohonan"
+    },
+    {
+      "location": "55:6:3",
+      "arabic": "يَسْجُدَانِ",
+      "transliteration": "yasjudāni",
+      "meaningIndo": "keduanya tunduk/sujud"
+    }
+  ],
+  "55:7": [
+    {
+      "location": "55:7:1",
+      "arabic": "وَٱلسَّمَآءَ",
+      "transliteration": "wal-samāa",
+      "meaningIndo": "dan langit"
+    },
+    {
+      "location": "55:7:2",
+      "arabic": "رَفَعَهَا",
+      "transliteration": "rafaʿahā",
+      "meaningIndo": "Dia tinggikannya"
+    },
+    {
+      "location": "55:7:3",
+      "arabic": "وَوَضَعَ",
+      "transliteration": "wawaḍaʿa",
+      "meaningIndo": "dan Dia letakkan"
+    },
+    {
+      "location": "55:7:4",
+      "arabic": "ٱلْمِيزَانَ",
+      "transliteration": "l-mīzāna",
+      "meaningIndo": "timbangan"
+    }
+  ],
+  "55:8": [
+    {
+      "location": "55:8:1",
+      "arabic": "أَلَّا",
+      "transliteration": "allā",
+      "meaningIndo": "supaya jangan"
+    },
+    {
+      "location": "55:8:2",
+      "arabic": "تَطْغَوْا۟",
+      "transliteration": "taṭghaw",
+      "meaningIndo": "kamu melampui batas"
+    },
+    {
+      "location": "55:8:3",
+      "arabic": "فِى",
+      "transliteration": "fī",
+      "meaningIndo": "dalam"
+    },
+    {
+      "location": "55:8:4",
+      "arabic": "ٱلْمِيزَانِ",
+      "transliteration": "l-mīzāni",
+      "meaningIndo": "neraca/timbangan"
+    }
+  ],
+  "55:9": [
+    {
+      "location": "55:9:1",
+      "arabic": "وَأَقِيمُوا۟",
+      "transliteration": "wa-aqīmū",
+      "meaningIndo": "dan dirikanlah"
+    },
+    {
+      "location": "55:9:2",
+      "arabic": "ٱلْوَزْنَ",
+      "transliteration": "l-wazna",
+      "meaningIndo": "neraca/timbangan"
+    },
+    {
+      "location": "55:9:3",
+      "arabic": "بِٱلْقِسْطِ",
+      "transliteration": "bil-qis'ṭi",
+      "meaningIndo": "dengan adil"
+    },
+    {
+      "location": "55:9:4",
+      "arabic": "وَلَا",
+      "transliteration": "walā",
+      "meaningIndo": "dan janganlah"
+    },
+    {
+      "location": "55:9:5",
+      "arabic": "تُخْسِرُوا۟",
+      "transliteration": "tukh'sirū",
+      "meaningIndo": "kamu mengurangi"
+    },
+    {
+      "location": "55:9:6",
+      "arabic": "ٱلْمِيزَانَ",
+      "transliteration": "l-mīzāna",
+      "meaningIndo": "neraca/timbangan"
+    }
+  ],
+  "55:10": [
+    {
+      "location": "55:10:1",
+      "arabic": "وَٱلْأَرْضَ",
+      "transliteration": "wal-arḍa",
+      "meaningIndo": "dan bumi"
+    },
+    {
+      "location": "55:10:2",
+      "arabic": "وَضَعَهَا",
+      "transliteration": "waḍaʿahā",
+      "meaningIndo": "Dia letakkan/hamparkannya"
+    },
+    {
+      "location": "55:10:3",
+      "arabic": "لِلْأَنَامِ",
+      "transliteration": "lil'anāmi",
+      "meaningIndo": "untuk makhluk"
+    }
+  ],
+  "55:11": [
+    {
+      "location": "55:11:1",
+      "arabic": "فِيهَا",
+      "transliteration": "fīhā",
+      "meaningIndo": "didalamnya/padanya"
+    },
+    {
+      "location": "55:11:2",
+      "arabic": "فَـٰكِهَةٌۭ",
+      "transliteration": "fākihatun",
+      "meaningIndo": "buah-buahan"
+    },
+    {
+      "location": "55:11:3",
+      "arabic": "وَٱلنَّخْلُ",
+      "transliteration": "wal-nakhlu",
+      "meaningIndo": "dan pohon kurma"
+    },
+    {
+      "location": "55:11:4",
+      "arabic": "ذَاتُ",
+      "transliteration": "dhātu",
+      "meaningIndo": "yang mempunyai"
+    },
+    {
+      "location": "55:11:5",
+      "arabic": "ٱلْأَكْمَامِ",
+      "transliteration": "l-akmāmi",
+      "meaningIndo": "kelopak mayang"
+    }
+  ],
+  "55:12": [
+    {
+      "location": "55:12:1",
+      "arabic": "وَٱلْحَبُّ",
+      "transliteration": "wal-ḥabu",
+      "meaningIndo": "dan biji-bijian"
+    },
+    {
+      "location": "55:12:2",
+      "arabic": "ذُو",
+      "transliteration": "dhū",
+      "meaningIndo": "mempunyai"
+    },
+    {
+      "location": "55:12:3",
+      "arabic": "ٱلْعَصْفِ",
+      "transliteration": "l-ʿaṣfi",
+      "meaningIndo": "kulit"
+    },
+    {
+      "location": "55:12:4",
+      "arabic": "وَٱلرَّيْحَانُ",
+      "transliteration": "wal-rayḥānu",
+      "meaningIndo": "dan harum baunya"
+    }
+  ],
+  "55:13": [
+    {
+      "location": "55:13:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:13:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:13:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:13:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:14": [
+    {
+      "location": "55:14:1",
+      "arabic": "خَلَقَ",
+      "transliteration": "khalaqa",
+      "meaningIndo": "Dia menciptakan"
+    },
+    {
+      "location": "55:14:2",
+      "arabic": "ٱلْإِنسَـٰنَ",
+      "transliteration": "l-insāna",
+      "meaningIndo": "manusia"
+    },
+    {
+      "location": "55:14:3",
+      "arabic": "مِن",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "55:14:4",
+      "arabic": "صَلْصَـٰلٍۢ",
+      "transliteration": "ṣalṣālin",
+      "meaningIndo": "tanah liat"
+    },
+    {
+      "location": "55:14:5",
+      "arabic": "كَٱلْفَخَّارِ",
+      "transliteration": "kal-fakhāri",
+      "meaningIndo": "seperti tembikar"
+    }
+  ],
+  "55:15": [
+    {
+      "location": "55:15:1",
+      "arabic": "وَخَلَقَ",
+      "transliteration": "wakhalaqa",
+      "meaningIndo": "dan Dia menciptakan"
+    },
+    {
+      "location": "55:15:2",
+      "arabic": "ٱلْجَآنَّ",
+      "transliteration": "l-jāna",
+      "meaningIndo": "jin"
+    },
+    {
+      "location": "55:15:3",
+      "arabic": "مِن",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "55:15:4",
+      "arabic": "مَّارِجٍۢ",
+      "transliteration": "mārijin",
+      "meaningIndo": "nyala api"
+    },
+    {
+      "location": "55:15:5",
+      "arabic": "مِّن",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "55:15:6",
+      "arabic": "نَّارٍۢ",
+      "transliteration": "nārin",
+      "meaningIndo": "api"
+    }
+  ],
+  "55:16": [
+    {
+      "location": "55:16:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:16:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:16:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhan kamu berdua"
+    },
+    {
+      "location": "55:16:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:17": [
+    {
+      "location": "55:17:1",
+      "arabic": "رَبُّ",
+      "transliteration": "rabbu",
+      "meaningIndo": "Tuhan/Pemelihara"
+    },
+    {
+      "location": "55:17:2",
+      "arabic": "ٱلْمَشْرِقَيْنِ",
+      "transliteration": "l-mashriqayni",
+      "meaningIndo": "dua timur/dua tempat terbit matahari"
+    },
+    {
+      "location": "55:17:3",
+      "arabic": "وَرَبُّ",
+      "transliteration": "warabbu",
+      "meaningIndo": "dan Tuhan/Pemelihara"
+    },
+    {
+      "location": "55:17:4",
+      "arabic": "ٱلْمَغْرِبَيْنِ",
+      "transliteration": "l-maghribayni",
+      "meaningIndo": "dua barat/dua tempat terbenamnya matahari"
+    }
+  ],
+  "55:18": [
+    {
+      "location": "55:18:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:18:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:18:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:18:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:19": [
+    {
+      "location": "55:19:1",
+      "arabic": "مَرَجَ",
+      "transliteration": "maraja",
+      "meaningIndo": "Dia alirkan"
+    },
+    {
+      "location": "55:19:2",
+      "arabic": "ٱلْبَحْرَيْنِ",
+      "transliteration": "l-baḥrayni",
+      "meaningIndo": "dua lautan"
+    },
+    {
+      "location": "55:19:3",
+      "arabic": "يَلْتَقِيَانِ",
+      "transliteration": "yaltaqiyāni",
+      "meaningIndo": "keduanya bertemu"
+    }
+  ],
+  "55:20": [
+    {
+      "location": "55:20:1",
+      "arabic": "بَيْنَهُمَا",
+      "transliteration": "baynahumā",
+      "meaningIndo": "diantara keduanya"
+    },
+    {
+      "location": "55:20:2",
+      "arabic": "بَرْزَخٌۭ",
+      "transliteration": "barzakhun",
+      "meaningIndo": "batas"
+    },
+    {
+      "location": "55:20:3",
+      "arabic": "لَّا",
+      "transliteration": "lā",
+      "meaningIndo": "tidak"
+    },
+    {
+      "location": "55:20:4",
+      "arabic": "يَبْغِيَانِ",
+      "transliteration": "yabghiyāni",
+      "meaningIndo": "keduanya melampui"
+    }
+  ],
+  "55:21": [
+    {
+      "location": "55:21:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:21:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "nikmat"
+    },
+    {
+      "location": "55:21:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:21:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:22": [
+    {
+      "location": "55:22:1",
+      "arabic": "يَخْرُجُ",
+      "transliteration": "yakhruju",
+      "meaningIndo": "keluar"
+    },
+    {
+      "location": "55:22:2",
+      "arabic": "مِنْهُمَا",
+      "transliteration": "min'humā",
+      "meaningIndo": "dari keduanya"
+    },
+    {
+      "location": "55:22:3",
+      "arabic": "ٱللُّؤْلُؤُ",
+      "transliteration": "l-lu'lu-u",
+      "meaningIndo": "mutiara"
+    },
+    {
+      "location": "55:22:4",
+      "arabic": "وَٱلْمَرْجَانُ",
+      "transliteration": "wal-marjānu",
+      "meaningIndo": "dan marjan"
+    }
+  ],
+  "55:23": [
+    {
+      "location": "55:23:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:23:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:23:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:23:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua mendustakan"
+    }
+  ],
+  "55:24": [
+    {
+      "location": "55:24:1",
+      "arabic": "وَلَهُ",
+      "transliteration": "walahu",
+      "meaningIndo": "dan bagi-Nya"
+    },
+    {
+      "location": "55:24:2",
+      "arabic": "ٱلْجَوَارِ",
+      "transliteration": "l-jawāri",
+      "meaningIndo": "kapal-kapal"
+    },
+    {
+      "location": "55:24:3",
+      "arabic": "ٱلْمُنشَـَٔاتُ",
+      "transliteration": "l-munshaātu",
+      "meaningIndo": "yang timbul/tinggi"
+    },
+    {
+      "location": "55:24:4",
+      "arabic": "فِى",
+      "transliteration": "fī",
+      "meaningIndo": "pada"
+    },
+    {
+      "location": "55:24:5",
+      "arabic": "ٱلْبَحْرِ",
+      "transliteration": "l-baḥri",
+      "meaningIndo": "lautan"
+    },
+    {
+      "location": "55:24:6",
+      "arabic": "كَٱلْأَعْلَـٰمِ",
+      "transliteration": "kal-aʿlāmi",
+      "meaningIndo": "laksana gunung-gunung"
+    }
+  ],
+  "55:25": [
+    {
+      "location": "55:25:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:25:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:25:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:25:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:26": [
+    {
+      "location": "55:26:1",
+      "arabic": "كُلُّ",
+      "transliteration": "kullu",
+      "meaningIndo": "tiap-tiap/segala"
+    },
+    {
+      "location": "55:26:2",
+      "arabic": "مَنْ",
+      "transliteration": "man",
+      "meaningIndo": "siapa/apa"
+    },
+    {
+      "location": "55:26:3",
+      "arabic": "عَلَيْهَا",
+      "transliteration": "ʿalayhā",
+      "meaningIndo": "atasnya"
+    },
+    {
+      "location": "55:26:4",
+      "arabic": "فَانٍۢ",
+      "transliteration": "fānin",
+      "meaningIndo": "binasa"
+    }
+  ],
+  "55:27": [
+    {
+      "location": "55:27:1",
+      "arabic": "وَيَبْقَىٰ",
+      "transliteration": "wayabqā",
+      "meaningIndo": "dan tetap/kekal"
+    },
+    {
+      "location": "55:27:2",
+      "arabic": "وَجْهُ",
+      "transliteration": "wajhu",
+      "meaningIndo": "wajah/zat"
+    },
+    {
+      "location": "55:27:3",
+      "arabic": "رَبِّكَ",
+      "transliteration": "rabbika",
+      "meaningIndo": "Tuhanmu"
+    },
+    {
+      "location": "55:27:4",
+      "arabic": "ذُو",
+      "transliteration": "dhū",
+      "meaningIndo": "mempunyai"
+    },
+    {
+      "location": "55:27:5",
+      "arabic": "ٱلْجَلَـٰلِ",
+      "transliteration": "l-jalāli",
+      "meaningIndo": "kebesaran"
+    },
+    {
+      "location": "55:27:6",
+      "arabic": "وَٱلْإِكْرَامِ",
+      "transliteration": "wal-ik'rāmi",
+      "meaningIndo": "dan kemuliaan"
+    }
+  ],
+  "55:28": [
+    {
+      "location": "55:28:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:28:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:28:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:28:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:29": [
+    {
+      "location": "55:29:1",
+      "arabic": "يَسْـَٔلُهُۥ",
+      "transliteration": "yasaluhu",
+      "meaningIndo": "akan meminta kepada-Nya"
+    },
+    {
+      "location": "55:29:2",
+      "arabic": "مَن",
+      "transliteration": "man",
+      "meaningIndo": "orang/makhluk"
+    },
+    {
+      "location": "55:29:3",
+      "arabic": "فِى",
+      "transliteration": "fī",
+      "meaningIndo": "pada"
+    },
+    {
+      "location": "55:29:4",
+      "arabic": "ٱلسَّمَـٰوَٰتِ",
+      "transliteration": "l-samāwāti",
+      "meaningIndo": "langit(jamak)"
+    },
+    {
+      "location": "55:29:5",
+      "arabic": "وَٱلْأَرْضِ ۚ",
+      "transliteration": "wal-arḍi",
+      "meaningIndo": "dan bumi"
+    },
+    {
+      "location": "55:29:6",
+      "arabic": "كُلَّ",
+      "transliteration": "kulla",
+      "meaningIndo": "setiap"
+    },
+    {
+      "location": "55:29:7",
+      "arabic": "يَوْمٍ",
+      "transliteration": "yawmin",
+      "meaningIndo": "hari"
+    },
+    {
+      "location": "55:29:8",
+      "arabic": "هُوَ",
+      "transliteration": "huwa",
+      "meaningIndo": "Dia"
+    },
+    {
+      "location": "55:29:9",
+      "arabic": "فِى",
+      "transliteration": "fī",
+      "meaningIndo": "pada"
+    },
+    {
+      "location": "55:29:10",
+      "arabic": "شَأْنٍۢ",
+      "transliteration": "shanin",
+      "meaningIndo": "kesibukan/urusan"
+    }
+  ],
+  "55:30": [
+    {
+      "location": "55:30:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:30:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:30:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:30:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:31": [
+    {
+      "location": "55:31:1",
+      "arabic": "سَنَفْرُغُ",
+      "transliteration": "sanafrughu",
+      "meaningIndo": "Kami akan berurusan/bertindak"
+    },
+    {
+      "location": "55:31:2",
+      "arabic": "لَكُمْ",
+      "transliteration": "lakum",
+      "meaningIndo": "bagi kalian"
+    },
+    {
+      "location": "55:31:3",
+      "arabic": "أَيُّهَ",
+      "transliteration": "ayyuha",
+      "meaningIndo": "wahai"
+    },
+    {
+      "location": "55:31:4",
+      "arabic": "ٱلثَّقَلَانِ",
+      "transliteration": "l-thaqalāni",
+      "meaningIndo": "manusia dan jin"
+    }
+  ],
+  "55:32": [
+    {
+      "location": "55:32:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:32:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "nikmat"
+    },
+    {
+      "location": "55:32:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:32:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:33": [
+    {
+      "location": "55:33:1",
+      "arabic": "يَـٰمَعْشَرَ",
+      "transliteration": "yāmaʿshara",
+      "meaningIndo": "hai jama'ah"
+    },
+    {
+      "location": "55:33:2",
+      "arabic": "ٱلْجِنِّ",
+      "transliteration": "l-jini",
+      "meaningIndo": "jin"
+    },
+    {
+      "location": "55:33:3",
+      "arabic": "وَٱلْإِنسِ",
+      "transliteration": "wal-insi",
+      "meaningIndo": "dan manusia"
+    },
+    {
+      "location": "55:33:4",
+      "arabic": "إِنِ",
+      "transliteration": "ini",
+      "meaningIndo": "jika"
+    },
+    {
+      "location": "55:33:5",
+      "arabic": "ٱسْتَطَعْتُمْ",
+      "transliteration": "is'taṭaʿtum",
+      "meaningIndo": "kamu mampu/sanggup"
+    },
+    {
+      "location": "55:33:6",
+      "arabic": "أَن",
+      "transliteration": "an",
+      "meaningIndo": "bahwa"
+    },
+    {
+      "location": "55:33:7",
+      "arabic": "تَنفُذُوا۟",
+      "transliteration": "tanfudhū",
+      "meaningIndo": "kamu menembus/melintasi"
+    },
+    {
+      "location": "55:33:8",
+      "arabic": "مِنْ",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "55:33:9",
+      "arabic": "أَقْطَارِ",
+      "transliteration": "aqṭāri",
+      "meaningIndo": "penjuru"
+    },
+    {
+      "location": "55:33:10",
+      "arabic": "ٱلسَّمَـٰوَٰتِ",
+      "transliteration": "l-samāwāti",
+      "meaningIndo": "langit(jamak)"
+    },
+    {
+      "location": "55:33:11",
+      "arabic": "وَٱلْأَرْضِ",
+      "transliteration": "wal-arḍi",
+      "meaningIndo": "dan bumi"
+    },
+    {
+      "location": "55:33:12",
+      "arabic": "فَٱنفُذُوا۟ ۚ",
+      "transliteration": "fa-unfudhū",
+      "meaningIndo": "maka tembuslah/lintasilah"
+    },
+    {
+      "location": "55:33:13",
+      "arabic": "لَا",
+      "transliteration": "lā",
+      "meaningIndo": "tidak"
+    },
+    {
+      "location": "55:33:14",
+      "arabic": "تَنفُذُونَ",
+      "transliteration": "tanfudhūna",
+      "meaningIndo": "kamu menembusnya"
+    },
+    {
+      "location": "55:33:15",
+      "arabic": "إِلَّا",
+      "transliteration": "illā",
+      "meaningIndo": "kecuali"
+    },
+    {
+      "location": "55:33:16",
+      "arabic": "بِسُلْطَـٰنٍۢ",
+      "transliteration": "bisul'ṭānin",
+      "meaningIndo": "dengan kekuasaan/kekuatan"
+    }
+  ],
+  "55:34": [
+    {
+      "location": "55:34:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:34:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:34:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:34:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:35": [
+    {
+      "location": "55:35:1",
+      "arabic": "يُرْسَلُ",
+      "transliteration": "yur'salu",
+      "meaningIndo": "akan dikirimkan"
+    },
+    {
+      "location": "55:35:2",
+      "arabic": "عَلَيْكُمَا",
+      "transliteration": "ʿalaykumā",
+      "meaningIndo": "atas kamu berdua"
+    },
+    {
+      "location": "55:35:3",
+      "arabic": "شُوَاظٌۭ",
+      "transliteration": "shuwāẓun",
+      "meaningIndo": "nyala"
+    },
+    {
+      "location": "55:35:4",
+      "arabic": "مِّن",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "55:35:5",
+      "arabic": "نَّارٍۢ",
+      "transliteration": "nārin",
+      "meaningIndo": "api"
+    },
+    {
+      "location": "55:35:6",
+      "arabic": "وَنُحَاسٌۭ",
+      "transliteration": "wanuḥāsun",
+      "meaningIndo": "dan cairan tembaga"
+    },
+    {
+      "location": "55:35:7",
+      "arabic": "فَلَا",
+      "transliteration": "falā",
+      "meaningIndo": "maka tidak"
+    },
+    {
+      "location": "55:35:8",
+      "arabic": "تَنتَصِرَانِ",
+      "transliteration": "tantaṣirāni",
+      "meaningIndo": "kamu berdua menolong/menyelamatkan diri"
+    }
+  ],
+  "55:36": [
+    {
+      "location": "55:36:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:36:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:36:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:36:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:37": [
+    {
+      "location": "55:37:1",
+      "arabic": "فَإِذَا",
+      "transliteration": "fa-idhā",
+      "meaningIndo": "maka apabila"
+    },
+    {
+      "location": "55:37:2",
+      "arabic": "ٱنشَقَّتِ",
+      "transliteration": "inshaqqati",
+      "meaningIndo": "terbelah"
+    },
+    {
+      "location": "55:37:3",
+      "arabic": "ٱلسَّمَآءُ",
+      "transliteration": "l-samāu",
+      "meaningIndo": "langit"
+    },
+    {
+      "location": "55:37:4",
+      "arabic": "فَكَانَتْ",
+      "transliteration": "fakānat",
+      "meaningIndo": "lalu adalah/menjadi ia"
+    },
+    {
+      "location": "55:37:5",
+      "arabic": "وَرْدَةًۭ",
+      "transliteration": "wardatan",
+      "meaningIndo": "mawar merah"
+    },
+    {
+      "location": "55:37:6",
+      "arabic": "كَٱلدِّهَانِ",
+      "transliteration": "kal-dihāni",
+      "meaningIndo": "seperti minyak"
+    }
+  ],
+  "55:38": [
+    {
+      "location": "55:38:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:38:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:38:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:38:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:39": [
+    {
+      "location": "55:39:1",
+      "arabic": "فَيَوْمَئِذٍۢ",
+      "transliteration": "fayawma-idhin",
+      "meaningIndo": "maka pada hari itu"
+    },
+    {
+      "location": "55:39:2",
+      "arabic": "لَّا",
+      "transliteration": "lā",
+      "meaningIndo": "tidak"
+    },
+    {
+      "location": "55:39:3",
+      "arabic": "يُسْـَٔلُ",
+      "transliteration": "yus'alu",
+      "meaningIndo": "ditanya"
+    },
+    {
+      "location": "55:39:4",
+      "arabic": "عَن",
+      "transliteration": "ʿan",
+      "meaningIndo": "atas"
+    },
+    {
+      "location": "55:39:5",
+      "arabic": "ذَنۢبِهِۦٓ",
+      "transliteration": "dhanbihi",
+      "meaningIndo": "dosanya"
+    },
+    {
+      "location": "55:39:6",
+      "arabic": "إِنسٌۭ",
+      "transliteration": "insun",
+      "meaningIndo": "manusia"
+    },
+    {
+      "location": "55:39:7",
+      "arabic": "وَلَا",
+      "transliteration": "walā",
+      "meaningIndo": "dan tidak"
+    },
+    {
+      "location": "55:39:8",
+      "arabic": "جَآنٌّۭ",
+      "transliteration": "jānnun",
+      "meaningIndo": "jin"
+    }
+  ],
+  "55:40": [
+    {
+      "location": "55:40:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:40:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:40:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:40:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:41": [
+    {
+      "location": "55:41:1",
+      "arabic": "يُعْرَفُ",
+      "transliteration": "yuʿ'rafu",
+      "meaningIndo": "diketahui/dikenal"
+    },
+    {
+      "location": "55:41:2",
+      "arabic": "ٱلْمُجْرِمُونَ",
+      "transliteration": "l-muj'rimūna",
+      "meaningIndo": "orang-orang yang berdosa"
+    },
+    {
+      "location": "55:41:3",
+      "arabic": "بِسِيمَـٰهُمْ",
+      "transliteration": "bisīmāhum",
+      "meaningIndo": "dengan tanda-tanda mereka"
+    },
+    {
+      "location": "55:41:4",
+      "arabic": "فَيُؤْخَذُ",
+      "transliteration": "fayu'khadhu",
+      "meaningIndo": "lalu dipegang/diambil"
+    },
+    {
+      "location": "55:41:5",
+      "arabic": "بِٱلنَّوَٰصِى",
+      "transliteration": "bil-nawāṣī",
+      "meaningIndo": "dengan umbun-umbun"
+    },
+    {
+      "location": "55:41:6",
+      "arabic": "وَٱلْأَقْدَامِ",
+      "transliteration": "wal-aqdāmi",
+      "meaningIndo": "dan kaki-kaki"
+    }
+  ],
+  "55:42": [
+    {
+      "location": "55:42:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:42:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:42:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:42:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:43": [
+    {
+      "location": "55:43:1",
+      "arabic": "هَـٰذِهِۦ",
+      "transliteration": "hādhihi",
+      "meaningIndo": "inilah"
+    },
+    {
+      "location": "55:43:2",
+      "arabic": "جَهَنَّمُ",
+      "transliteration": "jahannamu",
+      "meaningIndo": "neraka jahanam"
+    },
+    {
+      "location": "55:43:3",
+      "arabic": "ٱلَّتِى",
+      "transliteration": "allatī",
+      "meaningIndo": "yang"
+    },
+    {
+      "location": "55:43:4",
+      "arabic": "يُكَذِّبُ",
+      "transliteration": "yukadhibu",
+      "meaningIndo": "mendustakan"
+    },
+    {
+      "location": "55:43:5",
+      "arabic": "بِهَا",
+      "transliteration": "bihā",
+      "meaningIndo": "dengannya/padanya"
+    },
+    {
+      "location": "55:43:6",
+      "arabic": "ٱلْمُجْرِمُونَ",
+      "transliteration": "l-muj'rimūna",
+      "meaningIndo": "orang-orang yang berdosa"
+    }
+  ],
+  "55:44": [
+    {
+      "location": "55:44:1",
+      "arabic": "يَطُوفُونَ",
+      "transliteration": "yaṭūfūna",
+      "meaningIndo": "mereka berkeliling"
+    },
+    {
+      "location": "55:44:2",
+      "arabic": "بَيْنَهَا",
+      "transliteration": "baynahā",
+      "meaningIndo": "diantaranya"
+    },
+    {
+      "location": "55:44:3",
+      "arabic": "وَبَيْنَ",
+      "transliteration": "wabayna",
+      "meaningIndo": "dan antara"
+    },
+    {
+      "location": "55:44:4",
+      "arabic": "حَمِيمٍ",
+      "transliteration": "ḥamīmin",
+      "meaningIndo": "air mendidih"
+    },
+    {
+      "location": "55:44:5",
+      "arabic": "ءَانٍۢ",
+      "transliteration": "ānin",
+      "meaningIndo": "sangat panas"
+    }
+  ],
+  "55:45": [
+    {
+      "location": "55:45:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:45:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:45:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:45:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:46": [
+    {
+      "location": "55:46:1",
+      "arabic": "وَلِمَنْ",
+      "transliteration": "waliman",
+      "meaningIndo": "dan bagi orang"
+    },
+    {
+      "location": "55:46:2",
+      "arabic": "خَافَ",
+      "transliteration": "khāfa",
+      "meaningIndo": "ia takut"
+    },
+    {
+      "location": "55:46:3",
+      "arabic": "مَقَامَ",
+      "transliteration": "maqāma",
+      "meaningIndo": "tempat berdiri/menghadap"
+    },
+    {
+      "location": "55:46:4",
+      "arabic": "رَبِّهِۦ",
+      "transliteration": "rabbihi",
+      "meaningIndo": "Tuhannya"
+    },
+    {
+      "location": "55:46:5",
+      "arabic": "جَنَّتَانِ",
+      "transliteration": "jannatāni",
+      "meaningIndo": "dan surga"
+    }
+  ],
+  "55:47": [
+    {
+      "location": "55:47:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:47:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:47:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:47:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:48": [
+    {
+      "location": "55:48:1",
+      "arabic": "ذَوَاتَآ",
+      "transliteration": "dhawātā",
+      "meaningIndo": "keduanya mempunyai"
+    },
+    {
+      "location": "55:48:2",
+      "arabic": "أَفْنَانٍۢ",
+      "transliteration": "afnānin",
+      "meaningIndo": "bermacam-macam ragam"
+    }
+  ],
+  "55:49": [
+    {
+      "location": "55:49:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:49:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:49:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:49:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:50": [
+    {
+      "location": "55:50:1",
+      "arabic": "فِيهِمَا",
+      "transliteration": "fīhimā",
+      "meaningIndo": "didalam keduanya"
+    },
+    {
+      "location": "55:50:2",
+      "arabic": "عَيْنَانِ",
+      "transliteration": "ʿaynāni",
+      "meaningIndo": "dua mata air"
+    },
+    {
+      "location": "55:50:3",
+      "arabic": "تَجْرِيَانِ",
+      "transliteration": "tajriyāni",
+      "meaningIndo": "mengalir keduanya"
+    }
+  ],
+  "55:51": [
+    {
+      "location": "55:51:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:51:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:51:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:51:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:52": [
+    {
+      "location": "55:52:1",
+      "arabic": "فِيهِمَا",
+      "transliteration": "fīhimā",
+      "meaningIndo": "di dalam keduanya"
+    },
+    {
+      "location": "55:52:2",
+      "arabic": "مِن",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "55:52:3",
+      "arabic": "كُلِّ",
+      "transliteration": "kulli",
+      "meaningIndo": "setiap/segala"
+    },
+    {
+      "location": "55:52:4",
+      "arabic": "فَـٰكِهَةٍۢ",
+      "transliteration": "fākihatin",
+      "meaningIndo": "buah-buahan"
+    },
+    {
+      "location": "55:52:5",
+      "arabic": "زَوْجَانِ",
+      "transliteration": "zawjāni",
+      "meaningIndo": "berpasangan"
+    }
+  ],
+  "55:53": [
+    {
+      "location": "55:53:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:53:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:53:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:53:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:54": [
+    {
+      "location": "55:54:1",
+      "arabic": "مُتَّكِـِٔينَ",
+      "transliteration": "muttakiīna",
+      "meaningIndo": "mereka bersandar"
+    },
+    {
+      "location": "55:54:2",
+      "arabic": "عَلَىٰ",
+      "transliteration": "ʿalā",
+      "meaningIndo": "atas"
+    },
+    {
+      "location": "55:54:3",
+      "arabic": "فُرُشٍۭ",
+      "transliteration": "furushin",
+      "meaningIndo": "permadani"
+    },
+    {
+      "location": "55:54:4",
+      "arabic": "بَطَآئِنُهَا",
+      "transliteration": "baṭāinuhā",
+      "meaningIndo": "sebelah dalamnya"
+    },
+    {
+      "location": "55:54:5",
+      "arabic": "مِنْ",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "55:54:6",
+      "arabic": "إِسْتَبْرَقٍۢ ۚ",
+      "transliteration": "is'tabraqin",
+      "meaningIndo": "sutera"
+    },
+    {
+      "location": "55:54:7",
+      "arabic": "وَجَنَى",
+      "transliteration": "wajanā",
+      "meaningIndo": "dan memetik"
+    },
+    {
+      "location": "55:54:8",
+      "arabic": "ٱلْجَنَّتَيْنِ",
+      "transliteration": "l-janatayni",
+      "meaningIndo": "dua surga"
+    },
+    {
+      "location": "55:54:9",
+      "arabic": "دَانٍۢ",
+      "transliteration": "dānin",
+      "meaningIndo": "dekat"
+    }
+  ],
+  "55:55": [
+    {
+      "location": "55:55:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:55:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:55:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:55:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:56": [
+    {
+      "location": "55:56:1",
+      "arabic": "فِيهِنَّ",
+      "transliteration": "fīhinna",
+      "meaningIndo": "didalammya mereka (bidadari)"
+    },
+    {
+      "location": "55:56:2",
+      "arabic": "قَـٰصِرَٰتُ",
+      "transliteration": "qāṣirātu",
+      "meaningIndo": "pendek/menundukkan"
+    },
+    {
+      "location": "55:56:3",
+      "arabic": "ٱلطَّرْفِ",
+      "transliteration": "l-ṭarfi",
+      "meaningIndo": "pandangan"
+    },
+    {
+      "location": "55:56:4",
+      "arabic": "لَمْ",
+      "transliteration": "lam",
+      "meaningIndo": "tidak"
+    },
+    {
+      "location": "55:56:5",
+      "arabic": "يَطْمِثْهُنَّ",
+      "transliteration": "yaṭmith'hunna",
+      "meaningIndo": "menyetentuh mereka"
+    },
+    {
+      "location": "55:56:6",
+      "arabic": "إِنسٌۭ",
+      "transliteration": "insun",
+      "meaningIndo": "manusia"
+    },
+    {
+      "location": "55:56:7",
+      "arabic": "قَبْلَهُمْ",
+      "transliteration": "qablahum",
+      "meaningIndo": "sebelum mereka"
+    },
+    {
+      "location": "55:56:8",
+      "arabic": "وَلَا",
+      "transliteration": "walā",
+      "meaningIndo": "dan tidak"
+    },
+    {
+      "location": "55:56:9",
+      "arabic": "جَآنٌّۭ",
+      "transliteration": "jānnun",
+      "meaningIndo": "jin"
+    }
+  ],
+  "55:57": [
+    {
+      "location": "55:57:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:57:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:57:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:57:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:58": [
+    {
+      "location": "55:58:1",
+      "arabic": "كَأَنَّهُنَّ",
+      "transliteration": "ka-annahunna",
+      "meaningIndo": "seakan-akan mereka"
+    },
+    {
+      "location": "55:58:2",
+      "arabic": "ٱلْيَاقُوتُ",
+      "transliteration": "l-yāqūtu",
+      "meaningIndo": "yakut"
+    },
+    {
+      "location": "55:58:3",
+      "arabic": "وَٱلْمَرْجَانُ",
+      "transliteration": "wal-marjānu",
+      "meaningIndo": "dan marjan"
+    }
+  ],
+  "55:59": [
+    {
+      "location": "55:59:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:59:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:59:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:59:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:60": [
+    {
+      "location": "55:60:1",
+      "arabic": "هَلْ",
+      "transliteration": "hal",
+      "meaningIndo": "bukankah"
+    },
+    {
+      "location": "55:60:2",
+      "arabic": "جَزَآءُ",
+      "transliteration": "jazāu",
+      "meaningIndo": "balasan"
+    },
+    {
+      "location": "55:60:3",
+      "arabic": "ٱلْإِحْسَـٰنِ",
+      "transliteration": "l-iḥ'sāni",
+      "meaningIndo": "kebaikan"
+    },
+    {
+      "location": "55:60:4",
+      "arabic": "إِلَّا",
+      "transliteration": "illā",
+      "meaningIndo": "kecuali"
+    },
+    {
+      "location": "55:60:5",
+      "arabic": "ٱلْإِحْسَـٰنُ",
+      "transliteration": "l-iḥ'sānu",
+      "meaningIndo": "kebaikan"
+    }
+  ],
+  "55:61": [
+    {
+      "location": "55:61:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:61:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:61:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:61:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:62": [
+    {
+      "location": "55:62:1",
+      "arabic": "وَمِن",
+      "transliteration": "wamin",
+      "meaningIndo": "dan dari"
+    },
+    {
+      "location": "55:62:2",
+      "arabic": "دُونِهِمَا",
+      "transliteration": "dūnihimā",
+      "meaningIndo": "selain keduanya"
+    },
+    {
+      "location": "55:62:3",
+      "arabic": "جَنَّتَانِ",
+      "transliteration": "jannatāni",
+      "meaningIndo": "dua surga"
+    }
+  ],
+  "55:63": [
+    {
+      "location": "55:63:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:63:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:63:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:63:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:64": [
+    {
+      "location": "55:64:1",
+      "arabic": "مُدْهَآمَّتَانِ",
+      "transliteration": "mud'hāmmatāni",
+      "meaningIndo": "keduanya hijau tua"
+    }
+  ],
+  "55:65": [
+    {
+      "location": "55:65:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:65:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:65:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:65:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:66": [
+    {
+      "location": "55:66:1",
+      "arabic": "فِيهِمَا",
+      "transliteration": "fīhimā",
+      "meaningIndo": "di dalam keduanya"
+    },
+    {
+      "location": "55:66:2",
+      "arabic": "عَيْنَانِ",
+      "transliteration": "ʿaynāni",
+      "meaningIndo": "dua mata air"
+    },
+    {
+      "location": "55:66:3",
+      "arabic": "نَضَّاخَتَانِ",
+      "transliteration": "naḍḍākhatāni",
+      "meaningIndo": "memancarkan keduanya"
+    }
+  ],
+  "55:67": [
+    {
+      "location": "55:67:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:67:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:67:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:67:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:68": [
+    {
+      "location": "55:68:1",
+      "arabic": "فِيهِمَا",
+      "transliteration": "fīhimā",
+      "meaningIndo": "di dalam keduanya"
+    },
+    {
+      "location": "55:68:2",
+      "arabic": "فَـٰكِهَةٌۭ",
+      "transliteration": "fākihatun",
+      "meaningIndo": "buah-buahan"
+    },
+    {
+      "location": "55:68:3",
+      "arabic": "وَنَخْلٌۭ",
+      "transliteration": "wanakhlun",
+      "meaningIndo": "dan kurma"
+    },
+    {
+      "location": "55:68:4",
+      "arabic": "وَرُمَّانٌۭ",
+      "transliteration": "warummānun",
+      "meaningIndo": "dan delima"
+    }
+  ],
+  "55:69": [
+    {
+      "location": "55:69:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:69:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "nikmat"
+    },
+    {
+      "location": "55:69:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:69:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:70": [
+    {
+      "location": "55:70:1",
+      "arabic": "فِيهِنَّ",
+      "transliteration": "fīhinna",
+      "meaningIndo": "di dalamnya mereka"
+    },
+    {
+      "location": "55:70:2",
+      "arabic": "خَيْرَٰتٌ",
+      "transliteration": "khayrātun",
+      "meaningIndo": "baik-baik"
+    },
+    {
+      "location": "55:70:3",
+      "arabic": "حِسَانٌۭ",
+      "transliteration": "ḥisānun",
+      "meaningIndo": "bagus-bagus/cantik-cantik"
+    }
+  ],
+  "55:71": [
+    {
+      "location": "55:71:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:71:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:71:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:71:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:72": [
+    {
+      "location": "55:72:1",
+      "arabic": "حُورٌۭ",
+      "transliteration": "ḥūrun",
+      "meaningIndo": "yang putih/jelita"
+    },
+    {
+      "location": "55:72:2",
+      "arabic": "مَّقْصُورَٰتٌۭ",
+      "transliteration": "maqṣūrātun",
+      "meaningIndo": "tersimpan/terpingit"
+    },
+    {
+      "location": "55:72:3",
+      "arabic": "فِى",
+      "transliteration": "fī",
+      "meaningIndo": "dalam"
+    },
+    {
+      "location": "55:72:4",
+      "arabic": "ٱلْخِيَامِ",
+      "transliteration": "l-khiyāmi",
+      "meaningIndo": "mahligai/rumah"
+    }
+  ],
+  "55:73": [
+    {
+      "location": "55:73:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:73:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "nikmat"
+    },
+    {
+      "location": "55:73:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:73:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:74": [
+    {
+      "location": "55:74:1",
+      "arabic": "لَمْ",
+      "transliteration": "lam",
+      "meaningIndo": "tidak/belum"
+    },
+    {
+      "location": "55:74:2",
+      "arabic": "يَطْمِثْهُنَّ",
+      "transliteration": "yaṭmith'hunna",
+      "meaningIndo": "menyentuh mereka"
+    },
+    {
+      "location": "55:74:3",
+      "arabic": "إِنسٌۭ",
+      "transliteration": "insun",
+      "meaningIndo": "manusia"
+    },
+    {
+      "location": "55:74:4",
+      "arabic": "قَبْلَهُمْ",
+      "transliteration": "qablahum",
+      "meaningIndo": "sebelum mereka"
+    },
+    {
+      "location": "55:74:5",
+      "arabic": "وَلَا",
+      "transliteration": "walā",
+      "meaningIndo": "dan tidak"
+    },
+    {
+      "location": "55:74:6",
+      "arabic": "جَآنٌّۭ",
+      "transliteration": "jānnun",
+      "meaningIndo": "jin"
+    }
+  ],
+  "55:75": [
+    {
+      "location": "55:75:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:75:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:75:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:75:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu berdua dustakan"
+    }
+  ],
+  "55:76": [
+    {
+      "location": "55:76:1",
+      "arabic": "مُتَّكِـِٔينَ",
+      "transliteration": "muttakiīna",
+      "meaningIndo": "mereka bersandar"
+    },
+    {
+      "location": "55:76:2",
+      "arabic": "عَلَىٰ",
+      "transliteration": "ʿalā",
+      "meaningIndo": "diatas"
+    },
+    {
+      "location": "55:76:3",
+      "arabic": "رَفْرَفٍ",
+      "transliteration": "rafrafin",
+      "meaningIndo": "bantal-bantal"
+    },
+    {
+      "location": "55:76:4",
+      "arabic": "خُضْرٍۢ",
+      "transliteration": "khuḍ'rin",
+      "meaningIndo": "hijau"
+    },
+    {
+      "location": "55:76:5",
+      "arabic": "وَعَبْقَرِىٍّ",
+      "transliteration": "waʿabqariyyin",
+      "meaningIndo": "dan permandani"
+    },
+    {
+      "location": "55:76:6",
+      "arabic": "حِسَانٍۢ",
+      "transliteration": "ḥisānin",
+      "meaningIndo": "bagus indah"
+    }
+  ],
+  "55:77": [
+    {
+      "location": "55:77:1",
+      "arabic": "فَبِأَىِّ",
+      "transliteration": "fabi-ayyi",
+      "meaningIndo": "maka yang mana"
+    },
+    {
+      "location": "55:77:2",
+      "arabic": "ءَالَآءِ",
+      "transliteration": "ālāi",
+      "meaningIndo": "ni'mat"
+    },
+    {
+      "location": "55:77:3",
+      "arabic": "رَبِّكُمَا",
+      "transliteration": "rabbikumā",
+      "meaningIndo": "Tuhanmu berdua"
+    },
+    {
+      "location": "55:77:4",
+      "arabic": "تُكَذِّبَانِ",
+      "transliteration": "tukadhibāni",
+      "meaningIndo": "kamu dustakan"
+    }
+  ],
+  "55:78": [
+    {
+      "location": "55:78:1",
+      "arabic": "تَبَـٰرَكَ",
+      "transliteration": "tabāraka",
+      "meaningIndo": "Maha Tinggi/Agung"
+    },
+    {
+      "location": "55:78:2",
+      "arabic": "ٱسْمُ",
+      "transliteration": "us'mu",
+      "meaningIndo": "nama"
+    },
+    {
+      "location": "55:78:3",
+      "arabic": "رَبِّكَ",
+      "transliteration": "rabbika",
+      "meaningIndo": "Tuhanmu"
+    },
+    {
+      "location": "55:78:4",
+      "arabic": "ذِى",
+      "transliteration": "dhī",
+      "meaningIndo": "memiliki/mempunyai"
+    },
+    {
+      "location": "55:78:5",
+      "arabic": "ٱلْجَلَـٰلِ",
+      "transliteration": "l-jalāli",
+      "meaningIndo": "Kebesaran"
+    },
+    {
+      "location": "55:78:6",
+      "arabic": "وَٱلْإِكْرَامِ",
+      "transliteration": "wal-ik'rāmi",
+      "meaningIndo": "dan Kemuliaan"
+    }
+  ]
+}

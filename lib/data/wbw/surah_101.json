@@ -1,0 +1,240 @@
+{
+  "101:1": [
+    {
+      "location": "101:1:1",
+      "arabic": "ٱلْقَارِعَةُ",
+      "transliteration": "al-qāriʿatu",
+      "meaningIndo": "hari kiamat"
+    }
+  ],
+  "101:2": [
+    {
+      "location": "101:2:1",
+      "arabic": "مَا",
+      "transliteration": "mā",
+      "meaningIndo": "apakah"
+    },
+    {
+      "location": "101:2:2",
+      "arabic": "ٱلْقَارِعَةُ",
+      "transliteration": "l-qāriʿatu",
+      "meaningIndo": "hari kiamat"
+    }
+  ],
+  "101:3": [
+    {
+      "location": "101:3:1",
+      "arabic": "وَمَآ",
+      "transliteration": "wamā",
+      "meaningIndo": "dan apakah"
+    },
+    {
+      "location": "101:3:2",
+      "arabic": "أَدْرَىٰكَ",
+      "transliteration": "adrāka",
+      "meaningIndo": "kamu tahu"
+    },
+    {
+      "location": "101:3:3",
+      "arabic": "مَا",
+      "transliteration": "mā",
+      "meaningIndo": "apa"
+    },
+    {
+      "location": "101:3:4",
+      "arabic": "ٱلْقَارِعَةُ",
+      "transliteration": "l-qāriʿatu",
+      "meaningIndo": "hari kiamat"
+    }
+  ],
+  "101:4": [
+    {
+      "location": "101:4:1",
+      "arabic": "يَوْمَ",
+      "transliteration": "yawma",
+      "meaningIndo": "hari"
+    },
+    {
+      "location": "101:4:2",
+      "arabic": "يَكُونُ",
+      "transliteration": "yakūnu",
+      "meaningIndo": "adalah"
+    },
+    {
+      "location": "101:4:3",
+      "arabic": "ٱلنَّاسُ",
+      "transliteration": "l-nāsu",
+      "meaningIndo": "manusia"
+    },
+    {
+      "location": "101:4:4",
+      "arabic": "كَٱلْفَرَاشِ",
+      "transliteration": "kal-farāshi",
+      "meaningIndo": "seperti anai-anai"
+    },
+    {
+      "location": "101:4:5",
+      "arabic": "ٱلْمَبْثُوثِ",
+      "transliteration": "l-mabthūthi",
+      "meaningIndo": "bertebaran"
+    }
+  ],
+  "101:5": [
+    {
+      "location": "101:5:1",
+      "arabic": "وَتَكُونُ",
+      "transliteration": "watakūnu",
+      "meaningIndo": "dan adalah"
+    },
+    {
+      "location": "101:5:2",
+      "arabic": "ٱلْجِبَالُ",
+      "transliteration": "l-jibālu",
+      "meaningIndo": "gunung-gunung"
+    },
+    {
+      "location": "101:5:3",
+      "arabic": "كَٱلْعِهْنِ",
+      "transliteration": "kal-ʿih'ni",
+      "meaningIndo": "seperti bulu"
+    },
+    {
+      "location": "101:5:4",
+      "arabic": "ٱلْمَنفُوشِ",
+      "transliteration": "l-manfūshi",
+      "meaningIndo": "dihambur-hamburkan"
+    }
+  ],
+  "101:6": [
+    {
+      "location": "101:6:1",
+      "arabic": "فَأَمَّا",
+      "transliteration": "fa-ammā",
+      "meaningIndo": "maka adapun"
+    },
+    {
+      "location": "101:6:2",
+      "arabic": "مَن",
+      "transliteration": "man",
+      "meaningIndo": "siapa/orang"
+    },
+    {
+      "location": "101:6:3",
+      "arabic": "ثَقُلَتْ",
+      "transliteration": "thaqulat",
+      "meaningIndo": "berat"
+    },
+    {
+      "location": "101:6:4",
+      "arabic": "مَوَٰزِينُهُۥ",
+      "transliteration": "mawāzīnuhu",
+      "meaningIndo": "timbangannya"
+    }
+  ],
+  "101:7": [
+    {
+      "location": "101:7:1",
+      "arabic": "فَهُوَ",
+      "transliteration": "fahuwa",
+      "meaningIndo": "maka dia"
+    },
+    {
+      "location": "101:7:2",
+      "arabic": "فِى",
+      "transliteration": "fī",
+      "meaningIndo": "dalam"
+    },
+    {
+      "location": "101:7:3",
+      "arabic": "عِيشَةٍۢ",
+      "transliteration": "ʿīshatin",
+      "meaningIndo": "kehidupan"
+    },
+    {
+      "location": "101:7:4",
+      "arabic": "رَّاضِيَةٍۢ",
+      "transliteration": "rāḍiyatin",
+      "meaningIndo": "memuaskan"
+    }
+  ],
+  "101:8": [
+    {
+      "location": "101:8:1",
+      "arabic": "وَأَمَّا",
+      "transliteration": "wa-ammā",
+      "meaningIndo": "dan adapun"
+    },
+    {
+      "location": "101:8:2",
+      "arabic": "مَنْ",
+      "transliteration": "man",
+      "meaningIndo": "orang"
+    },
+    {
+      "location": "101:8:3",
+      "arabic": "خَفَّتْ",
+      "transliteration": "khaffat",
+      "meaningIndo": "ringan"
+    },
+    {
+      "location": "101:8:4",
+      "arabic": "مَوَٰزِينُهُۥ",
+      "transliteration": "mawāzīnuhu",
+      "meaningIndo": "timbangannya"
+    }
+  ],
+  "101:9": [
+    {
+      "location": "101:9:1",
+      "arabic": "فَأُمُّهُۥ",
+      "transliteration": "fa-ummuhu",
+      "meaningIndo": "maka tempat kembalinya"
+    },
+    {
+      "location": "101:9:2",
+      "arabic": "هَاوِيَةٌۭ",
+      "transliteration": "hāwiyatun",
+      "meaningIndo": "jurang yang dalam/neraka Hawiyah"
+    }
+  ],
+  "101:10": [
+    {
+      "location": "101:10:1",
+      "arabic": "وَمَآ",
+      "transliteration": "wamā",
+      "meaningIndo": "dan apakah"
+    },
+    {
+      "location": "101:10:2",
+      "arabic": "أَدْرَىٰكَ",
+      "transliteration": "adrāka",
+      "meaningIndo": "kamu tahu"
+    },
+    {
+      "location": "101:10:3",
+      "arabic": "مَا",
+      "transliteration": "mā",
+      "meaningIndo": "apa"
+    },
+    {
+      "location": "101:10:4",
+      "arabic": "هِيَهْ",
+      "transliteration": "hiyah",
+      "meaningIndo": "itu"
+    }
+  ],
+  "101:11": [
+    {
+      "location": "101:11:1",
+      "arabic": "نَارٌ",
+      "transliteration": "nārun",
+      "meaningIndo": "api"
+    },
+    {
+      "location": "101:11:2",
+      "arabic": "حَامِيَةٌۢ",
+      "transliteration": "ḥāmiyatun",
+      "meaningIndo": "sangat panas"
+    }
+  ]
+}

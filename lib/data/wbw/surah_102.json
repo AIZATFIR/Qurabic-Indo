@@ -1,0 +1,186 @@
+{
+  "102:1": [
+    {
+      "location": "102:1:1",
+      "arabic": "أَلْهَىٰكُمُ",
+      "transliteration": "alhākumu",
+      "meaningIndo": "telah melalaikan kamu"
+    },
+    {
+      "location": "102:1:2",
+      "arabic": "ٱلتَّكَاثُرُ",
+      "transliteration": "l-takāthuru",
+      "meaningIndo": "berbanyak-banyak/bermegah-megah"
+    }
+  ],
+  "102:2": [
+    {
+      "location": "102:2:1",
+      "arabic": "حَتَّىٰ",
+      "transliteration": "ḥattā",
+      "meaningIndo": "hingga"
+    },
+    {
+      "location": "102:2:2",
+      "arabic": "زُرْتُمُ",
+      "transliteration": "zur'tumu",
+      "meaningIndo": "kamu melewati/masuk"
+    },
+    {
+      "location": "102:2:3",
+      "arabic": "ٱلْمَقَابِرَ",
+      "transliteration": "l-maqābira",
+      "meaningIndo": "kuburan-kuburan"
+    }
+  ],
+  "102:3": [
+    {
+      "location": "102:3:1",
+      "arabic": "كَلَّا",
+      "transliteration": "kallā",
+      "meaningIndo": "sekali-kali tidak"
+    },
+    {
+      "location": "102:3:2",
+      "arabic": "سَوْفَ",
+      "transliteration": "sawfa",
+      "meaningIndo": "kelak"
+    },
+    {
+      "location": "102:3:3",
+      "arabic": "تَعْلَمُونَ",
+      "transliteration": "taʿlamūna",
+      "meaningIndo": "(kalian) mengetahui"
+    }
+  ],
+  "102:4": [
+    {
+      "location": "102:4:1",
+      "arabic": "ثُمَّ",
+      "transliteration": "thumma",
+      "meaningIndo": "kemudian"
+    },
+    {
+      "location": "102:4:2",
+      "arabic": "كَلَّا",
+      "transliteration": "kallā",
+      "meaningIndo": "sekali-kali tidak"
+    },
+    {
+      "location": "102:4:3",
+      "arabic": "سَوْفَ",
+      "transliteration": "sawfa",
+      "meaningIndo": "kelak"
+    },
+    {
+      "location": "102:4:4",
+      "arabic": "تَعْلَمُونَ",
+      "transliteration": "taʿlamūna",
+      "meaningIndo": "(kalian) mengetahui"
+    }
+  ],
+  "102:5": [
+    {
+      "location": "102:5:1",
+      "arabic": "كَلَّا",
+      "transliteration": "kallā",
+      "meaningIndo": "sekali-kali tidak"
+    },
+    {
+      "location": "102:5:2",
+      "arabic": "لَوْ",
+      "transliteration": "law",
+      "meaningIndo": "jika"
+    },
+    {
+      "location": "102:5:3",
+      "arabic": "تَعْلَمُونَ",
+      "transliteration": "taʿlamūna",
+      "meaningIndo": "(kalian) mengetahui"
+    },
+    {
+      "location": "102:5:4",
+      "arabic": "عِلْمَ",
+      "transliteration": "ʿil'ma",
+      "meaningIndo": "pengetahuan"
+    },
+    {
+      "location": "102:5:5",
+      "arabic": "ٱلْيَقِينِ",
+      "transliteration": "l-yaqīni",
+      "meaningIndo": "pasti/yakin"
+    }
+  ],
+  "102:6": [
+    {
+      "location": "102:6:1",
+      "arabic": "لَتَرَوُنَّ",
+      "transliteration": "latarawunna",
+      "meaningIndo": "sungguh kamu akan melihat"
+    },
+    {
+      "location": "102:6:2",
+      "arabic": "ٱلْجَحِيمَ",
+      "transliteration": "l-jaḥīma",
+      "meaningIndo": "neraka Jahim"
+    }
+  ],
+  "102:7": [
+    {
+      "location": "102:7:1",
+      "arabic": "ثُمَّ",
+      "transliteration": "thumma",
+      "meaningIndo": "kemudian"
+    },
+    {
+      "location": "102:7:2",
+      "arabic": "لَتَرَوُنَّهَا",
+      "transliteration": "latarawunnahā",
+      "meaningIndo": "sungguh kamu akan melihatnya"
+    },
+    {
+      "location": "102:7:3",
+      "arabic": "عَيْنَ",
+      "transliteration": "ʿayna",
+      "meaningIndo": "mata/penglihatan"
+    },
+    {
+      "location": "102:7:4",
+      "arabic": "ٱلْيَقِينِ",
+      "transliteration": "l-yaqīni",
+      "meaningIndo": "pasti/yakin"
+    }
+  ],
+  "102:8": [
+    {
+      "location": "102:8:1",
+      "arabic": "ثُمَّ",
+      "transliteration": "thumma",
+      "meaningIndo": "kemudian"
+    },
+    {
+      "location": "102:8:2",
+      "arabic": "لَتُسْـَٔلُنَّ",
+      "transliteration": "latus'alunna",
+      "meaningIndo": "sungguh kamu akan ditanya"
+    },
+    {
+      "location": "102:8:3",
+      "arabic": "يَوْمَئِذٍ",
+      "transliteration": "yawma-idhin",
+      "meaningIndo": "pada hari itu"
+    },
+    {
+      "location": "102:8:4",
+      "arabic": "عَنِ",
+      "transliteration": "ʿani",
+      "meaningIndo": "dari/tetang"
+    },
+    {
+      "location": "102:8:5",
+      "arabic": "ٱلنَّعِيمِ",
+      "transliteration": "l-naʿīmi",
+      "meaningIndo": "kenikmatan"
+    }
+  ]
+}

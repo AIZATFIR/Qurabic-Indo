@@ -1,0 +1,92 @@
+{
+  "103:1": [
+    {
+      "location": "103:1:1",
+      "arabic": "وَٱلْعَصْرِ",
+      "transliteration": "wal-ʿaṣri",
+      "meaningIndo": "demi waktu"
+    }
+  ],
+  "103:2": [
+    {
+      "location": "103:2:1",
+      "arabic": "إِنَّ",
+      "transliteration": "inna",
+      "meaningIndo": "sesungguhnya"
+    },
+    {
+      "location": "103:2:2",
+      "arabic": "ٱلْإِنسَـٰنَ",
+      "transliteration": "l-insāna",
+      "meaningIndo": "manusia"
+    },
+    {
+      "location": "103:2:3",
+      "arabic": "لَفِى",
+      "transliteration": "lafī",
+      "meaningIndo": "benar-benar dalam"
+    },
+    {
+      "location": "103:2:4",
+      "arabic": "خُسْرٍ",
+      "transliteration": "khus'rin",
+      "meaningIndo": "kerugian"
+    }
+  ],
+  "103:3": [
+    {
+      "location": "103:3:1",
+      "arabic": "إِلَّا",
+      "transliteration": "illā",
+      "meaningIndo": "kecuali"
+    },
+    {
+      "location": "103:3:2",
+      "arabic": "ٱلَّذِينَ",
+      "transliteration": "alladhīna",
+      "meaningIndo": "orang-orang yang"
+    },
+    {
+      "location": "103:3:3",
+      "arabic": "ءَامَنُوا۟",
+      "transliteration": "āmanū",
+      "meaningIndo": "beriman"
+    },
+    {
+      "location": "103:3:4",
+      "arabic": "وَعَمِلُوا۟",
+      "transliteration": "waʿamilū",
+      "meaningIndo": "dan mereka berbuat/beramal"
+    },
+    {
+      "location": "103:3:5",
+      "arabic": "ٱلصَّـٰلِحَـٰتِ",
+      "transliteration": "l-ṣāliḥāti",
+      "meaningIndo": "kebajikan/sholeh"
+    },
+    {
+      "location": "103:3:6",
+      "arabic": "وَتَوَاصَوْا۟",
+      "transliteration": "watawāṣaw",
+      "meaningIndo": "dan mereka saling berwasiat/menasehati"
+    },
+    {
+      "location": "103:3:7",
+      "arabic": "بِٱلْحَقِّ",
+      "transliteration": "bil-ḥaqi",
+      "meaningIndo": "dengan kebenaran"
+    },
+    {
+      "location": "103:3:8",
+      "arabic": "وَتَوَاصَوْا۟",
+      "transliteration": "watawāṣaw",
+      "meaningIndo": "dan mereka saling berwasiat/menasehati"
+    },
+    {
+      "location": "103:3:9",
+      "arabic": "بِٱلصَّبْرِ",
+      "transliteration": "bil-ṣabri",
+      "meaningIndo": "dengan kesabaran"
+    }
+  ]
+}

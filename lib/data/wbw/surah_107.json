@@ -1,0 +1,166 @@
+{
+  "107:1": [
+    {
+      "location": "107:1:1",
+      "arabic": "أَرَءَيْتَ",
+      "transliteration": "ara-ayta",
+      "meaningIndo": "tahukah kamu"
+    },
+    {
+      "location": "107:1:2",
+      "arabic": "ٱلَّذِى",
+      "transliteration": "alladhī",
+      "meaningIndo": "yang"
+    },
+    {
+      "location": "107:1:3",
+      "arabic": "يُكَذِّبُ",
+      "transliteration": "yukadhibu",
+      "meaningIndo": "dia mendustakan"
+    },
+    {
+      "location": "107:1:4",
+      "arabic": "بِٱلدِّينِ",
+      "transliteration": "bil-dīni",
+      "meaningIndo": "dengan agama"
+    }
+  ],
+  "107:2": [
+    {
+      "location": "107:2:1",
+      "arabic": "فَذَٰلِكَ",
+      "transliteration": "fadhālika",
+      "meaningIndo": "maka itulah"
+    },
+    {
+      "location": "107:2:2",
+      "arabic": "ٱلَّذِى",
+      "transliteration": "alladhī",
+      "meaningIndo": "yang"
+    },
+    {
+      "location": "107:2:3",
+      "arabic": "يَدُعُّ",
+      "transliteration": "yaduʿʿu",
+      "meaningIndo": "dia menghardik"
+    },
+    {
+      "location": "107:2:4",
+      "arabic": "ٱلْيَتِيمَ",
+      "transliteration": "l-yatīma",
+      "meaningIndo": "anak yatim"
+    }
+  ],
+  "107:3": [
+    {
+      "location": "107:3:1",
+      "arabic": "وَلَا",
+      "transliteration": "walā",
+      "meaningIndo": "dan tidak"
+    },
+    {
+      "location": "107:3:2",
+      "arabic": "يَحُضُّ",
+      "transliteration": "yaḥuḍḍu",
+      "meaningIndo": "menganjurkan"
+    },
+    {
+      "location": "107:3:3",
+      "arabic": "عَلَىٰ",
+      "transliteration": "ʿalā",
+      "meaningIndo": "atas"
+    },
+    {
+      "location": "107:3:4",
+      "arabic": "طَعَامِ",
+      "transliteration": "ṭaʿāmi",
+      "meaningIndo": "memberi makan"
+    },
+    {
+      "location": "107:3:5",
+      "arabic": "ٱلْمِسْكِينِ",
+      "transliteration": "l-mis'kīni",
+      "meaningIndo": "orang miskin"
+    }
+  ],
+  "107:4": [
+    {
+      "location": "107:4:1",
+      "arabic": "فَوَيْلٌۭ",
+      "transliteration": "fawaylun",
+      "meaningIndo": "maka celakalah"
+    },
+    {
+      "location": "107:4:2",
+      "arabic": "لِّلْمُصَلِّينَ",
+      "transliteration": "lil'muṣallīna",
+      "meaningIndo": "orang yang sholat"
+    }
+  ],
+  "107:5": [
+    {
+      "location": "107:5:1",
+      "arabic": "ٱلَّذِينَ",
+      "transliteration": "alladhīna",
+      "meaningIndo": "orang-orang yang"
+    },
+    {
+      "location": "107:5:2",
+      "arabic": "هُمْ",
+      "transliteration": "hum",
+      "meaningIndo": "mereka"
+    },
+    {
+      "location": "107:5:3",
+      "arabic": "عَن",
+      "transliteration": "ʿan",
+      "meaningIndo": "dar"
+    },
+    {
+      "location": "107:5:4",
+      "arabic": "صَلَاتِهِمْ",
+      "transliteration": "ṣalātihim",
+      "meaningIndo": "sholat mereka"
+    },
+    {
+      "location": "107:5:5",
+      "arabic": "سَاهُونَ",
+      "transliteration": "sāhūna",
+      "meaningIndo": "lalai"
+    }
+  ],
+  "107:6": [
+    {
+      "location": "107:6:1",
+      "arabic": "ٱلَّذِينَ",
+      "transliteration": "alladhīna",
+      "meaningIndo": "orang-orang yang"
+    },
+    {
+      "location": "107:6:2",
+      "arabic": "هُمْ",
+      "transliteration": "hum",
+      "meaningIndo": "mereka"
+    },
+    {
+      "location": "107:6:3",
+      "arabic": "يُرَآءُونَ",
+      "transliteration": "yurāūna",
+      "meaningIndo": "mereka berbuat ria"
+    }
+  ],
+  "107:7": [
+    {
+      "location": "107:7:1",
+      "arabic": "وَيَمْنَعُونَ",
+      "transliteration": "wayamnaʿūna",
+      "meaningIndo": "dan mereka mencegah/enggan"
+    },
+    {
+      "location": "107:7:2",
+      "arabic": "ٱلْمَاعُونَ",
+      "transliteration": "l-māʿūna",
+      "meaningIndo": "pertolongan"
+    }
+  ]
+}

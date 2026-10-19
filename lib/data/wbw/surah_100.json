@@ -1,0 +1,264 @@
+{
+  "100:1": [
+    {
+      "location": "100:1:1",
+      "arabic": "وَٱلْعَـٰدِيَـٰتِ",
+      "transliteration": "wal-ʿādiyāti",
+      "meaningIndo": "demi yang berlari kencang"
+    },
+    {
+      "location": "100:1:2",
+      "arabic": "ضَبْحًۭا",
+      "transliteration": "ḍabḥan",
+      "meaningIndo": "terengah-engah"
+    }
+  ],
+  "100:2": [
+    {
+      "location": "100:2:1",
+      "arabic": "فَٱلْمُورِيَـٰتِ",
+      "transliteration": "fal-mūriyāti",
+      "meaningIndo": "lalu yang memercikkan/terbitkan"
+    },
+    {
+      "location": "100:2:2",
+      "arabic": "قَدْحًۭا",
+      "transliteration": "qadḥan",
+      "meaningIndo": "api"
+    }
+  ],
+  "100:3": [
+    {
+      "location": "100:3:1",
+      "arabic": "فَٱلْمُغِيرَٰتِ",
+      "transliteration": "fal-mughīrāti",
+      "meaningIndo": "lalu yang menyerang"
+    },
+    {
+      "location": "100:3:2",
+      "arabic": "صُبْحًۭا",
+      "transliteration": "ṣub'ḥan",
+      "meaningIndo": "diwaktu subuh/pagi"
+    }
+  ],
+  "100:4": [
+    {
+      "location": "100:4:1",
+      "arabic": "فَأَثَرْنَ",
+      "transliteration": "fa-atharna",
+      "meaningIndo": "lalu ia menerbangkan"
+    },
+    {
+      "location": "100:4:2",
+      "arabic": "بِهِۦ",
+      "transliteration": "bihi",
+      "meaningIndo": "dengannya/karenanya"
+    },
+    {
+      "location": "100:4:3",
+      "arabic": "نَقْعًۭا",
+      "transliteration": "naqʿan",
+      "meaningIndo": "debu"
+    }
+  ],
+  "100:5": [
+    {
+      "location": "100:5:1",
+      "arabic": "فَوَسَطْنَ",
+      "transliteration": "fawasaṭna",
+      "meaningIndo": "maka ia menyerbu ketengah"
+    },
+    {
+      "location": "100:5:2",
+      "arabic": "بِهِۦ",
+      "transliteration": "bihi",
+      "meaningIndo": "dengannya"
+    },
+    {
+      "location": "100:5:3",
+      "arabic": "جَمْعًا",
+      "transliteration": "jamʿan",
+      "meaningIndo": "kumpulan"
+    }
+  ],
+  "100:6": [
+    {
+      "location": "100:6:1",
+      "arabic": "إِنَّ",
+      "transliteration": "inna",
+      "meaningIndo": "sungguh"
+    },
+    {
+      "location": "100:6:2",
+      "arabic": "ٱلْإِنسَـٰنَ",
+      "transliteration": "l-insāna",
+      "meaningIndo": "manusia"
+    },
+    {
+      "location": "100:6:3",
+      "arabic": "لِرَبِّهِۦ",
+      "transliteration": "lirabbihi",
+      "meaningIndo": "kepada Tuhannya"
+    },
+    {
+      "location": "100:6:4",
+      "arabic": "لَكَنُودٌۭ",
+      "transliteration": "lakanūdun",
+      "meaningIndo": "sangat ingkar/tidak berterima kasih"
+    }
+  ],
+  "100:7": [
+    {
+      "location": "100:7:1",
+      "arabic": "وَإِنَّهُۥ",
+      "transliteration": "wa-innahu",
+      "meaningIndo": "dan sesungguhnya ia"
+    },
+    {
+      "location": "100:7:2",
+      "arabic": "عَلَىٰ",
+      "transliteration": "ʿalā",
+      "meaningIndo": "atas"
+    },
+    {
+      "location": "100:7:3",
+      "arabic": "ذَٰلِكَ",
+      "transliteration": "dhālika",
+      "meaningIndo": "yang demikian/itu"
+    },
+    {
+      "location": "100:7:4",
+      "arabic": "لَشَهِيدٌۭ",
+      "transliteration": "lashahīdun",
+      "meaningIndo": "benar-benar menyaksikan"
+    }
+  ],
+  "100:8": [
+    {
+      "location": "100:8:1",
+      "arabic": "وَإِنَّهُۥ",
+      "transliteration": "wa-innahu",
+      "meaningIndo": "dan sesungguhnya dia"
+    },
+    {
+      "location": "100:8:2",
+      "arabic": "لِحُبِّ",
+      "transliteration": "liḥubbi",
+      "meaningIndo": "benar-benar cinta"
+    },
+    {
+      "location": "100:8:3",
+      "arabic": "ٱلْخَيْرِ",
+      "transliteration": "l-khayri",
+      "meaningIndo": "kebaikan (harta)"
+    },
+    {
+      "location": "100:8:4",
+      "arabic": "لَشَدِيدٌ",
+      "transliteration": "lashadīdun",
+      "meaningIndo": "sungguh sangat"
+    }
+  ],
+  "100:9": [
+    {
+      "location": "100:9:1",
+      "arabic": "۞ أَفَلَا",
+      "transliteration": "afalā",
+      "meaningIndo": "maka apakah tidak"
+    },
+    {
+      "location": "100:9:2",
+      "arabic": "يَعْلَمُ",
+      "transliteration": "yaʿlamu",
+      "meaningIndo": "dia mengetahui"
+    },
+    {
+      "location": "100:9:3",
+      "arabic": "إِذَا",
+      "transliteration": "idhā",
+      "meaningIndo": "apabila"
+    },
+    {
+      "location": "100:9:4",
+      "arabic": "بُعْثِرَ",
+      "transliteration": "buʿ'thira",
+      "meaningIndo": "dibangkitkan"
+    },
+    {
+      "location": "100:9:5",
+      "arabic": "مَا",
+      "transliteration": "mā",
+      "meaningIndo": "apa"
+    },
+    {
+      "location": "100:9:6",
+      "arabic": "فِى",
+      "transliteration": "fī",
+      "meaningIndo": "dalam"
+    },
+    {
+      "location": "100:9:7",
+      "arabic": "ٱلْقُبُورِ",
+      "transliteration": "l-qubūri",
+      "meaningIndo": "kubur"
+    }
+  ],
+  "100:10": [
+    {
+      "location": "100:10:1",
+      "arabic": "وَحُصِّلَ",
+      "transliteration": "waḥuṣṣila",
+      "meaningIndo": "dan dilahirkan"
+    },
+    {
+      "location": "100:10:2",
+      "arabic": "مَا",
+      "transliteration": "mā",
+      "meaningIndo": "apa"
+    },
+    {
+      "location": "100:10:3",
+      "arabic": "فِى",
+      "transliteration": "fī",
+      "meaningIndo": "dalam"
+    },
+    {
+      "location": "100:10:4",
+      "arabic": "ٱلصُّدُورِ",
+      "transliteration": "l-ṣudūri",
+      "meaningIndo": "dada"
+    }
+  ],
+  "100:11": [
+    {
+      "location": "100:11:1",
+      "arabic": "إِنَّ",
+      "transliteration": "inna",
+      "meaningIndo": "sesungguhnya"
+    },
+    {
+      "location": "100:11:2",
+      "arabic": "رَبَّهُم",
+      "transliteration": "rabbahum",
+      "meaningIndo": "Tuhan mereka"
+    },
+    {
+      "location": "100:11:3",
+      "arabic": "بِهِمْ",
+      "transliteration": "bihim",
+      "meaningIndo": "pada mereka"
+    },
+    {
+      "location": "100:11:4",
+      "arabic": "يَوْمَئِذٍۢ",
+      "transliteration": "yawma-idhin",
+      "meaningIndo": "pada hari itu"
+    },
+    {
+      "location": "100:11:5",
+      "arabic": "لَّخَبِيرٌۢ",
+      "transliteration": "lakhabīrun",
+      "meaningIndo": "benar-benar Maha Mengetahui"
+    }
+  ]
+}

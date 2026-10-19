@@ -1,0 +1,100 @@
+{
+  "112:1": [
+    {
+      "location": "112:1:1",
+      "arabic": "قُلْ",
+      "transliteration": "qul",
+      "meaningIndo": "katakanlah"
+    },
+    {
+      "location": "112:1:2",
+      "arabic": "هُوَ",
+      "transliteration": "huwa",
+      "meaningIndo": "Dia"
+    },
+    {
+      "location": "112:1:3",
+      "arabic": "ٱللَّهُ",
+      "transliteration": "l-lahu",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "112:1:4",
+      "arabic": "أَحَدٌ",
+      "transliteration": "aḥadun",
+      "meaningIndo": "Esa"
+    }
+  ],
+  "112:2": [
+    {
+      "location": "112:2:1",
+      "arabic": "ٱللَّهُ",
+      "transliteration": "al-lahu",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "112:2:2",
+      "arabic": "ٱلصَّمَدُ",
+      "transliteration": "l-ṣamadu",
+      "meaningIndo": "tempat bergantung"
+    }
+  ],
+  "112:3": [
+    {
+      "location": "112:3:1",
+      "arabic": "لَمْ",
+      "transliteration": "lam",
+      "meaningIndo": "tidak"
+    },
+    {
+      "location": "112:3:2",
+      "arabic": "يَلِدْ",
+      "transliteration": "yalid",
+      "meaningIndo": "beranak"
+    },
+    {
+      "location": "112:3:3",
+      "arabic": "وَلَمْ",
+      "transliteration": "walam",
+      "meaningIndo": "dan tidak"
+    },
+    {
+      "location": "112:3:4",
+      "arabic": "يُولَدْ",
+      "transliteration": "yūlad",
+      "meaningIndo": "diperanakkan"
+    }
+  ],
+  "112:4": [
+    {
+      "location": "112:4:1",
+      "arabic": "وَلَمْ",
+      "transliteration": "walam",
+      "meaningIndo": "dan tidak"
+    },
+    {
+      "location": "112:4:2",
+      "arabic": "يَكُن",
+      "transliteration": "yakun",
+      "meaningIndo": "ada"
+    },
+    {
+      "location": "112:4:3",
+      "arabic": "لَّهُۥ",
+      "transliteration": "lahu",
+      "meaningIndo": "baginya"
+    },
+    {
+      "location": "112:4:4",
+      "arabic": "كُفُوًا",
+      "transliteration": "kufuwan",
+      "meaningIndo": "menyamai/setara"
+    },
+    {
+      "location": "112:4:5",
+      "arabic": "أَحَدٌۢ",
+      "transliteration": "aḥadun",
+      "meaningIndo": "seorang"
+    }
+  ]
+}

@@ -1,0 +1,2120 @@
+{
+  "49:1": [
+    {
+      "location": "49:1:1",
+      "arabic": "يَـٰٓأَيُّهَا",
+      "transliteration": "yāayyuhā",
+      "meaningIndo": "wahai"
+    },
+    {
+      "location": "49:1:2",
+      "arabic": "ٱلَّذِينَ",
+      "transliteration": "alladhīna",
+      "meaningIndo": "orang-orang yang"
+    },
+    {
+      "location": "49:1:3",
+      "arabic": "ءَامَنُوا۟",
+      "transliteration": "āmanū",
+      "meaningIndo": "beriman"
+    },
+    {
+      "location": "49:1:4",
+      "arabic": "لَا",
+      "transliteration": "lā",
+      "meaningIndo": "jangan"
+    },
+    {
+      "location": "49:1:5",
+      "arabic": "تُقَدِّمُوا۟",
+      "transliteration": "tuqaddimū",
+      "meaningIndo": "kamu mendahului"
+    },
+    {
+      "location": "49:1:6",
+      "arabic": "بَيْنَ",
+      "transliteration": "bayna",
+      "meaningIndo": "antara"
+    },
+    {
+      "location": "49:1:7",
+      "arabic": "يَدَىِ",
+      "transliteration": "yadayi",
+      "meaningIndo": "hadapan"
+    },
+    {
+      "location": "49:1:8",
+      "arabic": "ٱللَّهِ",
+      "transliteration": "l-lahi",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:1:9",
+      "arabic": "وَرَسُولِهِۦ ۖ",
+      "transliteration": "warasūlihi",
+      "meaningIndo": "dan rasul-Nya"
+    },
+    {
+      "location": "49:1:10",
+      "arabic": "وَٱتَّقُوا۟",
+      "transliteration": "wa-ittaqū",
+      "meaningIndo": "dan bertakwalah"
+    },
+    {
+      "location": "49:1:11",
+      "arabic": "ٱللَّهَ ۚ",
+      "transliteration": "l-laha",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:1:12",
+      "arabic": "إِنَّ",
+      "transliteration": "inna",
+      "meaningIndo": "sesungguhnya"
+    },
+    {
+      "location": "49:1:13",
+      "arabic": "ٱللَّهَ",
+      "transliteration": "l-laha",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:1:14",
+      "arabic": "سَمِيعٌ",
+      "transliteration": "samīʿun",
+      "meaningIndo": "Maha Mendengar"
+    },
+    {
+      "location": "49:1:15",
+      "arabic": "عَلِيمٌۭ",
+      "transliteration": "ʿalīmun",
+      "meaningIndo": "Maha Mengetahui"
+    }
+  ],
+  "49:2": [
+    {
+      "location": "49:2:1",
+      "arabic": "يَـٰٓأَيُّهَا",
+      "transliteration": "yāayyuhā",
+      "meaningIndo": "wahai"
+    },
+    {
+      "location": "49:2:2",
+      "arabic": "ٱلَّذِينَ",
+      "transliteration": "alladhīna",
+      "meaningIndo": "orang-orang yang"
+    },
+    {
+      "location": "49:2:3",
+      "arabic": "ءَامَنُوا۟",
+      "transliteration": "āmanū",
+      "meaningIndo": "beriman"
+    },
+    {
+      "location": "49:2:4",
+      "arabic": "لَا",
+      "transliteration": "lā",
+      "meaningIndo": "jangan"
+    },
+    {
+      "location": "49:2:5",
+      "arabic": "تَرْفَعُوٓا۟",
+      "transliteration": "tarfaʿū",
+      "meaningIndo": "kamu meninggikan"
+    },
+    {
+      "location": "49:2:6",
+      "arabic": "أَصْوَٰتَكُمْ",
+      "transliteration": "aṣwātakum",
+      "meaningIndo": "suaramu"
+    },
+    {
+      "location": "49:2:7",
+      "arabic": "فَوْقَ",
+      "transliteration": "fawqa",
+      "meaningIndo": "di atas"
+    },
+    {
+      "location": "49:2:8",
+      "arabic": "صَوْتِ",
+      "transliteration": "ṣawti",
+      "meaningIndo": "suara"
+    },
+    {
+      "location": "49:2:9",
+      "arabic": "ٱلنَّبِىِّ",
+      "transliteration": "l-nabiyi",
+      "meaningIndo": "nabi"
+    },
+    {
+      "location": "49:2:10",
+      "arabic": "وَلَا",
+      "transliteration": "walā",
+      "meaningIndo": "dan jangan"
+    },
+    {
+      "location": "49:2:11",
+      "arabic": "تَجْهَرُوا۟",
+      "transliteration": "tajharū",
+      "meaningIndo": "kamu keraskan"
+    },
+    {
+      "location": "49:2:12",
+      "arabic": "لَهُۥ",
+      "transliteration": "lahu",
+      "meaningIndo": "kepadanya"
+    },
+    {
+      "location": "49:2:13",
+      "arabic": "بِٱلْقَوْلِ",
+      "transliteration": "bil-qawli",
+      "meaningIndo": "dengan perkataan"
+    },
+    {
+      "location": "49:2:14",
+      "arabic": "كَجَهْرِ",
+      "transliteration": "kajahri",
+      "meaningIndo": "seperti keras"
+    },
+    {
+      "location": "49:2:15",
+      "arabic": "بَعْضِكُمْ",
+      "transliteration": "baʿḍikum",
+      "meaningIndo": "sebagian kamu"
+    },
+    {
+      "location": "49:2:16",
+      "arabic": "لِبَعْضٍ",
+      "transliteration": "libaʿḍin",
+      "meaningIndo": "terhadap sebagian"
+    },
+    {
+      "location": "49:2:17",
+      "arabic": "أَن",
+      "transliteration": "an",
+      "meaningIndo": "bahwa"
+    },
+    {
+      "location": "49:2:18",
+      "arabic": "تَحْبَطَ",
+      "transliteration": "taḥbaṭa",
+      "meaningIndo": "akan hapus"
+    },
+    {
+      "location": "49:2:19",
+      "arabic": "أَعْمَـٰلُكُمْ",
+      "transliteration": "aʿmālukum",
+      "meaningIndo": "amal-amal kamu"
+    },
+    {
+      "location": "49:2:20",
+      "arabic": "وَأَنتُمْ",
+      "transliteration": "wa-antum",
+      "meaningIndo": "dan kalian"
+    },
+    {
+      "location": "49:2:21",
+      "arabic": "لَا",
+      "transliteration": "lā",
+      "meaningIndo": "tidak"
+    },
+    {
+      "location": "49:2:22",
+      "arabic": "تَشْعُرُونَ",
+      "transliteration": "tashʿurūna",
+      "meaningIndo": "menyadari"
+    }
+  ],
+  "49:3": [
+    {
+      "location": "49:3:1",
+      "arabic": "إِنَّ",
+      "transliteration": "inna",
+      "meaningIndo": "sesungguhnya"
+    },
+    {
+      "location": "49:3:2",
+      "arabic": "ٱلَّذِينَ",
+      "transliteration": "alladhīna",
+      "meaningIndo": "orang-orang yang"
+    },
+    {
+      "location": "49:3:3",
+      "arabic": "يَغُضُّونَ",
+      "transliteration": "yaghuḍḍūna",
+      "meaningIndo": "merendahkan"
+    },
+    {
+      "location": "49:3:4",
+      "arabic": "أَصْوَٰتَهُمْ",
+      "transliteration": "aṣwātahum",
+      "meaningIndo": "suara  mereka"
+    },
+    {
+      "location": "49:3:5",
+      "arabic": "عِندَ",
+      "transliteration": "ʿinda",
+      "meaningIndo": "di sisi"
+    },
+    {
+      "location": "49:3:6",
+      "arabic": "رَسُولِ",
+      "transliteration": "rasūli",
+      "meaningIndo": "rasul"
+    },
+    {
+      "location": "49:3:7",
+      "arabic": "ٱللَّهِ",
+      "transliteration": "l-lahi",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:3:8",
+      "arabic": "أُو۟لَـٰٓئِكَ",
+      "transliteration": "ulāika",
+      "meaningIndo": "mereka itu"
+    },
+    {
+      "location": "49:3:9",
+      "arabic": "ٱلَّذِينَ",
+      "transliteration": "alladhīna",
+      "meaningIndo": "orang-orang yang"
+    },
+    {
+      "location": "49:3:10",
+      "arabic": "ٱمْتَحَنَ",
+      "transliteration": "im'taḥana",
+      "meaningIndo": "menguji"
+    },
+    {
+      "location": "49:3:11",
+      "arabic": "ٱللَّهُ",
+      "transliteration": "l-lahu",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:3:12",
+      "arabic": "قُلُوبَهُمْ",
+      "transliteration": "qulūbahum",
+      "meaningIndo": "hati mereka"
+    },
+    {
+      "location": "49:3:13",
+      "arabic": "لِلتَّقْوَىٰ ۚ",
+      "transliteration": "lilttaqwā",
+      "meaningIndo": "untuk bertakwa"
+    },
+    {
+      "location": "49:3:14",
+      "arabic": "لَهُم",
+      "transliteration": "lahum",
+      "meaningIndo": "bagi mereka"
+    },
+    {
+      "location": "49:3:15",
+      "arabic": "مَّغْفِرَةٌۭ",
+      "transliteration": "maghfiratun",
+      "meaningIndo": "ampunan"
+    },
+    {
+      "location": "49:3:16",
+      "arabic": "وَأَجْرٌ",
+      "transliteration": "wa-ajrun",
+      "meaningIndo": "dan pahala"
+    },
+    {
+      "location": "49:3:17",
+      "arabic": "عَظِيمٌ",
+      "transliteration": "ʿaẓīmun",
+      "meaningIndo": "besar"
+    }
+  ],
+  "49:4": [
+    {
+      "location": "49:4:1",
+      "arabic": "إِنَّ",
+      "transliteration": "inna",
+      "meaningIndo": "sesungguhnya"
+    },
+    {
+      "location": "49:4:2",
+      "arabic": "ٱلَّذِينَ",
+      "transliteration": "alladhīna",
+      "meaningIndo": "orang-orang yang"
+    },
+    {
+      "location": "49:4:3",
+      "arabic": "يُنَادُونَكَ",
+      "transliteration": "yunādūnaka",
+      "meaningIndo": "mereka memanggil kamu"
+    },
+    {
+      "location": "49:4:4",
+      "arabic": "مِن",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "49:4:5",
+      "arabic": "وَرَآءِ",
+      "transliteration": "warāi",
+      "meaningIndo": "belakang"
+    },
+    {
+      "location": "49:4:6",
+      "arabic": "ٱلْحُجُرَٰتِ",
+      "transliteration": "l-ḥujurāti",
+      "meaningIndo": "kamar-kamar"
+    },
+    {
+      "location": "49:4:7",
+      "arabic": "أَكْثَرُهُمْ",
+      "transliteration": "aktharuhum",
+      "meaningIndo": "kebanyakan mereka"
+    },
+    {
+      "location": "49:4:8",
+      "arabic": "لَا",
+      "transliteration": "lā",
+      "meaningIndo": "tidak"
+    },
+    {
+      "location": "49:4:9",
+      "arabic": "يَعْقِلُونَ",
+      "transliteration": "yaʿqilūna",
+      "meaningIndo": "mengerti"
+    }
+  ],
+  "49:5": [
+    {
+      "location": "49:5:1",
+      "arabic": "وَلَوْ",
+      "transliteration": "walaw",
+      "meaningIndo": "dan kalau"
+    },
+    {
+      "location": "49:5:2",
+      "arabic": "أَنَّهُمْ",
+      "transliteration": "annahum",
+      "meaningIndo": "sekiranya mereka"
+    },
+    {
+      "location": "49:5:3",
+      "arabic": "صَبَرُوا۟",
+      "transliteration": "ṣabarū",
+      "meaningIndo": "mereka sabar"
+    },
+    {
+      "location": "49:5:4",
+      "arabic": "حَتَّىٰ",
+      "transliteration": "ḥattā",
+      "meaningIndo": "sehingga"
+    },
+    {
+      "location": "49:5:5",
+      "arabic": "تَخْرُجَ",
+      "transliteration": "takhruja",
+      "meaningIndo": "kamu keluar"
+    },
+    {
+      "location": "49:5:6",
+      "arabic": "إِلَيْهِمْ",
+      "transliteration": "ilayhim",
+      "meaningIndo": "kepada mereka"
+    },
+    {
+      "location": "49:5:7",
+      "arabic": "لَكَانَ",
+      "transliteration": "lakāna",
+      "meaningIndo": "sungguh adalah"
+    },
+    {
+      "location": "49:5:8",
+      "arabic": "خَيْرًۭا",
+      "transliteration": "khayran",
+      "meaningIndo": "lebih baik"
+    },
+    {
+      "location": "49:5:9",
+      "arabic": "لَّهُمْ ۚ",
+      "transliteration": "lahum",
+      "meaningIndo": "bagi mereka"
+    },
+    {
+      "location": "49:5:10",
+      "arabic": "وَٱللَّهُ",
+      "transliteration": "wal-lahu",
+      "meaningIndo": "dan Allah"
+    },
+    {
+      "location": "49:5:11",
+      "arabic": "غَفُورٌۭ",
+      "transliteration": "ghafūrun",
+      "meaningIndo": "Maha Pengampun"
+    },
+    {
+      "location": "49:5:12",
+      "arabic": "رَّحِيمٌۭ",
+      "transliteration": "raḥīmun",
+      "meaningIndo": "Maha Penyayang"
+    }
+  ],
+  "49:6": [
+    {
+      "location": "49:6:1",
+      "arabic": "يَـٰٓأَيُّهَا",
+      "transliteration": "yāayyuhā",
+      "meaningIndo": "wahai"
+    },
+    {
+      "location": "49:6:2",
+      "arabic": "ٱلَّذِينَ",
+      "transliteration": "alladhīna",
+      "meaningIndo": "orang-orang yang"
+    },
+    {
+      "location": "49:6:3",
+      "arabic": "ءَامَنُوٓا۟",
+      "transliteration": "āmanū",
+      "meaningIndo": "beriman"
+    },
+    {
+      "location": "49:6:4",
+      "arabic": "إِن",
+      "transliteration": "in",
+      "meaningIndo": "jika"
+    },
+    {
+      "location": "49:6:5",
+      "arabic": "جَآءَكُمْ",
+      "transliteration": "jāakum",
+      "meaningIndo": "datang kepadamu"
+    },
+    {
+      "location": "49:6:6",
+      "arabic": "فَاسِقٌۢ",
+      "transliteration": "fāsiqun",
+      "meaningIndo": "orang fasik"
+    },
+    {
+      "location": "49:6:7",
+      "arabic": "بِنَبَإٍۢ",
+      "transliteration": "binaba-in",
+      "meaningIndo": "dengan berita"
+    },
+    {
+      "location": "49:6:8",
+      "arabic": "فَتَبَيَّنُوٓا۟",
+      "transliteration": "fatabayyanū",
+      "meaningIndo": "maka jelaskan"
+    },
+    {
+      "location": "49:6:9",
+      "arabic": "أَن",
+      "transliteration": "an",
+      "meaningIndo": "agar"
+    },
+    {
+      "location": "49:6:10",
+      "arabic": "تُصِيبُوا۟",
+      "transliteration": "tuṣībū",
+      "meaningIndo": "kamu (tidak) menimpakan"
+    },
+    {
+      "location": "49:6:11",
+      "arabic": "قَوْمًۢا",
+      "transliteration": "qawman",
+      "meaningIndo": "kaum"
+    },
+    {
+      "location": "49:6:12",
+      "arabic": "بِجَهَـٰلَةٍۢ",
+      "transliteration": "bijahālatin",
+      "meaningIndo": "karena kebodohan/tidak tahu"
+    },
+    {
+      "location": "49:6:13",
+      "arabic": "فَتُصْبِحُوا۟",
+      "transliteration": "fatuṣ'biḥū",
+      "meaningIndo": "maka jadilah kamu"
+    },
+    {
+      "location": "49:6:14",
+      "arabic": "عَلَىٰ",
+      "transliteration": "ʿalā",
+      "meaningIndo": "atas"
+    },
+    {
+      "location": "49:6:15",
+      "arabic": "مَا",
+      "transliteration": "mā",
+      "meaningIndo": "apa"
+    },
+    {
+      "location": "49:6:16",
+      "arabic": "فَعَلْتُمْ",
+      "transliteration": "faʿaltum",
+      "meaningIndo": "perbuatanmu"
+    },
+    {
+      "location": "49:6:17",
+      "arabic": "نَـٰدِمِينَ",
+      "transliteration": "nādimīna",
+      "meaningIndo": "orang-orang yang menyesal"
+    }
+  ],
+  "49:7": [
+    {
+      "location": "49:7:1",
+      "arabic": "وَٱعْلَمُوٓا۟",
+      "transliteration": "wa-iʿ'lamū",
+      "meaningIndo": "dan ketahuilah"
+    },
+    {
+      "location": "49:7:2",
+      "arabic": "أَنَّ",
+      "transliteration": "anna",
+      "meaningIndo": "bahwa"
+    },
+    {
+      "location": "49:7:3",
+      "arabic": "فِيكُمْ",
+      "transliteration": "fīkum",
+      "meaningIndo": "diantara kamu"
+    },
+    {
+      "location": "49:7:4",
+      "arabic": "رَسُولَ",
+      "transliteration": "rasūla",
+      "meaningIndo": "rasul"
+    },
+    {
+      "location": "49:7:5",
+      "arabic": "ٱللَّهِ ۚ",
+      "transliteration": "l-lahi",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:7:6",
+      "arabic": "لَوْ",
+      "transliteration": "law",
+      "meaningIndo": "jika"
+    },
+    {
+      "location": "49:7:7",
+      "arabic": "يُطِيعُكُمْ",
+      "transliteration": "yuṭīʿukum",
+      "meaningIndo": "dia mentaati kamu"
+    },
+    {
+      "location": "49:7:8",
+      "arabic": "فِى",
+      "transliteration": "fī",
+      "meaningIndo": "dalam"
+    },
+    {
+      "location": "49:7:9",
+      "arabic": "كَثِيرٍۢ",
+      "transliteration": "kathīrin",
+      "meaningIndo": "banyak"
+    },
+    {
+      "location": "49:7:10",
+      "arabic": "مِّنَ",
+      "transliteration": "mina",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "49:7:11",
+      "arabic": "ٱلْأَمْرِ",
+      "transliteration": "l-amri",
+      "meaningIndo": "urusan"
+    },
+    {
+      "location": "49:7:12",
+      "arabic": "لَعَنِتُّمْ",
+      "transliteration": "laʿanittum",
+      "meaningIndo": "tentu menyusahkan kamu"
+    },
+    {
+      "location": "49:7:13",
+      "arabic": "وَلَـٰكِنَّ",
+      "transliteration": "walākinna",
+      "meaningIndo": "tetapi"
+    },
+    {
+      "location": "49:7:14",
+      "arabic": "ٱللَّهَ",
+      "transliteration": "l-laha",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:7:15",
+      "arabic": "حَبَّبَ",
+      "transliteration": "ḥabbaba",
+      "meaningIndo": "menjadikan cinta"
+    },
+    {
+      "location": "49:7:16",
+      "arabic": "إِلَيْكُمُ",
+      "transliteration": "ilaykumu",
+      "meaningIndo": "kepadamu"
+    },
+    {
+      "location": "49:7:17",
+      "arabic": "ٱلْإِيمَـٰنَ",
+      "transliteration": "l-īmāna",
+      "meaningIndo": "keimanan"
+    },
+    {
+      "location": "49:7:18",
+      "arabic": "وَزَيَّنَهُۥ",
+      "transliteration": "wazayyanahu",
+      "meaningIndo": "dan Dia menjadikannya indah"
+    },
+    {
+      "location": "49:7:19",
+      "arabic": "فِى",
+      "transliteration": "fī",
+      "meaningIndo": "dalam"
+    },
+    {
+      "location": "49:7:20",
+      "arabic": "قُلُوبِكُمْ",
+      "transliteration": "qulūbikum",
+      "meaningIndo": "hatimu"
+    },
+    {
+      "location": "49:7:21",
+      "arabic": "وَكَرَّهَ",
+      "transliteration": "wakarraha",
+      "meaningIndo": "dan Dia menjadikan benci"
+    },
+    {
+      "location": "49:7:22",
+      "arabic": "إِلَيْكُمُ",
+      "transliteration": "ilaykumu",
+      "meaningIndo": "kepadamu"
+    },
+    {
+      "location": "49:7:23",
+      "arabic": "ٱلْكُفْرَ",
+      "transliteration": "l-kuf'ra",
+      "meaningIndo": "kekafiran"
+    },
+    {
+      "location": "49:7:24",
+      "arabic": "وَٱلْفُسُوقَ",
+      "transliteration": "wal-fusūqa",
+      "meaningIndo": "dan kefasikan"
+    },
+    {
+      "location": "49:7:25",
+      "arabic": "وَٱلْعِصْيَانَ ۚ",
+      "transliteration": "wal-ʿiṣ'yāna",
+      "meaningIndo": "dan kedurhakaan"
+    },
+    {
+      "location": "49:7:26",
+      "arabic": "أُو۟لَـٰٓئِكَ",
+      "transliteration": "ulāika",
+      "meaningIndo": "mereka itu"
+    },
+    {
+      "location": "49:7:27",
+      "arabic": "هُمُ",
+      "transliteration": "humu",
+      "meaningIndo": "mereka"
+    },
+    {
+      "location": "49:7:28",
+      "arabic": "ٱلرَّٰشِدُونَ",
+      "transliteration": "l-rāshidūna",
+      "meaningIndo": "orang-orang yang mengikuti jalan yang lurus"
+    }
+  ],
+  "49:8": [
+    {
+      "location": "49:8:1",
+      "arabic": "فَضْلًۭا",
+      "transliteration": "faḍlan",
+      "meaningIndo": "karunia"
+    },
+    {
+      "location": "49:8:2",
+      "arabic": "مِّنَ",
+      "transliteration": "mina",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "49:8:3",
+      "arabic": "ٱللَّهِ",
+      "transliteration": "l-lahi",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:8:4",
+      "arabic": "وَنِعْمَةًۭ ۚ",
+      "transliteration": "waniʿ'matan",
+      "meaningIndo": "dan nikmat"
+    },
+    {
+      "location": "49:8:5",
+      "arabic": "وَٱللَّهُ",
+      "transliteration": "wal-lahu",
+      "meaningIndo": "dan Allah"
+    },
+    {
+      "location": "49:8:6",
+      "arabic": "عَلِيمٌ",
+      "transliteration": "ʿalīmun",
+      "meaningIndo": "Maha Mengetahui"
+    },
+    {
+      "location": "49:8:7",
+      "arabic": "حَكِيمٌۭ",
+      "transliteration": "ḥakīmun",
+      "meaningIndo": "Maha Bijaksana"
+    }
+  ],
+  "49:9": [
+    {
+      "location": "49:9:1",
+      "arabic": "وَإِن",
+      "transliteration": "wa-in",
+      "meaningIndo": "dan jika"
+    },
+    {
+      "location": "49:9:2",
+      "arabic": "طَآئِفَتَانِ",
+      "transliteration": "ṭāifatāni",
+      "meaningIndo": "dua golongan"
+    },
+    {
+      "location": "49:9:3",
+      "arabic": "مِنَ",
+      "transliteration": "mina",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "49:9:4",
+      "arabic": "ٱلْمُؤْمِنِينَ",
+      "transliteration": "l-mu'minīna",
+      "meaningIndo": "orang-orang yang beriman"
+    },
+    {
+      "location": "49:9:5",
+      "arabic": "ٱقْتَتَلُوا۟",
+      "transliteration": "iq'tatalū",
+      "meaningIndo": "mereka berperang"
+    },
+    {
+      "location": "49:9:6",
+      "arabic": "فَأَصْلِحُوا۟",
+      "transliteration": "fa-aṣliḥū",
+      "meaningIndo": "maka damaikanlah"
+    },
+    {
+      "location": "49:9:7",
+      "arabic": "بَيْنَهُمَا ۖ",
+      "transliteration": "baynahumā",
+      "meaningIndo": "diantara keduanya"
+    },
+    {
+      "location": "49:9:8",
+      "arabic": "فَإِنۢ",
+      "transliteration": "fa-in",
+      "meaningIndo": "maka jika"
+    },
+    {
+      "location": "49:9:9",
+      "arabic": "بَغَتْ",
+      "transliteration": "baghat",
+      "meaningIndo": "berbuat aniaya"
+    },
+    {
+      "location": "49:9:10",
+      "arabic": "إِحْدَىٰهُمَا",
+      "transliteration": "iḥ'dāhumā",
+      "meaningIndo": "salah seorang dari keduanya"
+    },
+    {
+      "location": "49:9:11",
+      "arabic": "عَلَى",
+      "transliteration": "ʿalā",
+      "meaningIndo": "atas"
+    },
+    {
+      "location": "49:9:12",
+      "arabic": "ٱلْأُخْرَىٰ",
+      "transliteration": "l-ukh'rā",
+      "meaningIndo": "yang lain"
+    },
+    {
+      "location": "49:9:13",
+      "arabic": "فَقَـٰتِلُوا۟",
+      "transliteration": "faqātilū",
+      "meaningIndo": "maka perangilah"
+    },
+    {
+      "location": "49:9:14",
+      "arabic": "ٱلَّتِى",
+      "transliteration": "allatī",
+      "meaningIndo": "yang"
+    },
+    {
+      "location": "49:9:15",
+      "arabic": "تَبْغِى",
+      "transliteration": "tabghī",
+      "meaningIndo": "berbuat aniaya"
+    },
+    {
+      "location": "49:9:16",
+      "arabic": "حَتَّىٰ",
+      "transliteration": "ḥattā",
+      "meaningIndo": "sehingga"
+    },
+    {
+      "location": "49:9:17",
+      "arabic": "تَفِىٓءَ",
+      "transliteration": "tafīa",
+      "meaningIndo": "(golongan) kembali"
+    },
+    {
+      "location": "49:9:18",
+      "arabic": "إِلَىٰٓ",
+      "transliteration": "ilā",
+      "meaningIndo": "kepada"
+    },
+    {
+      "location": "49:9:19",
+      "arabic": "أَمْرِ",
+      "transliteration": "amri",
+      "meaningIndo": "perintah"
+    },
+    {
+      "location": "49:9:20",
+      "arabic": "ٱللَّهِ ۚ",
+      "transliteration": "l-lahi",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:9:21",
+      "arabic": "فَإِن",
+      "transliteration": "fa-in",
+      "meaningIndo": "maka jika"
+    },
+    {
+      "location": "49:9:22",
+      "arabic": "فَآءَتْ",
+      "transliteration": "fāat",
+      "meaningIndo": "kembali"
+    },
+    {
+      "location": "49:9:23",
+      "arabic": "فَأَصْلِحُوا۟",
+      "transliteration": "fa-aṣliḥū",
+      "meaningIndo": "maka damaikanlah"
+    },
+    {
+      "location": "49:9:24",
+      "arabic": "بَيْنَهُمَا",
+      "transliteration": "baynahumā",
+      "meaningIndo": "diantara keduanya"
+    },
+    {
+      "location": "49:9:25",
+      "arabic": "بِٱلْعَدْلِ",
+      "transliteration": "bil-ʿadli",
+      "meaningIndo": "dengan adil"
+    },
+    {
+      "location": "49:9:26",
+      "arabic": "وَأَقْسِطُوٓا۟ ۖ",
+      "transliteration": "wa-aqsiṭū",
+      "meaningIndo": "dan berlaku adil-lah kamu"
+    },
+    {
+      "location": "49:9:27",
+      "arabic": "إِنَّ",
+      "transliteration": "inna",
+      "meaningIndo": "sesungguhnya"
+    },
+    {
+      "location": "49:9:28",
+      "arabic": "ٱللَّهَ",
+      "transliteration": "l-laha",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:9:29",
+      "arabic": "يُحِبُّ",
+      "transliteration": "yuḥibbu",
+      "meaningIndo": "menyukai"
+    },
+    {
+      "location": "49:9:30",
+      "arabic": "ٱلْمُقْسِطِينَ",
+      "transliteration": "l-muq'siṭīna",
+      "meaningIndo": "orang-orang yang berbuat adil"
+    }
+  ],
+  "49:10": [
+    {
+      "location": "49:10:1",
+      "arabic": "إِنَّمَا",
+      "transliteration": "innamā",
+      "meaningIndo": "sesungguhnya hanyalah"
+    },
+    {
+      "location": "49:10:2",
+      "arabic": "ٱلْمُؤْمِنُونَ",
+      "transliteration": "l-mu'minūna",
+      "meaningIndo": "orang-orang yang beriman"
+    },
+    {
+      "location": "49:10:3",
+      "arabic": "إِخْوَةٌۭ",
+      "transliteration": "ikh'watun",
+      "meaningIndo": "bersaudara"
+    },
+    {
+      "location": "49:10:4",
+      "arabic": "فَأَصْلِحُوا۟",
+      "transliteration": "fa-aṣliḥū",
+      "meaningIndo": "maka damaikanlah"
+    },
+    {
+      "location": "49:10:5",
+      "arabic": "بَيْنَ",
+      "transliteration": "bayna",
+      "meaningIndo": "antara"
+    },
+    {
+      "location": "49:10:6",
+      "arabic": "أَخَوَيْكُمْ ۚ",
+      "transliteration": "akhawaykum",
+      "meaningIndo": "kedua saudaramu"
+    },
+    {
+      "location": "49:10:7",
+      "arabic": "وَٱتَّقُوا۟",
+      "transliteration": "wa-ittaqū",
+      "meaningIndo": "dan bertakwalah"
+    },
+    {
+      "location": "49:10:8",
+      "arabic": "ٱللَّهَ",
+      "transliteration": "l-laha",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:10:9",
+      "arabic": "لَعَلَّكُمْ",
+      "transliteration": "laʿallakum",
+      "meaningIndo": "agar kalian"
+    },
+    {
+      "location": "49:10:10",
+      "arabic": "تُرْحَمُونَ",
+      "transliteration": "tur'ḥamūna",
+      "meaningIndo": "kamu dirahmati"
+    }
+  ],
+  "49:11": [
+    {
+      "location": "49:11:1",
+      "arabic": "يَـٰٓأَيُّهَا",
+      "transliteration": "yāayyuhā",
+      "meaningIndo": "wahai"
+    },
+    {
+      "location": "49:11:2",
+      "arabic": "ٱلَّذِينَ",
+      "transliteration": "alladhīna",
+      "meaningIndo": "orang-orang yang"
+    },
+    {
+      "location": "49:11:3",
+      "arabic": "ءَامَنُوا۟",
+      "transliteration": "āmanū",
+      "meaningIndo": "beriman"
+    },
+    {
+      "location": "49:11:4",
+      "arabic": "لَا",
+      "transliteration": "lā",
+      "meaningIndo": "jangan"
+    },
+    {
+      "location": "49:11:5",
+      "arabic": "يَسْخَرْ",
+      "transliteration": "yaskhar",
+      "meaningIndo": "memperolok-olok"
+    },
+    {
+      "location": "49:11:6",
+      "arabic": "قَوْمٌۭ",
+      "transliteration": "qawmun",
+      "meaningIndo": "suatu kamu"
+    },
+    {
+      "location": "49:11:7",
+      "arabic": "مِّن",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "49:11:8",
+      "arabic": "قَوْمٍ",
+      "transliteration": "qawmin",
+      "meaningIndo": "kaum"
+    },
+    {
+      "location": "49:11:9",
+      "arabic": "عَسَىٰٓ",
+      "transliteration": "ʿasā",
+      "meaningIndo": "boleh jadi"
+    },
+    {
+      "location": "49:11:10",
+      "arabic": "أَن",
+      "transliteration": "an",
+      "meaningIndo": "bahwa"
+    },
+    {
+      "location": "49:11:11",
+      "arabic": "يَكُونُوا۟",
+      "transliteration": "yakūnū",
+      "meaningIndo": "adalah mereka"
+    },
+    {
+      "location": "49:11:12",
+      "arabic": "خَيْرًۭا",
+      "transliteration": "khayran",
+      "meaningIndo": "lebih baik"
+    },
+    {
+      "location": "49:11:13",
+      "arabic": "مِّنْهُمْ",
+      "transliteration": "min'hum",
+      "meaningIndo": "dari pada mereka"
+    },
+    {
+      "location": "49:11:14",
+      "arabic": "وَلَا",
+      "transliteration": "walā",
+      "meaningIndo": "dan jangan"
+    },
+    {
+      "location": "49:11:15",
+      "arabic": "نِسَآءٌۭ",
+      "transliteration": "nisāon",
+      "meaningIndo": "wanita"
+    },
+    {
+      "location": "49:11:16",
+      "arabic": "مِّن",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "49:11:17",
+      "arabic": "نِّسَآءٍ",
+      "transliteration": "nisāin",
+      "meaningIndo": "wanita"
+    },
+    {
+      "location": "49:11:18",
+      "arabic": "عَسَىٰٓ",
+      "transliteration": "ʿasā",
+      "meaningIndo": "boleh jadi"
+    },
+    {
+      "location": "49:11:19",
+      "arabic": "أَن",
+      "transliteration": "an",
+      "meaningIndo": "bahwa"
+    },
+    {
+      "location": "49:11:20",
+      "arabic": "يَكُنَّ",
+      "transliteration": "yakunna",
+      "meaningIndo": "mereka adalah"
+    },
+    {
+      "location": "49:11:21",
+      "arabic": "خَيْرًۭا",
+      "transliteration": "khayran",
+      "meaningIndo": "lebih baik"
+    },
+    {
+      "location": "49:11:22",
+      "arabic": "مِّنْهُنَّ ۖ",
+      "transliteration": "min'hunna",
+      "meaningIndo": "dari mereka"
+    },
+    {
+      "location": "49:11:23",
+      "arabic": "وَلَا",
+      "transliteration": "walā",
+      "meaningIndo": "dan jangan"
+    },
+    {
+      "location": "49:11:24",
+      "arabic": "تَلْمِزُوٓا۟",
+      "transliteration": "talmizū",
+      "meaningIndo": "kamu mencela"
+    },
+    {
+      "location": "49:11:25",
+      "arabic": "أَنفُسَكُمْ",
+      "transliteration": "anfusakum",
+      "meaningIndo": "diri kalian sendiri"
+    },
+    {
+      "location": "49:11:26",
+      "arabic": "وَلَا",
+      "transliteration": "walā",
+      "meaningIndo": "dan jangan"
+    },
+    {
+      "location": "49:11:27",
+      "arabic": "تَنَابَزُوا۟",
+      "transliteration": "tanābazū",
+      "meaningIndo": "kamu panggil memanggil"
+    },
+    {
+      "location": "49:11:28",
+      "arabic": "بِٱلْأَلْقَـٰبِ ۖ",
+      "transliteration": "bil-alqābi",
+      "meaningIndo": "dengan julukan"
+    },
+    {
+      "location": "49:11:29",
+      "arabic": "بِئْسَ",
+      "transliteration": "bi'sa",
+      "meaningIndo": "seburuk-buruk"
+    },
+    {
+      "location": "49:11:30",
+      "arabic": "ٱلِٱسْمُ",
+      "transliteration": "l-s'mu",
+      "meaningIndo": "nama"
+    },
+    {
+      "location": "49:11:31",
+      "arabic": "ٱلْفُسُوقُ",
+      "transliteration": "l-fusūqu",
+      "meaningIndo": "fasik"
+    },
+    {
+      "location": "49:11:32",
+      "arabic": "بَعْدَ",
+      "transliteration": "baʿda",
+      "meaningIndo": "sesudah"
+    },
+    {
+      "location": "49:11:33",
+      "arabic": "ٱلْإِيمَـٰنِ ۚ",
+      "transliteration": "l-īmāni",
+      "meaningIndo": "keimanan"
+    },
+    {
+      "location": "49:11:34",
+      "arabic": "وَمَن",
+      "transliteration": "waman",
+      "meaningIndo": "dan barang siapa"
+    },
+    {
+      "location": "49:11:35",
+      "arabic": "لَّمْ",
+      "transliteration": "lam",
+      "meaningIndo": "tidak"
+    },
+    {
+      "location": "49:11:36",
+      "arabic": "يَتُبْ",
+      "transliteration": "yatub",
+      "meaningIndo": "berbuat"
+    },
+    {
+      "location": "49:11:37",
+      "arabic": "فَأُو۟لَـٰٓئِكَ",
+      "transliteration": "fa-ulāika",
+      "meaningIndo": "maka mereka itu"
+    },
+    {
+      "location": "49:11:38",
+      "arabic": "هُمُ",
+      "transliteration": "humu",
+      "meaningIndo": "mereka"
+    },
+    {
+      "location": "49:11:39",
+      "arabic": "ٱلظَّـٰلِمُونَ",
+      "transliteration": "l-ẓālimūna",
+      "meaningIndo": "orang-orang yang zalim"
+    }
+  ],
+  "49:12": [
+    {
+      "location": "49:12:1",
+      "arabic": "يَـٰٓأَيُّهَا",
+      "transliteration": "yāayyuhā",
+      "meaningIndo": "wahai"
+    },
+    {
+      "location": "49:12:2",
+      "arabic": "ٱلَّذِينَ",
+      "transliteration": "alladhīna",
+      "meaningIndo": "orang-orang yang"
+    },
+    {
+      "location": "49:12:3",
+      "arabic": "ءَامَنُوا۟",
+      "transliteration": "āmanū",
+      "meaningIndo": "beriman"
+    },
+    {
+      "location": "49:12:4",
+      "arabic": "ٱجْتَنِبُوا۟",
+      "transliteration": "ij'tanibū",
+      "meaningIndo": "jauhilah"
+    },
+    {
+      "location": "49:12:5",
+      "arabic": "كَثِيرًۭا",
+      "transliteration": "kathīran",
+      "meaningIndo": "banyak"
+    },
+    {
+      "location": "49:12:6",
+      "arabic": "مِّنَ",
+      "transliteration": "mina",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "49:12:7",
+      "arabic": "ٱلظَّنِّ",
+      "transliteration": "l-ẓani",
+      "meaningIndo": "berprasangka"
+    },
+    {
+      "location": "49:12:8",
+      "arabic": "إِنَّ",
+      "transliteration": "inna",
+      "meaningIndo": "sesungguhnya"
+    },
+    {
+      "location": "49:12:9",
+      "arabic": "بَعْضَ",
+      "transliteration": "baʿḍa",
+      "meaningIndo": "sebagian"
+    },
+    {
+      "location": "49:12:10",
+      "arabic": "ٱلظَّنِّ",
+      "transliteration": "l-ẓani",
+      "meaningIndo": "berprasangka"
+    },
+    {
+      "location": "49:12:11",
+      "arabic": "إِثْمٌۭ ۖ",
+      "transliteration": "ith'mun",
+      "meaningIndo": "dosa"
+    },
+    {
+      "location": "49:12:12",
+      "arabic": "وَلَا",
+      "transliteration": "walā",
+      "meaningIndo": "dan jangan"
+    },
+    {
+      "location": "49:12:13",
+      "arabic": "تَجَسَّسُوا۟",
+      "transliteration": "tajassasū",
+      "meaningIndo": "kamu mencari kesalahan"
+    },
+    {
+      "location": "49:12:14",
+      "arabic": "وَلَا",
+      "transliteration": "walā",
+      "meaningIndo": "dan jangan"
+    },
+    {
+      "location": "49:12:15",
+      "arabic": "يَغْتَب",
+      "transliteration": "yaghtab",
+      "meaningIndo": "kamu mengumpat"
+    },
+    {
+      "location": "49:12:16",
+      "arabic": "بَّعْضُكُم",
+      "transliteration": "baʿḍukum",
+      "meaningIndo": "sebagian kamu"
+    },
+    {
+      "location": "49:12:17",
+      "arabic": "بَعْضًا ۚ",
+      "transliteration": "baʿḍan",
+      "meaningIndo": "sebagian"
+    },
+    {
+      "location": "49:12:18",
+      "arabic": "أَيُحِبُّ",
+      "transliteration": "ayuḥibbu",
+      "meaningIndo": "apakah kamu menyukai"
+    },
+    {
+      "location": "49:12:19",
+      "arabic": "أَحَدُكُمْ",
+      "transliteration": "aḥadukum",
+      "meaningIndo": "salah seorang diantara kamu"
+    },
+    {
+      "location": "49:12:20",
+      "arabic": "أَن",
+      "transliteration": "an",
+      "meaningIndo": "bahwa"
+    },
+    {
+      "location": "49:12:21",
+      "arabic": "يَأْكُلَ",
+      "transliteration": "yakula",
+      "meaningIndo": "memakan"
+    },
+    {
+      "location": "49:12:22",
+      "arabic": "لَحْمَ",
+      "transliteration": "laḥma",
+      "meaningIndo": "daging"
+    },
+    {
+      "location": "49:12:23",
+      "arabic": "أَخِيهِ",
+      "transliteration": "akhīhi",
+      "meaningIndo": "saudaranya"
+    },
+    {
+      "location": "49:12:24",
+      "arabic": "مَيْتًۭا",
+      "transliteration": "maytan",
+      "meaningIndo": "yang mati"
+    },
+    {
+      "location": "49:12:25",
+      "arabic": "فَكَرِهْتُمُوهُ ۚ",
+      "transliteration": "fakarih'tumūhu",
+      "meaningIndo": "maka kamu jijik padanya"
+    },
+    {
+      "location": "49:12:26",
+      "arabic": "وَٱتَّقُوا۟",
+      "transliteration": "wa-ittaqū",
+      "meaningIndo": "dan bertakwalah"
+    },
+    {
+      "location": "49:12:27",
+      "arabic": "ٱللَّهَ ۚ",
+      "transliteration": "l-laha",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:12:28",
+      "arabic": "إِنَّ",
+      "transliteration": "inna",
+      "meaningIndo": "sesungguhnya"
+    },
+    {
+      "location": "49:12:29",
+      "arabic": "ٱللَّهَ",
+      "transliteration": "l-laha",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:12:30",
+      "arabic": "تَوَّابٌۭ",
+      "transliteration": "tawwābun",
+      "meaningIndo": "Maha Penerima taubat"
+    },
+    {
+      "location": "49:12:31",
+      "arabic": "رَّحِيمٌۭ",
+      "transliteration": "raḥīmun",
+      "meaningIndo": "Maha Penyayang"
+    }
+  ],
+  "49:13": [
+    {
+      "location": "49:13:1",
+      "arabic": "يَـٰٓأَيُّهَا",
+      "transliteration": "yāayyuhā",
+      "meaningIndo": "wahai"
+    },
+    {
+      "location": "49:13:2",
+      "arabic": "ٱلنَّاسُ",
+      "transliteration": "l-nāsu",
+      "meaningIndo": "manusia"
+    },
+    {
+      "location": "49:13:3",
+      "arabic": "إِنَّا",
+      "transliteration": "innā",
+      "meaningIndo": "sesungguhnya Kami"
+    },
+    {
+      "location": "49:13:4",
+      "arabic": "خَلَقْنَـٰكُم",
+      "transliteration": "khalaqnākum",
+      "meaningIndo": "Kami menciptakan Kamu"
+    },
+    {
+      "location": "49:13:5",
+      "arabic": "مِّن",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "49:13:6",
+      "arabic": "ذَكَرٍۢ",
+      "transliteration": "dhakarin",
+      "meaningIndo": "laki-laki"
+    },
+    {
+      "location": "49:13:7",
+      "arabic": "وَأُنثَىٰ",
+      "transliteration": "wa-unthā",
+      "meaningIndo": "dan perempuan"
+    },
+    {
+      "location": "49:13:8",
+      "arabic": "وَجَعَلْنَـٰكُمْ",
+      "transliteration": "wajaʿalnākum",
+      "meaningIndo": "dan Kami jadikan kamu"
+    },
+    {
+      "location": "49:13:9",
+      "arabic": "شُعُوبًۭا",
+      "transliteration": "shuʿūban",
+      "meaningIndo": "berbangsa-bangsa"
+    },
+    {
+      "location": "49:13:10",
+      "arabic": "وَقَبَآئِلَ",
+      "transliteration": "waqabāila",
+      "meaningIndo": "dan bersuku-suku"
+    },
+    {
+      "location": "49:13:11",
+      "arabic": "لِتَعَارَفُوٓا۟ ۚ",
+      "transliteration": "litaʿārafū",
+      "meaningIndo": "supaya kamu saling mengenal"
+    },
+    {
+      "location": "49:13:12",
+      "arabic": "إِنَّ",
+      "transliteration": "inna",
+      "meaningIndo": "sesungguhnya"
+    },
+    {
+      "location": "49:13:13",
+      "arabic": "أَكْرَمَكُمْ",
+      "transliteration": "akramakum",
+      "meaningIndo": "paling mulia diantara kamu"
+    },
+    {
+      "location": "49:13:14",
+      "arabic": "عِندَ",
+      "transliteration": "ʿinda",
+      "meaningIndo": "di sisi"
+    },
+    {
+      "location": "49:13:15",
+      "arabic": "ٱللَّهِ",
+      "transliteration": "l-lahi",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:13:16",
+      "arabic": "أَتْقَىٰكُمْ ۚ",
+      "transliteration": "atqākum",
+      "meaningIndo": "paling bertakwa diantara kamu"
+    },
+    {
+      "location": "49:13:17",
+      "arabic": "إِنَّ",
+      "transliteration": "inna",
+      "meaningIndo": "sesungguhnya"
+    },
+    {
+      "location": "49:13:18",
+      "arabic": "ٱللَّهَ",
+      "transliteration": "l-laha",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:13:19",
+      "arabic": "عَلِيمٌ",
+      "transliteration": "ʿalīmun",
+      "meaningIndo": "Maha Mengetahui"
+    },
+    {
+      "location": "49:13:20",
+      "arabic": "خَبِيرٌۭ",
+      "transliteration": "khabīrun",
+      "meaningIndo": "Maha Melihat"
+    }
+  ],
+  "49:14": [
+    {
+      "location": "49:14:1",
+      "arabic": "۞ قَالَتِ",
+      "transliteration": "qālati",
+      "meaningIndo": "berkata"
+    },
+    {
+      "location": "49:14:2",
+      "arabic": "ٱلْأَعْرَابُ",
+      "transliteration": "l-aʿrābu",
+      "meaningIndo": "orang-orang Arab dusun"
+    },
+    {
+      "location": "49:14:3",
+      "arabic": "ءَامَنَّا ۖ",
+      "transliteration": "āmannā",
+      "meaningIndo": "kami telah beriman"
+    },
+    {
+      "location": "49:14:4",
+      "arabic": "قُل",
+      "transliteration": "qul",
+      "meaningIndo": "katakanlah"
+    },
+    {
+      "location": "49:14:5",
+      "arabic": "لَّمْ",
+      "transliteration": "lam",
+      "meaningIndo": "belum"
+    },
+    {
+      "location": "49:14:6",
+      "arabic": "تُؤْمِنُوا۟",
+      "transliteration": "tu'minū",
+      "meaningIndo": "kamu beriman"
+    },
+    {
+      "location": "49:14:7",
+      "arabic": "وَلَـٰكِن",
+      "transliteration": "walākin",
+      "meaningIndo": "tetapi"
+    },
+    {
+      "location": "49:14:8",
+      "arabic": "قُولُوٓا۟",
+      "transliteration": "qūlū",
+      "meaningIndo": "katakan"
+    },
+    {
+      "location": "49:14:9",
+      "arabic": "أَسْلَمْنَا",
+      "transliteration": "aslamnā",
+      "meaningIndo": "kami telah menyerahkan diri"
+    },
+    {
+      "location": "49:14:10",
+      "arabic": "وَلَمَّا",
+      "transliteration": "walammā",
+      "meaningIndo": "dan belum"
+    },
+    {
+      "location": "49:14:11",
+      "arabic": "يَدْخُلِ",
+      "transliteration": "yadkhuli",
+      "meaningIndo": "masuk"
+    },
+    {
+      "location": "49:14:12",
+      "arabic": "ٱلْإِيمَـٰنُ",
+      "transliteration": "l-īmānu",
+      "meaningIndo": "keimanan"
+    },
+    {
+      "location": "49:14:13",
+      "arabic": "فِى",
+      "transliteration": "fī",
+      "meaningIndo": "dalam"
+    },
+    {
+      "location": "49:14:14",
+      "arabic": "قُلُوبِكُمْ ۖ",
+      "transliteration": "qulūbikum",
+      "meaningIndo": "hati kamu"
+    },
+    {
+      "location": "49:14:15",
+      "arabic": "وَإِن",
+      "transliteration": "wa-in",
+      "meaningIndo": "dan jika"
+    },
+    {
+      "location": "49:14:16",
+      "arabic": "تُطِيعُوا۟",
+      "transliteration": "tuṭīʿū",
+      "meaningIndo": "kamu taat"
+    },
+    {
+      "location": "49:14:17",
+      "arabic": "ٱللَّهَ",
+      "transliteration": "l-laha",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:14:18",
+      "arabic": "وَرَسُولَهُۥ",
+      "transliteration": "warasūlahu",
+      "meaningIndo": "dan rasul-Nya"
+    },
+    {
+      "location": "49:14:19",
+      "arabic": "لَا",
+      "transliteration": "lā",
+      "meaningIndo": "tidak"
+    },
+    {
+      "location": "49:14:20",
+      "arabic": "يَلِتْكُم",
+      "transliteration": "yalit'kum",
+      "meaningIndo": "Dia mengurangi kamu"
+    },
+    {
+      "location": "49:14:21",
+      "arabic": "مِّنْ",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "49:14:22",
+      "arabic": "أَعْمَـٰلِكُمْ",
+      "transliteration": "aʿmālikum",
+      "meaningIndo": "amalanmu"
+    },
+    {
+      "location": "49:14:23",
+      "arabic": "شَيْـًٔا ۚ",
+      "transliteration": "shayan",
+      "meaningIndo": "sesuatu pun"
+    },
+    {
+      "location": "49:14:24",
+      "arabic": "إِنَّ",
+      "transliteration": "inna",
+      "meaningIndo": "sesungguhnya"
+    },
+    {
+      "location": "49:14:25",
+      "arabic": "ٱللَّهَ",
+      "transliteration": "l-laha",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:14:26",
+      "arabic": "غَفُورٌۭ",
+      "transliteration": "ghafūrun",
+      "meaningIndo": "Maha Pengampun"
+    },
+    {
+      "location": "49:14:27",
+      "arabic": "رَّحِيمٌ",
+      "transliteration": "raḥīmun",
+      "meaningIndo": "Maha Penyayang"
+    }
+  ],
+  "49:15": [
+    {
+      "location": "49:15:1",
+      "arabic": "إِنَّمَا",
+      "transliteration": "innamā",
+      "meaningIndo": "sesungguhnya hanyalah"
+    },
+    {
+      "location": "49:15:2",
+      "arabic": "ٱلْمُؤْمِنُونَ",
+      "transliteration": "l-mu'minūna",
+      "meaningIndo": "orang-orang mukmin"
+    },
+    {
+      "location": "49:15:3",
+      "arabic": "ٱلَّذِينَ",
+      "transliteration": "alladhīna",
+      "meaningIndo": "orang-orang yang"
+    },
+    {
+      "location": "49:15:4",
+      "arabic": "ءَامَنُوا۟",
+      "transliteration": "āmanū",
+      "meaningIndo": "beriman"
+    },
+    {
+      "location": "49:15:5",
+      "arabic": "بِٱللَّهِ",
+      "transliteration": "bil-lahi",
+      "meaningIndo": "kepada Allah"
+    },
+    {
+      "location": "49:15:6",
+      "arabic": "وَرَسُولِهِۦ",
+      "transliteration": "warasūlihi",
+      "meaningIndo": "dan rasul-Nya"
+    },
+    {
+      "location": "49:15:7",
+      "arabic": "ثُمَّ",
+      "transliteration": "thumma",
+      "meaningIndo": "kemudian"
+    },
+    {
+      "location": "49:15:8",
+      "arabic": "لَمْ",
+      "transliteration": "lam",
+      "meaningIndo": "tidak"
+    },
+    {
+      "location": "49:15:9",
+      "arabic": "يَرْتَابُوا۟",
+      "transliteration": "yartābū",
+      "meaningIndo": "mereka ragu-ragu"
+    },
+    {
+      "location": "49:15:10",
+      "arabic": "وَجَـٰهَدُوا۟",
+      "transliteration": "wajāhadū",
+      "meaningIndo": "dan mereka berjihad"
+    },
+    {
+      "location": "49:15:11",
+      "arabic": "بِأَمْوَٰلِهِمْ",
+      "transliteration": "bi-amwālihim",
+      "meaningIndo": "dengan harta mereka"
+    },
+    {
+      "location": "49:15:12",
+      "arabic": "وَأَنفُسِهِمْ",
+      "transliteration": "wa-anfusihim",
+      "meaningIndo": "dan diri/jiwa mereka"
+    },
+    {
+      "location": "49:15:13",
+      "arabic": "فِى",
+      "transliteration": "fī",
+      "meaningIndo": "di"
+    },
+    {
+      "location": "49:15:14",
+      "arabic": "سَبِيلِ",
+      "transliteration": "sabīli",
+      "meaningIndo": "jalan"
+    },
+    {
+      "location": "49:15:15",
+      "arabic": "ٱللَّهِ ۚ",
+      "transliteration": "l-lahi",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:15:16",
+      "arabic": "أُو۟لَـٰٓئِكَ",
+      "transliteration": "ulāika",
+      "meaningIndo": "mereka itu"
+    },
+    {
+      "location": "49:15:17",
+      "arabic": "هُمُ",
+      "transliteration": "humu",
+      "meaningIndo": "mereka"
+    },
+    {
+      "location": "49:15:18",
+      "arabic": "ٱلصَّـٰدِقُونَ",
+      "transliteration": "l-ṣādiqūna",
+      "meaningIndo": "orang-orang yang benar"
+    }
+  ],
+  "49:16": [
+    {
+      "location": "49:16:1",
+      "arabic": "قُلْ",
+      "transliteration": "qul",
+      "meaningIndo": "katakanlah"
+    },
+    {
+      "location": "49:16:2",
+      "arabic": "أَتُعَلِّمُونَ",
+      "transliteration": "atuʿallimūna",
+      "meaningIndo": "apakah kamu akan memberitahukan"
+    },
+    {
+      "location": "49:16:3",
+      "arabic": "ٱللَّهَ",
+      "transliteration": "l-laha",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:16:4",
+      "arabic": "بِدِينِكُمْ",
+      "transliteration": "bidīnikum",
+      "meaningIndo": "tentang agamamu"
+    },
+    {
+      "location": "49:16:5",
+      "arabic": "وَٱللَّهُ",
+      "transliteration": "wal-lahu",
+      "meaningIndo": "dan Allah"
+    },
+    {
+      "location": "49:16:6",
+      "arabic": "يَعْلَمُ",
+      "transliteration": "yaʿlamu",
+      "meaningIndo": "mengetahui"
+    },
+    {
+      "location": "49:16:7",
+      "arabic": "مَا",
+      "transliteration": "mā",
+      "meaningIndo": "apa yang ada"
+    },
+    {
+      "location": "49:16:8",
+      "arabic": "فِى",
+      "transliteration": "fī",
+      "meaningIndo": "di"
+    },
+    {
+      "location": "49:16:9",
+      "arabic": "ٱلسَّمَـٰوَٰتِ",
+      "transliteration": "l-samāwāti",
+      "meaningIndo": "langit(jamak)"
+    },
+    {
+      "location": "49:16:10",
+      "arabic": "وَمَا",
+      "transliteration": "wamā",
+      "meaningIndo": "dan apa yang ada"
+    },
+    {
+      "location": "49:16:11",
+      "arabic": "فِى",
+      "transliteration": "fī",
+      "meaningIndo": "di"
+    },
+    {
+      "location": "49:16:12",
+      "arabic": "ٱلْأَرْضِ ۚ",
+      "transliteration": "l-arḍi",
+      "meaningIndo": "bumi"
+    },
+    {
+      "location": "49:16:13",
+      "arabic": "وَٱللَّهُ",
+      "transliteration": "wal-lahu",
+      "meaningIndo": "dan Allah"
+    },
+    {
+      "location": "49:16:14",
+      "arabic": "بِكُلِّ",
+      "transliteration": "bikulli",
+      "meaningIndo": "terhadap segala"
+    },
+    {
+      "location": "49:16:15",
+      "arabic": "شَىْءٍ",
+      "transliteration": "shayin",
+      "meaningIndo": "sesuatu"
+    },
+    {
+      "location": "49:16:16",
+      "arabic": "عَلِيمٌۭ",
+      "transliteration": "ʿalīmun",
+      "meaningIndo": "Maha Mengetahui"
+    }
+  ],
+  "49:17": [
+    {
+      "location": "49:17:1",
+      "arabic": "يَمُنُّونَ",
+      "transliteration": "yamunnūna",
+      "meaningIndo": "mereka merasa memberi nikmat"
+    },
+    {
+      "location": "49:17:2",
+      "arabic": "عَلَيْكَ",
+      "transliteration": "ʿalayka",
+      "meaningIndo": "atas kamu"
+    },
+    {
+      "location": "49:17:3",
+      "arabic": "أَنْ",
+      "transliteration": "an",
+      "meaningIndo": "bahwa"
+    },
+    {
+      "location": "49:17:4",
+      "arabic": "أَسْلَمُوا۟ ۖ",
+      "transliteration": "aslamū",
+      "meaningIndo": "mereka masuk Islam"
+    },
+    {
+      "location": "49:17:5",
+      "arabic": "قُل",
+      "transliteration": "qul",
+      "meaningIndo": "katakan"
+    },
+    {
+      "location": "49:17:6",
+      "arabic": "لَّا",
+      "transliteration": "lā",
+      "meaningIndo": "jangan"
+    },
+    {
+      "location": "49:17:7",
+      "arabic": "تَمُنُّوا۟",
+      "transliteration": "tamunnū",
+      "meaningIndo": "kamu merasa memberi nikmat"
+    },
+    {
+      "location": "49:17:8",
+      "arabic": "عَلَىَّ",
+      "transliteration": "ʿalayya",
+      "meaningIndo": "atas"
+    },
+    {
+      "location": "49:17:9",
+      "arabic": "إِسْلَـٰمَكُم ۖ",
+      "transliteration": "is'lāmakum",
+      "meaningIndo": "keislamanmu"
+    },
+    {
+      "location": "49:17:10",
+      "arabic": "بَلِ",
+      "transliteration": "bali",
+      "meaningIndo": "bahkan"
+    },
+    {
+      "location": "49:17:11",
+      "arabic": "ٱللَّهُ",
+      "transliteration": "l-lahu",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:17:12",
+      "arabic": "يَمُنُّ",
+      "transliteration": "yamunnu",
+      "meaningIndo": "memberi nikmat"
+    },
+    {
+      "location": "49:17:13",
+      "arabic": "عَلَيْكُمْ",
+      "transliteration": "ʿalaykum",
+      "meaningIndo": "atas kalian"
+    },
+    {
+      "location": "49:17:14",
+      "arabic": "أَنْ",
+      "transliteration": "an",
+      "meaningIndo": "bahwa"
+    },
+    {
+      "location": "49:17:15",
+      "arabic": "هَدَىٰكُمْ",
+      "transliteration": "hadākum",
+      "meaningIndo": "Dia memberi petunjuk kepadamu"
+    },
+    {
+      "location": "49:17:16",
+      "arabic": "لِلْإِيمَـٰنِ",
+      "transliteration": "lil'īmāni",
+      "meaningIndo": "kepada keimanan"
+    },
+    {
+      "location": "49:17:17",
+      "arabic": "إِن",
+      "transliteration": "in",
+      "meaningIndo": "jika"
+    },
+    {
+      "location": "49:17:18",
+      "arabic": "كُنتُمْ",
+      "transliteration": "kuntum",
+      "meaningIndo": "kalian adalah"
+    },
+    {
+      "location": "49:17:19",
+      "arabic": "صَـٰدِقِينَ",
+      "transliteration": "ṣādiqīna",
+      "meaningIndo": "orang-orang yang benar"
+    }
+  ],
+  "49:18": [
+    {
+      "location": "49:18:1",
+      "arabic": "إِنَّ",
+      "transliteration": "inna",
+      "meaningIndo": "sesungguhnya"
+    },
+    {
+      "location": "49:18:2",
+      "arabic": "ٱللَّهَ",
+      "transliteration": "l-laha",
+      "meaningIndo": "Allah"
+    },
+    {
+      "location": "49:18:3",
+      "arabic": "يَعْلَمُ",
+      "transliteration": "yaʿlamu",
+      "meaningIndo": "Maha Mengetahui"
+    },
+    {
+      "location": "49:18:4",
+      "arabic": "غَيْبَ",
+      "transliteration": "ghayba",
+      "meaningIndo": "kegaiban"
+    },
+    {
+      "location": "49:18:5",
+      "arabic": "ٱلسَّمَـٰوَٰتِ",
+      "transliteration": "l-samāwāti",
+      "meaningIndo": "langit(jamak)"
+    },
+    {
+      "location": "49:18:6",
+      "arabic": "وَٱلْأَرْضِ ۚ",
+      "transliteration": "wal-arḍi",
+      "meaningIndo": "dan bumi"
+    },
+    {
+      "location": "49:18:7",
+      "arabic": "وَٱللَّهُ",
+      "transliteration": "wal-lahu",
+      "meaningIndo": "dan Allah"
+    },
+    {
+      "location": "49:18:8",
+      "arabic": "بَصِيرٌۢ",
+      "transliteration": "baṣīrun",
+      "meaningIndo": "Maha Melihat"
+    },
+    {
+      "location": "49:18:9",
+      "arabic": "بِمَا",
+      "transliteration": "bimā",
+      "meaningIndo": "terhadap apa"
+    },
+    {
+      "location": "49:18:10",
+      "arabic": "تَعْمَلُونَ",
+      "transliteration": "taʿmalūna",
+      "meaningIndo": "kamu kerjakan"
+    }
+  ]
+}

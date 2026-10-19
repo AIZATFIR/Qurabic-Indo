@@ -1,0 +1,150 @@
+{
+  "111:1": [
+    {
+      "location": "111:1:1",
+      "arabic": "تَبَّتْ",
+      "transliteration": "tabbat",
+      "meaningIndo": "binasalah"
+    },
+    {
+      "location": "111:1:2",
+      "arabic": "يَدَآ",
+      "transliteration": "yadā",
+      "meaningIndo": "kedua tangan"
+    },
+    {
+      "location": "111:1:3",
+      "arabic": "أَبِى",
+      "transliteration": "abī",
+      "meaningIndo": "Abu"
+    },
+    {
+      "location": "111:1:4",
+      "arabic": "لَهَبٍۢ",
+      "transliteration": "lahabin",
+      "meaningIndo": "Lahab"
+    },
+    {
+      "location": "111:1:5",
+      "arabic": "وَتَبَّ",
+      "transliteration": "watabba",
+      "meaningIndo": "sebenar-benar binasa"
+    }
+  ],
+  "111:2": [
+    {
+      "location": "111:2:1",
+      "arabic": "مَآ",
+      "transliteration": "mā",
+      "meaningIndo": "tidak"
+    },
+    {
+      "location": "111:2:2",
+      "arabic": "أَغْنَىٰ",
+      "transliteration": "aghnā",
+      "meaningIndo": "berguna"
+    },
+    {
+      "location": "111:2:3",
+      "arabic": "عَنْهُ",
+      "transliteration": "ʿanhu",
+      "meaningIndo": "dari padanya/kepadanya"
+    },
+    {
+      "location": "111:2:4",
+      "arabic": "مَالُهُۥ",
+      "transliteration": "māluhu",
+      "meaningIndo": "hartanya"
+    },
+    {
+      "location": "111:2:5",
+      "arabic": "وَمَا",
+      "transliteration": "wamā",
+      "meaningIndo": "dan apa"
+    },
+    {
+      "location": "111:2:6",
+      "arabic": "كَسَبَ",
+      "transliteration": "kasaba",
+      "meaningIndo": "yang ia usahakan"
+    }
+  ],
+  "111:3": [
+    {
+      "location": "111:3:1",
+      "arabic": "سَيَصْلَىٰ",
+      "transliteration": "sayaṣlā",
+      "meaningIndo": "kelak ia akan masuk"
+    },
+    {
+      "location": "111:3:2",
+      "arabic": "نَارًۭا",
+      "transliteration": "nāran",
+      "meaningIndo": "api"
+    },
+    {
+      "location": "111:3:3",
+      "arabic": "ذَاتَ",
+      "transliteration": "dhāta",
+      "meaningIndo": "mempunyai"
+    },
+    {
+      "location": "111:3:4",
+      "arabic": "لَهَبٍۢ",
+      "transliteration": "lahabin",
+      "meaningIndo": "begejolak"
+    }
+  ],
+  "111:4": [
+    {
+      "location": "111:4:1",
+      "arabic": "وَٱمْرَأَتُهُۥ",
+      "transliteration": "wa-im'ra-atuhu",
+      "meaningIndo": "dan istrinya"
+    },
+    {
+      "location": "111:4:2",
+      "arabic": "حَمَّالَةَ",
+      "transliteration": "ḥammālata",
+      "meaningIndo": "pembawa"
+    },
+    {
+      "location": "111:4:3",
+      "arabic": "ٱلْحَطَبِ",
+      "transliteration": "l-ḥaṭabi",
+      "meaningIndo": "kayu bakar"
+    }
+  ],
+  "111:5": [
+    {
+      "location": "111:5:1",
+      "arabic": "فِى",
+      "transliteration": "fī",
+      "meaningIndo": "pada"
+    },
+    {
+      "location": "111:5:2",
+      "arabic": "جِيدِهَا",
+      "transliteration": "jīdihā",
+      "meaningIndo": "lehernya"
+    },
+    {
+      "location": "111:5:3",
+      "arabic": "حَبْلٌۭ",
+      "transliteration": "ḥablun",
+      "meaningIndo": "tali"
+    },
+    {
+      "location": "111:5:4",
+      "arabic": "مِّن",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "111:5:5",
+      "arabic": "مَّسَدٍۭ",
+      "transliteration": "masadin",
+      "meaningIndo": "sabut"
+    }
+  ]
+}

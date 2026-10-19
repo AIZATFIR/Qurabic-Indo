@@ -1,0 +1,112 @@
+{
+  "106:1": [
+    {
+      "location": "106:1:1",
+      "arabic": "لِإِيلَـٰفِ",
+      "transliteration": "liīlāfi",
+      "meaningIndo": "karena kebiasaan"
+    },
+    {
+      "location": "106:1:2",
+      "arabic": "قُرَيْشٍ",
+      "transliteration": "qurayshin",
+      "meaningIndo": "orang-orang Qurais"
+    }
+  ],
+  "106:2": [
+    {
+      "location": "106:2:1",
+      "arabic": "إِۦلَـٰفِهِمْ",
+      "transliteration": "īlāfihim",
+      "meaningIndo": "kebiasaan mereka"
+    },
+    {
+      "location": "106:2:2",
+      "arabic": "رِحْلَةَ",
+      "transliteration": "riḥ'lata",
+      "meaningIndo": "perjalanan/bepergian"
+    },
+    {
+      "location": "106:2:3",
+      "arabic": "ٱلشِّتَآءِ",
+      "transliteration": "l-shitāi",
+      "meaningIndo": "dimusim dingin"
+    },
+    {
+      "location": "106:2:4",
+      "arabic": "وَٱلصَّيْفِ",
+      "transliteration": "wal-ṣayfi",
+      "meaningIndo": "dan musim panas"
+    }
+  ],
+  "106:3": [
+    {
+      "location": "106:3:1",
+      "arabic": "فَلْيَعْبُدُوا۟",
+      "transliteration": "falyaʿbudū",
+      "meaningIndo": "maka hendaklah mereka menyembah"
+    },
+    {
+      "location": "106:3:2",
+      "arabic": "رَبَّ",
+      "transliteration": "rabba",
+      "meaningIndo": "Tuhan"
+    },
+    {
+      "location": "106:3:3",
+      "arabic": "هَـٰذَا",
+      "transliteration": "hādhā",
+      "meaningIndo": "ini"
+    },
+    {
+      "location": "106:3:4",
+      "arabic": "ٱلْبَيْتِ",
+      "transliteration": "l-bayti",
+      "meaningIndo": "rumah"
+    }
+  ],
+  "106:4": [
+    {
+      "location": "106:4:1",
+      "arabic": "ٱلَّذِىٓ",
+      "transliteration": "alladhī",
+      "meaningIndo": "yang"
+    },
+    {
+      "location": "106:4:2",
+      "arabic": "أَطْعَمَهُم",
+      "transliteration": "aṭʿamahum",
+      "meaningIndo": "Dia memberi makan mereka"
+    },
+    {
+      "location": "106:4:3",
+      "arabic": "مِّن",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "106:4:4",
+      "arabic": "جُوعٍۢ",
+      "transliteration": "jūʿin",
+      "meaningIndo": "kelaparan"
+    },
+    {
+      "location": "106:4:5",
+      "arabic": "وَءَامَنَهُم",
+      "transliteration": "waāmanahum",
+      "meaningIndo": "dan Dia memberikan keamanan mereka"
+    },
+    {
+      "location": "106:4:6",
+      "arabic": "مِّنْ",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "106:4:7",
+      "arabic": "خَوْفٍۭ",
+      "transliteration": "khawfin",
+      "meaningIndo": "ketakutan"
+    }
+  ]
+}

@@ -1,0 +1,264 @@
+{
+  "93:1": [
+    {
+      "location": "93:1:1",
+      "arabic": "وَٱلضُّحَىٰ",
+      "transliteration": "wal-ḍuḥā",
+      "meaningIndo": "demi matahari naik"
+    }
+  ],
+  "93:2": [
+    {
+      "location": "93:2:1",
+      "arabic": "وَٱلَّيْلِ",
+      "transliteration": "wa-al-layli",
+      "meaningIndo": "dan malam"
+    },
+    {
+      "location": "93:2:2",
+      "arabic": "إِذَا",
+      "transliteration": "idhā",
+      "meaningIndo": "apabila"
+    },
+    {
+      "location": "93:2:3",
+      "arabic": "سَجَىٰ",
+      "transliteration": "sajā",
+      "meaningIndo": "telah sunyi"
+    }
+  ],
+  "93:3": [
+    {
+      "location": "93:3:1",
+      "arabic": "مَا",
+      "transliteration": "mā",
+      "meaningIndo": "tidak"
+    },
+    {
+      "location": "93:3:2",
+      "arabic": "وَدَّعَكَ",
+      "transliteration": "waddaʿaka",
+      "meaningIndo": "meninggalkan kamu"
+    },
+    {
+      "location": "93:3:3",
+      "arabic": "رَبُّكَ",
+      "transliteration": "rabbuka",
+      "meaningIndo": "Tuhanmu"
+    },
+    {
+      "location": "93:3:4",
+      "arabic": "وَمَا",
+      "transliteration": "wamā",
+      "meaningIndo": "dan tidak"
+    },
+    {
+      "location": "93:3:5",
+      "arabic": "قَلَىٰ",
+      "transliteration": "qalā",
+      "meaningIndo": "marah/benci"
+    }
+  ],
+  "93:4": [
+    {
+      "location": "93:4:1",
+      "arabic": "وَلَلْـَٔاخِرَةُ",
+      "transliteration": "walalākhiratu",
+      "meaningIndo": "dan sungguh kesudahan/akhirat"
+    },
+    {
+      "location": "93:4:2",
+      "arabic": "خَيْرٌۭ",
+      "transliteration": "khayrun",
+      "meaningIndo": "lebih baik"
+    },
+    {
+      "location": "93:4:3",
+      "arabic": "لَّكَ",
+      "transliteration": "laka",
+      "meaningIndo": "bagimu"
+    },
+    {
+      "location": "93:4:4",
+      "arabic": "مِنَ",
+      "transliteration": "mina",
+      "meaningIndo": "dari pada"
+    },
+    {
+      "location": "93:4:5",
+      "arabic": "ٱلْأُولَىٰ",
+      "transliteration": "l-ūlā",
+      "meaningIndo": "permulaan/dunia"
+    }
+  ],
+  "93:5": [
+    {
+      "location": "93:5:1",
+      "arabic": "وَلَسَوْفَ",
+      "transliteration": "walasawfa",
+      "meaningIndo": "dan sungguh kelak"
+    },
+    {
+      "location": "93:5:2",
+      "arabic": "يُعْطِيكَ",
+      "transliteration": "yuʿ'ṭīka",
+      "meaningIndo": "memberikan kepadamu"
+    },
+    {
+      "location": "93:5:3",
+      "arabic": "رَبُّكَ",
+      "transliteration": "rabbuka",
+      "meaningIndo": "Tuhanmu"
+    },
+    {
+      "location": "93:5:4",
+      "arabic": "فَتَرْضَىٰٓ",
+      "transliteration": "fatarḍā",
+      "meaningIndo": "maka kamu jadi puas"
+    }
+  ],
+  "93:6": [
+    {
+      "location": "93:6:1",
+      "arabic": "أَلَمْ",
+      "transliteration": "alam",
+      "meaningIndo": "apakah tidak/bukanlah"
+    },
+    {
+      "location": "93:6:2",
+      "arabic": "يَجِدْكَ",
+      "transliteration": "yajid'ka",
+      "meaningIndo": "Dia mendapatimu"
+    },
+    {
+      "location": "93:6:3",
+      "arabic": "يَتِيمًۭا",
+      "transliteration": "yatīman",
+      "meaningIndo": "seorang yatim"
+    },
+    {
+      "location": "93:6:4",
+      "arabic": "فَـَٔاوَىٰ",
+      "transliteration": "faāwā",
+      "meaningIndo": "lalu Dia melindungi"
+    }
+  ],
+  "93:7": [
+    {
+      "location": "93:7:1",
+      "arabic": "وَوَجَدَكَ",
+      "transliteration": "wawajadaka",
+      "meaningIndo": "dan Dia mendapatimu"
+    },
+    {
+      "location": "93:7:2",
+      "arabic": "ضَآلًّۭا",
+      "transliteration": "ḍāllan",
+      "meaningIndo": "sesat/bingung"
+    },
+    {
+      "location": "93:7:3",
+      "arabic": "فَهَدَىٰ",
+      "transliteration": "fahadā",
+      "meaningIndo": "lalu Dia memberi petunjuk"
+    }
+  ],
+  "93:8": [
+    {
+      "location": "93:8:1",
+      "arabic": "وَوَجَدَكَ",
+      "transliteration": "wawajadaka",
+      "meaningIndo": "dan Dia mendapatimu"
+    },
+    {
+      "location": "93:8:2",
+      "arabic": "عَآئِلًۭا",
+      "transliteration": "ʿāilan",
+      "meaningIndo": "miskin/kekurangan"
+    },
+    {
+      "location": "93:8:3",
+      "arabic": "فَأَغْنَىٰ",
+      "transliteration": "fa-aghnā",
+      "meaningIndo": "lalu Dia memberi kecukupan"
+    }
+  ],
+  "93:9": [
+    {
+      "location": "93:9:1",
+      "arabic": "فَأَمَّا",
+      "transliteration": "fa-ammā",
+      "meaningIndo": "maka adapun"
+    },
+    {
+      "location": "93:9:2",
+      "arabic": "ٱلْيَتِيمَ",
+      "transliteration": "l-yatīma",
+      "meaningIndo": "anak yatim"
+    },
+    {
+      "location": "93:9:3",
+      "arabic": "فَلَا",
+      "transliteration": "falā",
+      "meaningIndo": "maka jangan"
+    },
+    {
+      "location": "93:9:4",
+      "arabic": "تَقْهَرْ",
+      "transliteration": "taqhar",
+      "meaningIndo": "kamu paksa/bersikap bengis"
+    }
+  ],
+  "93:10": [
+    {
+      "location": "93:10:1",
+      "arabic": "وَأَمَّا",
+      "transliteration": "wa-ammā",
+      "meaningIndo": "dan adapun"
+    },
+    {
+      "location": "93:10:2",
+      "arabic": "ٱلسَّآئِلَ",
+      "transliteration": "l-sāila",
+      "meaningIndo": "orang minta-minta"
+    },
+    {
+      "location": "93:10:3",
+      "arabic": "فَلَا",
+      "transliteration": "falā",
+      "meaningIndo": "maka jangan"
+    },
+    {
+      "location": "93:10:4",
+      "arabic": "تَنْهَرْ",
+      "transliteration": "tanhar",
+      "meaningIndo": "kamu menghardik"
+    }
+  ],
+  "93:11": [
+    {
+      "location": "93:11:1",
+      "arabic": "وَأَمَّا",
+      "transliteration": "wa-ammā",
+      "meaningIndo": "dan adapun"
+    },
+    {
+      "location": "93:11:2",
+      "arabic": "بِنِعْمَةِ",
+      "transliteration": "biniʿ'mati",
+      "meaningIndo": "dengan/terhadap nikmat"
+    },
+    {
+      "location": "93:11:3",
+      "arabic": "رَبِّكَ",
+      "transliteration": "rabbika",
+      "meaningIndo": "Tuhanmu"
+    },
+    {
+      "location": "93:11:4",
+      "arabic": "فَحَدِّثْ",
+      "transliteration": "faḥaddith",
+      "meaningIndo": "maka hendaklah kamu ceritakan"
+    }
+  ]
+}

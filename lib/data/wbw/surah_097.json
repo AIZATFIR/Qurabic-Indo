@@ -1,0 +1,192 @@
+{
+  "97:1": [
+    {
+      "location": "97:1:1",
+      "arabic": "إِنَّآ",
+      "transliteration": "innā",
+      "meaningIndo": "sesungguhnya"
+    },
+    {
+      "location": "97:1:2",
+      "arabic": "أَنزَلْنَـٰهُ",
+      "transliteration": "anzalnāhu",
+      "meaningIndo": "Kami telah menurunkannya"
+    },
+    {
+      "location": "97:1:3",
+      "arabic": "فِى",
+      "transliteration": "fī",
+      "meaningIndo": "pada"
+    },
+    {
+      "location": "97:1:4",
+      "arabic": "لَيْلَةِ",
+      "transliteration": "laylati",
+      "meaningIndo": "malam"
+    },
+    {
+      "location": "97:1:5",
+      "arabic": "ٱلْقَدْرِ",
+      "transliteration": "l-qadri",
+      "meaningIndo": "kemuliaan"
+    }
+  ],
+  "97:2": [
+    {
+      "location": "97:2:1",
+      "arabic": "وَمَآ",
+      "transliteration": "wamā",
+      "meaningIndo": "dan apakah"
+    },
+    {
+      "location": "97:2:2",
+      "arabic": "أَدْرَىٰكَ",
+      "transliteration": "adrāka",
+      "meaningIndo": "kamu tahu"
+    },
+    {
+      "location": "97:2:3",
+      "arabic": "مَا",
+      "transliteration": "mā",
+      "meaningIndo": "apa"
+    },
+    {
+      "location": "97:2:4",
+      "arabic": "لَيْلَةُ",
+      "transliteration": "laylatu",
+      "meaningIndo": "malam"
+    },
+    {
+      "location": "97:2:5",
+      "arabic": "ٱلْقَدْرِ",
+      "transliteration": "l-qadri",
+      "meaningIndo": "kemuliaan"
+    }
+  ],
+  "97:3": [
+    {
+      "location": "97:3:1",
+      "arabic": "لَيْلَةُ",
+      "transliteration": "laylatu",
+      "meaningIndo": "malam"
+    },
+    {
+      "location": "97:3:2",
+      "arabic": "ٱلْقَدْرِ",
+      "transliteration": "l-qadri",
+      "meaningIndo": "kemuliaan"
+    },
+    {
+      "location": "97:3:3",
+      "arabic": "خَيْرٌۭ",
+      "transliteration": "khayrun",
+      "meaningIndo": "lebih baik"
+    },
+    {
+      "location": "97:3:4",
+      "arabic": "مِّنْ",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "97:3:5",
+      "arabic": "أَلْفِ",
+      "transliteration": "alfi",
+      "meaningIndo": "seribu"
+    },
+    {
+      "location": "97:3:6",
+      "arabic": "شَهْرٍۢ",
+      "transliteration": "shahrin",
+      "meaningIndo": "bulan"
+    }
+  ],
+  "97:4": [
+    {
+      "location": "97:4:1",
+      "arabic": "تَنَزَّلُ",
+      "transliteration": "tanazzalu",
+      "meaningIndo": "turun"
+    },
+    {
+      "location": "97:4:2",
+      "arabic": "ٱلْمَلَـٰٓئِكَةُ",
+      "transliteration": "l-malāikatu",
+      "meaningIndo": "para malaikat"
+    },
+    {
+      "location": "97:4:3",
+      "arabic": "وَٱلرُّوحُ",
+      "transliteration": "wal-rūḥu",
+      "meaningIndo": "dan Roh/Jibril"
+    },
+    {
+      "location": "97:4:4",
+      "arabic": "فِيهَا",
+      "transliteration": "fīhā",
+      "meaningIndo": "padanya/pada malam"
+    },
+    {
+      "location": "97:4:5",
+      "arabic": "بِإِذْنِ",
+      "transliteration": "bi-idh'ni",
+      "meaningIndo": "dengan izin"
+    },
+    {
+      "location": "97:4:6",
+      "arabic": "رَبِّهِم",
+      "transliteration": "rabbihim",
+      "meaningIndo": "Tuhannya"
+    },
+    {
+      "location": "97:4:7",
+      "arabic": "مِّن",
+      "transliteration": "min",
+      "meaningIndo": "dari"
+    },
+    {
+      "location": "97:4:8",
+      "arabic": "كُلِّ",
+      "transliteration": "kulli",
+      "meaningIndo": "segala"
+    },
+    {
+      "location": "97:4:9",
+      "arabic": "أَمْرٍۢ",
+      "transliteration": "amrin",
+      "meaningIndo": "urusan"
+    }
+  ],
+  "97:5": [
+    {
+      "location": "97:5:1",
+      "arabic": "سَلَـٰمٌ",
+      "transliteration": "salāmun",
+      "meaningIndo": "sejahtera"
+    },
+    {
+      "location": "97:5:2",
+      "arabic": "هِىَ",
+      "transliteration": "hiya",
+      "meaningIndo": "ia/malam itu"
+    },
+    {
+      "location": "97:5:3",
+      "arabic": "حَتَّىٰ",
+      "transliteration": "ḥattā",
+      "meaningIndo": "hingga"
+    },
+    {
+      "location": "97:5:4",
+      "arabic": "مَطْلَعِ",
+      "transliteration": "maṭlaʿi",
+      "meaningIndo": "terbit"
+    },
+    {
+      "location": "97:5:5",
+      "arabic": "ٱلْفَجْرِ",
+      "transliteration": "l-fajri",
+      "meaningIndo": "fajar"
+    }
+  ]
+}
