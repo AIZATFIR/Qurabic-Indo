@@ -278,11 +278,11 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
         {/* Primary Readable Meaning Banner (Bahasa Indonesia) */}
         <div className="p-5 sm:p-6 rounded-2xl bg-primary/10 border border-primary/25 space-y-2 text-center shadow-xs">
           <div className="flex items-center justify-center space-x-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-primary">
-              Terjemahan Kata
+              <span className="text-xs font-bold uppercase tracking-wider text-primary">
+              Makna Kata
             </span>
             <button
-              onClick={() => openSourceDrawer(primaryMeaning.isEditorialSummary ? 'kemenag-translation' : 'quranic-arabic-corpus')}
+              onClick={() => openSourceDrawer(primaryMeaning.sourceBadge.startsWith("Lane's Lexicon") ? 'lane-arabic-english-lexicon' : (primaryMeaning.isEditorialSummary ? 'kemenag-translation' : 'quranic-arabic-corpus'))}
               className="text-[11px] px-2.5 py-0.5 rounded-full bg-canvas-surface border border-hairline text-ink-secondary hover:text-primary hover:border-primary transition-colors font-medium inline-flex items-center space-x-1 shadow-subtle"
             >
               <span>{primaryMeaning.sourceBadge && primaryMeaning.sourceBadge !== 'Terjemahan Kata' ? primaryMeaning.sourceBadge : 'Kemenag RI'}</span>

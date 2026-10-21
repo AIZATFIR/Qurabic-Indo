@@ -297,6 +297,13 @@ export function getWordStudy(
   const rootSlugOrAr = detail.lexical.rootSlug || detail.lexical.rootArabic || detail.lexical.root;
   const authenticIndo = getAuthenticWordMeaning(detail.identity.arabic, rootSlugOrAr);
 
+  // Prefer a word-level gloss over a root fallback. Root meanings are often
+  // broader than the word in this verse, and generic POS labels are not glosses.
+  const isGenericMeaning = (text?: string) => !text ||
+    /^(nomina|verba|partikel|bentuk kata|akar kata|konsep & turunan|kosakata terindeks)\b/i.test(text.trim()) ||
+    text.startsWith("Kosakata Al-Qur'an") ||
+    text.startsWith('Keluarga kata:');
+
   if (context?.meaningIndo && context.meaningIndo.trim()) {
     primaryText = context.meaningIndo.trim();
     sourceBadge = 'Terjemahan Kata';
@@ -305,18 +312,24 @@ export function getWordStudy(
     primaryText = detail.translation.primaryMeaning;
     sourceBadge = 'QAC Nahwu';
     isEditorial = true;
-  } else if (authenticIndo && authenticIndo !== "Kosakata Al-Qur'an" && authenticIndo.toLowerCase() !== "al-qur'an" && !authenticIndo.startsWith('Keluarga kata:')) {
-    primaryText = authenticIndo;
-    sourceBadge = detail.morphology.isParticle ? 'QAC Nahwu' : 'Kamus Qurabic';
-    isEditorial = true;
-  } else if (detail.translation.primaryMeaning && !detail.translation.primaryMeaning.startsWith(': see') && !detail.translation.primaryMeaning.startsWith('; see') && !detail.translation.primaryMeaning.startsWith('and ') && !/\b(the|and|or|of|to|in|on|from|with|by|for|not|he|they|we|you)\b/i.test(detail.translation.primaryMeaning)) {
+  } else if (!isGenericMeaning(detail.translation.primaryMeaning) && !detail.translation.primaryMeaning.startsWith(': see') && !detail.translation.primaryMeaning.startsWith('; see') && !detail.translation.primaryMeaning.startsWith('and ') && !/\b(the|and|or|of|to|in|on|from|with|by|for|not|he|they|we|you)\b/i.test(detail.translation.primaryMeaning)) {
     primaryText = detail.translation.primaryMeaning;
-    sourceBadge = detail.morphology.isParticle ? 'QAC Nahwu' : 'Kamus Qurabic';
+    sourceBadge = 'Kamus Qurabic';
     isEditorial = true;
   } else if (lex?.indonesianDefinition) {
     primaryText = lex.indonesianDefinition;
     sourceBadge = "Leksikon Klasik";
     isEditorial = false;
+  } else if (lex?.definition || lex?.senses?.[0]?.text) {
+    // Lane is Arabic-English; show its sourced English gloss when no reviewed
+    // Indonesian word gloss exists instead of inventing one from the root.
+    primaryText = lex.definition || lex.senses[0].text;
+    sourceBadge = "Lane's Lexicon · English";
+    isEditorial = false;
+  } else if (!isGenericMeaning(authenticIndo) && authenticIndo.toLowerCase() !== "al-qur'an") {
+    primaryText = authenticIndo;
+    sourceBadge = 'Kamus Qurabic';
+    isEditorial = true;
   } else if (detail.lexical.coreMeaning && !detail.lexical.coreMeaning.startsWith('Akar kata ') && !detail.lexical.coreMeaning.includes('memiliki peranan penting')) {
     primaryText = detail.lexical.coreMeaning;
     sourceBadge = 'Kajian Akar Kata';

@@ -702,20 +702,23 @@ export function getQuranicParticleInfo(token: string, tag?: string): QuranicPart
         'هم': 'mereka',
         'كم': 'kalian',
         'نا': 'kami',
-        'ه': 'dia / -nya',
-        'ها': 'dia (wanita) / -nya',
+        'ه': 'nya',
+        'ها': 'nya',
         'هما': 'mereka berdua',
         'هن': 'mereka (wanita)',
         'كن': 'kalian (wanita)',
         'ي': 'aku / -ku'
       };
       const pronText = pronounMap[pronoun] || pronoun;
-      const baseShort = baseInfo.primaryMeaning.split(/[/(\\]/)[0].trim();
+      const baseShort = baseInfo.primaryMeaning.split(/\s*\/\s*/)[0].replace(/\s*\([^)]*\)$/, '').trim();
+      const combinedMeaning = pronText === 'nya' && /^(Di dalam|Di atas)$/.test(baseShort)
+        ? `${baseShort}nya`
+        : `${baseShort} ${pronText}`;
       return {
         ...baseInfo,
         arabic: token,
         cleanArabic: clean,
-        primaryMeaning: `${baseShort} ${pronText}`,
+        primaryMeaning: combinedMeaning,
         grammaticalRole: `${baseInfo.particleCategory} + Dhamir Muttashil (${pronText})`
       };
     }
