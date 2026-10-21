@@ -25,6 +25,16 @@ import { getAuthenticWordMeaning, getRootTranslationProfile } from './root-dicti
 import { getLinguisticExplanation } from './linguistic-explanation-service';
 import { getGrammarDerivation } from './grammar-derivation-service';
 import { getRootOccurrencesFromChunk } from './morphology-service';
+import wbwDerivativeGlosses from '../data/wbw-derivative-glosses.json';
+
+const WBW_DERIVATIVE_GLOSSES = wbwDerivativeGlosses.meanings as Record<string, string>;
+
+function isGenericMeaning(text?: string): boolean {
+  return !text ||
+    /^(nomina|verba|partikel|bentuk kata|akar kata|konsep & turunan|kosakata terindeks)\b/i.test(text.trim()) ||
+    text.startsWith("Kosakata Al-Qur'an") ||
+    text.startsWith('Keluarga kata:');
+}
 
 /**
  * Maps raw QAC morphological features string to detailed Indonesian syntactic breakdown
@@ -184,7 +194,7 @@ export function getWordStudy(
   const wordFamily: WordFamilyItem[] = [];
   if (rootBw && !detail.morphology.isParticle) {
     const records = qacIndex.recordsByRoot.get(rootBw) || [];
-    const grouped = new Map<string, { arabic: string; bw: string; lemmaAr: string; pos: 'Isim' | "Fi'il" | 'Harf'; count: number; sampleLoc?: string }>();
+    const grouped = new Map<string, { arabic: string; bw: string; lemmaAr: string; lemmaBw: string; pos: 'Isim' | "Fi'il" | 'Harf'; count: number; sampleLoc?: string }>();
 
     for (const rec of records) {
       let rawAr = (rec.formArabic || buckwalterToArabic(rec.form)).replace(/^[\u0651\u0640]+/, '').trim();
@@ -210,6 +220,7 @@ export function getWordStudy(
           arabic: rawAr,
           bw: rec.form,
           lemmaAr: rec.lemmaArabic || (rec.lemma ? buckwalterToArabic(rec.lemma) : ''),
+          lemmaBw: rec.lemma || '',
           pos,
           count: 1,
           sampleLoc: rec.locationKey
@@ -224,7 +235,10 @@ export function getWordStudy(
     for (const item of sortedItems) {
       const cleanAr = stripArabicHarakat(item.arabic);
       const curated = CURATED_WORD_DICTIONARY[cleanAr] || CURATED_WORD_DICTIONARY[item.arabic];
-      const meaning = curated?.primaryMeaning || getAuthenticWordMeaning(item.arabic, detail.lexical.rootSlug || rootBw);
+      const qacWordId = `${item.pos === "Fi'il" ? 'v' : 'n'}-${rootBw}-${item.lemmaBw}`;
+      const meaning = WBW_DERIVATIVE_GLOSSES[qacWordId] ||
+        (!isGenericMeaning(curated?.primaryMeaning) ? curated?.primaryMeaning : undefined) ||
+        'Makna belum tersedia';
 
       wordFamily.push({
         arabic: item.arabic,
@@ -296,13 +310,6 @@ export function getWordStudy(
 
   const rootSlugOrAr = detail.lexical.rootSlug || detail.lexical.rootArabic || detail.lexical.root;
   const authenticIndo = getAuthenticWordMeaning(detail.identity.arabic, rootSlugOrAr);
-
-  // Prefer a word-level gloss over a root fallback. Root meanings are often
-  // broader than the word in this verse, and generic POS labels are not glosses.
-  const isGenericMeaning = (text?: string) => !text ||
-    /^(nomina|verba|partikel|bentuk kata|akar kata|konsep & turunan|kosakata terindeks)\b/i.test(text.trim()) ||
-    text.startsWith("Kosakata Al-Qur'an") ||
-    text.startsWith('Keluarga kata:');
 
   if (context?.meaningIndo && context.meaningIndo.trim()) {
     primaryText = context.meaningIndo.trim();

@@ -22,7 +22,6 @@ import {
 } from 'lucide-react';
 import { WordStudyViewModel } from '@/lib/lexicon/types';
 import { parseLexiconSenseTokens } from '@/lib/lexicon/lexicon-formatter';
-import { getAuthenticWordMeaning, getRootTranslationProfile } from '@/lib/morphology/root-dictionary';
 import { isRawBuckwalterRoot, transliterateArabic } from '@/lib/morphology/transliteration';
 import { stripArabicHarakat } from '@/lib/search/root-search';
 import { useBookmarks } from '@/lib/hooks/useBookmarks';
@@ -38,11 +37,30 @@ interface WordStudyProps {
   isModalMode?: boolean;
 }
 
+function toRomanNumeral(value: number): string {
+  const numerals: Array<[number, string]> = [[1000, 'm'], [900, 'cm'], [500, 'd'], [400, 'cd'], [100, 'c'], [90, 'xc'], [50, 'l'], [40, 'xl'], [10, 'x'], [9, 'ix'], [5, 'v'], [4, 'iv'], [1, 'i']];
+  let remaining = value;
+  return numerals.reduce((result, [number, numeral]) => {
+    while (remaining >= number) {
+      result += numeral;
+      remaining -= number;
+    }
+    return result;
+  }, '');
+}
+
+function senseReferencesVerse(text: string, surahNumber?: number, ayahNumber?: number): boolean {
+  if (!surahNumber || !ayahNumber) return false;
+  const surahRoman = toRomanNumeral(surahNumber);
+  return new RegExp(`\\b${surahRoman}\\.\\s*${ayahNumber}\\b`, 'i').test(text);
+}
+
 export default function WordStudy({ study, onClose, isModalMode = false }: WordStudyProps) {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isGrammarOpen, setIsGrammarOpen] = useState(true);
   const [isOccurrencesOpen, setIsOccurrencesOpen] = useState(false);
   const [isLexiconOpen, setIsLexiconOpen] = useState(false);
+  const [isWordFamilyExpanded, setIsWordFamilyExpanded] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [isSourceDrawerOpen, setIsSourceDrawerOpen] = useState(false);
   const [selectedSourceId, setSelectedSourceId] = useState<string | undefined>();
@@ -64,28 +82,9 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
     grammarDerivation
   } = study;
 
-  const isRoboticPhilosophy = (text?: string) => {
-    if (!text) return true;
-    return (
-      text.includes('memiliki peranan penting') ||
-      text.includes('kemunculan morfologis') ||
-      text.includes('memiliki frekuensi') ||
-      text.includes('terindeks dalam Quranic Arabic Corpus') ||
-      (text.startsWith('Akar kata ') && text.includes('kemunculan'))
-    );
-  };
-
-  const rootProfile = (!morphology.isParticle && lexical.rootSlug)
-    ? getRootTranslationProfile(lexical.rootSlug)
-    : null;
-
-  const rawRootTrans = !morphology.isParticle
-    ? (lexical.rootTranslation || rootProfile?.coreMeaning || (rootProfile?.titleIndo && !rootProfile.titleIndo.startsWith('Konsep') ? rootProfile.titleIndo.replace(/^Akar\s+[^\(]+\(/, '').replace(/\)$/, '') : undefined) || lexical.rootPhilosophy)
-    : undefined;
-
-  const rootTrans = (!morphology.isParticle && rawRootTrans && !isRoboticPhilosophy(rawRootTrans))
-    ? rawRootTrans
-    : undefined;
+  const visibleWordFamily = isModalMode && !isWordFamilyExpanded
+    ? wordFamily.slice(0, 6)
+    : wordFamily;
 
   const displayTransliteration = (identity.transliteration && !isRawBuckwalterRoot(identity.transliteration))
     ? identity.transliteration
@@ -107,6 +106,9 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
   const resolvedSurahNumber = context?.surahNumber || fallbackOccurrence?.surahNumber;
   const resolvedAyahNumber = context?.ayahNumber || fallbackOccurrence?.ayahNumber;
   const resolvedSurahNameIndo = context?.surahNameIndo || fallbackOccurrence?.surahNameIndo;
+  const relevantLaneSenseIndex = lexical.senses.findIndex((sense) =>
+    senseReferencesVerse(sense.text, resolvedSurahNumber, resolvedAyahNumber)
+  );
 
   const handlePlayAudio = () => {
     if (isPlayingAudio) return;
@@ -282,7 +284,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
               Makna Kata
             </span>
             <button
-              onClick={() => openSourceDrawer(primaryMeaning.sourceBadge.startsWith("Lane's Lexicon") ? 'lane-arabic-english-lexicon' : (primaryMeaning.isEditorialSummary ? 'kemenag-translation' : 'quranic-arabic-corpus'))}
+              onClick={() => openSourceDrawer(primaryMeaning.sourceBadge.startsWith("Lane's Lexicon") ? 'lane-arabic-english-lexicon' : (primaryMeaning.sourceBadge === 'Terjemahan Kata' || primaryMeaning.isEditorialSummary ? 'kemenag-translation' : 'quranic-arabic-corpus'))}
               className="text-[11px] px-2.5 py-0.5 rounded-full bg-canvas-surface border border-hairline text-ink-secondary hover:text-primary hover:border-primary transition-colors font-medium inline-flex items-center space-x-1 shadow-subtle"
             >
               <span>{primaryMeaning.sourceBadge && primaryMeaning.sourceBadge !== 'Terjemahan Kata' ? primaryMeaning.sourceBadge : 'Kemenag RI'}</span>
@@ -344,14 +346,10 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
             </div>
           </div>
 
-          {rootTrans && (
-            <div className="p-4 rounded-2xl bg-canvas-soft/80 border border-hairline flex items-start space-x-3">
-              <BookOpen className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-              <div className="text-xs sm:text-sm text-ink-secondary leading-relaxed font-sans select-text">
-                <strong className="text-ink-primary font-semibold">Filosofi Dasar Makna:</strong>{' '}
-                {rootTrans}
-              </div>
-            </div>
+          {isModalMode && (
+            <p className="text-sm text-ink-secondary leading-relaxed">
+              Arti tiap turunan mengikuti terjemahan kata pada ayat; satu akar dapat membentuk kata dengan arti berbeda.
+            </p>
           )}
         </section>
       )}
@@ -388,12 +386,8 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
 
           {/* Spacious Responsive Grid (2 cols mobile, 3 cols desktop for generous breathing room) */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5 sm:gap-4">
-            {wordFamily.map((item, idx) => {
-              const isPlaceholder = !item.meaningIndo || /^(verba|nomina|partikel|bentuk kata|akar kata|konsep)\b/i.test(item.meaningIndo);
-              const displayMeaning = isPlaceholder
-                ? getAuthenticWordMeaning(item.arabic, lexical.rootSlug || lexical.root)
-                : item.meaningIndo;
-
+            {visibleWordFamily.map((item, idx) => {
+              const displayMeaning = item.meaningIndo || 'Makna belum tersedia';
               const isVerb = item.pos === "Fi'il";
               const cleanItemArabic = stripArabicHarakat(item.arabic.replace(/\u0670/g, '\u0627'));
               const isCurrentWord = cleanItemArabic === cleanActiveArabic;
@@ -442,7 +436,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
 
                   {/* Clear Authentic Indonesian Definition */}
                   <div className="pt-2 border-t border-hairline/60">
-                    <p className="text-xs sm:text-sm font-bold text-ink-primary group-hover:text-primary transition-colors line-clamp-2 leading-snug font-sans select-text">
+                    <p className="text-sm sm:text-base font-semibold text-ink-primary group-hover:text-primary transition-colors line-clamp-3 leading-snug font-sans select-text">
                       {displayMeaning}
                     </p>
                   </div>
@@ -450,6 +444,16 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
               );
             })}
           </div>
+
+          {isModalMode && wordFamily.length > 6 && (
+            <button
+              type="button"
+              onClick={() => setIsWordFamilyExpanded((expanded) => !expanded)}
+              className="w-full py-2 text-sm font-semibold text-primary hover:underline"
+            >
+              {isWordFamilyExpanded ? 'Tampilkan lebih sedikit' : `Lihat ${wordFamily.length - 6} turunan lainnya`}
+            </button>
+          )}
         </section>
       )}
 
@@ -500,7 +504,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       {/* ========================================================================= */}
       {/* 5. CATATAN TADABBUR & LINGUISTIK (Curated Scholarship)                     */}
       {/* ========================================================================= */}
-      {linguisticExplanation?.isCurated && (
+      {!isModalMode && linguisticExplanation?.isCurated && (
         <section className="p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
           <div className="flex items-center justify-between border-b border-hairline pb-3">
             <h3 className="text-lg sm:text-xl font-bold text-ink-primary flex items-center space-x-2">
@@ -546,7 +550,29 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       {/* ========================================================================= */}
       {/* 6. STRUKTUR TATA BAHASA & DERIVASI MORFOLOGI (Nahwu, Sharaf & QAC)        */}
       {/* ========================================================================= */}
-      {grammarDerivation && (
+      {isModalMode ? (
+        <section className="p-5 sm:p-6 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
+          <h3 className="text-base sm:text-lg font-bold text-ink-primary">Struktur kata</h3>
+          <dl className="grid grid-cols-2 gap-3 text-sm sm:text-base">
+            <div className="rounded-2xl bg-canvas-soft border border-hairline p-3">
+              <dt className="text-xs text-ink-mute">Kelas kata</dt>
+              <dd className="mt-1 font-semibold text-ink-primary">{morphology.posLabelIndo || morphology.pos}</dd>
+            </div>
+            {!morphology.isParticle && <div className="rounded-2xl bg-canvas-soft border border-hairline p-3">
+              <dt className="text-xs text-ink-mute">Akar</dt>
+              <dd className="mt-1 font-arabic text-lg font-bold text-primary" dir="rtl">{lexical.rootArabic}</dd>
+            </div>}
+            {morphology.wazanOrForm && <div className="rounded-2xl bg-canvas-soft border border-hairline p-3">
+              <dt className="text-xs text-ink-mute">Bentuk</dt>
+              <dd className="mt-1 font-semibold text-ink-primary">{morphology.wazanOrForm}</dd>
+            </div>}
+            {syntax.caseEnding && <div className="rounded-2xl bg-canvas-soft border border-hairline p-3">
+              <dt className="text-xs text-ink-mute">I‘rab</dt>
+              <dd className="mt-1 font-semibold text-ink-primary">{syntax.caseEnding}</dd>
+            </div>}
+          </dl>
+        </section>
+      ) : grammarDerivation && (
         <section className="p-6 sm:p-7 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
           <div className="flex items-center justify-between border-b border-hairline pb-3">
             <h3 className="text-base sm:text-lg font-bold text-ink-primary flex items-center space-x-2">
@@ -706,20 +732,20 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       {/* ========================================================================= */}
       {/* 6.1 MATRIKS TASRIF SHARAF, SILSILAH DERIVASI & TADABBUR BALAGHAH           */}
       {/* ========================================================================= */}
-      {!morphology.isParticle && (
+      {!isModalMode && !morphology.isParticle && (
         <SharafParadigmVisualizer rootSlug={lexical.rootSlug} rootArabic={lexical.rootArabic} />
       )}
 
-      {!morphology.isParticle && (
+      {!isModalMode && !morphology.isParticle && (
         <RootFamilyTree rootSlug={lexical.rootSlug} rootArabic={lexical.rootArabic} />
       )}
 
-      {!morphology.isParticle && lexical.rootSlug && (
+      {!isModalMode && !morphology.isParticle && lexical.rootSlug && (
         <BalaghahNuanceCard rootSlug={lexical.rootSlug} />
       )}
 
       {/* Interaktif CTA ke Modul Latihan */}
-      <div className="p-5 bg-gradient-to-r from-primary/10 via-canvas-soft to-primary/5 border border-primary/20 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4 font-sans shadow-subtle">
+      {!isModalMode && <div className="p-5 bg-gradient-to-r from-primary/10 via-canvas-soft to-primary/5 border border-primary/20 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4 font-sans shadow-subtle">
         <div className="flex items-center space-x-3 text-center sm:text-left">
           <div className="w-10 h-10 rounded-2xl bg-primary text-white flex items-center justify-center shrink-0 shadow-subtle">
             <LearnIcon className="w-5 h-5" />
@@ -739,12 +765,12 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
         >
           Mulai Latihan Interaktif &rarr;
         </Link>
-      </div>
+      </div>}
 
       {/* ========================================================================= */}
       {/* 7. SEMUA KEMUNCULAN DI AL-QUR'AN (CONCORDANCE OCCURRENCES)                */}
       {/* ========================================================================= */}
-      {!morphology.isParticle && occurrences.items.length > 0 && (
+      {!isModalMode && !morphology.isParticle && occurrences.items.length > 0 && (
         <section className="p-6 sm:p-7 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
           <div className="flex items-center justify-between border-b border-hairline pb-3">
             <h3 className="text-base sm:text-lg font-bold text-ink-primary flex items-center space-x-2">
@@ -827,30 +853,38 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                 <div className="text-xs sm:text-sm text-ink-mute flex items-center justify-between px-1">
                   <span className="font-semibold text-ink-secondary">
                     {lexical.rootArabic ? `Akar: ${lexical.rootArabic} · ` : ''}
-                    Entri Otentik Edward William Lane (London, 1863):
+                    Entri Edward William Lane (1863):
                   </span>
-                  <span className="text-primary font-medium">Mode Baca</span>
+                  <span className="text-primary font-medium">Teks Inggris</span>
                 </div>
+                {relevantLaneSenseIndex >= 0 && (
+                  <p className="text-sm sm:text-base text-ink-secondary rounded-xl bg-primary/5 p-3">
+                    Sense #{relevantLaneSenseIndex + 1} menyebut QS. {resolvedSurahNumber}:{resolvedAyahNumber}.
+                  </p>
+                )}
 
                 {lexical.senses.map((sense, idx) => {
                   const tokens = parseLexiconSenseTokens(sense.text);
+                  const isRelevant = idx === relevantLaneSenseIndex;
 
                   return (
-                    <div
+                    <details
                       key={idx}
-                      className="p-5 sm:p-6 rounded-2xl bg-canvas-surface border border-hairline shadow-xs space-y-3 border-l-4 border-l-primary"
+                      open={isRelevant}
+                      className="group p-4 sm:p-5 rounded-2xl bg-canvas-surface border border-hairline shadow-xs border-l-4 border-l-primary"
                     >
-                      <div className="flex items-center justify-between text-xs pb-2 border-b border-hairline/60">
-                        <span className="font-bold text-primary text-xs sm:text-sm flex items-center space-x-2">
-                          <span className="w-2 h-2 rounded-full bg-primary inline-block" />
+                      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm sm:text-base font-semibold text-ink-primary">
+                        <span className="flex items-center gap-2">
                           <span>Sense #{idx + 1}</span>
+                          {isRelevant && <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs text-primary">Relevan dengan ayat ini</span>}
                         </span>
-                        <span className="px-2.5 py-0.5 rounded-lg bg-canvas-soft border border-hairline text-xs font-mono font-semibold text-ink-primary">
-                          Book I, Part {sense.citation.volume}, p. {sense.citation.page}
+                        <span className="flex items-center gap-2 text-xs text-ink-mute">
+                          {sense.citation.volume ? `Part ${sense.citation.volume}, p. ${sense.citation.page}` : `p. ${sense.citation.page}`}
+                          <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
                         </span>
-                      </div>
+                      </summary>
 
-                      <div className="text-sm sm:text-base leading-relaxed text-ink-primary font-serif select-text">
+                      <div className="mt-4 border-t border-hairline/60 pt-4 text-base sm:text-lg leading-relaxed sm:leading-loose text-ink-primary font-serif select-text">
                         {tokens.map((token, tIdx) => {
                           if (token.type === 'arabic') {
                             return (
@@ -873,7 +907,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                           return <span key={tIdx}>{token.content}</span>;
                         })}
                       </div>
-                    </div>
+                    </details>
                   );
                 })}
               </div>
