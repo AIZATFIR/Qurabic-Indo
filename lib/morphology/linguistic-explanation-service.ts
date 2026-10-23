@@ -254,6 +254,16 @@ const CURATED_LINGUISTIC_PROFILES: Record<string, {
       `Secara linguistik, ${word} dan kata-kata terkait berasal dari akar kata ${rootSpaced}, dengan kata kerja dasar عَلَنَ yang berarti tampak nyata dan tidak tersembunyi (lawan dari as-sirr / rahasia). Dalam wazan Form IV (أَعْلَنَ), kata ini bermakna menyiarkan, menyatakan secara terbuka, atau menampakkan apa yang sebelumnya terpendam.`,
     quranicTheme:
       'Dalam Al-Qur\'an, akar kata ini sering dikontraskan dengan kata sirr (rahasia) — seperti "Ya\'lamu ma tusirruna wa ma tu\'linun" — menegaskan kemahatahuan Allah atas apa pun yang disembunyikan dalam dada manusia maupun apa yang mereka tampakkan secara terang-terangan.'
+  },
+
+  // 23. Root s-m-w (س-م-و) — Ketinggian, Nama, Keluhuran (QS. 1:1, dll.)
+  's-m-w': {
+    baseLemma: 'سَمَا / سُمُوّ',
+    baseMeaning: 'meninggi / menjulang / tanda keluhuran',
+    narrative: (word, rootSpaced) =>
+      `Secara linguistik, ${word} dan kata-kata terkait berasal dari akar kata ${rootSpaced}, dengan kata kerja dasar سَمَا (yasmu) yang berarti menjulang tinggi atau luhur. Dari prinsip "ketinggian" ini lahir kata اِسْم (nama) — karena nama mengangkat dan membedakan suatu entitas dari yang lain sehingga dikenal dan menonjol — serta kata سَمَاء (langit), yakni segala naungan yang berada di atas kita. Menyebut nama Allah (بِسْمِ اللَّهِ) berarti memulai dengan tanda pengenal yang paling luhur dan menghubungkan tindakan kita kepada Yang Maha Tinggi.`,
+    quranicTheme:
+      'Dalam Al-Qur\'an, akar س-م-و hadir dalam dua manifestasi agung: nama-nama Allah yang paling indah (Al-Asmā\' al-Husnā) sebagai sarana mengenal-Nya, dan penciptaan langit (As-Samā\') berlapis-lapis sebagai bukti ketinggian qudrah dan rahmat-Nya kepada semesta.'
   }
 };
 
