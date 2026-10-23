@@ -504,7 +504,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       {/* ========================================================================= */}
       {/* 5. CATATAN TADABBUR & LINGUISTIK (Curated Scholarship)                     */}
       {/* ========================================================================= */}
-      {!isModalMode && linguisticExplanation?.isCurated && (
+      {linguisticExplanation?.isCurated && (
         <section className="p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
           <div className="flex items-center justify-between border-b border-hairline pb-3">
             <h3 className="text-lg sm:text-xl font-bold text-ink-primary flex items-center space-x-2">
@@ -550,29 +550,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       {/* ========================================================================= */}
       {/* 6. STRUKTUR TATA BAHASA & DERIVASI MORFOLOGI (Nahwu, Sharaf & QAC)        */}
       {/* ========================================================================= */}
-      {isModalMode ? (
-        <section className="p-5 sm:p-6 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
-          <h3 className="text-base sm:text-lg font-bold text-ink-primary">Struktur kata</h3>
-          <dl className="grid grid-cols-2 gap-3 text-sm sm:text-base">
-            <div className="rounded-2xl bg-canvas-soft border border-hairline p-3">
-              <dt className="text-xs text-ink-mute">Kelas kata</dt>
-              <dd className="mt-1 font-semibold text-ink-primary">{morphology.posLabelIndo || morphology.pos}</dd>
-            </div>
-            {!morphology.isParticle && <div className="rounded-2xl bg-canvas-soft border border-hairline p-3">
-              <dt className="text-xs text-ink-mute">Akar</dt>
-              <dd className="mt-1 font-arabic text-lg font-bold text-primary" dir="rtl">{lexical.rootArabic}</dd>
-            </div>}
-            {morphology.wazanOrForm && <div className="rounded-2xl bg-canvas-soft border border-hairline p-3">
-              <dt className="text-xs text-ink-mute">Bentuk</dt>
-              <dd className="mt-1 font-semibold text-ink-primary">{morphology.wazanOrForm}</dd>
-            </div>}
-            {syntax.caseEnding && <div className="rounded-2xl bg-canvas-soft border border-hairline p-3">
-              <dt className="text-xs text-ink-mute">I‘rab</dt>
-              <dd className="mt-1 font-semibold text-ink-primary">{syntax.caseEnding}</dd>
-            </div>}
-          </dl>
-        </section>
-      ) : grammarDerivation && (
+      {grammarDerivation && (
         <section className="p-6 sm:p-7 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
           <div className="flex items-center justify-between border-b border-hairline pb-3">
             <h3 className="text-base sm:text-lg font-bold text-ink-primary flex items-center space-x-2">
