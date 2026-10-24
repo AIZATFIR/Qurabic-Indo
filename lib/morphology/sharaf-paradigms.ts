@@ -17,6 +17,65 @@ export interface SharafForm {
  * Authentic Classical Sharaf Paradigms for High-Frequency Quranic Roots
  */
 export const CLASSICAL_PARADIGMS: Record<string, SharafForm[]> = {
+  // 0. Root m-l-k (م-ل-ك)
+  'b-$-r': [
+    {
+      formId: 'Form II',
+      formName: 'Tsulatsi Mazid (فَعَّلَ)',
+      wazanPattern: 'فَعَّلَ / يُفَعِّلُ (بَشَّرَ / يُبَشِّرُ)',
+      faedahSharaf: 'Ta\'diyah & Mubalaghah: Memberitakan kabar gembira secara luas & membekas.',
+      explanation: 'Menyampaikan kabar gembira yang mengubah raut muka (basyarah) penerimanya menjadi cerah.',
+      madhi: { arabic: 'بَشَّرَ', translit: 'Basysyara', meaning: 'Telah memberi kabar gembira' },
+      mudhari: { arabic: 'يُبَشِّرُ', translit: 'Yubasysyiru', meaning: 'Sedang/akan memberi kabar gembira' },
+      amr: { arabic: 'بَشِّرْ', translit: 'Basysyir', meaning: 'Berilah kabar gembira!' },
+      masdar: { arabic: 'تَبْشِيرًا', translit: 'Tabsyīran', meaning: 'Pemberitaan kabar gembira' },
+      isimFail: { arabic: 'مُبَشِّرٌ', translit: 'Mubasysyirun', meaning: 'Pemberi kabar gembira' },
+      isimMaful: { arabic: 'مُبَشَّرٌ', translit: 'Mubasysyarun', meaning: 'Yang diberi kabar gembira' },
+      quranicExample: { verseRef: 'QS. 2:25', arabic: 'وَبَشِّرِ الَّذِينَ آمَنُوا', indo: 'Dan sampaikanlah kabar gembira kepada orang-orang yang beriman.' }
+    },
+    {
+      formId: 'Form X',
+      formName: 'Istif\'al (اِسْتَفْعَلَ)',
+      wazanPattern: 'اِسْتَفْعَلَ / يَسْتَفْعِلُ (اِسْتَبْشَرَ / يَسْتَبْشِرُ)',
+      faedahSharaf: 'Menyambut kabar gembira dengan penuh suka cita dan kebahagiaan mendalam.',
+      explanation: 'Menerima dan merasakan kegembiraan mendalam dari berita baik yang sampai padanya.',
+      madhi: { arabic: 'اِسْتَبْشَرَ', translit: 'Istabsyara', meaning: 'Telah bersuka cita' },
+      mudhari: { arabic: 'يَسْتَبْشِرُ', translit: 'Yastabsyiru', meaning: 'Sedang bersuka cita' },
+      amr: { arabic: 'اِسْتَبْشِرْ', translit: 'Istabsyir', meaning: 'Bergembiralah!' },
+      masdar: { arabic: 'اِسْتِبْشَارًا', translit: 'Istibsyāran', meaning: 'Suka cita mendalam' },
+      isimFail: { arabic: 'مُسْتَبْشِرٌ', translit: 'Mustabsyirun', meaning: 'Orang yang bersuka cita' },
+      isimMaful: { arabic: 'مُسْتَبْشَرٌ', translit: 'Mustabsyarun', meaning: 'Yang disambut dengan gembira' },
+      quranicExample: { verseRef: 'QS. 3:170', arabic: 'وَيَسْتَبْشِرُونَ بِالَّذِينَ لَمْ يَلْحَقُوا بِهِمْ', indo: 'Dan mereka bersuka cita terhadap orang-orang yang belum menyusul mereka.' }
+    }
+  ],
+  'm-l-k': [
+    {
+      formId: 'Form I',
+      formName: 'Tsulatsi Mujarrad (فَعَلَ)',
+      wazanPattern: 'فَعَلَ / يَفْعِلُ (مَلَكَ / يَمْلِكُ)',
+      faedahSharaf: 'Kepemilikan hakiki, kuasa mengatur, dan kekuasaan mutlak.',
+      explanation: 'Bentuk dasar yang menunjukkan kepemilikan dan kekuasaan penuh atas sesuatu.',
+      madhi: { arabic: 'مَلَكَ', translit: 'Malaka', meaning: 'Telah memiliki / menguasai' },
+      mudhari: { arabic: 'يَمْلِكُ', translit: 'Yamliku', meaning: 'Memiliki / berkuasa' },
+      amr: { arabic: 'اِمْلِكْ', translit: 'Imlik', meaning: 'Kuasailah!' },
+      masdar: { arabic: 'مُلْكًا', translit: 'Mulkan', meaning: 'Kekuasaan / Kerajaan' },
+      isimFail: { arabic: 'مَالِكٌ', translit: 'Mālikun', meaning: 'Pemilik / Yang Berkuasa' },
+      isimMaful: { arabic: 'مَمْلُوكٌ', translit: 'Mamlūkun', meaning: 'Hamba / Yang dimiliki' },
+      quranicExample: { verseRef: 'QS. 1:4', arabic: 'مَٰلِكِ يَوْمِ ٱلدِّينِ', indo: 'Pemilik hari pembalasan.' }
+    },
+    {
+      formId: 'Form II',
+      formName: 'Bab Tafil (مَلَّكَ)',
+      wazanPattern: 'فَعَّلَ / يُفَعِّلُ (مَلَّكَ / يُمَلِّكُ)',
+      faedahSharaf: 'Menganugerahkan kepemilikan atau otoritas kepada pihak lain.',
+      explanation: 'Menyerahkan atau menganugerahkan kepemilikan dan otoritas kepada pihak lain.',
+      madhi: { arabic: 'مَلَّكَ', translit: 'Mallaka', meaning: 'Telah menganugerahi kekuasaan' },
+      mudhari: { arabic: 'يُمَلِّكُ', translit: 'Yumalliku', meaning: 'Menganugerahkan kepemilikan' },
+      masdar: { arabic: 'تَمْلِيكًا', translit: 'Tamlīkan', meaning: 'Pemberian hak milik' },
+      isimFail: { arabic: 'مُمَلِّكٌ', translit: 'Mumallikun', meaning: 'Pemberi hak' },
+      isimMaful: { arabic: 'مُمَلَّكٌ', translit: 'Mumallakun', meaning: 'Yang diberi kuasa' }
+    }
+  ],
   // 1. Root s-b-r (ص-ب-ر)
   's-b-r': [
     {
@@ -208,11 +267,24 @@ export const CLASSICAL_PARADIGMS: Record<string, SharafForm[]> = {
  * Fallback Generator for generic Quranic roots
  */
 export function generateGenericParadigm(rootAr: string, rootSlug: string): SharafForm[] {
-  const clean = (rootAr || rootSlug || 'فعل').replace(/[^a-zA-Z\u0621-\u064A\s-]/g, '').trim();
-  const letters = clean.includes('-') ? clean.split('-') : clean.split('');
-  const f = letters[0] || 'ف';
-  const a = letters[1] || 'ع';
-  const l = letters[2] || 'ل';
+  let arOnly = (rootAr || '').replace(/[^\u0621-\u064A]/g, '').trim();
+  let f = 'ف', a = 'ع', l = 'ل';
+  if (arOnly.length >= 3) {
+    f = arOnly[0]; a = arOnly[1]; l = arOnly[2];
+  } else if (rootSlug && rootSlug.includes('-')) {
+    const parts = rootSlug.split('-').map(p => p.trim());
+    const slugMap: Record<string, string> = {
+      'm': 'م', 'l': 'ل', 'k': 'ك', 'b': 'ب', 't': 'ت', 's': 'س', 'r': 'ر',
+      'q': 'ق', 'd': 'د', 'E': 'ع', 'g': 'غ', 'x': 'خ', 'H': 'ح', 'h': 'ه',
+      'n': 'ن', 'w': 'و', 'y': 'ي', 'f': 'ف', 'j': 'ج', 'z': 'ز', 'S': 'ص',
+      'D': 'ض', 'T': 'ط', 'Z': 'ظ', 'A': 'ا', 'a': 'ا'
+    };
+    if (parts.length >= 3) {
+      f = slugMap[parts[0]] || parts[0];
+      a = slugMap[parts[1]] || parts[1];
+      l = slugMap[parts[2]] || parts[2];
+    }
+  }
 
   return [
     {

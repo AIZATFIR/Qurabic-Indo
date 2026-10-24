@@ -491,7 +491,7 @@ export function getCanonicalWordDetail(
       ((matchedRoot.coreMeaning && !matchedRoot.coreMeaning.includes('memiliki peranan penting')) ||
        (matchedRoot.meaningsIndonesian && matchedRoot.meaningsIndonesian.some(m => !m.startsWith('Gagasan pokok') && !m.startsWith('Ragam makna') && !m.includes('memiliki peranan penting'))))
     ) {
-      const senses = [];
+      const senses: any[] = [];
       if (matchedRoot.coreMeaning && !matchedRoot.coreMeaning.includes('memiliki peranan penting')) {
         senses.push({
           senseIndex: 1,

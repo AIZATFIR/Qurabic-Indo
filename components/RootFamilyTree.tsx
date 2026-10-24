@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { GitBranch, Layers, ArrowRight, BookOpen } from 'lucide-react';
+import ROOT_DATABASE_RAW from '../lib/data/roots-database.json';
 
 export interface DerivativeNode {
   category: 'Madhi' | 'Mudhari' | 'Amr' | 'Masdar' | 'IsimFa\'il' | 'IsimMaf\'ul' | 'Lainnya';
@@ -23,6 +24,23 @@ interface RootFamilyTreeProps {
  * Pre-defined rich derivative families for core Quranic roots
  */
 const CLASSICAL_FAMILY_TREES: Record<string, DerivativeNode[]> = {
+  'm-l-k': [
+    { category: 'Madhi', wazan: 'فَعَلَ (Form I)', arabic: 'مَلَكَ', translit: 'Malaka', meaningIndo: 'Memiliki / Menguasai', quranOccurrenceCount: 48, verseExample: { verseRef: 'QS. 25:3', textArabic: 'لَا يَمْلِكُونَ لِأَنْفُسِهِمْ ضَرًّا وَلَا نَفْعًا' } },
+    { category: 'Mudhari', wazan: 'يَفْعِلُ (Form I)', arabic: 'يَمْلِكُ', translit: 'Yamliku', meaningIndo: 'Sedang/akan menguasai / berkuasa', quranOccurrenceCount: 36, verseExample: { verseRef: 'QS. 10:31', textArabic: 'أَمَّنْ يَمْلِكُ السَّمْعَ وَالْأَبْصَارَ' } },
+    { category: 'IsimFa\'il', wazan: 'فَاعِلٌ', arabic: 'مَالِك', translit: 'Mālik', meaningIndo: 'Pemilik / Penguasa Hari Pembalasan', quranOccurrenceCount: 5, verseExample: { verseRef: 'QS. 1:4', textArabic: 'مَالِكِ يَوْمِ الدِّينِ' } },
+    { category: 'Lainnya', wazan: 'فَعِيلٌ / فَعْلٌ', arabic: 'مَلِك / مُلْك', translit: 'Malik / Mulk', meaningIndo: 'Raja / Kerajaan & Kedaulatan', quranOccurrenceCount: 48, verseExample: { verseRef: 'QS. 114:2', textArabic: 'مَلِكِ النَّاسِ' } },
+    { category: 'Lainnya', wazan: 'فَعَلٌ / مَلَكُوت', arabic: 'مَلَك / مَلَكُوت', translit: 'Malak / Malakūt', meaningIndo: 'Malaikat / Kerajaan Agung Semesta', quranOccurrenceCount: 88, verseExample: { verseRef: 'QS. 6:75', textArabic: 'وَكَذَٰلِكَ نُرِي إِبْرَاهِيمَ مَلَكُوتَ السَّمَاوَاتِ وَالْأَرْضِ' } }
+  ],
+  'b-$-r': [
+    { category: 'Madhi', wazan: 'فَعَّلَ (Form II)', arabic: 'بَشَّرَ', translit: 'Basysyara', meaningIndo: 'Memberi kabar gembira', quranOccurrenceCount: 38, verseExample: { verseRef: 'QS. 2:25', textArabic: 'وَبَشِّرِ الَّذِينَ آمَنُوا وَعَمِلُوا الصَّالِحَاتِ' } },
+    { category: 'Mudhari', wazan: 'يَسْتَفْعِلُ (Form X)', arabic: 'يَسْتَبْشِرُ', translit: 'Yastabsyiru', meaningIndo: 'Bergembira / bersuka cita', quranOccurrenceCount: 7, verseExample: { verseRef: 'QS. 3:170', textArabic: 'وَيَسْتَبْشِرُونَ بِالَّذِينَ لَمْ يَلْحَقُوا بِهِمْ' } },
+    { category: 'Amr', wazan: 'فَاعِلْ (Form III)', arabic: 'بَاشِرْ', translit: 'Bāsyir', meaningIndo: 'Campurilah / berhubunganlah', quranOccurrenceCount: 2, verseExample: { verseRef: 'QS. 2:187', textArabic: 'فَالْآنَ بَاشِرُوهُنَّ' } },
+    { category: 'Amr', wazan: 'أَفْعِلْ (Form IV)', arabic: 'أَبْشِرْ', translit: 'Absyir', meaningIndo: 'Bergembiralah!', quranOccurrenceCount: 1, verseExample: { verseRef: 'QS. 41:30', textArabic: 'وَأَبْشِرُوا بِالْجَنَّةِ الَّتِي كُنْتُمْ تُوعَدُونَ' } },
+    { category: 'Lainnya', wazan: 'فَعَلٌ (Isim)', arabic: 'بَشَرٌ', translit: 'Basyar', meaningIndo: 'Manusia (sebagai makhluk ragawi / fisik)', quranOccurrenceCount: 37, verseExample: { verseRef: 'QS. 3:47', textArabic: 'قَالَتْ رَبِّ أَنَّىٰ يَكُونُ لِي وَلَدٌ وَلَمْ يَمْسَسْنِي بَشَرٌ' } },
+    { category: 'Lainnya', wazan: 'فُعْلَى (Masdar/Isim)', arabic: 'بُشْرَىٰ', translit: 'Busyro', meaningIndo: 'Kabar gembira', quranOccurrenceCount: 15, verseExample: { verseRef: 'QS. 10:64', textArabic: 'لَهُمُ الْبُشْرَىٰ فِي الْحَيَاةِ الدُّنْيَا' } },
+    { category: 'IsimFa\'il', wazan: 'مُفَعِّلٌ (Form II)', arabic: 'مُبَشِّرٌ', translit: 'Mubasy-syir', meaningIndo: 'Pemberi kabar gembira', quranOccurrenceCount: 9, verseExample: { verseRef: 'QS. 2:213', textArabic: 'فَبَعَثَ اللَّهُ النَّبِيِّينَ مُبَشِّرِينَ وَمُنْذِرِينَ' } },
+    { category: 'Lainnya', wazan: 'فَعِيلٌ (Sifat Musyabbahah)', arabic: 'بَشِيرٌ', translit: 'Basyīr', meaningIndo: 'Pembawa kabar gembira yang terpercaya', quranOccurrenceCount: 7, verseExample: { verseRef: 'QS. 2:119', textArabic: 'إِنَّا أَرْسَلْنَاكَ بِالْحَقِّ بَشِيرًا وَنَذِيرًا' } }
+  ],
   's-b-r': [
     { category: 'Madhi', wazan: 'فَعَلَ (Form I)', arabic: 'صَبَرَ', translit: 'Ṣabara', meaningIndo: 'Dia telah bersabar', quranOccurrenceCount: 15, verseExample: { verseRef: 'QS. 16:126', textArabic: 'وَلَئِنْ صَبَرْتُمْ لَهُوَ خَيْرٌ لِلصَّابِرِينَ' } },
     { category: 'Mudhari', wazan: 'يَفْعِلُ (Form I)', arabic: 'يَصْبِرُ', translit: 'Yaṣbiru', meaningIndo: 'Dia sedang/akan bersabar', quranOccurrenceCount: 22, verseExample: { verseRef: 'QS. 12:90', textArabic: 'إِنَّهُ مَنْ يَتَّقِ وَيَصْبِرْ' } },
@@ -49,6 +67,38 @@ const CLASSICAL_FAMILY_TREES: Record<string, DerivativeNode[]> = {
 };
 
 function generateGenericFamilyTree(rootAr: string, rootSlug: string): DerivativeNode[] {
+  // Check if root exists in roots-database.json to extract authentic derivatives
+  const dbEntry = (ROOT_DATABASE_RAW as any[]).find(
+    r => r.root === rootSlug || r.rootLatin === rootSlug || r.rootArabic === rootAr
+  );
+
+  if (dbEntry && (dbEntry.verbs?.length || dbEntry.nouns?.length)) {
+    const nodes: DerivativeNode[] = [];
+    for (const v of (dbEntry.verbs || [])) {
+      nodes.push({
+        category: 'Madhi',
+        wazan: v.form || "Fi'il",
+        arabic: v.arabic,
+        translit: v.transliteration || v.arabic,
+        meaningIndo: v.meaningIndo || 'Kata Kerja',
+        quranOccurrenceCount: v.frequency
+      });
+    }
+    for (const n of (dbEntry.nouns || [])) {
+      nodes.push({
+        category: n.type === 'active_participle' ? "IsimFa'il" : (n.type === 'passive_participle' ? "IsimMaf'ul" : (n.type === 'masdar' ? 'Masdar' : 'Lainnya')),
+        wazan: n.pattern || 'Isim',
+        arabic: n.arabic,
+        translit: n.transliteration || n.arabic,
+        meaningIndo: n.meaningIndo || 'Kata Benda',
+        quranOccurrenceCount: n.frequency
+      });
+    }
+    if (nodes.length > 0) {
+      return nodes;
+    }
+  }
+
   const clean = (rootAr || rootSlug || 'فعل').replace(/[^a-zA-Z\u0621-\u064A\s-]/g, '').trim();
   const letters = clean.includes('-') ? clean.split('-') : clean.split('');
   const f = letters[0] || 'ف';
