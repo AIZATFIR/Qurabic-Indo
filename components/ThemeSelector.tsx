@@ -2,10 +2,14 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useTheme } from '@/lib/context/ThemeContext';
-import { Palette, Check, Sun, Moon, Leaf, BookOpen } from 'lucide-react';
+import { Palette, Check, Sun, Moon, Leaf, BookOpen, Cloud, Mountain } from 'lucide-react';
 import { ThemeType } from '@/lib/context/theme-config';
 
 const THEME_ICONS: Record<ThemeType, any> = {
+  'half-bookpaper': BookOpen,
+  'full-bookpaper': BookOpen,
+  langit: Cloud,
+  earth: Mountain,
   bookpaper: BookOpen,
   light: Sun,
   green: Leaf,

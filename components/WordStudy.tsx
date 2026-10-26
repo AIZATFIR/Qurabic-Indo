@@ -417,10 +417,10 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                         </div>
                       </div>
 
-                      {/* Arabic Typography: Clean & Balanced */}
-                      <div className="py-2">
+                      {/* Arabic Typography: Clean & Balanced with generous leading to prevent harakat clipping */}
+                      <div className="py-2.5 px-1 overflow-visible">
                         <span
-                          className="font-arabic text-2xl sm:text-3xl font-bold text-ink-primary group-hover:text-primary transition-colors block leading-relaxed select-text"
+                          className="font-arabic text-3xl sm:text-4xl font-bold text-ink-primary group-hover:text-primary transition-colors block leading-[2.2] sm:leading-[2.4] select-text py-1"
                           dir="rtl"
                         >
                           {item.arabic}

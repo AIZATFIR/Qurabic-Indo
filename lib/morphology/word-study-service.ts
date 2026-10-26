@@ -236,9 +236,13 @@ export function getWordStudy(
       const cleanAr = stripArabicHarakat(item.arabic);
       const curated = CURATED_WORD_DICTIONARY[cleanAr] || CURATED_WORD_DICTIONARY[item.arabic];
       const qacWordId = `${item.pos === "Fi'il" ? 'v' : 'n'}-${rootBw}-${item.lemmaBw}`;
-      const meaning = WBW_DERIVATIVE_GLOSSES[qacWordId] ||
-        (!isGenericMeaning(curated?.primaryMeaning) ? curated?.primaryMeaning : undefined) ||
-        'Makna belum tersedia';
+      
+      // If the word matches the current active word and active word has meaning, prefer it
+      let meaning = (cleanAr === detail.identity.cleanArabic && detail.translation?.primaryMeaning)
+        ? detail.translation.primaryMeaning
+        : (WBW_DERIVATIVE_GLOSSES[qacWordId] ||
+          (!isGenericMeaning(curated?.primaryMeaning) ? curated?.primaryMeaning : undefined) ||
+          'Makna belum tersedia');
 
       wordFamily.push({
         arabic: item.arabic,
