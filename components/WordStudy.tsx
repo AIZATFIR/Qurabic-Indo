@@ -322,9 +322,9 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                 ))}
               </div>
 
-              {lexical.root && (
-                <span className="text-xs font-mono font-semibold text-ink-mute">
-                  ({lexical.root})
+              {lexical.rootArabic && (
+                <span className="text-xs font-medium text-ink-mute">
+                  ({transliterateArabic(lexical.rootArabic)})
                 </span>
               )}
             </div>
