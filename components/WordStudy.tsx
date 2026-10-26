@@ -260,9 +260,9 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
         </div>
 
         {/* Crisp Grand Arabic Word Display with Soft Ambient Glow */}
-        <div className="relative py-4 my-1 flex items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-b from-primary/5 via-canvas-soft/40 to-transparent border border-hairline/40">
+        <div className="relative py-6 my-1 flex items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-b from-primary/5 via-canvas-soft/40 to-transparent border border-hairline/40">
           <span
-            className="font-arabic text-6xl sm:text-7xl lg:text-8xl font-bold text-primary tracking-wide block leading-[2.6] sm:leading-[2.8] select-text transition-transform duration-300 hover:scale-[1.02]"
+            className="font-arabic text-6xl sm:text-7xl lg:text-8xl font-bold text-primary tracking-normal block leading-normal select-text transition-transform duration-300 hover:scale-[1.02]"
             title={identity.arabic}
             dir="rtl"
           >
@@ -298,12 +298,13 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       </section>
 
       {/* ========================================================================= */}
-      {/* 2. ROOT CONCEPT BANNER (Akar Kata & Filosofi Makna) — KALAAM BEST PRACTICE */}
+      {/* 2. ROOT CONCEPT BANNER & KELUARGA KATA BENTO (Integrated Clean Canvas)   */}
       {/* ========================================================================= */}
       {!morphology.isParticle && lexical.rootArabic && (
-        <section className="p-5 sm:p-6 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-hairline pb-3.5">
-            <div className="flex items-center space-x-3">
+        <section className="p-6 sm:p-7 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-6">
+          {/* Header Bar: Root Badge, Arabic Letter Tiles & Frequency */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-hairline/70 pb-4">
+            <div className="flex items-center space-x-3.5">
               <span className="text-xs font-bold uppercase tracking-wider text-ink-mute flex items-center space-x-1.5">
                 <Compass className="w-4 h-4 text-primary" />
                 <span>Akar Kata</span>
@@ -314,7 +315,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                 {rootLettersList.map((letter, idx) => (
                   <div
                     key={idx}
-                    className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-primary/10 border border-primary/25 text-primary font-arabic text-2xl font-extrabold flex items-center justify-center shadow-xs transition-transform hover:-translate-y-0.5 select-text"
+                    className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-primary/10 border border-primary/20 text-primary font-arabic text-2xl font-extrabold flex items-center justify-center shadow-xs select-text"
                   >
                     {letter}
                   </div>
@@ -346,113 +347,107 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
             </div>
           </div>
 
-          {isModalMode && (
-            <p className="text-sm text-ink-secondary leading-relaxed">
-              Arti tiap turunan mengikuti terjemahan kata pada ayat; satu akar dapat membentuk kata dengan arti berbeda.
-            </p>
-          )}
-        </section>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 3. KELUARGA KATA DALAM AL-QUR'AN (WORD FAMILY) — THE CENTERPIECE AT TOP    */}
-      {/* ========================================================================= */}
-      {!morphology.isParticle && wordFamily.length > 0 && (
-        <section className="p-6 sm:p-7 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-hairline pb-3.5">
-            <div>
-              <h3 className="text-base sm:text-lg font-bold text-ink-primary flex items-center space-x-2">
-                <GitFork className="w-5 h-5 text-primary shrink-0" />
-                <span>Keluarga Kata dalam Al-Qur&apos;an</span>
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-bold">
-                  {wordFamily.length} Bentuk Terpilih
-                </span>
-              </h3>
-              <p className="text-xs sm:text-sm text-ink-secondary pt-1 font-sans">
-                Bentuk-bentuk turunan dari akar <strong className="text-primary font-arabic text-base">{lexical.rootArabic}</strong> yang digunakan dalam Al-Qur&apos;an beserta artinya:
+          {/* Root Semantic & Philosophy Context (Isi Ruang Kosong dengan Intisari Bermakna) */}
+          {lexical.rootPhilosophy && (
+            <div className="p-4 sm:p-5 rounded-2xl bg-canvas-soft border border-hairline/80 space-y-1.5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-primary block">
+                Filosofi &amp; Intisari Makna Akar
+              </span>
+              <p className="text-sm sm:text-base text-ink-secondary leading-relaxed font-sans select-text">
+                {lexical.rootPhilosophy}
               </p>
             </div>
+          )}
 
-            {lexical.rootSlug && (
-              <Link
-                href={`/akar/${lexical.rootSlug}`}
-                className="text-xs font-semibold text-primary hover:underline shrink-0 inline-flex items-center space-x-1 self-start sm:self-center"
-              >
-                <span>Buka Kamus Akar</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            )}
-          </div>
+          {/* Seamless Integrated Word Family Matrix */}
+          {wordFamily.length > 0 && (
+            <div className="space-y-3.5 pt-1">
+              <div className="flex items-center justify-between">
+                <h4 className="text-sm sm:text-base font-bold text-ink-primary flex items-center space-x-2">
+                  <GitFork className="w-4 h-4 text-primary shrink-0" />
+                  <span>Keluarga Kata dalam Al-Qur&apos;an</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold">
+                    {wordFamily.length} Bentuk
+                  </span>
+                </h4>
+                {isModalMode && (
+                  <span className="text-xs text-ink-mute hidden sm:inline">
+                    Pilih kata untuk eksplorasi detail
+                  </span>
+                )}
+              </div>
 
-          {/* Spacious Responsive Grid (2 cols mobile, 3 cols desktop for generous breathing room) */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5 sm:gap-4">
-            {visibleWordFamily.map((item, idx) => {
-              const displayMeaning = item.meaningIndo || 'Makna belum tersedia';
-              const isVerb = item.pos === "Fi'il";
-              const cleanItemArabic = stripArabicHarakat(item.arabic.replace(/\u0670/g, '\u0627'));
-              const isCurrentWord = cleanItemArabic === cleanActiveArabic;
+              {/* Bento Grid: Clean Surface, Rounded-2xl, Balanced Spacing & No Visual Noise */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {visibleWordFamily.map((item, idx) => {
+                  const displayMeaning = item.meaningIndo || 'Makna belum tersedia';
+                  const isVerb = item.pos === "Fi'il";
+                  const cleanItemArabic = stripArabicHarakat(item.arabic.replace(/\u0670/g, '\u0627'));
+                  const isCurrentWord = cleanItemArabic === cleanActiveArabic;
 
-              return (
-                <Link
-                  key={idx}
-                  href={`/kata/${encodeURIComponent(item.arabic)}`}
-                  className={`p-4 sm:p-5 rounded-2xl transition-all duration-200 text-center space-y-2.5 group flex flex-col justify-between shadow-xs hover:shadow-md hover:-translate-y-0.5 border ${
-                    isCurrentWord
-                      ? 'bg-primary/10 border-primary/40 ring-2 ring-primary/20'
-                      : 'bg-canvas-soft hover:bg-canvas-page border-hairline hover:border-primary/40'
-                  }`}
-                >
-                  {/* Top Row: POS Tag & Frequency Badge */}
-                  <div className="flex items-center justify-between text-xs">
-                    <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
-                      isVerb
-                        ? 'bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/20'
-                        : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20'
-                    }`}>
-                      {item.pos}
-                    </span>
-
-                    <div className="flex items-center space-x-1.5">
-                      {isCurrentWord && (
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/20 px-1.5 py-0.5 rounded-md">
-                          Kata Ini
-                        </span>
-                      )}
-                      <span className="font-mono font-bold text-xs text-ink-mute group-hover:text-primary transition-colors bg-canvas-surface px-2 py-0.5 rounded-full border border-hairline">
-                        {item.count}×
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Arabic Word Display in Large Calligraphic Typography */}
-                  <div className="py-1">
-                    <span
-                      className="font-arabic text-3xl sm:text-4xl font-bold text-ink-primary group-hover:text-primary transition-colors block leading-relaxed select-text"
-                      dir="rtl"
+                  return (
+                    <Link
+                      key={idx}
+                      href={`/kata/${encodeURIComponent(item.arabic)}`}
+                      className={`p-3.5 sm:p-4 rounded-2xl transition-all duration-200 text-center flex flex-col justify-between border ${
+                        isCurrentWord
+                          ? 'bg-primary/10 border-primary/40 ring-1 ring-primary/20 shadow-xs'
+                          : 'bg-canvas-soft hover:bg-canvas-page border-hairline hover:border-primary/30'
+                      }`}
                     >
-                      {item.arabic}
-                    </span>
-                  </div>
+                      {/* Top Row: POS Tag & Frequency */}
+                      <div className="flex items-center justify-between text-xs pb-1">
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                          isVerb
+                            ? 'bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/20'
+                            : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20'
+                        }`}>
+                          {item.pos}
+                        </span>
 
-                  {/* Clear Authentic Indonesian Definition */}
-                  <div className="pt-2 border-t border-hairline/60">
-                    <p className="text-sm sm:text-base font-semibold text-ink-primary group-hover:text-primary transition-colors line-clamp-3 leading-snug font-sans select-text">
-                      {displayMeaning}
-                    </p>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+                        <div className="flex items-center space-x-1">
+                          {isCurrentWord && (
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-primary bg-primary/20 px-1 py-0.2 rounded">
+                              Kata Ini
+                            </span>
+                          )}
+                          <span className="font-mono font-medium text-[11px] text-ink-mute bg-canvas-surface px-1.5 py-0.5 rounded-full border border-hairline">
+                            {item.count}×
+                          </span>
+                        </div>
+                      </div>
 
-          {isModalMode && wordFamily.length > 6 && (
-            <button
-              type="button"
-              onClick={() => setIsWordFamilyExpanded((expanded) => !expanded)}
-              className="w-full py-2 text-sm font-semibold text-primary hover:underline"
-            >
-              {isWordFamilyExpanded ? 'Tampilkan lebih sedikit' : `Lihat ${wordFamily.length - 6} turunan lainnya`}
-            </button>
+                      {/* Arabic Typography: Clean & Balanced */}
+                      <div className="py-2">
+                        <span
+                          className="font-arabic text-2xl sm:text-3xl font-bold text-ink-primary group-hover:text-primary transition-colors block leading-relaxed select-text"
+                          dir="rtl"
+                        >
+                          {item.arabic}
+                        </span>
+                      </div>
+
+                      {/* Indonesian Meaning */}
+                      <div className="pt-2 border-t border-hairline/60">
+                        <p className="text-xs sm:text-sm font-semibold text-ink-primary group-hover:text-primary transition-colors line-clamp-2 leading-snug font-sans select-text">
+                          {displayMeaning}
+                        </p>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {isModalMode && wordFamily.length > 6 && (
+                <button
+                  type="button"
+                  onClick={() => setIsWordFamilyExpanded((expanded) => !expanded)}
+                  className="w-full py-2 text-xs font-semibold text-primary hover:underline transition-colors"
+                >
+                  {isWordFamilyExpanded ? 'Tampilkan lebih sedikit' : `Lihat ${wordFamily.length - 6} turunan lainnya`}
+                </button>
+              )}
+            </div>
           )}
         </section>
       )}
