@@ -25,6 +25,8 @@ export function useModalBackHandler(
 
   const isHistoryPushedRef = useRef(false);
   const initialPathnameRef = useRef<string>('');
+  const historyKeyRef = useRef<string>('');
+  const effectGenerationRef = useRef(0);
 
   const triggerRespectfulAdIfAllowed = useCallback(() => {
     const isReadingModal = ['word_study', 'grammar_legend', 'surah_search'].includes(modalName);
@@ -50,23 +52,28 @@ export function useModalBackHandler(
   useEffect(() => {
     if (!isOpen || typeof window === 'undefined') return;
 
+    const generation = ++effectGenerationRef.current;
     initialPathnameRef.current = window.location.pathname;
-    const modalKey = `__qurabic_${modalName}_${Date.now()}`;
+    const modalKey = historyKeyRef.current || `__qurabic_${modalName}_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    historyKeyRef.current = modalKey;
     const currentState = window.history.state || {};
 
     try {
-      window.history.pushState(
-        { ...currentState, [modalKey]: true, __qurabic_modal_active: true },
-        ''
-      );
+      // StrictMode replays this effect; reuse the entry owned by this mounted modal.
+      if (!currentState[modalKey]) {
+        window.history.pushState(
+          { ...currentState, [modalKey]: true, __qurabic_modal_active: true, __qurabic_modal_top: modalKey },
+          ''
+        );
+      }
       isHistoryPushedRef.current = true;
     } catch {
       isHistoryPushedRef.current = false;
     }
 
-    const handlePopState = () => {
+    const handlePopState = (event: PopStateEvent) => {
       // User pressed mobile hardware back button or browser back
-      if (isHistoryPushedRef.current) {
+      if (isHistoryPushedRef.current && !event.state?.[modalKey]) {
         isHistoryPushedRef.current = false;
         triggerRespectfulAdIfAllowed();
         onCloseRef.current();
@@ -78,14 +85,17 @@ export function useModalBackHandler(
     return () => {
       window.removeEventListener('popstate', handlePopState);
 
-      // If closed by parent state change or unmount, pop the history state
-      // but only if we are still on the exact same pathname (not navigated to new route)
-      if (isHistoryPushedRef.current && window.location.pathname === initialPathnameRef.current) {
-        isHistoryPushedRef.current = false;
-        try {
-          window.history.back();
-        } catch {}
-      }
+      // Cleanup is also replayed by StrictMode. Defer traversal so a synchronous
+      // remount can cancel it before an asynchronous popstate closes the new modal.
+      queueMicrotask(() => {
+        if (effectGenerationRef.current !== generation) return;
+        if (isHistoryPushedRef.current &&
+            window.location.pathname === initialPathnameRef.current &&
+            window.history.state?.__qurabic_modal_top === modalKey) {
+          isHistoryPushedRef.current = false;
+          try { window.history.back(); } catch {}
+        }
+      });
     };
   }, [isOpen, modalName, triggerRespectfulAdIfAllowed]);
 

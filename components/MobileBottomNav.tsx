@@ -5,19 +5,21 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, BookOpen, Bookmark, Search, BookMarked, Compass, Sun } from 'lucide-react';
 import OmniSearch from './OmniSearch';
+import { useLanguage } from '@/lib/context/LanguageContext';
 import { useBookmarks } from '@/lib/hooks/useBookmarks';
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
+  const { t } = useLanguage();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { bookmarkedIds } = useBookmarks();
 
   const navItems = [
-    { label: 'Beranda', href: '/', icon: Home },
-    { label: 'Baca', href: '/baca', icon: BookMarked },
+    { label: t('Beranda', 'Home'), href: '/', icon: Home },
+    { label: t('Baca', 'Read'), href: '/baca', icon: BookMarked },
     { label: 'Rahm', href: '/rahm', icon: Sun },
-    { label: 'Katalog', href: '/morfologi', icon: BookOpen },
-    { label: 'Tersimpan', href: '/favorit', icon: Bookmark, badge: bookmarkedIds.length },
+    { label: t('Katalog', 'Roots'), href: '/morfologi', icon: BookOpen },
+    { label: t('Tersimpan', 'Saved'), href: '/favorit', icon: Bookmark, badge: bookmarkedIds.length },
   ];
 
   if (pathname === '/baca') {
@@ -36,7 +38,7 @@ export default function MobileBottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center justify-center space-y-0.5 py-1 px-2 rounded-xl transition-all relative ${
+                className={`flex flex-col items-center justify-center space-y-0.5 min-h-11 py-1 px-2 transition-all relative ${
                   isActive
                     ? 'text-primary font-bold'
                     : 'text-ink-mute hover:text-ink-primary'
@@ -50,7 +52,7 @@ export default function MobileBottomNav() {
                     </span>
                   )}
                 </div>
-                <span className="text-[9px] font-medium font-sans">{item.label}</span>
+                <span className="text-[11px] font-medium font-sans">{item.label}</span>
               </Link>
             );
           })}
@@ -58,10 +60,10 @@ export default function MobileBottomNav() {
           {/* Search Trigger Button */}
           <button
             onClick={() => setIsSearchOpen(true)}
-            className="flex flex-col items-center justify-center space-y-0.5 py-1 px-2 rounded-xl text-ink-mute hover:text-primary transition-all cursor-pointer"
+            className="flex flex-col items-center justify-center space-y-0.5 min-h-11 py-1 px-2 text-ink-mute hover:text-primary transition-all cursor-pointer"
           >
             <Search className="w-4 h-4" />
-            <span className="text-[9px] font-medium font-sans">Cari</span>
+            <span className="text-[11px] font-medium font-sans">{t('Cari', 'Search')}</span>
           </button>
         </div>
       </div>

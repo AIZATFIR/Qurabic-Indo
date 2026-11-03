@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
+import { useLanguage } from '@/lib/context/LanguageContext';
 import { X, ShieldCheck, ExternalLink, BookOpen, Layers, Award } from 'lucide-react';
 import { SourceRegistry } from '@/lib/lexicon/types';
 import { useModalBackHandler } from '@/lib/hooks/useModalBackHandler';
@@ -18,6 +19,7 @@ export default function SourceDrawer({
   sources,
   initialSourceId
 }: SourceDrawerProps) {
+  const { t, language } = useLanguage();
   const { handleClose } = useModalBackHandler(isOpen, onClose, { modalName: 'source_drawer' });
 
   useEffect(() => {
@@ -49,23 +51,27 @@ export default function SourceDrawer({
       onClick={handleClose}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="word-source-title"
         data-lenis-prevent="true"
         onWheel={(e) => e.stopPropagation()}
-        className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto overscroll-contain bg-[var(--bg-surface)] text-[var(--color-ink-primary)] border border-hairline rounded-3xl shadow-2xl p-6 sm:p-7 space-y-5 animate-scale-up text-left opacity-100"
+        className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto overscroll-contain bg-[var(--bg-surface)] text-[var(--color-ink-primary)] border border-hairline rounded-none shadow-2xl p-6 sm:p-7 space-y-5 animate-scale-up text-left opacity-100"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-hairline pb-3.5">
           <div className="flex items-center space-x-2">
             <ShieldCheck className="w-5 h-5 text-primary" />
-            <h3 className="text-base font-bold text-ink-primary">
-              Otoritas &amp; Provenansi Data
+            <h3 id="word-source-title" className="text-base font-bold text-ink-primary">
+              {t('Sumber data', 'Data sources')}
             </h3>
           </div>
           <button
             onClick={handleClose}
             className="p-1.5 rounded-full hover:bg-canvas-soft text-ink-mute hover:text-ink-primary transition-colors border border-hairline"
-            title="Tutup"
+            title={t('Tutup', 'Close')}
+            aria-label={t('Tutup sumber data', 'Close data sources')}
           >
             <X className="w-4 h-4" />
           </button>
@@ -73,7 +79,7 @@ export default function SourceDrawer({
 
         {/* Intro */}
         <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed">
-          Setiap data linguistik, leksikografi, dan teks di Qurabic bersumber dari repositori terverifikasi dan dapat ditelusuri langsung ke publikasi akademis aslinya.
+          {t('Terjemahan kata, terjemahan ayat, anotasi tata bahasa, dan definisi kamus adalah sumber yang berbeda. Definisi Lane ditampilkan dalam bahasa Inggris aslinya. Transkripsi digital dapat mengandung kesalahan; periksa halaman rujukan untuk kajian lebih lanjut.', 'Word translations, verse translations, grammar annotations and dictionary definitions are different sources. Lane definitions retain their original English. Digital transcriptions can contain errors; consult the referenced page for further study.')}
         </p>
 
         {/* Sources List */}
@@ -83,7 +89,7 @@ export default function SourceDrawer({
             return (
               <div
                 key={src.id}
-                className={`p-4 rounded-2xl border transition-all space-y-2 ${
+                className={`py-4 border-b transition-all space-y-2 ${
                   isHighlighted
                     ? 'bg-primary-subdued/30 border-primary/40'
                     : 'bg-canvas-soft border-hairline'
@@ -92,10 +98,10 @@ export default function SourceDrawer({
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <h4 className="text-sm font-bold text-ink-primary">
-                      {src.name}
+                      {language === 'en' ? (src.nameEnglish || src.name) : src.name}
                     </h4>
                     {src.edition && (
-                      <p className="text-[11px] text-ink-mute font-medium">
+                      <p className="text-sm text-ink-mute font-medium">
                         {src.edition}
                       </p>
                     )}
@@ -108,8 +114,8 @@ export default function SourceDrawer({
                 </div>
 
                 {src.description && (
-                  <p className="text-xs text-ink-secondary leading-relaxed">
-                    {src.description}
+                  <p className="text-sm text-ink-secondary leading-relaxed">
+                    {language === 'en' ? (src.descriptionEnglish || src.description) : src.description}
                   </p>
                 )}
 
@@ -121,7 +127,7 @@ export default function SourceDrawer({
                       rel="noopener noreferrer"
                       className="text-xs font-semibold text-primary hover:text-primary-deep inline-flex items-center space-x-1"
                     >
-                      <span>Lihat Rujukan Asli</span>
+                      <span>{t('Buka sumber', 'Open source')}</span>
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>
@@ -132,8 +138,8 @@ export default function SourceDrawer({
         </div>
 
         {/* Footer Note */}
-        <div className="p-3 bg-canvas-soft rounded-2xl border border-hairline text-[11px] text-ink-mute text-center">
-          Prinsip Integritas Qurabic: Zero AI-generated classical citations. Semua kutipan terikat ke edisi digital resmi.
+        <div className="p-3 bg-canvas-soft rounded-none border border-hairline text-sm text-ink-mute text-center">
+          {t('Entry ini menampilkan terjemahan per kata dan anotasi sumber; narasi akar dan tasrif otomatis yang belum ditinjau tidak disertakan.', 'This entry shows sourced word translations and annotations. Unreviewed generated root narratives and conjugations are excluded.')}
         </div>
       </div>
     </div>

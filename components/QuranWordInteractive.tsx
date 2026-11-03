@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, memo } from 'react';
+import { useLanguage } from '@/lib/context/LanguageContext';
 import WordEtymologyModal from './WordEtymologyModal';
 
 export interface QuranWordClickData {
@@ -114,6 +115,7 @@ function QuranWordInteractiveComponent({
   fontSize = 'lg',
   onWordClick,
 }: QuranWordInteractiveProps) {
+  const { t } = useLanguage();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const displayTransliteration = transliteration && !transliteration.startsWith('Kata ')
@@ -189,7 +191,7 @@ function QuranWordInteractiveComponent({
     }
   };
 
-  const a11yLabel = `Bedah kata: ${wordArabic}, ${displayTransliteration}${meaningIndo ? `, arti: ${meaningIndo}` : ''}`;
+  const a11yLabel = `${t('Bedah kata', 'Explore word')}: ${wordArabic}, ${displayTransliteration}${meaningIndo ? `, ${meaningIndo}` : ''}`;
 
   return (
     <>
@@ -202,7 +204,7 @@ function QuranWordInteractiveComponent({
           onKeyDown={handleKeyDown}
           aria-label={a11yLabel}
           className="inline-block px-1 sm:px-1.5 py-0.5 my-0.5 rounded-lg border-0 bg-transparent hover:bg-primary-subdued/50 hover:text-primary transition-all cursor-pointer select-none active:scale-95 focus:outline-none focus-visible:ring-1 focus-visible:ring-primary group font-arabic"
-          title="Klik untuk Bedah Leksikal & Arti Kata"
+          title={t('Klik untuk Bedah Leksikal & Arti Kata', 'Explore word meaning and morphology')}
           dir="rtl"
         >
           <span className="font-arabic text-inherit group-hover:text-primary transition-colors" dir="rtl">
@@ -217,7 +219,7 @@ function QuranWordInteractiveComponent({
           onClick={handleClick}
           onKeyDown={handleKeyDown}
           aria-label={a11yLabel}
-          className={`inline-flex flex-col items-center justify-between ${stackedCardPadding} rounded-2xl bg-canvas-soft/90 hover:bg-primary-subdued/90 border border-hairline/90 hover:border-primary/50 transition-all cursor-pointer select-none active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-center group my-1.5 mx-1 shadow-sm hover:shadow-subtle`}
+          className={`inline-flex flex-col items-center justify-between ${stackedCardPadding} bg-transparent hover:bg-primary-subdued/60 border-b border-hairline/50 hover:border-primary/50 transition-all cursor-pointer select-none active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-center group my-1.5 mx-1 `}
           title="Klik untuk Bedah Leksikal & Morfologi"
         >
           <span className={`font-arabic ${stackedArabicSize} text-ink-primary group-hover:text-primary transition-colors leading-[2.2] sm:leading-[2.4]`} dir="rtl">

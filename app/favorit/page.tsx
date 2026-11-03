@@ -1,75 +1,37 @@
 'use client';
 
-import React from 'react';
 import { useBookmarks } from '@/lib/hooks/useBookmarks';
 import { ROOT_DATABASE } from '@/lib/data/roots';
 import RootCard from '@/components/RootCard';
 import Link from 'next/link';
 import { Bookmark, BookOpen, ArrowLeft } from 'lucide-react';
+import { useLanguage } from '@/lib/context/LanguageContext';
 
 export default function FavoritPage() {
   const { bookmarkedIds, isLoaded } = useBookmarks();
-
-  const savedRoots = ROOT_DATABASE.filter((root) => bookmarkedIds.includes(root.id));
+  const { t } = useLanguage();
+  const savedRoots = ROOT_DATABASE.filter(root => bookmarkedIds.includes(root.id));
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      {/* Back Link */}
-      <Link
-        href="/"
-        className="inline-flex items-center space-x-2 text-sm text-ink-mute hover:text-primary transition-colors mb-2 font-medium font-sans"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        <span>Kembali ke Beranda</span>
+    <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8 font-sans">
+      <Link href="/" className="inline-flex min-h-11 items-center gap-2 text-sm text-ink-secondary hover:text-primary">
+        <ArrowLeft className="h-4 w-4" aria-hidden="true" />{t('Kembali ke beranda', 'Back to home')}
       </Link>
-
-      {/* Header Banner */}
-      <div className="bg-canvas-surface border border-hairline rounded-2xl p-8 sm:p-10 shadow-subtle space-y-3">
-        <h1 className="text-3xl sm:text-4xl font-light text-ink-primary tracking-tight font-sans">
-          Akar Kata <span className="font-semibold text-primary">Tersimpan</span>
-        </h1>
-
-        <p className="text-sm text-ink-secondary max-w-2xl leading-relaxed font-sans">
-          Koleksi akar kata dan kosakata Al-Qur&apos;an yang telah Anda tandai untuk dipelajari lebih lanjut. Tersimpan secara lokal di peramban Anda.
-        </p>
-      </div>
-
-      {/* Content */}
-      {!isLoaded ? (
-        <div className="p-12 text-center text-ink-mute font-sans">Memuat data tersimpan...</div>
-      ) : savedRoots.length === 0 ? (
-        <div className="p-12 sm:p-16 text-center bg-canvas-surface border border-hairline rounded-2xl space-y-4 shadow-subtle">
-          <div className="w-10 h-10 rounded-xl bg-primary-subdued text-primary flex items-center justify-center mx-auto">
-            <Bookmark className="w-5 h-5" />
-          </div>
-          <h2 className="text-base sm:text-lg font-semibold text-ink-primary font-sans">Belum Ada Kata Tersimpan</h2>
-          <p className="text-sm text-ink-mute max-w-md mx-auto font-sans">
-            Klik ikon penanda pada kartu akar kata atau kosakata manapun untuk menyimpannya ke daftar belajar Anda.
-          </p>
-          <div className="pt-2">
-            <Link
-              href="/morfologi"
-              className="inline-flex items-center space-x-2 bg-primary hover:bg-primary-deep text-white px-5 py-2.5 rounded-xl text-xs font-semibold shadow-subtle transition-all font-sans"
-            >
-              <BookOpen className="w-4 h-4" />
-              <span>Buka Katalog Morfologi</span>
-            </Link>
-          </div>
-        </div>
-      ) : (
-        <section aria-labelledby="saved-roots-heading" className="space-y-4">
-          <h2 id="saved-roots-heading" className="sr-only">Daftar Akar Kata Tersimpan</h2>
-          <div className="flex items-center justify-between text-xs text-ink-mute font-sans">
-            <span>Menampilkan {savedRoots.length} akar kata tersimpan</span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {savedRoots.map((root) => (
-              <RootCard key={root.id} root={root} />
-            ))}
-          </div>
+      <header className="border-b border-hairline py-8">
+        <h1 className="text-3xl font-medium tracking-tight text-ink-primary sm:text-4xl">{t('Akar kata tersimpan', 'Saved roots')}</h1>
+        <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-secondary">{t('Akar kata yang Anda tandai untuk dipelajari. Simpanan disimpan di peramban ini.', 'Roots you saved for further study. Your saved list is stored in this browser.')}</p>
+      </header>
+      {!isLoaded ? <p role="status" className="py-12 text-ink-secondary">{t('Memuat simpanan…', 'Loading saved roots…')}</p>
+        : savedRoots.length === 0 ? <section className="py-12 sm:py-16">
+          <Bookmark className="h-6 w-6 text-primary" aria-hidden="true" />
+          <h2 className="mt-5 text-xl font-medium text-ink-primary">{t('Belum ada akar tersimpan', 'No saved roots yet')}</h2>
+          <p className="mt-3 max-w-lg text-base leading-relaxed text-ink-secondary">{t('Pilih ikon penanda di samping akar kata untuk menambahkannya ke daftar belajar Anda.', 'Select the bookmark beside a root to add it to your study list.')}</p>
+          <Link href="/morfologi" className="mt-5 inline-flex min-h-11 items-center gap-2 border-b border-primary text-base font-medium text-primary"><BookOpen className="h-4 w-4" aria-hidden="true" />{t('Jelajahi akar kata', 'Explore roots')}</Link>
         </section>
-      )}
-    </div>
+        : <section aria-labelledby="saved-roots-heading" className="pt-6">
+          <h2 id="saved-roots-heading" className="text-sm text-ink-secondary">{savedRoots.length} {t('akar kata tersimpan', 'saved roots')}</h2>
+          <div className="mt-2">{savedRoots.map(root => <RootCard key={root.id} root={root} />)}</div>
+        </section>}
+    </main>
   );
 }

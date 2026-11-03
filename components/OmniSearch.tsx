@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, X, BookOpen, ArrowRight, CornerDownLeft, Info, History, Trash2 } from 'lucide-react';
+import { Search, X, BookOpen, ArrowRight, CornerDownLeft, History, Trash2 } from 'lucide-react';
 import { searchRoots } from '@/lib/search/root-search';
 import { RootWord } from '@/lib/types/morphology';
+import { useLanguage } from '@/lib/context/LanguageContext';
 
 interface OmniSearchProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ interface OmniSearchProps {
 const STORAGE_KEY = 'qurabic_search_history';
 
 export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
+  const { t } = useLanguage();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<RootWord[]>([]);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
@@ -54,7 +56,7 @@ export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
         if (isOpen) {
           onClose();
         } else {
-          const triggerBtn = document.querySelector('header button');
+          const triggerBtn = document.querySelector('[data-search-trigger]');
           if (triggerBtn) (triggerBtn as HTMLButtonElement).click();
         }
       }
@@ -118,13 +120,13 @@ export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-ink-primary/50 backdrop-blur-sm transition-opacity animate-in fade-in duration-200 font-sans overscroll-contain">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-ink-primary/50 transition-opacity animate-in fade-in duration-200 font-sans overscroll-contain">
       
       {/* Backdrop Dismiss */}
       <div className="fixed inset-0" onClick={onClose} />
 
       {/* Search Modal Box */}
-      <div className="relative w-full max-w-2xl bg-canvas-surface border border-hairline rounded-2xl shadow-2xl overflow-hidden overscroll-contain z-10 flex flex-col max-h-[82vh]">
+      <div role="dialog" aria-modal="true" aria-label={t('Cari kata atau akar', 'Search words and roots')} className="relative w-full max-w-2xl bg-canvas-surface border border-hairline rounded-sm shadow-2xl overflow-hidden overscroll-contain z-10 flex flex-col max-h-[82vh]">
         
         {/* Search Input Bar */}
         <form onSubmit={handleFormSubmit} className="flex items-center px-5 py-4 border-b border-hairline bg-canvas-surface">
@@ -134,14 +136,16 @@ export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
             type="text"
             value={query}
             onChange={(e) => handleSearchChange(e.target.value)}
-            placeholder="Cari akar kata, lafal Arab, atau makna (contoh: sabar, rahman, ك-ت-ب)..."
+            aria-label={t('Cari kata atau akar', 'Search for a word or root')}
+            placeholder={t('Cari kata atau akar, contoh: sabar, كتب', 'Search a word or root, for example: كتب, rahman')}
             className="w-full bg-transparent text-ink-primary placeholder:text-ink-mute text-base focus:outline-none font-sans"
           />
           {query && (
             <button
               type="button"
+              aria-label={t('Hapus pencarian', 'Clear search')}
               onClick={() => handleSearchChange('')}
-              className="p-1 rounded-full text-ink-mute hover:text-ink-primary hover:bg-canvas-soft transition-colors mr-2"
+              className="p-1 rounded-sm text-ink-mute hover:text-ink-primary hover:bg-canvas-soft transition-colors mr-2"
             >
               <X className="w-4 h-4" />
             </button>
@@ -149,7 +153,8 @@ export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
           <button
             type="button"
             onClick={onClose}
-            className="px-2.5 py-1 text-xs rounded-full bg-canvas-soft border border-hairline text-ink-mute hover:text-ink-primary font-sans"
+            aria-label={t('Tutup pencarian', 'Close search')}
+            className="px-2.5 py-1 text-sm rounded-sm bg-canvas-soft border border-hairline text-ink-mute hover:text-ink-primary font-sans"
           >
             ESC
           </button>
@@ -157,18 +162,18 @@ export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
 
         {/* Dynamic Last Search Bar (Clean, no fake suggestions) */}
         {searchHistory.length > 0 && !query && (
-          <div className="px-5 py-2.5 bg-canvas-soft/80 border-b border-hairline flex items-center justify-between text-xs font-sans">
+          <div className="px-5 py-2.5 bg-canvas-soft/80 border-b border-hairline flex items-center justify-between text-sm font-sans">
             <div className="flex items-center space-x-2 overflow-x-auto pr-2">
               <span className="text-ink-mute font-medium flex items-center space-x-1 shrink-0">
                 <History className="w-3 h-3 text-primary" />
-                <span>Pencarian Terakhir:</span>
+                <span>{t('Pencarian terakhir:', 'Recent searches:')}</span>
               </span>
               {searchHistory.map((item, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onClick={() => handleSelectHistoryItem(item)}
-                  className="px-2.5 py-1 rounded-lg bg-canvas-surface border border-hairline hover:border-primary/50 text-ink-secondary hover:text-primary transition-colors text-xs shrink-0 font-medium font-sans"
+                  className="px-2.5 py-1 rounded-sm bg-canvas-surface border border-hairline hover:border-primary/50 text-ink-secondary hover:text-primary transition-colors text-sm shrink-0 font-medium font-sans"
                 >
                   {item}
                 </button>
@@ -179,7 +184,8 @@ export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
               type="button"
               onClick={clearHistory}
               className="text-ink-mute hover:text-red-500 transition-colors p-1 shrink-0"
-              title="Hapus Riwayat Pencarian"
+              title={t('Hapus riwayat pencarian', 'Clear search history')}
+              aria-label={t('Hapus riwayat pencarian', 'Clear search history')}
             >
               <Trash2 className="w-3.5 h-3.5" />
             </button>
@@ -191,71 +197,44 @@ export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
           {results.length === 0 ? (
             <div className="py-12 text-center text-ink-mute space-y-3 font-sans">
               <BookOpen className="w-10 h-10 mx-auto text-ink-mute opacity-50" />
-              <p className="font-medium text-sm">Akar kata tidak ditemukan dalam katalog lokal</p>
+              <p className="font-medium text-sm">{t('Akar kata tidak ditemukan dalam indeks', 'No roots found in the index')}</p>
               <button
                 type="button"
                 onClick={handleFormSubmit}
-                className="inline-flex items-center space-x-2 bg-primary hover:bg-primary-deep text-white px-4 py-2 rounded-full text-xs font-semibold shadow-subtle transition-all font-sans"
+                className="inline-flex items-center space-x-2 bg-primary hover:bg-primary-deep text-white px-4 py-2 rounded-sm text-sm font-semibold transition-all font-sans"
               >
                 <Search className="w-3.5 h-3.5" />
-                <span>Cari di Seluruh Ayat Al-Qur&apos;an (&ldquo;{query}&rdquo;)</span>
+                <span>{t('Cari di seluruh ayat', 'Search all verses')} (&ldquo;{query}&rdquo;)</span>
               </button>
             </div>
           ) : (
             results.slice(0, 10).map((root) => (
-              <div
+              <button
                 key={root.id}
+                type="button"
                 onClick={() => handleSelectRoot(root)}
-                className="group p-4 rounded-2xl bg-canvas-surface border border-hairline hover:border-primary/40 hover:shadow-subtle transition-all cursor-pointer flex items-center justify-between"
+                className="group flex w-full items-center justify-between gap-4 border-b border-hairline px-3 py-4 text-left hover:bg-canvas-soft focus-visible:outline-primary"
               >
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-2xl bg-canvas-soft border border-hairline flex items-center justify-center text-primary font-arabic text-2xl font-bold group-hover:scale-105 transition-transform" dir="rtl">
-                    {root.rootArabicJoined}
-                  </div>
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <h4 className="font-bold text-ink-primary text-sm group-hover:text-primary transition-colors font-sans">
-                        {root.titleIndo}
-                      </h4>
-                      <span className="text-[10px] px-2 py-0.5 rounded-md bg-canvas-soft text-ink-mute font-sans font-medium">
-                        {root.totalOccurrences}x di Al-Qur&apos;an
-                      </span>
-                    </div>
-                    <p className="text-xs text-ink-secondary mt-1 line-clamp-1 font-sans">
-                      {root.meaningsIndonesian[0]}
-                    </p>
-                    {root.etymologyNote && (
-                      <p className="text-[11px] text-ink-mute mt-1 line-clamp-1 italic flex items-center space-x-1 font-sans">
-                        <Info className="w-3 h-3 text-primary inline mr-1 shrink-0" />
-                        <span>{root.etymologyNote.slice(0, 85)}...</span>
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3 pl-3">
-                  <div className="hidden sm:flex flex-col text-right text-[11px] font-sans text-ink-mute">
-                    <span className="text-primary font-semibold">{root.verbsCount} Fi&apos;il</span>
-                    <span className="text-ink-secondary font-semibold">{root.nounsCount} Isim</span>
-                  </div>
-                  <div className="w-8 h-8 rounded-full bg-canvas-soft group-hover:bg-primary group-hover:text-white text-ink-mute flex items-center justify-center transition-all">
-                    <ArrowRight className="w-4 h-4" />
-                  </div>
-                </div>
-              </div>
+                <span lang="ar" dir="rtl" className="shrink-0 font-arabic text-3xl leading-loose text-ink-primary group-hover:text-primary">{root.rootArabicJoined}</span>
+                <span className="min-w-0 flex-1 text-base text-ink-secondary">
+                  <span className="block">{root.rootLatin}</span>
+                  <span className="mt-1 block">{root.totalOccurrences} {t('kemunculan', 'occurrences')}</span>
+                </span>
+                <ArrowRight className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+              </button>
             ))
           )}
         </div>
 
         {/* Footer info & Submit Link */}
-        <div className="px-5 py-3 bg-canvas-soft border-t border-hairline text-xs text-ink-mute flex items-center justify-between font-sans">
+        <div className="px-5 py-3 bg-canvas-soft border-t border-hairline text-sm text-ink-mute flex items-center justify-between font-sans">
           <button
             type="button"
             onClick={handleFormSubmit}
             className="flex items-center space-x-1.5 hover:text-primary transition-colors font-sans"
           >
             <CornerDownLeft className="w-3.5 h-3.5 text-primary" />
-            <span>Tekan <strong className="text-ink-primary">Enter</strong> untuk telusuri ayat</span>
+            <span>{t('Buka hasil pertama', 'Open first result')}</span>
           </button>
           <span className="font-semibold text-primary font-sans">Qurabic (Indo)</span>
         </div>

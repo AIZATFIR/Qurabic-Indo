@@ -11,30 +11,20 @@
  * 4. Zero LLM-per-entry hallucination: All claims trace to valid entries in SourceRegistry.
  */
 
-import { WordStudyViewModel, WordFamilyItem, SyntaxAnalysis, LexicalStatus, LexicalSummary, LexicalSense } from '../lexicon/types';
+import { WordStudyViewModel, WordFamilyItem, SyntaxAnalysis, LexicalStatus } from '../lexicon/types';
 import { resolveCanonicalWordDetail, CanonicalWordContext } from './canonical-service';
 import { getQACAuthoritativeIndex } from './qac-parser';
 import { SOURCES_REGISTRY } from '../data/sources';
 import { buckwalterToArabic } from './buckwalter';
 import { stripArabicHarakat } from '../search/root-search';
-import { getClassicalCitation } from '../lexicon/classical-citations';
-import { getWordDetailedExplanation, CURATED_WORD_DICTIONARY } from '../search/word-dictionary';
-import { ROOT_DATABASE } from '../data/roots';
 import { transliterateArabic, isRawBuckwalterRoot } from './transliteration';
-import { getAuthenticWordMeaning, getRootTranslationProfile } from './root-dictionary';
-import { getLinguisticExplanation } from './linguistic-explanation-service';
-import { getGrammarDerivation } from './grammar-derivation-service';
 import { getRootOccurrencesFromChunk } from './morphology-service';
-import wbwDerivativeGlosses from '../data/wbw-derivative-glosses.json';
+import wbwIndonesianGlosses from '../data/wbw-indonesian-glosses.json';
+import wbwEnglishGlosses from '../data/wbw-english-glosses.json';
 
-const WBW_DERIVATIVE_GLOSSES = wbwDerivativeGlosses.meanings as Record<string, string>;
-
-function isGenericMeaning(text?: string): boolean {
-  return !text ||
-    /^(nomina|verba|partikel|bentuk kata|akar kata|konsep & turunan|kosakata terindeks)\b/i.test(text.trim()) ||
-    text.startsWith("Kosakata Al-Qur'an") ||
-    text.startsWith('Keluarga kata:');
-}
+const WBW_ID = wbwIndonesianGlosses.meanings as Record<string, string>;
+const WBW_EN = wbwEnglishGlosses.meanings as Record<string, string>;
+const wordLocation = (coordinate?: string) => coordinate?.split(':').slice(0, 3).join(':') || '';
 
 /**
  * Maps raw QAC morphological features string to detailed Indonesian syntactic breakdown
@@ -186,7 +176,15 @@ export function getWordStudy(
   context?: CanonicalWordContext
 ): WordStudyViewModel {
   // 1. Resolve canonical details using authoritative QAC parser
-  const detail = resolveCanonicalWordDetail(tokenOrLocation, context);
+  const standalone = !/\d+:\d+/.test(tokenOrLocation) && !context?.wordIndex
+    ? tokenOrLocation.replace(/[\u064B-\u0652\u0670\u0640]/g, '').replace(/ى/g, 'ي').trim()
+    : '';
+  const particleEntry = (standalone === 'كلا' && /[ٌٍُِ]/.test(tokenOrLocation)) ? undefined : ({
+    'و': { id: 'Dan', en: 'and', location: undefined },
+    'في': { id: 'Di dalam', en: 'in', location: '2:10:1' },
+    'كلا': { id: 'Sekali-kali tidak', en: 'Nay!', location: '78:4:1' },
+  } as Record<string, { id: string; en: string; location?: string }>)[standalone];
+  const detail = resolveCanonicalWordDetail(particleEntry?.location || tokenOrLocation, context);
   const qacIndex = getQACAuthoritativeIndex();
   const rootBw = detail.lexical.root;
 
@@ -233,11 +231,7 @@ export function getWordStudy(
       .slice(0, 12);
 
     for (const item of sortedItems) {
-      const cleanAr = stripArabicHarakat(item.arabic);
-      const curated = CURATED_WORD_DICTIONARY[cleanAr] || CURATED_WORD_DICTIONARY[item.arabic];
-      const qacWordId = `${item.pos === "Fi'il" ? 'v' : 'n'}-${rootBw}-${item.lemmaBw}`;
-      const meaning = WBW_DERIVATIVE_GLOSSES[qacWordId] ||
-        (!isGenericMeaning(curated?.primaryMeaning) ? curated?.primaryMeaning : undefined) ||
+      const meaning = WBW_ID[wordLocation(item.sampleLoc)] ||
         'Makna belum tersedia';
 
       wordFamily.push({
@@ -246,36 +240,17 @@ export function getWordStudy(
         lemmaArabic: item.lemmaAr,
         pos: item.pos,
         meaningIndo: meaning,
+        meaningEnglish: WBW_EN[wordLocation(item.sampleLoc)],
         count: item.count,
         sampleCoordinate: item.sampleLoc
       });
     }
 
-    // Fallback to ROOT_DATABASE if QAC records are unavailable (e.g. client-side execution)
-    if (wordFamily.length === 0) {
-      const rootEntry = ROOT_DATABASE.find(
-        (r) => r.rootLatin === rootBw || r.id === detail.lexical.rootSlug || r.rootArabic === detail.lexical.rootArabic
-      );
-      if (rootEntry) {
-        const allDerivs = [...(rootEntry.verbs || []), ...(rootEntry.nouns || [])];
-        for (const deriv of allDerivs.slice(0, 12)) {
-          wordFamily.push({
-            arabic: deriv.arabic,
-            buckwalter: deriv.buckwalter || '',
-            lemmaArabic: deriv.arabic,
-            pos: deriv.type === 'verb' ? "Fi'il" : 'Isim',
-            meaningIndo: getAuthenticWordMeaning(deriv.arabic, rootEntry.id || rootBw, deriv.meaningIndo),
-            count: deriv.frequency || 1,
-            sampleCoordinate: undefined
-          });
-        }
-      }
-    }
   }
 
   // 3. Determine Lexical Status
   let lexicalStatus: LexicalStatus = 'not_found';
-  const lex = detail.lexicon;
+  const lex = particleEntry ? undefined : detail.lexicon;
   if (lex?.hasLexicalData && lex.senses && lex.senses.length > 0) {
     lexicalStatus = 'verified';
   } else if (lex?.hasLexicalData) {
@@ -286,130 +261,18 @@ export function getWordStudy(
     lexicalStatus = 'not_indexed';
   }
 
-  // 4. Construct Lexical Summary with mandatory basisSenseIds (Strict Invariant)
-  let lexicalSummary: LexicalSummary | undefined;
-  if (lex?.hasLexicalData && lex.senses.length > 0) {
-    const basisIds = lex.senses.map(s => s.id || `sense-${s.senseIndex}`);
-    const summaryText = lex.indonesianDefinition || lex.definition || lex.senses[0].text;
-
-    lexicalSummary = {
-      key: detail.lexical.lemma || detail.lexical.root || detail.identity.cleanArabic,
-      locale: 'id',
-      text: summaryText,
-      basisSenseIds: basisIds.length > 0 ? basisIds : [`lane-${lex.volume}-${lex.page}`],
-      status: 'source-derived',
-      generatedBy: "Lane's Arabic-English Lexicon",
-      reviewedAt: new Date().toISOString().split('T')[0]
-    };
-  }
-
-  // 5. Build Primary Meaning for top-level display (Indonesian-First)
-  let primaryText = '';
-  let sourceBadge = 'Kamus Qurabic';
-  let isEditorial = true;
-
-  const rootSlugOrAr = detail.lexical.rootSlug || detail.lexical.rootArabic || detail.lexical.root;
-  const authenticIndo = getAuthenticWordMeaning(detail.identity.arabic, rootSlugOrAr);
-
-  if (context?.meaningIndo && context.meaningIndo.trim()) {
-    primaryText = context.meaningIndo.trim();
-    sourceBadge = 'Terjemahan Kata';
-    isEditorial = false;
-  } else if (detail.morphology.isParticle && detail.translation.primaryMeaning && !detail.translation.primaryMeaning.startsWith('Partikel / Kata')) {
-    primaryText = detail.translation.primaryMeaning;
-    sourceBadge = 'QAC Nahwu';
-    isEditorial = true;
-  } else if (!isGenericMeaning(detail.translation.primaryMeaning) && !detail.translation.primaryMeaning.startsWith(': see') && !detail.translation.primaryMeaning.startsWith('; see') && !detail.translation.primaryMeaning.startsWith('and ') && !/\b(the|and|or|of|to|in|on|from|with|by|for|not|he|they|we|you)\b/i.test(detail.translation.primaryMeaning)) {
-    primaryText = detail.translation.primaryMeaning;
-    sourceBadge = 'Kamus Qurabic';
-    isEditorial = true;
-  } else if (lex?.indonesianDefinition) {
-    primaryText = lex.indonesianDefinition;
-    sourceBadge = "Leksikon Klasik";
-    isEditorial = false;
-  } else if (lex?.definition || lex?.senses?.[0]?.text) {
-    // Lane is Arabic-English; show its sourced English gloss when no reviewed
-    // Indonesian word gloss exists instead of inventing one from the root.
-    primaryText = lex.definition || lex.senses[0].text;
-    sourceBadge = "Lane's Lexicon · English";
-    isEditorial = false;
-  } else if (!isGenericMeaning(authenticIndo) && authenticIndo.toLowerCase() !== "al-qur'an") {
-    primaryText = authenticIndo;
-    sourceBadge = 'Kamus Qurabic';
-    isEditorial = true;
-  } else if (detail.lexical.coreMeaning && !detail.lexical.coreMeaning.startsWith('Akar kata ') && !detail.lexical.coreMeaning.includes('memiliki peranan penting')) {
-    primaryText = detail.lexical.coreMeaning;
-    sourceBadge = 'Kajian Akar Kata';
-    isEditorial = true;
-  } else if (detail.morphology.isParticle) {
-    primaryText = 'Partikel / Kata Tugas (Harf)';
-    sourceBadge = 'QAC Nahwu';
-    isEditorial = false;
-  } else if (authenticIndo && authenticIndo !== "Kosakata Al-Qur'an" && authenticIndo.toLowerCase() !== "al-qur'an") {
-    primaryText = authenticIndo;
-    sourceBadge = 'Kamus Qurabic';
-    isEditorial = true;
-  } else {
-    primaryText = detail.translation.primaryMeaning || 'Kosakata Terindeks Al-Qur\'an';
-    sourceBadge = 'Qurabic Corpus';
-    isEditorial = true;
-  }
+  // Only bundled, location-matched translations carry word-meaning provenance.
+  // Caller-supplied display text and root commentary are not lexical evidence.
+  const location = wordLocation(detail.identity.coordinate);
+  const primaryText = particleEntry?.id || WBW_ID[location] || 'Makna kata belum tersedia';
+  const primaryEnglish = particleEntry?.en || WBW_EN[location];
 
   // 6. Build Syntactic Breakdown
   const syntax = parseSyntacticFeatures(detail.morphology.rawTag, detail.morphology.rawFeatures);
 
-  // 6. Resolve Classical Citation & Root Philosophy
-  const classicalCit = getClassicalCitation(rootSlugOrAr);
-  const detailedExpl = getWordDetailedExplanation(detail.identity.arabic);
-  const rootProfile = rootSlugOrAr ? getRootTranslationProfile(rootSlugOrAr) : null;
-  const cleanCore = (detail.lexical.coreMeaning && !detail.lexical.coreMeaning.includes('memiliki peranan penting') && !detail.lexical.coreMeaning.startsWith('Akar kata '))
-    ? detail.lexical.coreMeaning
-    : undefined;
-
-  const rootPhil = classicalCit?.corePhilosophy || rootProfile?.coreMeaning || detailedExpl.rootExplanation || cleanCore || (detail.lexical.rootArabic ? `Akar kata ${detail.lexical.rootArabic} melandasi pembentukan makna kata ini dalam Al-Qur'an.` : undefined);
-
-  // 7. Assemble Provenance Sources
-  const provenance = [
-    SOURCES_REGISTRY.quranText,
-    SOURCES_REGISTRY.morphology,
-    SOURCES_REGISTRY.translation
-  ];
-  if (lex?.hasLexicalData) {
-    provenance.push(SOURCES_REGISTRY.laneLexicon);
-  }
-
-  const rootTranslation = rootProfile?.coreMeaning || cleanCore || classicalCit?.corePhilosophy || undefined;
-
-  // 8. Synthesize Kalaam-Style Linguistic Explanation & Grammar Derivation Flow
-  const linguisticExplanation = getLinguisticExplanation({
-    wordArabic: detail.identity.arabic,
-    rootArabic: detail.lexical.rootArabic,
-    rootSlug: detail.lexical.rootSlug,
-    lemmaArabic: detail.lexical.lemmaArabic,
-    pos: detail.morphology.pos,
-    posLabelIndo: detail.morphology.posLabelIndo,
-    primaryMeaning: primaryText,
-    isParticle: detail.morphology.isParticle
-  });
-
-  const grammarDerivation = getGrammarDerivation({
-    wordArabic: detail.identity.arabic,
-    locationKey: detail.identity.coordinate,
-    rawTag: detail.morphology.rawTag,
-    rawFeatures: detail.morphology.rawFeatures,
-    rootLetters: detail.lexical.rootArabic,
-    rootSlug: detail.lexical.rootSlug,
-    lemmaArabic: detail.lexical.lemmaArabic,
-    pos: detail.morphology.pos,
-    verbType: detail.morphology.verbType,
-    wazanOrForm: detail.morphology.wazanOrForm,
-    primaryMeaning: primaryText,
-    verseArabic: detail.context?.ayahArabic,
-    ayahIndo: detail.context?.ayahIndo,
-    surahNumber: detail.context?.surahNumber,
-    ayahNumber: detail.context?.ayahNumber,
-    wordIndex: detail.context?.wordIndex
-  });
+  const provenance = [SOURCES_REGISTRY.quranText, SOURCES_REGISTRY.morphology,
+    SOURCES_REGISTRY.translation, SOURCES_REGISTRY.wordTranslation];
+  if (lex?.hasLexicalData) provenance.push(SOURCES_REGISTRY.laneLexicon);
 
   const effectiveOccItems = detail.relatedOccurrences.length > 0
     ? detail.relatedOccurrences
@@ -432,17 +295,22 @@ export function getWordStudy(
   return {
     identity: {
       coordinate: detail.identity.coordinate,
-      arabic: detail.identity.arabic,
-      cleanArabic: detail.identity.cleanArabic,
+      arabic: particleEntry ? tokenOrLocation : detail.identity.arabic,
+      cleanArabic: particleEntry ? standalone : detail.identity.cleanArabic,
       transliteration: (detail.identity.transliteration && !isRawBuckwalterRoot(detail.identity.transliteration))
         ? detail.identity.transliteration
         : transliterateArabic(detail.identity.arabic)
     },
     primaryMeaning: {
       text: primaryText,
-      source: lex?.source || 'Qurabic Corpus',
-      sourceBadge,
-      isEditorialSummary: isEditorial
+      source: particleEntry ? SOURCES_REGISTRY.morphology.name : SOURCES_REGISTRY.wordTranslation.name,
+      sourceBadge: particleEntry ? 'QAC · label Indonesia' : 'Quran.com · Indonesia',
+      sourceId: particleEntry ? 'quranic-arabic-corpus' : 'quran-com-wbw',
+      textEnglish: primaryEnglish,
+      sourceEnglish: particleEntry ? SOURCES_REGISTRY.morphology.name : SOURCES_REGISTRY.wordTranslation.name,
+      sourceBadgeEnglish: particleEntry ? 'QAC · English' : 'Quran.com · English',
+      sourceIdEnglish: particleEntry ? 'quranic-arabic-corpus' : 'quran-com-wbw',
+      isEditorialSummary: !!particleEntry
     },
     morphology: {
       pos: detail.morphology.pos,
@@ -466,19 +334,13 @@ export function getWordStudy(
       lexicalRoot: lex?.rootBw || detail.lexical.root,
       rootAgreement: !lex?.rootBw || lex.rootBw === detail.lexical.root,
       status: lexicalStatus,
-      summary: lexicalSummary,
+      summary: undefined,
       senses: lex?.senses || [],
       isRootEntry: !!lex?.isRootEntry,
       sourceCitation: lex?.sourceCitation || "Lane's Arabic-English Lexicon",
       volume: lex?.volume,
       page: lex?.page,
-      rootPhilosophy: rootPhil,
-      rootTranslation,
-      meanings: (detail.morphology.isParticle && detail.translation.meanings.length > 0)
-        ? detail.translation.meanings
-        : (detailedExpl.meanings.length > 0 ? detailedExpl.meanings : detail.translation.meanings),
-      classicalCitation: classicalCit,
-      usageNuances: detailedExpl.quranicNuances
+      meanings: [primaryText],
     },
     wordFamily,
     occurrences: {
@@ -488,7 +350,7 @@ export function getWordStudy(
     syntax,
     provenance,
     context: resolvedContext,
-    linguisticExplanation,
-    grammarDerivation
+    linguisticExplanation: undefined,
+    grammarDerivation: undefined
   };
 }

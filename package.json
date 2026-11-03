@@ -9,10 +9,11 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "audit:lexicon": "npx tsx scripts/lexicon/audit-lexicon.ts",
-    "test": "npx tsx lib/morphology/corpus-inventory.test.ts && npx tsx lib/morphology/adversarial-fuzz.test.ts && npx tsx lib/morphology/cross-surface-matrix.test.ts && npx tsx lib/morphology/golden-matrix.test.ts && npx tsx lib/morphology/contract.test.ts && npx tsx lib/morphology/index-validation.test.ts && npx tsx lib/search/root-search.test.ts && npx tsx lib/search/word-dictionary.test.ts && npx tsx lib/context/theme.test.ts && npx tsx lib/data/surah-list.test.ts && npx tsx lib/api/audio.test.ts && npx tsx lib/data/sources.test.ts && npx tsx lib/data/curated-videos.test.ts && npx tsx lib/data/legal-routes.test.ts && npx tsx lib/data/concordance-integrity.test.ts && npx tsx lib/data/milestone5-integrity.test.ts && npx tsx lib/reading/reading-experience.test.ts && npx tsx lib/hardening/production-hardening.test.ts && npx tsx lib/morphology/kalaam-experience.test.ts && npx tsx lib/hooks/useModalBackHandler.test.ts && npx tsx lib/morphology/interactive-features.test.ts",
+    "test": "npx tsx lib/morphology/corpus-inventory.test.ts && npx tsx lib/morphology/adversarial-fuzz.test.ts && npx tsx lib/morphology/cross-surface-matrix.test.ts && npx tsx lib/morphology/golden-matrix.test.ts && npx tsx lib/morphology/contract.test.ts && npx tsx lib/morphology/index-validation.test.ts && npx tsx lib/search/root-search.test.ts && npx tsx lib/search/word-dictionary.test.ts && npx tsx lib/context/theme.test.ts && npx tsx lib/data/surah-list.test.ts && npx tsx lib/api/audio.test.ts && npx tsx lib/data/sources.test.ts && npx tsx lib/data/curated-videos.test.ts && npx tsx lib/data/legal-routes.test.ts && npx tsx lib/data/concordance-integrity.test.ts && npx tsx lib/data/milestone5-integrity.test.ts && npx tsx lib/reading/reading-experience.test.ts && npx tsx lib/hardening/production-hardening.test.ts && npx tsx lib/morphology/kalaam-experience.test.ts && npx tsx lib/hooks/useModalBackHandler.test.ts && npx tsx lib/morphology/interactive-features.test.ts && npx tsx lib/api/quran-language.test.ts && npx tsx lib/morphology/word-study-provenance.test.ts && npx tsx lib/morphology/particles-and-root-cleanliness.test.ts && npx tsx lib/lexicon/lexicon-formatter.test.ts && npx tsx lib/tafsir/tafsir-source.test.ts",
     "android:sync": "npx cap sync android",
     "android:open": "npx cap open android",
-    "android:build": "(cd android && ./gradlew assembleDebug)"
+    "android:build": "(cd android && ./gradlew assembleDebug)",
+    "test:e2e": "node scripts/qa/release-smoke.cjs"
   },
   "dependencies": {
     "@capacitor-community/admob": "^8.2.1",
@@ -22,7 +23,7 @@
     "gsap": "^3.15.0",
     "lenis": "^1.3.26",
     "lucide-react": "^0.427.0",
-    "next": "^14.2.5",
+    "next": "^15.5.28",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-virtuoso": "^4.18.12",
@@ -40,7 +41,8 @@
     "autoprefixer": "^10.4.20",
     "better-sqlite3": "^13.0.3",
     "eslint": "^8.57.0",
-    "eslint-config-next": "^14.2.5",
+    "eslint-config-next": "^15.5.28",
+    "playwright": "^1.64.1",
     "postcss": "^8.4.41",
     "tailwindcss": "^3.4.10",
     "tsx": "^4.17.0",

@@ -1,7 +1,7 @@
 /**
  * Quran Recitation Audio Source Abstraction
  * Provides multi-qari per-ayah audio URLs using high-availability CDNs (EveryAyah, QuranCDN)
- * and configurable Indonesian translation audio providers (Human recording & TTS AI).
+ * and human-recorded Indonesian translation audio.
  */
 
 export interface QariMeta {
@@ -112,7 +112,7 @@ export const AVAILABLE_QARIS: QariMeta[] = [
   },
 ];
 
-export type TranslationVoiceMode = 'human' | 'tts' | 'off';
+export type TranslationVoiceMode = 'human' | 'off';
 
 export interface TranslationVoiceOption {
   id: TranslationVoiceMode;
@@ -124,12 +124,7 @@ export const TRANSLATION_VOICE_OPTIONS: TranslationVoiceOption[] = [
   {
     id: 'human',
     name: 'Rekaman Suara Manusia (Asli)',
-    description: 'Suara asli manusia (Tersedia untuk 76 surat, tanpa sisipan suara robot)',
-  },
-  {
-    id: 'tts',
-    name: 'Suara Digital (TTS AI)',
-    description: 'Sintesis vokal Bahasa Indonesia untuk seluruh 114 surat',
+    description: 'Rekaman terjemahan manusia, mengikuti ketersediaan arsip per ayat.',
   },
   {
     id: 'off',
@@ -139,9 +134,9 @@ export const TRANSLATION_VOICE_OPTIONS: TranslationVoiceOption[] = [
 ];
 
 /**
- * Set of Surahs with authentic human-recorded Indonesian translation available in the public archive.
- * (76 Surahs total: Al-Fatihah, Al-Baqarah, and Surahs 40-41, 43-114).
- * Surahs 3 to 39 and 42 were not produced in the per-ayah recording archive.
+ * Surah coverage listed by the existing Internet Archive per-verse recording collection.
+ * Individual files can still be missing or unavailable; playback skips failures.
+ * This collection does not provide per-verse recordings for Surahs 3–39 and 42.
  */
 export const HUMAN_TRANSLATION_AVAILABLE_SURAHS = new Set<number>([
   1, 2, 40, 41, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61,
@@ -266,53 +261,46 @@ export function getHumanTranslationAudioUrl(surahNumber: number, ayahNumber: num
   return `https://archive.org/download/AlQuran-terjemahan-indonesia-tanpa-bahasa-arab/${s}${a}.mp3`;
 }
 
-/**
- * Resolves streaming TTS audio endpoint for Indonesian translation
- */
-export function getTranslationTtsAudioUrl(
-  text?: string,
-  surahNumber?: number,
-  ayahNumber?: number
-): string {
-  const params = new URLSearchParams();
-  if (text) params.set('text', text);
-  if (surahNumber) params.set('surah', String(surahNumber));
-  if (ayahNumber) params.set('ayah', String(ayahNumber));
-  return `/api/audio-translation?${params.toString()}`;
-}
-
-/**
- * Returns prioritized candidate list for Indonesian translation audio based on user preference:
- * - 'human': Pure human voice without robotic TTS interruptions.
- *            Returns [humanUrl] if surah is supported (76 surahs available).
- *            Returns [] if surah human audio is not available, preventing awkward TTS pop-in.
- * - 'tts': [TTS API endpoint] for 114 surah universal AI voice synthesis.
- * - 'off': []
- */
+/** Returns only existing human recording candidates; never synthesizes translation audio. */
 export function getTranslationAudioCandidateUrls(
   surahNumber: number,
   ayahNumber: number,
-  translationText?: string,
-  mode: TranslationVoiceMode = 'human',
-  allowTtsFallback: boolean = false
+  _translationText?: string,
+  mode: TranslationVoiceMode = 'human'
 ): string[] {
-  if (mode === 'off') return [];
+  if (mode === 'off' || !isHumanTranslationAvailable(surahNumber)) return [];
+  return [getHumanTranslationAudioUrl(surahNumber, ayahNumber)];
+}
 
-  const humanAvailable = isHumanTranslationAvailable(surahNumber);
-  const humanUrl = getHumanTranslationAudioUrl(surahNumber, ayahNumber);
-  const ttsUrl = getTranslationTtsAudioUrl(translationText, surahNumber, ayahNumber);
+export interface AudioTrack {
+  ayahNumber: number;
+  phase: 'arabic' | 'translation';
+}
 
-  if (mode === 'human') {
-    if (!humanAvailable) {
-      // In human-only mode, never unexpectedly switch to robotic Google TTS
-      return allowTtsFallback ? [ttsUrl] : [];
-    }
-    return allowTtsFallback ? [humanUrl, ttsUrl] : [humanUrl];
+export function getFirstAudioTrack(
+  surahNumber: number,
+  ayahNumber: number,
+  handsfreeMode: 'off' | 'normal' | 'reverse'
+): AudioTrack {
+  return { ayahNumber, phase: handsfreeMode === 'reverse' && isHumanTranslationAvailable(surahNumber) ? 'translation' : 'arabic' };
+}
+
+/** One verse cycle includes its two phases; unavailable human recordings are skipped. */
+export function getNextAudioTrack(options: {
+  surahNumber: number;
+  ayahNumber: number;
+  phase: AudioTrack['phase'];
+  totalAyahs: number;
+  handsfreeMode: 'off' | 'normal' | 'reverse';
+  repeatMode: 'off' | 'ayah' | 'surah';
+  autoNext: boolean;
+}): AudioTrack | null {
+  const { surahNumber, ayahNumber, phase, totalAyahs, handsfreeMode, repeatMode, autoNext } = options;
+  if (phase === 'translation' && handsfreeMode === 'reverse') return { ayahNumber, phase: 'arabic' };
+  if (phase === 'arabic' && handsfreeMode === 'normal' && isHumanTranslationAvailable(surahNumber)) {
+    return { ayahNumber, phase: 'translation' };
   }
-
-  if (mode === 'tts') {
-    return humanAvailable ? [ttsUrl, humanUrl] : [ttsUrl];
-  }
-
-  return [];
+  if (repeatMode === 'ayah') return getFirstAudioTrack(surahNumber, ayahNumber, handsfreeMode);
+  if (ayahNumber >= totalAyahs) return repeatMode === 'surah' ? getFirstAudioTrack(surahNumber, 1, handsfreeMode) : null;
+  return autoNext ? getFirstAudioTrack(surahNumber, ayahNumber + 1, handsfreeMode) : null;
 }

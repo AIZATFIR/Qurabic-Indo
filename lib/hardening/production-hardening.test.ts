@@ -102,14 +102,14 @@ async function runHardeningTests() {
   console.log('\n🔍 4. SEO & Dynamic Metadata Generation:');
   
   const kataMeta = await generateKataMetadata({
-    params: { slug: encodeURIComponent('صَبَرُوا') },
-    searchParams: { surah: '2', ayah: '153', wordIndex: '3' },
+    params: Promise.resolve({ slug: encodeURIComponent('صَبَرُوا') }),
+    searchParams: Promise.resolve({ surah: '2', ayah: '153', wordIndex: '3' }),
   });
   assert(typeof kataMeta.title === 'string' && kataMeta.title.includes('صَبَرُوا'), 'Kata metadata title contains Arabic word');
   assert(typeof kataMeta.description === 'string' && kataMeta.description.length > 20, 'Kata metadata description is comprehensive');
 
   const akarMeta = await generateAkarMetadata({
-    params: { slug: 'sbr' },
+    params: Promise.resolve({ slug: 'sbr' }),
   });
   assert(typeof akarMeta.title === 'string' && akarMeta.title.includes('ص ب ر'), 'Akar metadata title contains Arabic root');
   assert(typeof akarMeta.description === 'string' && akarMeta.description.length > 20, 'Akar metadata description is rich and informative');

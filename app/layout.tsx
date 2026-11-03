@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import { ThemeProvider } from '@/lib/context/ThemeContext';
 import { Toaster } from 'sonner';
 import AdsController from '@/components/AdsController';
+import { LanguageProvider } from '@/lib/context/LanguageContext';
 
 export const viewport: Viewport = {
   themeColor: '#fbf8f1',
@@ -16,7 +17,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://qurabic.vercel.app'),
+  metadataBase: new URL('https://qurabic-indo-corpus.vercel.app'),
   title: {
     default: 'Qurabic (Indo) — Quranic Arabic Corpus & Root Word Explorer',
     template: '%s | Qurabic',
@@ -62,6 +63,7 @@ export default function RootLayout({
         >
           Lewati ke konten utama
         </a>
+        <LanguageProvider>
         <ThemeProvider>
           <SmoothScroll>
             <Navbar />
@@ -86,6 +88,7 @@ export default function RootLayout({
             }}
           />
         </ThemeProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

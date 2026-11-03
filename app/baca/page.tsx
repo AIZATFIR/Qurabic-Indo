@@ -30,6 +30,8 @@ import SurahSearchModal from '@/components/SurahSearchModal';
 import QuranAudioPlayer from '@/components/QuranAudioPlayer';
 import { fetchSurahWithWBW, FullAyahWBW } from '@/lib/api/quran-corpus-api';
 import { SURAH_LIST, getSurahByNumber } from '@/lib/data/surah-list';
+import LanguageSelector from '@/components/LanguageSelector';
+import { useLanguage } from '@/lib/context/LanguageContext';
 import { useTheme } from '@/lib/context/ThemeContext';
 import { useQuranAudio } from '@/lib/hooks/useQuranAudio';
 import { useReadingSearch } from '@/lib/hooks/useReadingSearch';
@@ -37,6 +39,7 @@ import { preloadUpcomingAyahs } from '@/lib/audio/audio-preloader';
 
 function BacaQuranPageContent() {
   const router = useRouter();
+  const { language, t } = useLanguage();
   const searchParams = useSearchParams();
   const surahQuery = searchParams.get('surah');
   const ayahQuery = searchParams.get('ayah');
@@ -187,22 +190,25 @@ function BacaQuranPageContent() {
 
   // Fetch selected Surah with in-memory caching
   useEffect(() => {
+    let cancelled = false;
     async function loadSurahData() {
       setLoading(true);
       try {
-        const data = await fetchSurahWithWBW(selectedSurah);
+        const data = await fetchSurahWithWBW(selectedSurah, language);
+        if (cancelled) return;
         setAyahs(data);
         // Instant audio & translation warm-up ("ngeload sekalian terjemahan")
         preloadUpcomingAyahs(selectedSurah, 1, data.length, (n) => data.find((a) => a.ayahNumber === n)?.textIndo);
       } catch (err) {
         console.error('Error fetching surah data:', err);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
     loadSurahData();
-  }, [selectedSurah]);
+    return () => { cancelled = true; };
+  }, [selectedSurah, language]);
 
   // Handle URL Ayah auto-jump once surah data is ready
   const hasJumpedToUrlAyahRef = useRef<string | null>(null);
@@ -325,7 +331,7 @@ function BacaQuranPageContent() {
             <Link
               href="/"
               className="p-1.5 sm:p-2 rounded-xl text-ink-mute hover:text-primary hover:bg-canvas-soft transition-colors flex items-center justify-center"
-              title="Kembali ke Beranda"
+              title={t('Kembali ke Beranda', 'Back to home')}
             >
               <ChevronLeft className="w-5 h-5" />
             </Link>
@@ -333,7 +339,7 @@ function BacaQuranPageContent() {
             <button
               onClick={() => setIsSurahModalOpen(true)}
               className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-hairline bg-canvas-soft hover:border-primary/40 text-xs font-semibold text-ink-primary shadow-subtle transition-all group"
-              title="Ganti Surah"
+              title={t('Ganti Surah', 'Choose surah')}
             >
               <BookMarked className="w-3.5 h-3.5 text-primary shrink-0" />
               <span className="font-bold truncate max-w-[110px] xs:max-w-[140px] sm:max-w-none">
@@ -355,10 +361,10 @@ function BacaQuranPageContent() {
                   ? 'bg-primary text-white shadow-subtle'
                   : 'text-ink-secondary hover:text-ink-primary'
               }`}
-              title="Mode Baca Mushaf Alami"
+              title={t('Mode Baca Mushaf Alami', 'Read Quran')}
             >
               <BookOpen className="w-3.5 h-3.5 shrink-0" />
-              <span className="hidden xs:inline">Mode Baca</span>
+              <span className="hidden xs:inline">{t('Mode Baca', 'Read')}</span>
             </button>
             <button
               onClick={() => setReadingMode('tadabbur')}
@@ -367,10 +373,10 @@ function BacaQuranPageContent() {
                   ? 'bg-primary text-white shadow-subtle'
                   : 'text-ink-secondary hover:text-ink-primary'
               }`}
-              title="Mode Tadabbur Kata Interaktif"
+              title={t('Mode Tadabbur Kata Interaktif', 'Explore words')}
             >
               <Search className="w-3.5 h-3.5 shrink-0" />
-              <span className="hidden xs:inline">Mode Tadabbur</span>
+              <span className="hidden xs:inline">{t('Mode Tadabbur', 'Explore')}</span>
             </button>
           </div>
 
@@ -379,7 +385,7 @@ function BacaQuranPageContent() {
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               className="p-1.5 sm:p-2 rounded-xl text-ink-mute hover:text-primary hover:bg-canvas-soft transition-all hidden xs:flex items-center justify-center"
-              title="Kembali ke Awal Surah"
+              title={t('Kembali ke Awal Surah', 'Back to beginning')}
             >
               <ChevronUp className="w-4 h-4" />
             </button>
@@ -391,8 +397,8 @@ function BacaQuranPageContent() {
                   ? 'bg-primary text-white border-primary shadow-subtle'
                   : 'bg-canvas-soft border-hairline text-ink-primary hover:border-primary/40'
               }`}
-              title="Pengaturan Tampilan & Warna Kertas"
-              aria-label="Pengaturan Tampilan"
+              title={t('Pengaturan Tampilan & Warna Kertas', 'Reading settings')}
+              aria-label={t('Pengaturan Tampilan', 'Reading settings')}
             >
               <SlidersHorizontal className="w-4 h-4" />
             </button>
@@ -406,19 +412,22 @@ function BacaQuranPageContent() {
                 />
                 <div className="absolute right-0 top-12 z-50 w-72 sm:w-80 p-4 rounded-2xl bg-canvas-surface border border-hairline shadow-hover space-y-4 animate-in fade-in slide-in-from-top-2 duration-150 font-sans">
                   <div className="flex items-center justify-between border-b border-hairline pb-2.5">
-                    <span className="text-xs font-bold text-ink-primary">Pengaturan Bacaan</span>
+                    <span className="text-xs font-bold text-ink-primary">{t('Pengaturan Bacaan', 'Reading settings')}</span>
                     <button
                       onClick={() => setIsMobileControlsOpen(false)}
+                      aria-label={t('Tutup pengaturan', 'Close settings')}
                       className="p-1 rounded-lg text-ink-mute hover:text-ink-primary"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
+                  <LanguageSelector />
+
                   {/* Mode Tadabbur Toggles */}
                   <div className="space-y-2">
                     <span className="text-[11px] font-semibold text-ink-mute block uppercase tracking-wider">
-                      Tampilan Teks
+                      {t('Tampilan Teks', 'Text display')}
                     </span>
                     <div className="flex items-center gap-2">
                       {readingMode === 'tadabbur' && (
@@ -449,7 +458,7 @@ function BacaQuranPageContent() {
                   {/* Font Size Adjuster */}
                   <div className="space-y-2">
                     <span className="text-[11px] font-semibold text-ink-mute block uppercase tracking-wider">
-                      Ukuran Teks
+                      {t('Ukuran Teks', 'Text size')}
                     </span>
                     <div className="flex items-center bg-canvas-soft border border-hairline rounded-xl p-1 justify-between">
                       {(['sm', 'md', 'lg', 'xl'] as const).map((size) => (
@@ -471,7 +480,7 @@ function BacaQuranPageContent() {
                   {/* Theme / Paper Selector */}
                   <div className="space-y-2">
                     <span className="text-[11px] font-semibold text-ink-mute block uppercase tracking-wider">
-                      Warna Kertas
+                      {t('Warna Kertas', 'Paper colour')}
                     </span>
                     <div className="flex items-center justify-between gap-1.5 p-1 bg-canvas-soft border border-hairline rounded-xl">
                       {options.map((t) => (
@@ -501,12 +510,12 @@ function BacaQuranPageContent() {
       <div className="max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
         
         {/* Continuous Scholarly Reading Surface */}
-        <div className="bg-canvas-surface rounded-2xl border border-hairline shadow-subtle overflow-hidden">
+        <div className="bg-canvas-surface overflow-hidden">
           
           {/* Surah Header */}
           <div className="p-6 sm:p-10 text-center space-y-4 border-b border-hairline bg-canvas-soft/40">
             <span className="text-xs text-ink-mute font-medium font-sans uppercase tracking-wider">
-              Surah Ke-{currentSurahMeta.number} • {currentSurahMeta.revelationType}
+              {t('Surah ke-', 'Surah ')}{currentSurahMeta.number}
             </span>
 
             <h1 className="font-arabic text-4xl sm:text-5xl lg:text-6xl font-bold text-primary leading-[2.2] sm:leading-[2.6]" dir="rtl">
@@ -514,10 +523,10 @@ function BacaQuranPageContent() {
             </h1>
 
             <h2 className="text-lg sm:text-xl font-medium font-sans text-ink-primary">
-              Surah {currentSurahMeta.nameIndo} ({currentSurahMeta.ayahsCount} Ayat)
+              Surah {currentSurahMeta.nameIndo} ({currentSurahMeta.ayahsCount} {t('Ayat', 'verses')})
             </h2>
-            <p className="text-xs sm:text-sm text-ink-mute font-sans">
-              Arti: &ldquo;{currentSurahMeta.translationId}&rdquo;
+            <p className="text-sm text-ink-secondary font-sans">
+              {language === 'id' ? <>Arti: &ldquo;{currentSurahMeta.translationId}&rdquo; · Terjemahan ayat: Kemenag RI / Quran.com</> : 'Translation: Saheeh International · Quran.com'}
             </p>
 
             {/* Audio Recitation & Tadarus Handsfree Trigger */}
@@ -525,7 +534,7 @@ function BacaQuranPageContent() {
               <button
                 onClick={audio.togglePlayPause}
                 className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary-deep text-white text-xs font-semibold shadow-subtle transition-all font-sans"
-                title={audio.isPlaying ? 'Jeda Tilawah' : 'Putar Tilawah Surah Ini (Space)'}
+                title={audio.isPlaying ? t('Jeda Tilawah', 'Pause recitation') : t('Putar Tilawah Surah Ini (Space)', 'Play recitation (Space)')}
               >
                 {audio.isLoading ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -534,7 +543,7 @@ function BacaQuranPageContent() {
                 ) : (
                   <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
                 )}
-                <span>{audio.isPlaying ? 'Jeda Tilawah' : 'Putar Tilawah'}</span>
+                <span>{audio.isPlaying ? t('Jeda Tilawah', 'Pause recitation') : t('Putar Tilawah', 'Play recitation')}</span>
               </button>
 
               <div className="relative" ref={headerHandsfreeRef}>
@@ -545,8 +554,8 @@ function BacaQuranPageContent() {
                       ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 font-bold'
                       : 'bg-canvas-soft hover:bg-canvas-page text-ink-secondary hover:text-primary border-hairline'
                   }`}
-                  title="Tadarus Handsfree: Klik untuk Buka Pilihan Mode (Arab ⇄ Makna)"
-                  aria-label="Tadarus Handsfree"
+                  title={t('Pilihan mode handsfree', 'Choose handsfree mode')}
+                  aria-label={t(t('Tadarus Handsfree', 'Handsfree'), 'Handsfree')}
                   aria-haspopup="true"
                   aria-expanded={isHeaderHandsfreeOpen}
                 >
@@ -559,10 +568,10 @@ function BacaQuranPageContent() {
                   )}
                   <span>
                     {audio.handsfreeMode === 'normal'
-                      ? 'Handsfree: Arab → Makna'
+                      ? t('Handsfree: Arab → Makna', 'Handsfree: Arabic → Indonesian')
                       : audio.handsfreeMode === 'reverse'
-                      ? 'Handsfree: Makna → Arab'
-                      : 'Tadarus Handsfree'}
+                      ? t('Handsfree: Makna → Arab', 'Handsfree: Indonesian → Arabic')
+                      : t('Tadarus Handsfree', 'Handsfree')}
                   </span>
                 </button>
 
@@ -572,7 +581,7 @@ function BacaQuranPageContent() {
                     <div className="flex items-center justify-between pb-2 border-b border-hairline">
                       <div className="flex items-center space-x-1.5">
                         <Headphones className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                        <span className="text-xs font-semibold text-ink-primary">Mode Tadarus Handsfree</span>
+                        <span className="text-xs font-semibold text-ink-primary">{t('Mode Tadarus Handsfree', 'Handsfree mode')}</span>
                       </div>
                       {audio.handsfreeMode !== 'off' && (
                         <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider">
@@ -581,6 +590,7 @@ function BacaQuranPageContent() {
                       )}
                     </div>
 
+                    {!audio.isHumanTranslationAvailableForCurrentSurah && <p className="text-sm text-ink-secondary">{t('Rekaman terjemahan manusia belum tersedia untuk surat ini. Tilawah Arab tetap berjalan.', 'A human Indonesian translation recording is unavailable for this surah. Arabic recitation will continue.')}</p>}
                     <div className="grid grid-cols-1 gap-1.5">
                       {/* Tombol Panah Kanan: Arab -> Makna (Normal) */}
                       <button
@@ -602,8 +612,8 @@ function BacaQuranPageContent() {
                             <ArrowRight className="w-4 h-4" />
                           </div>
                           <div>
-                            <div className="text-xs font-semibold">Arab → Makna</div>
-                            <div className="text-[10px] text-ink-mute">Tilawah Arab dulu, baru terjemahan</div>
+                            <div className="text-xs font-semibold">{t('Arab → Makna', 'Arabic → Indonesian')}</div>
+                            <div className="text-[10px] text-ink-mute">{t('Tilawah Arab dulu, baru terjemahan', 'Arabic recitation, then Indonesian translation')}</div>
                           </div>
                         </div>
                         {audio.handsfreeMode === 'normal' && <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
@@ -629,8 +639,8 @@ function BacaQuranPageContent() {
                             <ArrowLeft className="w-4 h-4" />
                           </div>
                           <div>
-                            <div className="text-xs font-semibold">Makna → Arab (Reverse)</div>
-                            <div className="text-[10px] text-ink-mute">Terjemahan dibacakan dulu, baru Arab</div>
+                            <div className="text-xs font-semibold">{t('Makna → Arab (Reverse)', 'Indonesian → Arabic')}</div>
+                            <div className="text-[10px] text-ink-mute">{t('Terjemahan dibacakan dulu, baru Arab', 'Indonesian translation, then Arabic recitation')}</div>
                           </div>
                         </div>
                         {audio.handsfreeMode === 'reverse' && <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
@@ -649,7 +659,7 @@ function BacaQuranPageContent() {
                             : 'text-ink-mute hover:text-rose-600 hover:bg-rose-500/10'
                         }`}
                       >
-                        {audio.handsfreeMode === 'off' ? 'Handsfree Nonaktif' : 'Matikan Mode Handsfree'}
+                        {audio.handsfreeMode === 'off' ? t('Handsfree Nonaktif', 'Handsfree off') : t('Matikan Mode Handsfree', 'Turn handsfree off')}
                       </button>
                     </div>
                   </div>
@@ -674,7 +684,7 @@ function BacaQuranPageContent() {
                 }`}
               >
                 <Navigation className="w-3.5 h-3.5" />
-                <span>Lompat Ayat</span>
+                <span>{t('Lompat Ayat', 'Jump to verse')}</span>
               </button>
 
               <button
@@ -689,7 +699,7 @@ function BacaQuranPageContent() {
                 }`}
               >
                 <Search className="w-3.5 h-3.5" />
-                <span>Cari Kata / Makna</span>
+                <span>{t('Cari Kata / Makna', 'Search word / meaning')}</span>
               </button>
             </div>
 
@@ -699,10 +709,11 @@ function BacaQuranPageContent() {
                 /* Mode B: Lompat Nomor Ayat (Dropdown / Selector with 7-ayah context window) */
                 <div className="flex items-center space-x-2 w-full md:w-auto">
                   <span className="text-xs text-ink-mute hidden sm:inline whitespace-nowrap">
-                    Pilih Ayat (1 - {currentSurahMeta.ayahsCount}):
+                    {t('Pilih Ayat', 'Choose verse')} (1–{currentSurahMeta.ayahsCount}):
                   </span>
                   <div className="relative flex-1 md:w-44">
                     <select
+                      aria-label={t('Nomor ayat', 'Verse number')}
                       value={selectedAyah || ''}
                       onChange={(e) => {
                         const val = e.target.value ? parseInt(e.target.value, 10) : null;
@@ -712,10 +723,10 @@ function BacaQuranPageContent() {
                       }}
                       className="w-full pl-3 pr-8 py-1.5 rounded-xl border border-hairline bg-canvas-soft hover:bg-canvas-page text-xs font-semibold text-ink-primary appearance-none focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
                     >
-                      <option value="">-- Ke Nomor Ayat --</option>
+                      <option value="">{t('Ke nomor ayat', 'Verse number')}</option>
                       {Array.from({ length: currentSurahMeta.ayahsCount }, (_, i) => i + 1).map((num) => (
                         <option key={num} value={num}>
-                          Ayat {num}
+                          {t('Ayat', 'Verse')} {num}
                         </option>
                       ))}
                     </select>
@@ -725,9 +736,9 @@ function BacaQuranPageContent() {
                     <button
                       onClick={clearSearch}
                       className="p-1.5 rounded-lg border border-hairline bg-canvas-soft hover:bg-canvas-page text-xs text-ink-secondary hover:text-primary transition-colors"
-                      title="Kembalikan ke Tampilan Seluruh Surah"
+                      title={t('Kembalikan ke Tampilan Seluruh Surah', 'Show the entire surah')}
                     >
-                      Buka Semua
+                      {t('Buka Semua', 'Show all')}
                     </button>
                   )}
                 </div>
@@ -739,14 +750,14 @@ function BacaQuranPageContent() {
                     type="text"
                     value={wordQuery}
                     onChange={(e) => setWordQuery(e.target.value)}
-                    placeholder="Ketik kata Arab, latin, atau arti..."
+                    placeholder={t('Ketik kata Arab, latin, atau arti…', 'Search Arabic, transliteration, or meaning…')}
                     className="w-full pl-8 pr-8 py-1.5 rounded-xl border border-hairline bg-canvas-soft text-xs text-ink-primary placeholder:text-ink-mute focus:outline-none focus:ring-1 focus:ring-primary"
                   />
                   {wordQuery && (
                     <button
                       onClick={clearSearch}
                       className="p-1 text-ink-mute hover:text-ink-primary absolute right-2 rounded-full hover:bg-canvas-surface"
-                      title="Hapus Pencarian"
+                      title={t('Hapus Pencarian', 'Clear search')}
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -760,13 +771,13 @@ function BacaQuranPageContent() {
           {isFilteringKata && (
             <div className="p-3.5 bg-primary-subdued/40 border-b border-hairline flex items-center justify-between text-xs text-primary font-sans px-6">
               <span>
-                Menampilkan <strong>{totalMatchesCount} ayat</strong> yang memuat &ldquo;{wordQuery}&rdquo; dalam Surah {currentSurahMeta.nameIndo}.
+                {t('Menampilkan', 'Showing')} <strong>{totalMatchesCount} {t('ayat', 'verses')}</strong> · &ldquo;{wordQuery}&rdquo; · {currentSurahMeta.nameIndo}
               </span>
               <button
                 onClick={clearSearch}
                 className="font-semibold underline hover:text-primary-deep"
               >
-                Tampilkan Semua Ayat
+                {t('Tampilkan Semua Ayat', 'Show all verses')}
               </button>
             </div>
           )}
@@ -774,13 +785,13 @@ function BacaQuranPageContent() {
           {isAyahContextWindow && (
             <div className="p-3.5 bg-primary-subdued/30 border-b border-hairline flex items-center justify-between text-xs text-primary font-sans px-6">
               <span>
-                Fokus Ayat <strong>{selectedAyah}</strong> (Menampilkan Konteks Ayat {visibleRange.start} - {visibleRange.end} dari {currentSurahMeta.ayahsCount} Ayat).
+                {t('Fokus ayat', 'Verse')} <strong>{selectedAyah}</strong> · {visibleRange.start}–{visibleRange.end} / {currentSurahMeta.ayahsCount}
               </span>
               <button
                 onClick={clearSearch}
                 className="font-semibold underline hover:text-primary-deep"
               >
-                Tampilkan Seluruh Surah
+                {t('Tampilkan Seluruh Surah', 'Show entire surah')}
               </button>
             </div>
           )}
@@ -789,7 +800,7 @@ function BacaQuranPageContent() {
           {loading ? (
             <div className="py-24 text-center space-y-3">
               <div className="w-7 h-7 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-              <p className="text-xs font-sans text-ink-mute">Memuat teks Al-Qur&apos;an &amp; analisis kata...</p>
+              <p className="text-xs font-sans text-ink-mute">{t('Memuat teks Al-Qur’an & analisis kata...', 'Loading Quran text and word analysis…')}</p>
             </div>
           ) : displayedAyahs.length === 0 ? (
             <div className="py-16 text-center space-y-4 max-w-lg mx-auto px-4">
@@ -797,7 +808,7 @@ function BacaQuranPageContent() {
                 <div className="p-5 rounded-2xl bg-canvas-soft border border-primary/20 shadow-subtle space-y-3 text-left">
                   <div className="flex items-center space-x-2 text-xs font-semibold text-primary">
                     <BookOpen className="w-4 h-4" />
-                    <span>Ditemukan Nama Surah:</span>
+                    <span>{t('Ditemukan Nama Surah:', 'Matching surahs:')}</span>
                   </div>
                   <div className="space-y-2">
                     {matchedSurahs.slice(0, 3).map((s: (typeof SURAH_LIST)[number]) => (
@@ -818,7 +829,7 @@ function BacaQuranPageContent() {
                               Surah {s.nameIndo}
                             </p>
                             <p className="text-[11px] text-ink-mute">
-                              {s.translationId} • {s.ayahsCount} Ayat
+                              {language === 'id' ? `${s.translationId} · ` : ''}{s.ayahsCount} {t('ayat', 'verses')}
                             </p>
                           </div>
                         </div>
@@ -830,13 +841,13 @@ function BacaQuranPageContent() {
                     ))}
                   </div>
                   <p className="text-[11px] text-ink-mute text-center pt-1">
-                    Klik surah di atas untuk langsung membuka dan membaca.
+                    {t('Klik surah di atas untuk langsung membuka dan membaca.', 'Choose a surah above to read it.')}
                   </p>
                 </div>
               ) : (
                 <>
-                  <p className="text-sm font-semibold text-ink-primary">Tidak ada ayat yang cocok</p>
-                  <p className="text-xs text-ink-mute">Coba gunakan kata kunci lain atau bersihkan pencarian.</p>
+                  <p className="text-sm font-semibold text-ink-primary">{t('Tidak ada ayat yang cocok', 'No matching verses')}</p>
+                  <p className="text-xs text-ink-mute">{t('Coba gunakan kata kunci lain atau bersihkan pencarian.', 'Try another word or clear your search.')}</p>
                 </>
               )}
             </div>
@@ -885,8 +896,8 @@ function BacaQuranPageContent() {
                               ? 'text-primary bg-primary-subdued'
                               : 'text-ink-mute hover:text-primary hover:bg-canvas-soft'
                           }`}
-                          title={isActiveAyah && audio.isPlaying ? 'Jeda Ayat Ini' : 'Putar Tilawah Ayat Ini'}
-                          aria-label={`Putar Tilawah Ayat ${ayah.ayahNumber}`}
+                          title={isActiveAyah && audio.isPlaying ? t('Jeda Ayat Ini', 'Pause verse') : t('Putar Tilawah Ayat Ini', 'Play verse')}
+                          aria-label={`${t('Putar Tilawah Ayat', 'Play verse')} ${ayah.ayahNumber}`}
                         >
                           {isActiveAyah && audio.isLoading ? (
                             <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
@@ -902,8 +913,8 @@ function BacaQuranPageContent() {
                         {isActiveAyah && audio.isReadingTranslation && (
                           <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-md font-semibold animate-pulse hidden sm:inline-flex">
                             {audio.handsfreeMode === 'reverse'
-                              ? 'Makna Terjemahan (ID) Dulu'
-                              : 'Membacakan Terjemahan ID'}
+                              ? t('Makna Terjemahan (ID) Dulu', 'Indonesian translation first')
+                              : t('Membacakan Terjemahan ID', 'Playing Indonesian translation')}
                           </span>
                         )}
 
@@ -914,10 +925,10 @@ function BacaQuranPageContent() {
                               ? 'bg-primary text-white border-primary shadow-subtle'
                               : 'bg-canvas-surface border-hairline text-ink-secondary hover:text-primary hover:border-primary/40'
                           }`}
-                          title="Buka Tafsir Ringkas Kemenag RI untuk Ayat ini"
+                          title={t('Buka Tafsir Kemenag RI untuk ayat ini', 'Read Indonesian Kemenag tafsir')}
                         >
                           <BookOpen className="w-3.5 h-3.5" />
-                          <span>Tafsir</span>
+                          <span>{t('Tafsir', 'Tafsir · ID')}</span>
                         </button>
                       </div>
 
@@ -1006,24 +1017,24 @@ function BacaQuranPageContent() {
                             onClick={() => setExpandedTafsirAyah(null)}
                             className="text-xs text-ink-mute hover:text-ink-primary font-medium"
                           >
-                            Tutup
+                            {t('Tutup', 'Close')}
                           </button>
                         </div>
 
                         {loadingTafsirAyah === ayah.ayahNumber ? (
                           <div className="py-6 flex items-center justify-center space-x-2 text-ink-mute text-xs">
                             <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                            <span>Memuat penjelasan tafsir...</span>
+                            <span>{t('Memuat penjelasan tafsir...', 'Loading Indonesian tafsir…')}</span>
                           </div>
                         ) : tafsirCache[ayah.ayahNumber]?.text ? (
-                          <div className="text-xs sm:text-sm font-sans leading-relaxed text-ink-secondary space-y-2 select-text">
+                          <div className="text-base font-sans leading-relaxed text-ink-primary space-y-2 select-text">
                             <p className="whitespace-pre-line">{tafsirCache[ayah.ayahNumber].text}</p>
                             <p className="text-[11px] text-ink-mute pt-2 border-t border-hairline">
-                              Sumber: {tafsirCache[ayah.ayahNumber].source}
+                              {t('Sumber', 'Source')}: {tafsirCache[ayah.ayahNumber].source}
                             </p>
                           </div>
                         ) : (
-                          <p className="text-xs text-ink-mute italic">Tafsir untuk ayat ini belum tersedia.</p>
+                          <p className="text-xs text-ink-mute italic">{t('Tafsir untuk ayat ini belum tersedia.', 'Indonesian tafsir is unavailable for this verse.')}</p>
                         )}
                       </div>
                     )}
@@ -1041,11 +1052,11 @@ function BacaQuranPageContent() {
                 onClick={loadMoreAyahs}
                 className="px-5 py-2.5 rounded-xl bg-canvas-surface hover:bg-canvas-page border border-hairline text-xs font-semibold text-primary transition-all shadow-subtle inline-flex items-center space-x-2 font-sans"
               >
-                <span>Tampilkan Selanjutnya</span>
+                <span>{t('Tampilkan Selanjutnya', 'Show more')}</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
               <span className="text-[11px] text-ink-mute block font-sans">
-                Menampilkan {visibleRange.end} dari {ayahs.length} Ayat
+                {t('Menampilkan', 'Showing')} {visibleRange.end} / {ayahs.length} {t('ayat', 'verses')}
               </span>
             </div>
           )}
@@ -1057,7 +1068,7 @@ function BacaQuranPageContent() {
                 onClick={clearSearch}
                 className="px-5 py-2.5 rounded-xl bg-primary text-white hover:bg-primary-deep text-xs font-semibold transition-all shadow-subtle inline-flex items-center space-x-2 font-sans"
               >
-                <span>Tampilkan Seluruh Surah ({ayahs.length} Ayat)</span>
+                <span>{t('Tampilkan seluruh surah', 'Show entire surah')} ({ayahs.length} {t('ayat', 'verses')})</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -1065,14 +1076,14 @@ function BacaQuranPageContent() {
         </div>
 
         {/* Bottom Surah Navigation (Prev & Next) */}
-        <nav aria-label="Navigasi Surah" className="flex items-center justify-between pt-4">
+        <nav aria-label={t('Navigasi Surah', 'Surah navigation')} className="flex items-center justify-between pt-4">
           {selectedSurah > 1 ? (
             <button
               onClick={() => handleSelectSurah(selectedSurah - 1)}
               className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl border border-hairline bg-canvas-surface hover:border-primary text-xs font-semibold text-ink-primary hover:text-primary transition-all shadow-subtle font-sans"
             >
               <ChevronLeft className="w-4 h-4" />
-              <span>Surah Sebelumnya ({selectedSurah - 1}. {SURAH_LIST[selectedSurah - 2]?.nameIndo})</span>
+              <span>{t('Surah sebelumnya', 'Previous surah')} ({selectedSurah - 1}. {SURAH_LIST[selectedSurah - 2]?.nameIndo})</span>
             </button>
           ) : <div />}
 
@@ -1081,7 +1092,7 @@ function BacaQuranPageContent() {
               onClick={() => handleSelectSurah(selectedSurah + 1)}
               className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl border border-hairline bg-canvas-surface hover:border-primary text-xs font-semibold text-ink-primary hover:text-primary transition-all shadow-subtle font-sans"
             >
-              <span>Surah Berikutnya ({selectedSurah + 1}. {SURAH_LIST[selectedSurah]?.nameIndo})</span>
+              <span>{t('Surah berikutnya', 'Next surah')} ({selectedSurah + 1}. {SURAH_LIST[selectedSurah]?.nameIndo})</span>
               <ChevronRight className="w-4 h-4" />
             </button>
           ) : <div />}

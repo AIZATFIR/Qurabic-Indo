@@ -2,11 +2,12 @@
 
 import React, { useState, useMemo } from 'react';
 import { Virtuoso } from 'react-virtuoso';
+import { useLanguage } from '@/lib/context/LanguageContext';
 import { RootWord } from '@/lib/types/morphology';
 import { SURAH_LIST, SurahMeta } from '@/lib/data/surah-list';
 import RootCard from './RootCard';
 import Link from 'next/link';
-import { BookOpen, Search, ArrowRight, Layers, BookMarked, Radio } from 'lucide-react';
+import { Search, ArrowRight } from 'lucide-react';
 
 interface VirtualQuranSearchResultsProps {
   query: string;
@@ -21,6 +22,7 @@ export default function VirtualQuranSearchResults({
   initialRoots,
   liveRoot,
 }: VirtualQuranSearchResultsProps) {
+  const { language, t } = useLanguage();
   const [activeFilter, setActiveFilter] = useState<SearchFilterTab>('all');
 
   // Filter surahs matching the query
@@ -38,11 +40,7 @@ export default function VirtualQuranSearchResults({
 
   // Combined Results list for virtualization
   const combinedItems = useMemo(() => {
-    const list: Array<{ type: 'root' | 'surah' | 'live'; data: any }> = [];
-
-    if (liveRoot) {
-      list.push({ type: 'live', data: liveRoot });
-    }
+    const list: Array<{ type: 'root' | 'surah'; data: any }> = [];
 
     if (activeFilter === 'all' || activeFilter === 'surahs') {
       matchingSurahs.forEach((s) => list.push({ type: 'surah', data: s }));
@@ -57,57 +55,57 @@ export default function VirtualQuranSearchResults({
 
   return (
     <section aria-labelledby="search-results-heading" className="space-y-6 font-sans">
-      <h2 id="search-results-heading" className="sr-only">Daftar Hasil Pencarian</h2>
+      <h2 id="search-results-heading" className="sr-only">{t('Daftar hasil pencarian', 'Search results')}</h2>
       
       {/* Search Filter Tabs */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline pb-4">
         <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 sm:pb-0">
           <button
             onClick={() => setActiveFilter('all')}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
+            className={`px-3.5 py-1.5 rounded-sm text-base font-semibold transition-all ${
               activeFilter === 'all'
-                ? 'bg-primary text-white shadow-subtle'
+                ? 'bg-primary text-white'
                 : 'bg-canvas-surface text-ink-mute hover:text-ink-primary border border-hairline'
             }`}
           >
-            Semua ({combinedItems.length})
+            {t('Semua', 'All')} ({initialRoots.length + matchingSurahs.length})
           </button>
 
           <button
             onClick={() => setActiveFilter('roots')}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
+            className={`px-3.5 py-1.5 rounded-sm text-base font-semibold transition-all ${
               activeFilter === 'roots'
-                ? 'bg-primary text-white shadow-subtle'
+                ? 'bg-primary text-white'
                 : 'bg-canvas-surface text-ink-mute hover:text-ink-primary border border-hairline'
             }`}
           >
-            Akar Kata ({initialRoots.length})
+            {t('Akar kata', 'Roots')} ({initialRoots.length})
           </button>
 
           <button
             onClick={() => setActiveFilter('surahs')}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
+            className={`px-3.5 py-1.5 rounded-sm text-base font-semibold transition-all ${
               activeFilter === 'surahs'
-                ? 'bg-primary text-white shadow-subtle'
+                ? 'bg-primary text-white'
                 : 'bg-canvas-surface text-ink-mute hover:text-ink-primary border border-hairline'
             }`}
           >
-            Surah ({matchingSurahs.length})
+            {t('Surah', 'Surahs')} ({matchingSurahs.length})
           </button>
         </div>
 
-        <span className="text-xs text-ink-mute">
-          Virtualisasi Render &bull; <strong className="text-ink-primary">{combinedItems.length}</strong> Item
+        <span className="text-base text-ink-mute">
+          <strong className="text-ink-primary">{combinedItems.length}</strong> {t('hasil', 'results')}
         </span>
       </div>
 
       {/* Empty State */}
       {combinedItems.length === 0 ? (
-        <div className="p-12 text-center bg-canvas-surface border border-hairline rounded-3xl space-y-3 shadow-subtle">
+        <div className="p-12 text-center bg-canvas-surface border border-hairline rounded-sm space-y-3">
           <Search className="w-8 h-8 mx-auto text-ink-mute opacity-40" />
-          <h3 className="text-base font-semibold text-ink-primary">Tidak Ada Hasil Ditemukan</h3>
-          <p className="text-xs text-ink-mute max-w-md mx-auto">
-            Tidak ditemukan data yang cocok dengan &ldquo;{query}&rdquo; pada kategori terpilih. Cobalah gunakan kata kunci lain.
+          <h3 className="text-base font-semibold text-ink-primary">{t('Tidak ada hasil', 'No results found')}</h3>
+          <p className="text-base text-ink-mute max-w-md mx-auto">
+            {t(`Tidak ada hasil untuk “${query}” pada kategori ini. Coba kata kunci lain.`, `No results for “${query}” in this category. Try another search.`)}
           </p>
         </div>
       ) : (
@@ -123,22 +121,22 @@ export default function VirtualQuranSearchResults({
                   <div className="pb-4" key={`surah-${surah.number}`}>
                     <Link
                       href={`/baca?surah=${surah.number}`}
-                      aria-label={`Buka Surah ${surah.number}. ${surah.nameIndo} (${surah.translationId})`}
-                      className="p-5 rounded-2xl bg-canvas-surface border border-hairline hover:border-primary/40 hover:shadow-subtle transition-all flex items-center justify-between group"
+                      aria-label={t(`Buka Surah ${surah.number}. ${surah.nameIndo}`, `Open Surah ${surah.number}. ${surah.transliteration}`)}
+                      className="p-5 rounded-sm bg-canvas-surface border border-hairline hover:border-primary/40 transition-all flex items-center justify-between group"
                     >
                       <div className="flex items-center space-x-4">
-                        <div className="w-10 h-10 rounded-xl bg-primary-subdued text-primary flex items-center justify-center font-bold text-sm">
+                        <div className="w-10 h-10 rounded-sm bg-primary-subdued text-primary flex items-center justify-center font-bold text-sm">
                           {surah.number}
                         </div>
                         <div>
                           <div className="flex items-center space-x-2">
                             <h3 className="font-bold text-ink-primary group-hover:text-primary transition-colors text-sm">
-                              Surah {surah.nameIndo}
+                              {t('Surah', 'Surah')} {language === 'en' ? surah.transliteration : surah.nameIndo}
                             </h3>
-                            <span className="text-[11px] text-ink-mute">({surah.translationId})</span>
+                            {language === 'id' && <span className="text-sm text-ink-secondary">({surah.translationId})</span>}
                           </div>
-                          <p className="text-xs text-ink-mute mt-0.5">
-                            {surah.ayahsCount} Ayat &bull; {surah.revelationType}
+                          <p className="text-base text-ink-mute mt-0.5">
+                            {surah.ayahsCount} {t('ayat', 'verses')} · {language === 'en' ? (surah.revelationType === 'Makkiyyah' ? 'Meccan' : 'Medinan') : surah.revelationType}
                           </p>
                         </div>
                       </div>
@@ -147,7 +145,7 @@ export default function VirtualQuranSearchResults({
                         <span className="font-arabic text-xl font-bold text-ink-primary" dir="rtl">
                           {surah.nameArabic}
                         </span>
-                        <div className="w-8 h-8 rounded-full bg-canvas-soft group-hover:bg-primary group-hover:text-white text-ink-mute flex items-center justify-center transition-all">
+                        <div className="w-8 h-8 rounded-sm bg-canvas-soft group-hover:bg-primary group-hover:text-white text-ink-mute flex items-center justify-center transition-all">
                           <ArrowRight className="w-4 h-4" />
                         </div>
                       </div>

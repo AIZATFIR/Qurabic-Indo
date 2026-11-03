@@ -32,8 +32,8 @@ test('Particles Dictionary & Zero-Fallback Placeholder Tests', async (t) => {
   await t.test('2. Particle فِي word study has authentic Nahwu breakdown and zero template placeholder', () => {
     const study = getWordStudy('فِي');
     assert.equal(study.morphology.pos, 'Harf');
-    assert.ok(study.primaryMeaning.text.includes('Di dalam') || study.primaryMeaning.text.includes('Pada'));
-    assert.ok(study.lexical.meanings && study.lexical.meanings.length >= 2);
+    assert.ok(study.primaryMeaning.text.toLowerCase().includes('di dalam'));
+    assert.ok(study.lexical.meanings && study.lexical.meanings.length >= 1);
 
     // Negative invariant: Zero leaked dummy strings
     for (const m of study.lexical.meanings || []) {
@@ -44,11 +44,12 @@ test('Particles Dictionary & Zero-Fallback Placeholder Tests', async (t) => {
     assert.ok(!study.lexical.rootPhilosophy?.includes('memiliki peranan penting dalam kosakata Al-Qur\'an dengan berbagai bentuk turunan verba'));
   });
 
-  await t.test('3. Root ك و ن (k-w-n) has genuine existential philosophy and no dummy template', () => {
+  await t.test('3. Root ك و ن (k-w-n) displays a sourced contextual gloss, without invented philosophy', () => {
     const study = getWordStudy('كَانَ');
     assert.equal(study.lexical.rootArabic, 'ك و ن');
-    assert.ok(study.primaryMeaning.text.includes('Adalah') || study.primaryMeaning.text.includes('Wujud'));
-    assert.ok(study.lexical.rootPhilosophy?.includes('al-kaun') || study.lexical.rootPhilosophy?.includes('eksistensi'));
+    assert.ok(study.primaryMeaning.text.toLowerCase().includes('adalah'));
+    assert.equal(study.lexical.rootPhilosophy, undefined);
+    assert.equal(study.primaryMeaning.sourceId, 'quran-com-wbw');
 
     for (const m of study.lexical.meanings || []) {
       assert.notEqual(m, 'Konsep & Turunan Akar كون');

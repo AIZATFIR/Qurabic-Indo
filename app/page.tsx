@@ -2,383 +2,131 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import {
-  Search,
-  ArrowRight,
-  BookOpen,
-  Layers,
-  BookMarked,
-  Shuffle,
-  ShieldCheck,
-  ExternalLink,
-  Compass,
-  Volume2
-} from 'lucide-react';
+import { ArrowRight, Bookmark, ExternalLink } from 'lucide-react';
 import { ROOT_DATABASE } from '@/lib/data/roots';
-import RootCard from '@/components/RootCard';
+import { useBookmarks } from '@/lib/hooks/useBookmarks';
+import { useLanguage } from '@/lib/context/LanguageContext';
 import OmniSearch from '@/components/OmniSearch';
 import IlluminatedQuranHero from '@/components/IlluminatedQuranHero';
-import { ContainerScroll } from '@/components/ui/container-scroll-animation';
+
+const STARTING_ROOT_IDS = ['S-l-w', 'S-b-r', 'E-l-m', 'r-H-m', 'k-t-b', 'q-w-l'];
+const STARTING_ROOTS = STARTING_ROOT_IDS.flatMap((id) => {
+  const root = ROOT_DATABASE.find((entry) => entry.id === id);
+  return root ? [root] : [];
+});
+
+const EXPLORE_LINKS = [
+  { href: '/ayat-random', title: ['Ayat acak', 'Random verse'], description: ['Baca satu ayat dan pelajari kata-katanya.', 'Read a verse and explore its words.'] },
+  { href: '/morfologi', title: ['Indeks akar kata', 'Root index'], description: ['Telusuri akar, bentuk kata, dan ayat tempatnya digunakan.', 'Browse roots, word forms, and the verses where they occur.'] },
+  { href: '/rekomendasi', title: ['Bahan belajar', 'Learning resources'], description: ['Temukan video dan aplikasi untuk melanjutkan belajar.', 'Find videos and apps for further study.'] },
+];
 
 export default function HomePage() {
+  const { language, t } = useLanguage();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [lastSearch, setLastSearch] = useState<string | null>(null);
+  const { isBookmarked, toggleBookmark } = useBookmarks();
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('qurabic_last_search');
-      if (saved) setLastSearch(saved);
-    } catch (e) {}
+      setLastSearch(localStorage.getItem('qurabic_last_search'));
+    } catch {
+      // Reading and search remain available when browser storage is disabled.
+    }
   }, [isSearchOpen]);
 
   return (
-    <div className="space-y-20 pb-20">
-      
-      {/* 1. ILLUMINATED QUR'AN CINEMATIC GSAP HERO SECTION */}
+    <div className="mx-auto max-w-5xl px-5 sm:px-8 pb-16 sm:pb-24 font-sans">
       <IlluminatedQuranHero
         onOpenSearch={() => setIsSearchOpen(true)}
         lastSearch={lastSearch || undefined}
       />
 
-      {/* 2. CINEMATIC SCROLL PERSPECTIVE REVEAL */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <ContainerScroll
-          titleComponent={
-            <div className="space-y-4 mb-8">
-              <span className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-primary-subdued text-primary text-xs font-semibold uppercase tracking-wider">
-                <Compass className="w-3.5 h-3.5" />
-                <span>Metode Eksplorasi Terpadu</span>
-              </span>
-              <h2 className="text-3xl sm:text-5xl font-light text-ink-primary tracking-tight font-sans">
-                Membedah Satu Ayat <br />
-                <span className="font-semibold text-primary">Hingga ke Akar Maknanya</span>
-              </h2>
-              <p className="text-sm sm:text-base text-ink-mute max-w-xl mx-auto font-sans leading-relaxed">
-                Setiap kata dalam mushaf terhubung langsung dengan kamus etimologi klasik, klasifikasi gramatika Sharaf, dan pelafalan audio.
-              </p>
-            </div>
-          }
-        >
-          {/* Mock Interactive Quran Reader Viewport inside Scroll Frame */}
-          <div className="p-6 sm:p-10 flex flex-col justify-between h-full space-y-6 overflow-hidden select-none">
-            {/* Header of Mock Reader */}
-            <div className="flex items-center justify-between border-b border-hairline pb-4 text-xs font-sans text-ink-mute">
-              <div className="flex items-center space-x-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
-                <span className="font-semibold text-ink-primary">Q.S. Al-Baqarah [2]:255 (Ayat Kursi)</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="px-2.5 py-0.5 rounded-md bg-canvas-soft border border-hairline font-mono text-[11px]">
-                  Mode: Bookpaper Mushaf
-                </span>
-              </div>
-            </div>
+      <nav aria-label={t('Jelajahi Qurabic', 'Explore Qurabic')} className="border-y border-hairline divide-y divide-hairline">
+        {EXPLORE_LINKS.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="group grid grid-cols-[1fr_auto] sm:grid-cols-[13rem_1fr_auto] gap-x-6 gap-y-1 items-center py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset hover:bg-canvas-soft transition-colors"
+          >
+            <span className="text-lg font-medium text-ink-primary group-hover:text-primary">{t(item.title[0], item.title[1])}</span>
+            <span className="row-start-2 sm:row-start-auto text-base leading-relaxed text-ink-secondary">{t(item.description[0], item.description[1])}</span>
+            <ArrowRight className="col-start-2 sm:col-start-3 row-start-1 h-5 w-5 text-primary" aria-hidden="true" />
+          </Link>
+        ))}
+      </nav>
 
-            {/* Arabic Text with Word-by-Word Interactivity Preview */}
-            <div className="space-y-6 text-center my-auto">
-              <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 font-arabic text-2xl sm:text-3xl lg:text-4xl text-ink-primary font-bold leading-loose" dir="rtl">
-                <span className="p-2 rounded-xl bg-primary-subdued text-primary ring-2 ring-primary/30">
-                  اللَّهُ
-                </span>
-                <span className="p-2 rounded-xl hover:bg-canvas-soft transition-colors">
-                  لَا إِلَـٰهَ
-                </span>
-                <span className="p-2 rounded-xl hover:bg-canvas-soft transition-colors">
-                  إِلَّا هُوَ
-                </span>
-                <span className="p-2 rounded-xl bg-canvas-soft border border-hairline">
-                  الْحَيُّ
-                </span>
-                <span className="p-2 rounded-xl bg-canvas-soft border border-hairline">
-                  الْقَيُّومُ
-                </span>
-              </div>
-
-              {/* Translation & Linguistic Insight Preview */}
-              <div className="p-5 rounded-2xl bg-canvas-soft/80 border border-hairline max-w-2xl mx-auto space-y-2 text-left">
-                <div className="flex items-center justify-between text-xs font-sans">
-                  <span className="font-semibold text-primary">Bedah Morfologi Sharaf:</span>
-                  <span className="text-ink-mute font-mono">Akar: ح - ي - ي (h-y-y)</span>
-                </div>
-                <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed font-sans">
-                  <strong className="text-ink-primary">الْحَيُّ (Al-Hayyu):</strong> Isim Shifat Musyabbahah bi Ismi al-Fa&apos;il &mdash; Dzat Yang Maha Hidup secara mutlak, kekal abadi, dan menjadi sumber segala kehidupan di alam semesta.
-                </p>
-              </div>
-            </div>
-
-            {/* Mock Reader Footer */}
-            <div className="pt-4 border-t border-hairline flex items-center justify-between text-xs text-ink-mute font-sans">
-              <div className="flex items-center space-x-2">
-                <Volume2 className="w-4 h-4 text-primary" />
-                <span>Audio: Syaikh Mishary Rashid Al-Afasy</span>
-              </div>
-              <Link
-                href="/baca?surah=2"
-                className="inline-flex items-center space-x-1.5 text-primary font-semibold hover:underline"
-              >
-                <span>Buka Bacaan Penuh</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-          </div>
-        </ContainerScroll>
+      <section aria-labelledby="roots-heading" className="pt-12 sm:pt-16">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <h2 id="roots-heading" className="text-2xl font-semibold tracking-tight text-ink-primary">{t('Mulai dari akar kata', 'Start with a root')}</h2>
+          <Link href="/morfologi" className="inline-flex min-h-11 items-center gap-2 text-base font-medium text-primary hover:underline underline-offset-4 focus-visible:outline-primary">
+            {t('Lihat semua akar', 'Browse all roots')} <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+        </div>
+        <p className="mt-2 max-w-2xl text-base leading-relaxed text-ink-secondary">
+          {t("Lihat berbagai bentuk dari satu akar beserta kemunculannya dalam Al-Qur'an.", 'Explore the forms of a root and where they occur in the Quran.')}
+        </p>
+        <ul className="mt-6 divide-y divide-hairline border-y border-hairline">
+          {STARTING_ROOTS.map((root) => {
+            const bookmarked = isBookmarked(root.id);
+            return (
+              <li key={root.id} className="flex items-center gap-3 sm:gap-5 py-2">
+                <Link
+                  href={`/akar/${root.id}`}
+                  aria-label={t(`Pelajari akar ${root.rootArabic}, ${root.totalOccurrences} kemunculan`, `Explore root ${root.rootArabic}, ${root.totalOccurrences} occurrences`)}
+                  className="group grid min-w-0 flex-1 grid-cols-[1fr_auto] sm:grid-cols-[11rem_1fr_auto] gap-x-5 gap-y-1 items-center py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary hover:text-primary"
+                >
+                  <span lang="ar" dir="rtl" className="justify-self-start font-arabic text-3xl leading-loose text-ink-primary group-hover:text-primary">{root.rootArabic}</span>
+                  <span className="col-start-1 row-start-2 sm:col-start-2 sm:row-start-1 text-base text-ink-secondary">{root.rootLatin}</span>
+                  <span className="col-start-2 sm:col-start-3 row-start-1 row-span-2 sm:row-span-1 text-right text-base tabular-nums text-ink-secondary">
+                    {root.totalOccurrences.toLocaleString(language === 'en' ? 'en-US' : 'id-ID')}<span className="hidden sm:inline">{t(' kemunculan', ' occurrences')}</span><span className="block sm:hidden text-sm">{t('kemunculan', 'occurrences')}</span>
+                  </span>
+                </Link>
+                <button
+                  type="button"
+                  aria-label={`${bookmarked ? t('Hapus simpanan', 'Remove saved root') : t('Simpan akar', 'Save root')} ${root.rootArabic}`}
+                  aria-pressed={bookmarked}
+                  onClick={() => toggleBookmark(root.id, root.rootArabic)}
+                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center text-primary hover:bg-canvas-soft transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  <Bookmark className={`h-5 w-5 ${bookmarked ? 'fill-current' : ''}`} aria-hidden="true" />
+                </button>
+              </li>
+            );
+          })}
+        </ul>
       </section>
 
-      {/* 3. FEATURED FEATURES HIGHLIGHT */}
-      <section className="max-w-7xl mx-auto px-6 sm:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
-          {/* Card 1: Mode Baca */}
-          <Link
-            href="/baca"
-            className="p-6 sm:p-7 rounded-2xl bg-canvas-surface border border-hairline hover:border-primary/40 transition-all group space-y-3 shadow-subtle"
-          >
-            <div className="w-10 h-10 rounded-xl bg-primary-subdued text-primary flex items-center justify-center">
-              <BookMarked className="w-5 h-5" />
-            </div>
-            <h3 className="text-base sm:text-lg font-semibold text-ink-primary group-hover:text-primary transition-colors font-sans">
-              Baca Qur&apos;an &amp; Bedah Kata
-            </h3>
-            <p className="text-sm text-ink-mute leading-relaxed font-sans">
-              Mushaf Al-Qur&apos;an dengan ukuran huruf nyaman. Klik kata manapun untuk membuka definisi, audio pelafalan, dan akar kata.
-            </p>
+      <section aria-labelledby="sources-heading" className="pt-12 sm:pt-16">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <h2 id="sources-heading" className="text-2xl font-semibold tracking-tight text-ink-primary">{t('Kenali rujukannya', 'Know the sources')}</h2>
+          <Link href="/tentang" className="inline-flex min-h-11 items-center gap-2 text-base font-medium text-primary hover:underline underline-offset-4 focus-visible:outline-primary">
+            {t('Tentang data', 'About the data')} <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
-
-          {/* Card 2: Ayat Acak */}
-          <Link
-            href="/ayat-random"
-            className="p-6 sm:p-7 rounded-2xl bg-canvas-surface border border-hairline hover:border-primary/40 transition-all group space-y-3 shadow-subtle"
-          >
-            <div className="w-10 h-10 rounded-xl bg-primary-subdued text-primary flex items-center justify-center">
-              <Shuffle className="w-5 h-5" />
-            </div>
-            <h3 className="text-base sm:text-lg font-semibold text-ink-primary group-hover:text-primary transition-colors font-sans">
-              Ayat Acak
-            </h3>
-            <p className="text-sm text-ink-mute leading-relaxed font-sans">
-              Ayat Al-Qur&apos;an pilihan lengkap dengan audio murottal dan analisis per kata untuk tadabbur harian.
-            </p>
-          </Link>
-
-          {/* Card 3: Katalog Morfologi */}
-          <Link
-            href="/morfologi"
-            className="p-6 sm:p-7 rounded-2xl bg-canvas-surface border border-hairline hover:border-primary/40 transition-all group space-y-3 shadow-subtle"
-          >
-            <div className="w-10 h-10 rounded-xl bg-primary-subdued text-primary flex items-center justify-center">
-              <Layers className="w-5 h-5" />
-            </div>
-            <h3 className="text-base sm:text-lg font-semibold text-ink-primary group-hover:text-primary transition-colors font-sans">
-              Katalog Morfologi
-            </h3>
-            <p className="text-sm text-ink-mute leading-relaxed font-sans">
-              Indeks akar kata Al-Qur&apos;an terorganisasi berdasarkan abjad hijaiyyah, frekuensi kemunculan, dan wazan Sharaf.
-            </p>
-          </Link>
-
         </div>
+        <dl className="mt-5 space-y-5 text-base leading-relaxed">
+          <div className="sm:grid sm:grid-cols-[13rem_1fr] gap-x-6">
+            <dt className="font-medium text-ink-primary">{t('Teks dan terjemahan', 'Text and translation')}</dt>
+            <dd className="mt-1 sm:mt-0 text-ink-secondary">{t('Terjemahan Indonesia Kemenag RI melalui Quran.com. Makna kata dibaca bersama konteks ayatnya.', 'Verse translations: Kemenag RI (Indonesian) and Saheeh International (English), via Quran.com. Word-by-word glosses are a separate resource.')}</dd>
+          </div>
+          <div className="sm:grid sm:grid-cols-[13rem_1fr] gap-x-6">
+            <dt className="font-medium text-ink-primary">{t('Akar dan morfologi', 'Roots and morphology')}</dt>
+            <dd className="mt-1 sm:mt-0 text-ink-secondary">
+              {t('Anotasi kata dari', 'Word annotations from')}{' '}
+              <a href="https://corpus.quran.com/" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-4 focus-visible:outline-primary">
+                Quranic Arabic Corpus<ExternalLink className="ml-1 inline h-3.5 w-3.5" aria-hidden="true" /><span className="sr-only">{t(' (buka tab baru)', ' (opens a new tab)')}</span>
+              </a>.
+            </dd>
+          </div>
+          <div className="sm:grid sm:grid-cols-[13rem_1fr] gap-x-6">
+            <dt className="font-medium text-ink-primary">{t('Leksikon klasik', 'Classical lexicon')}</dt>
+            <dd className="mt-1 sm:mt-0 text-ink-secondary">{t("Lane's Arabic-English Lexicon ditampilkan dalam bahasa Inggris aslinya, dengan rujukan jilid dan halaman pada entri yang tersedia.", "Lane's Arabic-English Lexicon is shown in its original English, with volume and page references for available entries.")}</dd>
+          </div>
+        </dl>
+        <p className="mt-6 max-w-2xl text-base leading-relaxed text-ink-secondary">{t('Makna terjemahan, catatan morfologi, dan definisi kamus menjelaskan hal yang berbeda. Periksa label sumber pada setiap entri.', 'Translations, morphology notes, and dictionary definitions serve different purposes. Check the source label on each entry.')}</p>
       </section>
 
-      {/* 4. CATALOG SECTION: EXPLORE ROOT WORDS */}
-      <section className="max-w-7xl mx-auto px-6 sm:px-12 space-y-12">
-        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 border-b border-hairline pb-4">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-light text-ink-primary tracking-tight font-sans">
-              Akar Kata Populer
-            </h2>
-            <p className="text-sm text-ink-mute mt-1 font-sans">
-              Etimologi dan turunan kata kerja (Fi&apos;il) serta kata benda (Isim) dalam Bahasa Indonesia.
-            </p>
-          </div>
-          <Link
-            href="/morfologi"
-            className="text-sm font-medium text-primary hover:underline flex items-center space-x-1 transition-colors font-sans"
-          >
-            <span>Lihat Semua Katalog</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-
-        {/* 3-Column Root Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {ROOT_DATABASE.slice(0, 9).map((root) => (
-            <RootCard key={root.id} root={root} />
-          ))}
-        </div>
-
-        {/* 5. FEATURED LEMMAS SECTION */}
-        <div className="pt-8 space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 border-b border-hairline pb-4">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-light text-ink-primary tracking-tight font-sans">
-                Kajian Etimologi Klasik
-              </h2>
-              <p className="text-sm text-ink-mute mt-1 font-sans">
-                Kajian leksikal mendalam dari Leksikon Klasik (Lane&apos;s Arabic-English Lexicon) &amp; The Quranic Arabic Corpus.
-              </p>
-            </div>
-            <Link
-              href="/akar/s-b-r"
-              className="text-sm font-medium text-primary hover:underline flex items-center space-x-1 transition-colors font-sans"
-            >
-              <span>Detail Etimologi</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {/* Lemma 1 */}
-            <Link
-              href="/akar/s-l-w"
-              className="bg-canvas-surface p-6 rounded-2xl border border-hairline hover:border-primary/40 transition-all group space-y-2.5"
-            >
-              <div className="flex justify-between items-baseline">
-                <span className="text-3xl font-arabic text-ink-primary group-hover:text-primary transition-colors" dir="rtl">صَلَاة</span>
-                <span className="text-xs text-ink-mute font-medium font-sans">99x</span>
-              </div>
-              <h4 className="text-sm font-semibold text-ink-primary font-sans">Sholat (ص-ل-و)</h4>
-              <p className="text-xs sm:text-sm text-ink-secondary line-clamp-2 font-sans leading-relaxed">Shalawain (urat punggung yang menyambungkan). Tali penyambung ruhani hamba dengan Sang Khaliq.</p>
-            </Link>
-
-            {/* Lemma 2 */}
-            <Link
-              href="/akar/s-b-r"
-              className="bg-canvas-surface p-6 rounded-2xl border border-hairline hover:border-primary/40 transition-all group space-y-2.5"
-            >
-              <div className="flex justify-between items-baseline">
-                <span className="text-3xl font-arabic text-ink-primary group-hover:text-primary transition-colors" dir="rtl">صَبْر</span>
-                <span className="text-xs text-ink-mute font-medium font-sans">103x</span>
-              </div>
-              <h4 className="text-sm font-semibold text-ink-primary font-sans">Sabar (ص-ب-ر)</h4>
-              <p className="text-xs sm:text-sm text-ink-secondary line-clamp-2 font-sans leading-relaxed">Shobarah (batu padat yang kokoh) dan obat pahit penyembuh. Ketabahan jiwa yang tidak goyah.</p>
-            </Link>
-
-            {/* Lemma 3 */}
-            <Link
-              href="/akar/a-l-m"
-              className="bg-canvas-surface p-6 rounded-2xl border border-hairline hover:border-primary/40 transition-all group space-y-2.5"
-            >
-              <div className="flex justify-between items-baseline">
-                <span className="text-3xl font-arabic text-ink-primary group-hover:text-primary transition-colors" dir="rtl">عِلْم</span>
-                <span className="text-xs text-ink-mute font-medium font-sans">854x</span>
-              </div>
-              <h4 className="text-sm font-semibold text-ink-primary font-sans">Ilmu (ع-ل-م)</h4>
-              <p className="text-xs sm:text-sm text-ink-secondary line-clamp-2 font-sans leading-relaxed">&apos;Alam (tanda penunjuk). Pengetahuan hakiki yang menyingkap kebenaran dan memberi arah jalan hidup.</p>
-            </Link>
-
-            {/* Lemma 4 */}
-            <Link
-              href="/akar/r-h-m"
-              className="bg-canvas-surface p-6 rounded-2xl border border-hairline hover:border-primary/40 transition-all group space-y-2.5"
-            >
-              <div className="flex justify-between items-baseline">
-                <span className="text-3xl font-arabic text-ink-primary group-hover:text-primary transition-colors" dir="rtl">رَحْمَة</span>
-                <span className="text-xs text-ink-mute font-medium font-sans">339x</span>
-              </div>
-              <h4 className="text-sm font-semibold text-ink-primary font-sans">Rahmat (ر-ح-م)</h4>
-              <p className="text-xs sm:text-sm text-ink-secondary line-clamp-2 font-sans leading-relaxed">Rahim (kandungan ibu). Kasih sayang mendalam yang melindungi, memelihara, dan memberi kehidupan.</p>
-            </Link>
-          </div>
-        </div>
-
-        {/* 6. REKOMENDASI & SHOWCASE BELAJAR BANNER */}
-        <section className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-primary-subdued/40 via-canvas-surface to-primary-subdued/20 border border-hairline relative overflow-hidden space-y-6">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
-            <div className="space-y-2 max-w-xl">
-              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-primary-subdued text-primary text-xs font-medium">
-                <Compass className="w-3.5 h-3.5" />
-                <span>Rekomendasi Tambahan</span>
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-light text-ink-primary tracking-tight font-sans">
-                Kajian Video Bedah Kata &amp; <br />
-                <span className="font-semibold text-primary">Aplikasi Belajar Harian (Kalaam)</span>
-              </h3>
-              <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed font-sans">
-                Tonton kurasi video favorit yang membedah rahasia bahasa Al-Qur&apos;an dan jelajahi showcase aplikasi belajar kosakata harian.
-              </p>
-            </div>
-
-            <Link
-              href="/rekomendasi"
-              className="inline-flex items-center space-x-2 bg-primary hover:bg-primary-deep text-white font-semibold text-xs sm:text-sm px-6 py-3 rounded-full shadow-subtle hover:shadow-soft transition-all shrink-0 font-sans"
-            >
-              <span>Buka Halaman Rekomendasi</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </section>
-
-        {/* 7. PROVENANCE & REFERENCES SECTION (Source of Truth) */}
-        <section className="p-7 sm:p-10 rounded-2xl bg-canvas-surface border border-hairline space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-hairline pb-4">
-            <div>
-              <h3 className="text-lg font-semibold text-ink-primary font-sans">
-                Sumber Rujukan &amp; Provenance Data
-              </h3>
-              <p className="text-xs text-ink-mute font-sans mt-0.5">
-                Setiap informasi dan konten dalam Qurabic terhubung langsung ke sumber rujukan otentik.
-              </p>
-            </div>
-            <span className="text-xs text-primary font-semibold font-sans px-3 py-1 bg-primary-subdued rounded-lg self-start sm:self-auto">
-              Source-Grounded Architecture
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-xs sm:text-sm font-sans">
-            <div className="space-y-2">
-              <span className="font-semibold text-ink-primary block text-sm">
-                1. Teks &amp; Terjemahan:
-              </span>
-              <p className="text-ink-secondary leading-relaxed">
-                Teks Rasm Utsmani (Madinah) dan Terjemahan Bahasa Indonesia resmi dari Kementerian Agama RI &amp; Quran.com API v4.
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <span className="font-semibold text-ink-primary block text-sm">
-                2. Leksikografi Klasik:
-              </span>
-              <p className="text-ink-secondary leading-relaxed">
-                Kajian etimologi berlandaskan <em>Lisān al-&apos;Arab</em> (Ibn Manzhur), <em>Maqāyīs al-Lughah</em> (Ibn Faris), dan <em>Al-Mufradāt</em> (Ar-Raghib Al-Isfahani).
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <span className="font-semibold text-ink-primary block text-sm">
-                3. Quranic Arabic Corpus:
-              </span>
-              <p className="text-ink-secondary leading-relaxed">
-                Anotasi part-of-speech (POS) dan dekomposisi morfologi Sharaf dari riset komputasi bahasa University of Leeds.
-              </p>
-              <a
-                href="https://corpus.quran.com/"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center space-x-1 text-primary hover:underline font-medium text-xs pt-1"
-              >
-                <span>corpus.quran.com</span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
-            </div>
-
-            <div className="space-y-2">
-              <span className="font-semibold text-ink-primary block text-sm">
-                4. Audio Tilawah:
-              </span>
-              <p className="text-ink-secondary leading-relaxed">
-                Audio murottal per-ayat berkualitas tinggi oleh Syaikh Mishary Rashid Al-Afasy dari repositori EveryAyah.
-              </p>
-            </div>
-          </div>
-        </section>
-
-      </section>
-
-      {/* Global OmniSearch Modal Dialog */}
-      <OmniSearch
-        isOpen={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
-      />
+      <OmniSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </div>
   );
 }

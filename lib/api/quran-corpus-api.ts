@@ -14,6 +14,7 @@ export interface ApiSearchMatch {
   numberInSurah: number;
 }
 
+// Legacy field names meaningIndo/textIndo carry the requested display language.
 export interface WBWWord {
   id: number;
   position: number;
@@ -39,6 +40,7 @@ export interface FullAyahWBW {
 
 // In-Memory cache for high-performance reading mode & zero redundant network latency
 export const SURAH_WBW_CACHE = new Map<number, FullAyahWBW[]>();
+const SURAH_WBW_EN_CACHE = new Map<number, FullAyahWBW[]>();
 
 /**
  * Fallback resolver for Indonesian Quran translations
@@ -114,14 +116,24 @@ async function fetchIndonesianSurahTranslationFallback(surahNumber: number): Pro
 /**
  * Fetches full surah with exact word-by-word (WBW) data from Quran.com API v4
  */
-export async function fetchSurahWithWBW(surahNumber: number): Promise<FullAyahWBW[]> {
-  if (SURAH_WBW_CACHE.has(surahNumber)) {
-    return SURAH_WBW_CACHE.get(surahNumber)!;
-  }
+export async function fetchSurahWithWBW(surahNumber: number, language: 'id' | 'en' = 'id'): Promise<FullAyahWBW[]> {
+  const cache = language === 'en' ? SURAH_WBW_EN_CACHE : SURAH_WBW_CACHE;
+  if (cache.has(surahNumber)) return cache.get(surahNumber)!;
+  const translationId = language === 'en' ? 20 : 33;
+  const fetchTranslationFallback = async () => {
+    if (language === 'id') return fetchIndonesianSurahTranslationFallback(surahNumber);
+    const result = new Map<number, string>();
+    const response = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`, { signal: AbortSignal.timeout(8000) });
+    if (response.ok) {
+      const json = await response.json();
+      for (const ayah of json.data?.ayahs || []) if (ayah.numberInSurah && ayah.text) result.set(ayah.numberInSurah, ayah.text);
+    }
+    return result;
+  };
 
   try {
     const page1Res = await fetch(
-      `https://api.quran.com/api/v4/verses/by_chapter/${surahNumber}?language=id&words=true&word_fields=text_uthmani,transliteration,translation,location&translations=33&per_page=50&page=1`,
+      `https://api.quran.com/api/v4/verses/by_chapter/${surahNumber}?language=${language}&words=true&word_fields=text_uthmani,transliteration,translation,location&translations=${translationId}&per_page=50&page=1`,
       { next: { revalidate: 86400 } }
     );
 
@@ -135,7 +147,7 @@ export async function fetchSurahWithWBW(surahNumber: number): Promise<FullAyahWB
       for (let p = 2; p <= totalPages; p++) {
         pagePromises.push(
           fetch(
-            `https://api.quran.com/api/v4/verses/by_chapter/${surahNumber}?language=id&words=true&word_fields=text_uthmani,transliteration,translation,location&translations=33&per_page=50&page=${p}`,
+            `https://api.quran.com/api/v4/verses/by_chapter/${surahNumber}?language=${language}&words=true&word_fields=text_uthmani,transliteration,translation,location&translations=${translationId}&per_page=50&page=${p}`,
             { next: { revalidate: 86400 } }
           ).then(r => r.ok ? r.json() : { verses: [] })
         );
@@ -155,7 +167,7 @@ export async function fetchSurahWithWBW(surahNumber: number): Promise<FullAyahWB
         const arabic = w.text_uthmani || w.text || '';
         const transliteration = w.transliteration?.text || '';
         const rawMeaning = w.translation?.text || '';
-        const meaningIndo = cleanGlossToIndonesian(rawMeaning);
+        const meaningIndo = language === 'en' ? rawMeaning : cleanGlossToIndonesian(rawMeaning);
         const charType = (w.char_type_name === 'end' ? 'end' : 'word') as 'word' | 'end';
         const location = w.location || `${surahNumber}:${v.verse_number}:${w.position}`;
 
@@ -199,7 +211,7 @@ export async function fetchSurahWithWBW(surahNumber: number): Promise<FullAyahWB
     // Check if any verses lack Indonesian translation, and augment with official fallback
     const hasMissingTranslation = formatted.some((v) => !v.textIndo || v.textIndo.trim().length === 0);
     if (hasMissingTranslation) {
-      const fallbackMap = await fetchIndonesianSurahTranslationFallback(surahNumber);
+      const fallbackMap = await fetchTranslationFallback();
       formatted.forEach((v) => {
         if (!v.textIndo || v.textIndo.trim().length === 0) {
           const fallbackText = fallbackMap.get(v.ayahNumber);
@@ -210,16 +222,16 @@ export async function fetchSurahWithWBW(surahNumber: number): Promise<FullAyahWB
       });
     }
 
-    SURAH_WBW_CACHE.set(surahNumber, formatted);
+    cache.set(surahNumber, formatted);
     return formatted;
   } catch (err) {
     console.warn('Fallback to Multi-Resource Indonesian Quran API:', err);
     // Multi-source fallback: fetch Arabic text and Indonesian translations
-    const fallbackMap = await fetchIndonesianSurahTranslationFallback(surahNumber);
+    const fallbackMap = await fetchTranslationFallback();
 
     const [arRes, idRes] = await Promise.all([
       fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`),
-      fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/id.indonesian`)
+      fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/${language === 'en' ? 'en.sahih' : 'id.indonesian'}`)
     ]);
 
     if (!arRes.ok) return [];
@@ -261,7 +273,7 @@ export async function fetchSurahWithWBW(surahNumber: number): Promise<FullAyahWB
       };
     });
 
-    SURAH_WBW_CACHE.set(surahNumber, fallbackFormatted);
+    cache.set(surahNumber, fallbackFormatted);
     return fallbackFormatted;
   }
 }

@@ -7,19 +7,22 @@ import WordStudy from '@/components/WordStudy';
 import { ArrowLeft, Compass } from 'lucide-react';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
-  searchParams?: {
+  }>;
+  searchParams?: Promise<{
+    location?: string;
     surah?: string;
     ayah?: string;
     wordIndex?: string;
-  };
+  }>;
 }
 
 export const dynamicParams = true;
 
-export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params: paramsPromise, searchParams: searchParamsPromise }: PageProps): Promise<Metadata> {
+  const params = await paramsPromise;
+  const searchParams = await searchParamsPromise;
   const rawSlug = decodeURIComponent(params.slug).trim();
   if (!rawSlug) return { title: 'Kata Al-Qur\'an' };
 
@@ -27,7 +30,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
   const ayahNumber = searchParams?.ayah ? parseInt(searchParams.ayah, 10) : undefined;
   const wordIndex = searchParams?.wordIndex ? parseInt(searchParams.wordIndex, 10) : undefined;
 
-  const study = getWordStudy(rawSlug, { surahNumber, ayahNumber, wordIndex });
+  const study = getWordStudy(searchParams?.location && /^\d+:\d+:\d+$/.test(searchParams.location) ? searchParams.location : rawSlug, { surahNumber, ayahNumber, wordIndex });
   if (!study) {
     return {
       title: `Kata: ${rawSlug} | Qurabic`,
@@ -53,7 +56,9 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
   };
 }
 
-export default function WordDetailPage({ params, searchParams }: PageProps) {
+export default async function WordDetailPage({ params: paramsPromise, searchParams: searchParamsPromise }: PageProps) {
+  const params = await paramsPromise;
+  const searchParams = await searchParamsPromise;
   const rawSlug = decodeURIComponent(params.slug).trim();
   if (!rawSlug) notFound();
 
@@ -62,7 +67,7 @@ export default function WordDetailPage({ params, searchParams }: PageProps) {
   const wordIndex = searchParams?.wordIndex ? parseInt(searchParams.wordIndex, 10) : undefined;
 
   // 1. Resolve Word Study ViewModel using Central WordStudyService
-  const study = getWordStudy(rawSlug, {
+  const study = getWordStudy(searchParams?.location && /^\d+:\d+:\d+$/.test(searchParams.location) ? searchParams.location : rawSlug, {
     surahNumber,
     ayahNumber,
     wordIndex

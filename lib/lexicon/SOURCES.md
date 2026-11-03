@@ -1,68 +1,25 @@
-# Authoritative Source Verification & Provenance Chain: Lane's Arabic-English Lexicon
+# Lexicon data sources
 
-## 1. Overview & Provenance
+## Lane’s Arabic-English Lexicon
 
-* **Work**: *An Arabic-English Lexicon: Derived from the Best and the Most Copious Eastern Sources*
-* **Author / Compiler**: Edward William Lane (1801–1876), edited and completed by Stanley Lane-Poole (1854–1893).
-* **Historical Publication**: Published in 8 volumes/parts between 1863 and 1893 in London (Williams and Norgate).
-* **Primary Digital Sources**:
-  - Perseus Digital Library (Tufts University, Gregory Crane et al.).
-  - Alpheios Project ([github.com/alpheios-project/lan](https://github.com/alpheios-project/lan)).
-  - LanesLexicon Project ([github.com/laneslexicon/LexiconDatabase](https://github.com/laneslexicon/LexiconDatabase)).
+- Work: Edward William Lane, *An Arabic-English Lexicon*, London: Williams and Norgate, 1863–1893.
+- Digital text: [Alpheios Lane repository](https://github.com/alpheios-project/lan), whose README credits original digitization to the Perseus Digital Library at Tufts University and corrections to the Alpheios Project.
+- Alpheios identifies its digital text as [CC BY-SA 3.0 US](https://creativecommons.org/licenses/by-sa/3.0/us/).
+- Local ingestion reads `data/lexicon/lane/raw/lexicon.sqlite`. Its upstream distribution is [LanesLexicon/LexiconDatabase](https://github.com/laneslexicon/LexiconDatabase), which includes a GPL-3.0 license. Conversion to JSON does not itself remove upstream obligations. Retain attribution and consult the actual upstream license files when redistributing data.
+- Runtime JSON: `lib/lexicon/data/chunks/`, indexed by `manifest.json`.
+- Printed part/page values are copied from the source records. Digital transcription, automatic sense extraction, and root matching may contain errors; records have not all received an independent scholarly review.
 
----
+The interface preserves the transcribed English text. It no longer guesses which Latin tokens are Buckwalter: that heuristic corrupted ordinary words such as “Hence” and “English”. Arabic already encoded as Unicode receives direction and font formatting only.
 
-## 2. Delineated 3-Tier License & Redistribution Analysis
+## Word translations and morphology
 
-To ensure complete legal rigor and avoid ambiguous claims, the licensing chain is separated into three distinct layers:
+- Primary Indonesian and English word glosses: Quran.com API v4, keyed by `surah:ayah:word`. The exported responses do not include an individual translator attribution; do not label them Kemenag translations.
+- Whole-verse Indonesian translations are a separate source (Kemenag resource 33 and fallback mirrors). English reader translation uses resource 20 (Saheeh International).
+- Roots, lemmas and grammatical features: [Quranic Arabic Corpus v0.4](https://corpus.quran.com/documentation/), whose documentation describes manual morphological/syntactic annotation. Indonesian class labels are interface translations, not quotations from a classical lexicon.
+- Short standalone particle labels: QAC descriptions, for example `wa (and)` and [kallā, “Nay!”, aversion particle (78:4:1)](https://corpus.quran.com/wordbyword.jsp?chapter=78&verse=4). The UI distinguishes these localized grammar labels from Quran.com contextual word translations.
 
-### Tier 1: Original 19th-Century Print Edition
-- **Status**: **Public Domain worldwide**.
-- **Rationale**: Published between 1863 and 1893 (>130 years ago). All underlying classical definitions and citations are out of copyright.
+## Display boundaries
 
-### Tier 2: Digital Text Corpora (Perseus Digital Library & Alpheios Project)
-- **Status**: **Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0)**.
-- **Terms**: Permits sharing and adapting the digital XML text for educational and non-commercial research, provided proper attribution is maintained and any derivative datasets are shared under compatible terms.
-- **Attribution Invariant**: Every record served in Qurabic must explicitly link to or attribute:
-  `"Sourced from Edward William Lane, An Arabic-English Lexicon (digitized by Perseus Digital Library & Alpheios Project)"`.
+A word gloss is not a definition of its entire root. A root-entry match is not proof that each dictionary sense applies to the selected verse. Lane source language remains English and is labeled. Generated root narratives, unreviewed philosophical summaries and automatically constructed conjugations are excluded from word and root detail displays.
 
-### Tier 3: LanesLexicon Desktop Software & SQLite Packaging
-- **Status**: **GNU General Public License v3.0 (GPL-3.0)**.
-- **Terms**: The Perl parser scripts and standalone `lexicon.sqlite` database bundled for the desktop application are covered by GPL-3.0.
-- **Qurabic Architectural Separation**: Qurabic does **not** embed proprietary runtime dependencies. Qurabic ingests raw verified text entries into modular JSON chunk indices (`lib/lexicon/data/`), cleanly isolating application code from binary GPL database blobs while preserving attribution.
-
----
-
-## 3. Database Schema Structure (`lexicon_schema.sql`)
-
-The `laneslexicon` SQLite schema indexes roots, headwords, verb forms, and definitions as follows:
-
-```sql
-CREATE TABLE root (
-  id INTEGER PRIMARY KEY,
-  word TEXT,          -- Huruf akar Arab (e.g. عون, صبر, خلط, ريب)
-  bword TEXT,         -- Transliterasi Buckwalter akar (e.g. Ewn, Sbr, xlT, ryb)
-  xml TEXT,           -- Ikhtisar leksikal akar
-  page INTEGER        -- Halaman jilid cetak asli
-);
-
-CREATE TABLE entry (
-  id INTEGER PRIMARY KEY,
-  root TEXT,          -- Akar Arab
-  broot TEXT,         -- Buckwalter akar
-  word TEXT,          -- Lemma / Headword Arab (e.g. اسْتَعَانَ, صَبَرَ)
-  bword TEXT,         -- Lemma Buckwalter
-  itype TEXT,         -- Wazan / Verb Form ("1", "4", "8", "10", dll.)
-  xml TEXT,           -- Teks definisi kamus asli & kutipan otoritas klasik
-  page INTEGER        -- Halaman rujukan cetak asli
-);
-```
-
----
-
-## 4. Architectural Invariants for Qurabic
-
-1. **Zero AI Paraphrasing / Synthetic Definitions**: All dictionary senses in `lane-pilot.json` and future chunks are verbatim extracts from the authenticated classical dictionary text.
-2. **Coordinate-First QAC Binding**: Word lookups proceed strictly from the authenticated Quranic coordinate (`surah:ayah:word`) to the QAC Lemma and Root, and then to the Lexicon index.
-3. **Honest Absence of Data**: If a root or word is unindexed in our verified dataset, Qurabic returns `hasLexicalData: false` and `"Makna leksikal belum tersedia."` instead of generating fallback prose.
-4. **Particle Immunity**: Particles (Harf) are strictly precluded from matching roots or retrieving classical triliteral dictionary entries.
+[QUL morphology resources](https://qul.tarteel.ai/resources/morphology) provide roots, lemmas and stems, and [QUL translations](https://qul.tarteel.ai/resources/translation) provide downloadable word and verse translations. These resources can support the corpus layer, but do not themselves supply a classical root dictionary interpretation.

@@ -24,7 +24,8 @@ const sampleWordStudy = getWordStudy('صَبَرَ', {
 
 assert.ok(sampleWordStudy.identity.arabic === 'صَبَرَ', 'Word study identity must match target Arabic');
 assert.ok(sampleWordStudy.primaryMeaning.text.length > 0, 'Word study must have non-empty primary meaning');
-assert.ok(sampleWordStudy.grammarDerivation, 'Word study must construct grammar derivation');
+assert.equal(sampleWordStudy.grammarDerivation, undefined, 'Unreviewed generated derivations must not be published');
+assert.equal(sampleWordStudy.primaryMeaning.sourceId, 'quran-com-wbw');
 console.log('✅ Test 2 Passed: Word study model generation verified.');
 
 // 3. Test Centralized Sharaf Paradigms Engine

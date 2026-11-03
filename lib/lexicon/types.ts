@@ -30,6 +30,8 @@ export interface SourceRegistry {
   retrievalDate?: string;
   contentHash?: string;
   description?: string;
+  nameEnglish?: string;
+  descriptionEnglish?: string;
 }
 
 export interface LexicalSenseCitation {
@@ -155,6 +157,7 @@ export interface WordFamilyItem {
   posDetail?: string;
   wazanOrForm?: string;
   meaningIndo?: string;
+  meaningEnglish?: string;
   count: number;
   sampleCoordinate?: string;
 }
@@ -179,6 +182,11 @@ export interface WordStudyViewModel {
     text: string;
     source: string;
     sourceBadge: string;
+    sourceId?: string;
+    textEnglish?: string;
+    sourceEnglish?: string;
+    sourceBadgeEnglish?: string;
+    sourceIdEnglish?: string;
     isEditorialSummary?: boolean;
   };
   morphology: {

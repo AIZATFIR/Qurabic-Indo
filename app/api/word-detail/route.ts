@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     const ayahNumber = searchParams.get('ayah') ? parseInt(searchParams.get('ayah')!, 10) : undefined;
     const wordIndex = searchParams.get('wordIndex') ? parseInt(searchParams.get('wordIndex')!, 10) : undefined;
 
-    const targetInput = word || location;
+    const targetInput = location || word;
     if (!targetInput) {
       return NextResponse.json(
         { error: 'Parameter query diperlukan: word atau location' },
@@ -73,6 +73,7 @@ export async function GET(request: NextRequest) {
       success: true,
       data: {
         ...detail,
+        translation: { primaryMeaning: study.primaryMeaning.text, meanings: [study.primaryMeaning.text], sourceCitation: study.primaryMeaning.source },
         study
       }
     });

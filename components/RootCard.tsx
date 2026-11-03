@@ -1,99 +1,37 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
+import { Bookmark, ArrowRight } from 'lucide-react';
 import { RootWord } from '@/lib/types/morphology';
 import { useBookmarks } from '@/lib/hooks/useBookmarks';
-import { Bookmark, BookOpen, Layers } from 'lucide-react';
+import { useLanguage } from '@/lib/context/LanguageContext';
 
-interface RootCardProps {
-  root: RootWord;
-}
+interface RootCardProps { root: RootWord; }
 
 export default function RootCard({ root }: RootCardProps) {
   const { isBookmarked, toggleBookmark } = useBookmarks();
+  const { language, t } = useLanguage();
   const bookmarked = isBookmarked(root.id);
-
-  const primaryMeaning =
-    root.meaningsIndonesian && root.meaningsIndonesian.length > 0
-      ? root.meaningsIndonesian.join(' • ')
-      : root.titleIndo;
-
-  const isGenericEtymology =
-    !root.etymologyNote ||
-    root.etymologyNote.startsWith("Penyusunan etimologi dan morfologi");
-
-  const displayEtymology = isGenericEtymology
-    ? `Akar kata ${root.rootArabic} (${root.rootLatin}) membentuk ${root.verbsCount} bentuk Fi'il dan ${root.nounsCount} bentuk Isim dengan total ${root.totalOccurrences} kemunculan dalam Al-Qur'an.`
-    : root.etymologyNote;
-
   return (
-    <div className="group bg-canvas-surface border border-hairline rounded-2xl p-6 sm:p-7 shadow-subtle hover:border-primary/40 transition-all duration-200 flex flex-col justify-between relative space-y-4">
-      
-      {/* Bookmark Button (Quiet, subtle interaction) */}
+    <article className="flex items-center gap-3 sm:gap-5 border-b border-hairline py-4 font-sans">
+      <Link href={`/akar/${root.id}`} className="group flex min-w-0 flex-1 flex-wrap items-center gap-x-6 gap-y-2 py-2 focus-visible:outline-primary">
+        <h3 lang="ar" dir="rtl" className="min-w-32 font-arabic text-3xl leading-loose text-ink-primary group-hover:text-primary">{root.rootArabic}</h3>
+        <div className="min-w-0 flex-1 text-base text-ink-secondary">
+          <p>{root.rootLatin}</p>
+          <p className="mt-1 tabular-nums">{root.totalOccurrences.toLocaleString(language === 'en' ? 'en-US' : 'id-ID')} {t("kemunculan di Al-Qur'an", 'occurrences in the Quran')}</p>
+          <p className="mt-1 text-sm">{root.verbsCount} {t("bentuk fi'il", 'verb forms')} · {root.nounsCount} {t('bentuk isim', 'noun forms')}</p>
+        </div>
+        <span className="hidden sm:inline-flex items-center gap-2 text-base font-medium text-primary">{t('Buka akar', 'Explore root')} <ArrowRight className="h-4 w-4" aria-hidden="true" /></span>
+      </Link>
       <button
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          toggleBookmark(root.id);
-        }}
-        title={bookmarked ? 'Hapus dari Kata Tersimpan' : 'Simpan Kata Ini'}
-        className={`absolute top-5 right-5 p-2 rounded-xl transition-colors z-10 ${
-          bookmarked
-            ? 'text-primary'
-            : 'text-ink-mute hover:text-primary'
-        }`}
+        type="button"
+        aria-label={`${bookmarked ? t('Hapus simpanan', 'Remove saved root') : t('Simpan akar', 'Save root')} ${root.rootArabic}`}
+        aria-pressed={bookmarked}
+        onClick={() => toggleBookmark(root.id, root.rootArabic)}
+        className="inline-flex h-11 w-11 shrink-0 items-center justify-center text-primary hover:bg-canvas-soft focus-visible:outline-primary"
       >
-        <Bookmark className={`w-4 h-4 ${bookmarked ? 'fill-current' : ''}`} />
+        <Bookmark className={`h-5 w-5 ${bookmarked ? 'fill-current' : ''}`} aria-hidden="true" />
       </button>
-
-      <div className="space-y-3">
-        {/* Quiet Scholarly Metadata (No loud badge pill) */}
-        <div className="text-xs text-ink-mute font-medium font-sans tracking-wide">
-          {root.totalOccurrences} kemunculan di Al-Qur&apos;an
-        </div>
-
-        {/* Root Word & Transliteration */}
-        <Link href={`/akar/${root.id}`} className="block group-hover:text-primary transition-colors space-y-2">
-          <div className="flex items-baseline space-x-3">
-            <h3 className="font-arabic text-3xl sm:text-4xl font-semibold text-ink-primary group-hover:text-primary transition-colors" dir="rtl">
-              {root.rootArabic}
-            </h3>
-            <span className="text-base font-medium text-ink-mute font-sans">
-              ({root.rootLatin})
-            </span>
-          </div>
-
-          {/* Primary Meaning (Direct, prominent, no redundant 'ARTI UTAMA:' label) */}
-          <p className="text-base sm:text-lg font-semibold text-ink-primary font-sans leading-snug line-clamp-2">
-            {primaryMeaning}
-          </p>
-
-          {/* Linguistic Evidence & Etymology */}
-          <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed line-clamp-2 font-sans italic">
-            &ldquo;{displayEtymology}&rdquo;
-          </p>
-        </Link>
-      </div>
-
-      {/* Morphology & Action Link */}
-      <div className="pt-3.5 border-t border-hairline flex items-center justify-between">
-        <div className="flex items-center space-x-2 text-xs font-medium text-ink-mute font-sans">
-          <span className="text-ink-secondary">{root.verbsCount} Fi&apos;il</span>
-          <span>•</span>
-          <span className="text-ink-secondary">{root.nounsCount} Isim</span>
-        </div>
-
-        <Link
-          href={`/akar/${root.id}`}
-          aria-label={`Bedah morfologi akar kata ${root.rootArabic} (${root.rootLatin})`}
-          className="inline-flex items-center space-x-1 text-xs font-semibold text-primary hover:underline transition-colors font-sans"
-        >
-          <span>Bedah Morfologi</span>
-          <BookOpen className="w-3.5 h-3.5" />
-        </Link>
-      </div>
-
-    </div>
+    </article>
   );
 }
