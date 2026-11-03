@@ -10,7 +10,7 @@ import AdsController from '@/components/AdsController';
 import { LanguageProvider } from '@/lib/context/LanguageContext';
 
 export const viewport: Viewport = {
-  themeColor: '#fbf8f1',
+  themeColor: '#f4f6f2',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -55,7 +55,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" className="scroll-smooth" data-theme="bookpaper">
+    <html lang="id" className="scroll-smooth" data-theme="blend">
       <body className="min-h-screen flex flex-col bg-canvas text-ink-primary selection:bg-primary-subdued selection:text-primary-deep font-sans pb-16 md:pb-0">
         <a
           href="#main-content"

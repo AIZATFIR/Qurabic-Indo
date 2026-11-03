@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { ThemeType, THEME_OPTIONS, isValidTheme } from './theme-config';
+import { ThemeType, THEME_OPTIONS, normalizeTheme } from './theme-config';
 
 interface ThemeContextValue {
   theme: ThemeType;
@@ -10,7 +10,7 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-  theme: 'bookpaper',
+  theme: 'blend',
   setTheme: () => {},
   options: THEME_OPTIONS,
 });
@@ -18,15 +18,14 @@ const ThemeContext = createContext<ThemeContextValue>({
 const STORAGE_KEY = 'qurabic_theme_preference';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeType>('bookpaper');
+  const [theme, setThemeState] = useState<ThemeType>('blend');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved && isValidTheme(saved)) {
-        setThemeState(saved);
-      }
+      const normalized = saved ? normalizeTheme(saved) : null;
+      if (normalized) setThemeState(normalized);
     } catch (e) {
       console.warn('LocalStorage theme access not permitted', e);
     }
@@ -41,11 +40,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     const root = document.documentElement;
     root.setAttribute('data-theme', theme);
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
+    root.classList.remove('dark');
   }, [theme, mounted]);
 
   const setTheme = (nextTheme: ThemeType) => {

@@ -8,110 +8,67 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-arabic: 'Amiri Quran', 'Scheherazade New', 'Amiri', 'Noto Naskh Arabic', serif;
 
-  /* Default Theme: Bookpaper */
-  --bg-page: #F5EFE6;
-  --bg-surface: #FAF5ED;
-  --bg-soft: #EDE3D4;
-  --color-primary: #2D5A43;
-  --color-primary-deep: #1F3F2E;
-  --color-primary-subdued: #E4EEE7;
-  --color-primary-fixed: #EFF5F1;
-  --color-ink-primary: #2C241E;
-  --color-ink-secondary: #574B40;
-  --color-ink-mute: #8C7E72;
-  --color-border: #E0D4C3;
+  --bg-page: #F4F6F2;
+  --bg-surface: #FBFCFA;
+  --bg-soft: #E7EDE7;
+  --color-primary: #205B43;
+  --color-primary-deep: #174733;
+  --color-primary-subdued: #DDEBE2;
+  --color-primary-fixed: #EDF4EF;
+  --color-ink-primary: #232922;
+  --color-ink-secondary: #44564A;
+  --color-ink-mute: #708076;
+  --color-border: #DDE3DC;
+  --radius-surface: 1.5rem;
+  --radius-control: 0.875rem;
 }
 
-/* 1. Theme Half Bookpaper (Kertas Mushaf Seimbang) */
-[data-theme="half-bookpaper"],
-[data-theme="bookpaper"] {
-  --bg-page: #FAF6EF;
-  --bg-surface: #FFFDF9;
-  --bg-soft: #F2E9DC;
-  --color-primary: #2B5740;
-  --color-primary-deep: #1E402E;
-  --color-primary-subdued: #E6EFEA;
-  --color-primary-fixed: #F0F6F3;
-  --color-ink-primary: #26211C;
-  --color-ink-secondary: #52473D;
-  --color-ink-mute: #85786D;
-  --color-border: #E5DACB;
+[data-theme="blend"] {
+  --bg-page: #F4F6F2;
+  --bg-surface: #FBFCFA;
+  --bg-soft: #E7EDE7;
+  --color-primary: #205B43;
+  --color-primary-deep: #174733;
+  --color-primary-subdued: #DDEBE2;
+  --color-primary-fixed: #EDF4EF;
+  --color-ink-primary: #232922;
+  --color-ink-secondary: #44564A;
+  --color-ink-mute: #708076;
+  --color-border: #DDE3DC;
+  --radius-surface: 1.5rem;
+  --radius-control: 0.875rem;
 }
 
-/* 2. Theme Full Bookpaper (Kertas Kitab Kuning / Warm Paper) */
-[data-theme="full-bookpaper"] {
-  --bg-page: #F3E9DA;
-  --bg-surface: #FAF2E6;
-  --bg-soft: #E9DDCB;
-  --color-primary: #234934;
-  --color-primary-deep: #173324;
-  --color-primary-subdued: #DFECE4;
-  --color-primary-fixed: #EBF3EE;
-  --color-ink-primary: #221C16;
-  --color-ink-secondary: #4A3E33;
-  --color-ink-mute: #7A6C5F;
-  --color-border: #DDD0BF;
-}
-
-/* 3. Theme Langit (Biru Langit Al-Qur'an / Ethereal & Serene Sky) */
-[data-theme="langit"] {
-  --bg-page: #F0F4F8;
-  --bg-surface: #F8FAFD;
-  --bg-soft: #E2EBF4;
-  --color-primary: #3B729F;
-  --color-primary-deep: #2A567A;
-  --color-primary-subdued: #EBF3FA;
-  --color-primary-fixed: #F2F7FB;
-  --color-ink-primary: #1C2833;
-  --color-ink-secondary: #486581;
-  --color-ink-mute: #829AB1;
-  --color-border: #D3E0EA;
-}
-
-/* 4. Theme Earth (Bumi, Tanah & Kayu / Natural Ochre) */
-[data-theme="earth"] {
-  --bg-page: #F5EFEB;
-  --bg-surface: #FAF6F3;
-  --bg-soft: #EAE1DA;
-  --color-primary: #7C4A2D;
-  --color-primary-deep: #5D351E;
-  --color-primary-subdued: #F4EAE3;
-  --color-primary-fixed: #FBF4EF;
-  --color-ink-primary: #2B1D15;
-  --color-ink-secondary: #543E31;
-  --color-ink-mute: #876E5E;
-  --color-border: #DFCFC3;
-}
-
-/* Fallbacks & Light */
-[data-theme="light"] {
-  --bg-page: #FAFCFA;
+[data-theme="simple"] {
+  --bg-page: #F7F8F6;
   --bg-surface: #FFFFFF;
-  --bg-soft: #F0F7F3;
-  --color-primary: #059669;
-  --color-primary-deep: #047857;
-  --color-primary-subdued: #E6F7F0;
-  --color-primary-fixed: #ECFDF5;
-  --color-ink-primary: #0F172A;
-  --color-ink-secondary: #334155;
-  --color-ink-mute: #64748B;
-  --color-border: #E2ECE6;
+  --bg-soft: #EEF1ED;
+  --color-primary: #355D49;
+  --color-primary-deep: #244936;
+  --color-primary-subdued: #E4EBE5;
+  --color-primary-fixed: #F1F5F2;
+  --color-ink-primary: #212924;
+  --color-ink-secondary: #46534A;
+  --color-ink-mute: #727D75;
+  --color-border: #E0E5E0;
+  --radius-surface: 0.75rem;
+  --radius-control: 0.5rem;
 }
 
-/* 4. Theme Dark (Malam Obsidian) */
-[data-theme="dark"],
-.dark {
-  --bg-page: #0B1410;
-  --bg-surface: #12221B;
-  --bg-soft: #182E25;
-  --color-primary: #10B981;
-  --color-primary-deep: #059669;
-  --color-primary-subdued: #064E3B;
-  --color-primary-fixed: #0E3628;
-  --color-ink-primary: #F1F5F9;
-  --color-ink-secondary: #CBD5E1;
-  --color-ink-mute: #94A3B8;
-  --color-border: #1E3D30;
+[data-theme="modern"] {
+  --bg-page: #EEF6F1;
+  --bg-surface: #FBFEFC;
+  --bg-soft: #DDECE3;
+  --color-primary: #08764F;
+  --color-primary-deep: #075D3E;
+  --color-primary-subdued: #CCE9D8;
+  --color-primary-fixed: #E5F4EA;
+  --color-ink-primary: #112B20;
+  --color-ink-secondary: #315846;
+  --color-ink-mute: #5C7B6A;
+  --color-border: #CFE0D5;
+  --radius-surface: 1.75rem;
+  --radius-control: 1rem;
 }
 
 /* Premium Smooth Scroll */

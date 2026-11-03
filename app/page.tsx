@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Bookmark, ExternalLink } from 'lucide-react';
 import { ROOT_DATABASE } from '@/lib/data/roots';
 import { useBookmarks } from '@/lib/hooks/useBookmarks';
 import { useLanguage } from '@/lib/context/LanguageContext';
+import { useTheme } from '@/lib/context/ThemeContext';
 import OmniSearch from '@/components/OmniSearch';
 import IlluminatedQuranHero from '@/components/IlluminatedQuranHero';
 
@@ -23,6 +24,7 @@ const EXPLORE_LINKS = [
 
 export default function HomePage() {
   const { language, t } = useLanguage();
+  const { theme } = useTheme();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [lastSearch, setLastSearch] = useState<string | null>(null);
   const { isBookmarked, toggleBookmark } = useBookmarks();
@@ -47,7 +49,7 @@ export default function HomePage() {
           <Link
             key={item.href}
             href={item.href}
-            className="group grid grid-cols-[1fr_auto] sm:grid-cols-[13rem_1fr_auto] gap-x-6 gap-y-1 items-center py-4 sm:py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset hover:bg-canvas-soft transition-colors"
+            className="group grid grid-cols-[1fr_auto] sm:grid-cols-[13rem_1fr_auto] gap-x-6 gap-y-1 items-center py-3 sm:py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset hover:bg-canvas-soft transition-colors"
           >
             <span className="text-lg font-medium text-ink-primary group-hover:text-primary">{t(item.title[0], item.title[1])}</span>
             <span className="row-start-2 sm:row-start-auto text-base leading-relaxed text-ink-secondary">{t(item.description[0], item.description[1])}</span>
@@ -66,21 +68,58 @@ export default function HomePage() {
         <p className="mt-2 max-w-2xl text-base leading-relaxed text-ink-secondary">
           {t("Lihat berbagai bentuk dari satu akar beserta kemunculannya dalam Al-Qur'an.", 'Explore the forms of a root and where they occur in the Quran.')}
         </p>
-        <ul className="mt-6 divide-y divide-hairline border-y border-hairline">
-          {STARTING_ROOTS.map((root) => {
+        <div className="mt-6">
+          {STARTING_ROOTS[0] && (() => {
+            const root = STARTING_ROOTS[0];
             const bookmarked = isBookmarked(root.id);
+            const featuredStyle: CSSProperties = {
+              borderRadius: 'var(--radius-surface)',
+              backgroundColor: theme === 'modern' ? 'var(--color-primary)' : theme === 'blend' ? 'var(--color-primary-subdued)' : 'var(--bg-soft)',
+              color: theme === 'modern' ? '#fff' : 'var(--color-ink-primary)',
+            };
             return (
-              <li key={root.id} className="flex items-center gap-3 sm:gap-5 py-2">
+              <div key={root.id} className="flex items-center gap-4 overflow-hidden px-4 py-4 sm:gap-6 sm:px-7 sm:py-5" style={featuredStyle}>
                 <Link
                   href={`/akar/${root.id}`}
                   aria-label={t(`Pelajari akar ${root.rootArabic}, ${root.totalOccurrences} kemunculan`, `Explore root ${root.rootArabic}, ${root.totalOccurrences} occurrences`)}
-                  className="group grid min-w-0 flex-1 grid-cols-[1fr_auto] sm:grid-cols-[11rem_1fr_auto] gap-x-5 gap-y-1 items-center py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary hover:text-primary"
+                  className="group flex min-h-16 min-w-0 flex-1 items-center gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:gap-6"
                 >
-                  <span lang="ar" dir="rtl" className="justify-self-start font-arabic text-3xl leading-loose text-ink-primary group-hover:text-primary">{root.rootArabic}</span>
-                  <span className="col-start-1 row-start-2 sm:col-start-2 sm:row-start-1 text-base text-ink-secondary">{root.rootLatin}</span>
-                  <span className="col-start-2 sm:col-start-3 row-start-1 row-span-2 sm:row-span-1 text-right text-base tabular-nums text-ink-secondary">
-                    {root.totalOccurrences.toLocaleString(language === 'en' ? 'en-US' : 'id-ID')}<span className="hidden sm:inline">{t(' kemunculan', ' occurrences')}</span><span className="block sm:hidden text-sm">{t('kemunculan', 'occurrences')}</span>
+                  <span lang="ar" dir="rtl" className={`shrink-0 font-arabic text-4xl leading-tight sm:text-5xl ${theme === 'modern' ? 'text-white' : 'text-primary'}`}>{root.rootArabic}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className={`block text-xs font-medium ${theme === 'modern' ? 'text-white/75' : 'text-ink-secondary'}`}>{t('Akar pilihan', 'Featured root')}</span>
+                    <span className="mt-1 block text-lg font-semibold group-hover:underline underline-offset-4">{root.rootLatin}</span>
+                    <span className={`mt-0.5 block text-sm ${theme === 'modern' ? 'text-white/80' : 'text-ink-secondary'}`}>{root.totalOccurrences.toLocaleString(language === 'en' ? 'en-US' : 'id-ID')}{t(' kemunculan', ' occurrences')}</span>
                   </span>
+                  <ArrowRight className="h-5 w-5 shrink-0" aria-hidden="true" />
+                </Link>
+                <button
+                  type="button"
+                  aria-label={`${bookmarked ? t('Hapus simpanan', 'Remove saved root') : t('Simpan akar', 'Save root')} ${root.rootArabic}`}
+                  aria-pressed={bookmarked}
+                  onClick={() => toggleBookmark(root.id, root.rootArabic)}
+                  className={`inline-flex h-11 w-11 shrink-0 items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${theme === 'modern' ? 'text-white hover:bg-white/10' : 'text-primary hover:bg-canvas-surface/70'}`}
+                  style={{ borderRadius: 'var(--radius-control)' }}
+                >
+                  <Bookmark className={`h-5 w-5 ${bookmarked ? 'fill-current' : ''}`} aria-hidden="true" />
+                </button>
+              </div>
+            );
+          })()}
+          <ul className="mt-4 grid grid-cols-1 gap-x-8 border-t border-hairline sm:grid-cols-2">
+          {STARTING_ROOTS.slice(1).map((root) => {
+            const bookmarked = isBookmarked(root.id);
+            return (
+              <li key={root.id} className="flex items-center gap-2 border-b border-hairline sm:gap-3">
+                <Link
+                  href={`/akar/${root.id}`}
+                  aria-label={t(`Pelajari akar ${root.rootArabic}, ${root.totalOccurrences} kemunculan`, `Explore root ${root.rootArabic}, ${root.totalOccurrences} occurrences`)}
+                  className="group flex min-h-16 min-w-0 flex-1 items-center justify-between gap-2 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary hover:text-primary"
+                >
+                  <span className="flex min-w-0 items-baseline gap-2">
+                    <span lang="ar" dir="rtl" className="shrink-0 font-arabic text-2xl leading-relaxed text-ink-primary group-hover:text-primary">{root.rootArabic}</span>
+                    <span className="truncate text-sm text-ink-secondary">{root.rootLatin}</span>
+                  </span>
+                  <span className="shrink-0 text-right text-sm tabular-nums text-ink-secondary">{root.totalOccurrences.toLocaleString(language === 'en' ? 'en-US' : 'id-ID')}<span className="hidden lg:inline">{t(' kemunculan', ' occurrences')}</span></span>
                 </Link>
                 <button
                   type="button"
@@ -94,7 +133,8 @@ export default function HomePage() {
               </li>
             );
           })}
-        </ul>
+          </ul>
+        </div>
       </section>
 
       <section aria-labelledby="sources-heading" className="pt-12 sm:pt-16">

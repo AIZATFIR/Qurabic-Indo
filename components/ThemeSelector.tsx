@@ -11,14 +11,9 @@ export default function ThemeSelector() {
   const { t } = useLanguage();
   const optionsId = useId();
   const themeLabels: Record<ThemeType, string> = {
-    'half-bookpaper': t('Kertas buku lembut', 'Half book paper'),
-    'full-bookpaper': t('Kertas buku penuh', 'Full book paper'),
-    langit: t('Langit', 'Sky'),
-    earth: t('Bumi', 'Earth'),
-    dark: t('Malam', 'Dark'),
-    bookpaper: t('Kertas buku', 'Book paper'),
-    light: t('Terang', 'Light'),
-    green: t('Hijau zamrud', 'Emerald'),
+    blend: t('Gabungan', 'Blend'),
+    simple: t('Sederhana', 'Simple'),
+    modern: t('Modern', 'Modern'),
   };
   const themeLabel = (id: ThemeType) => themeLabels[id];
   const [isOpen, setIsOpen] = useState(false);
@@ -44,30 +39,31 @@ export default function ThemeSelector() {
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-1.5 min-h-11 px-2.5 py-1.5 border border-hairline dark:border-hairline-dark bg-white dark:bg-canvas-dark-surface hover:border-primary/40 text-xs text-ink-secondary dark:text-stone-300 transition-colors"
+        className="flex items-center space-x-2 min-h-11 px-3 py-1.5 border border-hairline bg-canvas-surface hover:border-primary/50 text-xs text-ink-secondary transition-colors"
+        style={{ borderRadius: 'var(--radius-control)' }}
         title={t('Pilih tema tampilan', 'Choose a theme')}
         aria-label={t('Pilih tema tampilan', 'Choose a theme')}
         aria-expanded={isOpen}
         aria-controls={optionsId}
       >
         <span
-          className="w-3 h-3 rounded-full border border-black/10 shrink-0"
+          className="w-3.5 h-3.5 rounded-full border border-black/10 shrink-0"
           style={{ backgroundColor: currentOption.primaryHex }}
         />
         <span className="font-medium font-sans text-sm hidden sm:inline">
           {themeLabel(currentOption.id)}
         </span>
-        <Palette className="w-3 h-3 text-ink-mute ml-0.5" />
+        <Palette className="w-3.5 h-3.5 text-ink-mute ml-0.5" />
       </button>
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div id={optionsId} className="absolute right-0 mt-2 w-48 bg-white dark:bg-[#12221B] border border-hairline dark:border-hairline-dark shadow-hover py-1.5 z-50 animate-in fade-in zoom-in-95 duration-100">
-          <div className="px-3 py-1.5 border-b border-hairline dark:border-hairline-dark text-xs uppercase font-semibold text-ink-mute tracking-wider font-sans">
-            {t('Pilihan tema', 'Themes')}
+        <div id={optionsId} role="group" aria-label={t('Pilihan tampilan', 'Appearance')} className="absolute right-0 mt-2 w-[min(19rem,calc(100vw-2rem))] rounded-2xl border border-hairline bg-canvas-surface p-2 shadow-hover z-50 animate-in fade-in zoom-in-95 duration-100">
+          <div className="px-3 pb-2 pt-1 text-sm font-semibold text-ink-primary font-sans">
+            {t('Tampilan', 'Appearance')}
           </div>
 
-          <div className="p-1 space-y-0.5">
+          <div className="space-y-1">
             {options.map((opt) => {
               const isSelected = opt.id === theme;
 
@@ -79,28 +75,21 @@ export default function ThemeSelector() {
                     setTheme(opt.id);
                     setIsOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between min-h-11 px-2.5 py-2 text-sm font-sans transition-all ${
+                  className={`w-full flex items-center gap-3 min-h-14 px-3 py-2 text-left font-sans transition-colors ${
                     isSelected
-                      ? 'bg-primary-fixed dark:bg-primary/20 text-primary-deep dark:text-primary-light font-bold'
-                      : 'text-ink-secondary dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800/60'
+                      ? 'bg-primary-fixed text-primary-deep'
+                      : 'text-ink-secondary hover:bg-canvas-soft'
                   }`}
+                  style={{ borderRadius: 'var(--radius-control)' }}
                 >
-                  <div className="flex items-center space-x-2.5">
-                    <span
-                      className="w-3.5 h-3.5 rounded-full border border-black/15 shrink-0"
-                      style={{ backgroundColor: opt.bgHex, borderColor: opt.borderHex }}
-                    >
-                      <span
-                        className="block w-1.5 h-1.5 rounded-full m-auto mt-[3px]"
-                        style={{ backgroundColor: opt.primaryHex }}
-                      />
-                    </span>
-                    <span className="flex items-center space-x-1.5">
-                      <span>{themeLabel(opt.id)}</span>
-                    </span>
-                  </div>
-
-                  {isSelected && <Check className="w-3.5 h-3.5 text-primary shrink-0" />}
+                  <span className="grid h-9 w-9 shrink-0 place-items-center border border-hairline bg-[var(--preview-bg)]" style={{ borderRadius: 'calc(var(--radius-control) * 0.8)', '--preview-bg': opt.bgHex } as React.CSSProperties}>
+                    <span className="h-4 w-4 rounded-full" style={{ backgroundColor: opt.primaryHex }} />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-semibold">{themeLabels[opt.id]}</span>
+                    <span className="mt-0.5 block text-xs leading-relaxed text-ink-mute">{t(opt.description, opt.id === 'blend' ? 'A quiet base with modern green accents' : opt.id === 'simple' ? 'Light and minimal' : 'Stronger color and softer shapes')}</span>
+                  </span>
+                  {isSelected && <Check className="w-4 h-4 text-primary shrink-0" />}
                 </button>
               );
             })}

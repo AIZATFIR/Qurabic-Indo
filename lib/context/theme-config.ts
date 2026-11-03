@@ -1,4 +1,4 @@
-export type ThemeType = 'half-bookpaper' | 'full-bookpaper' | 'langit' | 'earth' | 'dark' | 'bookpaper' | 'light' | 'green';
+export type ThemeType = 'blend' | 'simple' | 'modern';
 
 export interface ThemeOption {
   id: ThemeType;
@@ -7,51 +7,55 @@ export interface ThemeOption {
   bgHex: string;
   primaryHex: string;
   borderHex: string;
+  description: string;
 }
 
 export const THEME_OPTIONS: ThemeOption[] = [
   {
-    id: 'half-bookpaper',
-    label: 'Half Bookpaper',
-    shortLabel: 'Half Paper',
-    bgHex: '#FAF6EF',
-    primaryHex: '#2B5740',
-    borderHex: '#E5DACB',
+    id: 'blend',
+    label: 'Gabungan',
+    shortLabel: 'Blend',
+    bgHex: '#F5F4EF',
+    primaryHex: '#205B43',
+    borderHex: '#DFE3DA',
+    description: 'Tenang dengan aksen hijau modern',
   },
   {
-    id: 'full-bookpaper',
-    label: 'Full Bookpaper',
-    shortLabel: 'Full Paper',
-    bgHex: '#F3E9DA',
-    primaryHex: '#234934',
-    borderHex: '#DDD0BF',
+    id: 'simple',
+    label: 'Sederhana',
+    shortLabel: 'Simple',
+    bgHex: '#F7F8F6',
+    primaryHex: '#42584C',
+    borderHex: '#E2E5E1',
+    description: 'Ringan dan minimal',
   },
   {
-    id: 'langit',
-    label: 'Tema Langit',
-    shortLabel: 'Langit',
-    bgHex: '#F0F7FB',
-    primaryHex: '#0284C7',
-    borderHex: '#D1E6F3',
-  },
-  {
-    id: 'earth',
-    label: 'Tema Earth',
-    shortLabel: 'Earth',
-    bgHex: '#F5EFEB',
-    primaryHex: '#7C4A2D',
-    borderHex: '#DFCFC3',
-  },
-  {
-    id: 'dark',
-    label: 'Malam Obsidian',
-    shortLabel: 'Malam',
-    bgHex: '#0B1410',
-    primaryHex: '#10B981',
-    borderHex: '#1E3D30',
+    id: 'modern',
+    label: 'Modern',
+    shortLabel: 'Modern',
+    bgHex: '#EEF6F1',
+    primaryHex: '#08764F',
+    borderHex: '#D5E6DB',
+    description: 'Warna lebih berani, bentuk lebih lembut',
   },
 ];
 
+const LEGACY_THEME_MAP: Record<string, ThemeType> = {
+  'half-bookpaper': 'blend',
+  'full-bookpaper': 'blend',
+  bookpaper: 'blend',
+  light: 'simple',
+  langit: 'modern',
+  earth: 'blend',
+  green: 'modern',
+  dark: 'modern',
+};
+
+export function normalizeTheme(theme: string): ThemeType | null {
+  if (isValidTheme(theme)) return theme;
+  return LEGACY_THEME_MAP[theme] ?? null;
+}
+
 export function isValidTheme(theme: string): theme is ThemeType {
-  return ['half-bookpaper', 'full-bookpaper', 'langit', 'earth', 'dark', 'bookpaper', 'light', 'green'].includes(theme);
+  return theme === 'blend' || theme === 'simple' || theme === 'modern';
 }

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { ArrowRight, Search } from 'lucide-react';
 import { useLanguage } from '@/lib/context/LanguageContext';
+import { useTheme } from '@/lib/context/ThemeContext';
 
 interface IlluminatedQuranHeroProps {
   onOpenSearch: () => void;
@@ -11,20 +12,29 @@ interface IlluminatedQuranHeroProps {
 
 export default function IlluminatedQuranHero({ onOpenSearch, lastSearch }: IlluminatedQuranHeroProps) {
   const { t } = useLanguage();
+  const { theme } = useTheme();
+  const framed = theme !== 'simple';
+  const modern = theme === 'modern';
 
   return (
-    <header className="py-8 sm:py-16">
-      <h1 className="max-w-2xl text-2xl sm:text-3xl font-semibold text-ink-primary tracking-tight leading-[1.2]">
-        {t("Baca Al-Qur'an.", 'Read the Quran.')}<br />
-        {t('Pelajari katanya.', 'Explore every word.')}
-      </h1>
-      <p className="mt-4 max-w-2xl text-base sm:text-lg leading-relaxed text-ink-secondary">
-        {t('Buka makna kata saat membaca, telusuri akar dan turunannya, lalu lihat rujukannya.', 'Read word meanings in context, explore roots and their forms, and consult the sources.')}
-      </p>
-      <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-center">
+    <header
+      className={`relative isolate my-6 sm:my-10 overflow-hidden transition-colors ${framed ? 'px-5 py-6 sm:px-10 sm:py-12' : 'py-8 sm:py-16'}`}
+      style={framed ? { borderRadius: 'var(--radius-surface)', backgroundColor: modern ? 'var(--color-primary)' : 'var(--color-primary-subdued)', color: modern ? '#FFFFFF' : 'var(--color-ink-primary)' } : undefined}
+    >
+      {framed && <span aria-hidden="true" lang="ar" dir="rtl" className={`pointer-events-none absolute -right-2 top-1/2 hidden -translate-y-1/2 select-none font-arabic text-[10rem] leading-none lg:block ${modern ? 'text-white/10' : 'text-primary/10'}`}>اقرأ</span>}
+      <div className="relative max-w-3xl">
+        <h1 className={`max-w-2xl text-3xl sm:text-[2.65rem] font-semibold tracking-tight leading-[1.16] ${modern ? 'text-white' : 'text-ink-primary'}`}>
+          {t("Baca Al-Qur'an.", 'Read the Quran.')}<br />
+          {t('Pelajari katanya.', 'Explore every word.')}
+        </h1>
+        <p className={`mt-4 max-w-2xl text-base sm:text-lg leading-relaxed ${modern ? 'text-white/85' : 'text-ink-secondary'}`}>
+          {t('Buka makna kata saat membaca, telusuri akar dan turunannya, lalu lihat rujukannya.', 'Read word meanings in context, explore roots and their forms, and consult the sources.')}
+        </p>
+        <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-center">
         <Link
           href="/baca"
-          className="inline-flex min-h-12 items-center justify-center gap-3 rounded-sm bg-primary px-6 py-3 text-base font-medium text-white hover:bg-primary-deep transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:ring-offset-canvas"
+          className={`inline-flex min-h-12 items-center justify-center gap-3 px-6 py-3 text-base font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 ${modern ? 'bg-white text-primary-deep hover:bg-primary-fixed' : 'bg-primary text-white hover:bg-primary-deep focus-visible:ring-offset-canvas'}`}
+          style={{ borderRadius: 'var(--radius-control)' }}
         >
           {t("Buka Al-Qur'an", 'Open the Quran')}
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -32,20 +42,22 @@ export default function IlluminatedQuranHero({ onOpenSearch, lastSearch }: Illum
         <button
           type="button"
           onClick={onOpenSearch}
-          className="inline-flex min-h-12 items-center justify-center gap-3 rounded-sm border border-hairline px-6 py-3 text-base font-medium text-ink-primary hover:bg-canvas-soft transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:ring-offset-canvas"
+          className={`inline-flex min-h-12 items-center justify-center gap-3 border px-6 py-3 text-base font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 ${modern ? 'border-white/35 text-white hover:bg-white/10 focus-visible:ring-offset-primary' : 'border-hairline text-ink-primary hover:bg-canvas-surface focus-visible:ring-offset-canvas'}`}
+          style={{ borderRadius: 'var(--radius-control)' }}
         >
           <Search className="h-4 w-4" aria-hidden="true" />
           {t('Cari kata atau akar', 'Find a word or root')}
         </button>
-      </div>
-      {lastSearch && (
-        <p className="mt-5 text-base text-ink-secondary">
+        </div>
+        {lastSearch && (
+        <p className={`mt-5 text-base ${modern ? 'text-white/85' : 'text-ink-secondary'}`}>
           {t('Pencarian terakhir:', 'Last search:')}{' '}
-          <button type="button" onClick={onOpenSearch} className="text-primary underline underline-offset-4 focus-visible:outline-primary">
+          <button type="button" onClick={onOpenSearch} className={`underline underline-offset-4 focus-visible:outline-primary ${modern ? 'text-white' : 'text-primary'}`}>
             {lastSearch}
           </button>
         </p>
-      )}
+        )}
+      </div>
     </header>
   );
 }
