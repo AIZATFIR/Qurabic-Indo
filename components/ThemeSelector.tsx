@@ -10,7 +10,17 @@ export default function ThemeSelector() {
   const { theme, setTheme, options } = useTheme();
   const { t } = useLanguage();
   const optionsId = useId();
-  const themeLabel = (id: ThemeType) => ({ bookpaper: t('Kertas buku', 'Book paper'), light: t('Terang', 'Light'), green: t('Hijau zamrud', 'Emerald'), dark: t('Malam', 'Dark') })[id];
+  const themeLabels: Record<ThemeType, string> = {
+    'half-bookpaper': t('Kertas buku lembut', 'Half book paper'),
+    'full-bookpaper': t('Kertas buku penuh', 'Full book paper'),
+    langit: t('Langit', 'Sky'),
+    earth: t('Bumi', 'Earth'),
+    dark: t('Malam', 'Dark'),
+    bookpaper: t('Kertas buku', 'Book paper'),
+    light: t('Terang', 'Light'),
+    green: t('Hijau zamrud', 'Emerald'),
+  };
+  const themeLabel = (id: ThemeType) => themeLabels[id];
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -34,7 +44,7 @@ export default function ThemeSelector() {
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-1.5 min-h-11 px-2.5 py-1.5 border border-hairline dark:border-hairline-dark bg-white dark:bg-canvas-dark-surface hover:border-primary/40 text-xs text-ink-secondary dark:text-stone-300 transition-all shadow-subtle"
+        className="flex items-center space-x-1.5 min-h-11 px-2.5 py-1.5 border border-hairline dark:border-hairline-dark bg-white dark:bg-canvas-dark-surface hover:border-primary/40 text-xs text-ink-secondary dark:text-stone-300 transition-colors"
         title={t('Pilih tema tampilan', 'Choose a theme')}
         aria-label={t('Pilih tema tampilan', 'Choose a theme')}
         aria-expanded={isOpen}
@@ -77,7 +87,7 @@ export default function ThemeSelector() {
                 >
                   <div className="flex items-center space-x-2.5">
                     <span
-                      className="w-3.5 h-3.5 rounded-full border border-black/15 shadow-subtle shrink-0"
+                      className="w-3.5 h-3.5 rounded-full border border-black/15 shrink-0"
                       style={{ backgroundColor: opt.bgHex, borderColor: opt.borderHex }}
                     >
                       <span

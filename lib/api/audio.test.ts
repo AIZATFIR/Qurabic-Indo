@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { AVAILABLE_QARIS, TRANSLATION_VOICE_OPTIONS, getAudioCandidateUrls, getAyahAudioUrl, getTranslationAudioCandidateUrls, getNextAudioTrack, getFirstAudioTrack } from './audio';
+import { AVAILABLE_QARIS, TRANSLATION_VOICE_OPTIONS, getAudioCandidateUrls, getAyahAudioUrl, getTranslationAudioCandidateUrls, getNextAudioTrack, getFirstAudioTrack, isHumanTranslationAvailable } from './audio';
 
 test('recitation URLs identify the requested verse and real reciter', () => {
   assert.match(getAyahAudioUrl(18, 10), /018010\.mp3$/);
@@ -17,8 +17,19 @@ test('translation audio is human only, including legacy saved TTS preferences', 
   assert.ok(getTranslationAudioCandidateUrls(1, 1).every(url => !url.includes('/api/')));
 });
 
+test('handsfree translation follows the selected interface language', () => {
+  assert.equal(isHumanTranslationAvailable(18, 'en'), true);
+  assert.equal(isHumanTranslationAvailable(18, 'id'), false);
+  assert.match(getTranslationAudioCandidateUrls(18, 1, undefined, 'human', 'en')[0], /English\/Sahih_Intnl_Ibrahim_Walk_192kbps\/018001\.mp3$/);
+  assert.match(getTranslationAudioCandidateUrls(1, 1, undefined, 'human', 'id')[0], /archive\.org\/download\/AlQuran-terjemahan-indonesia-tanpa-bahasa-arab\/001001\.mp3$/);
+  assert.deepEqual(getFirstAudioTrack(18, 5, 'reverse', 'en'), { ayahNumber: 5, phase: 'translation' });
+  assert.deepEqual(getNextAudioTrack({ ...base, surahNumber: 18, ayahNumber: 5, totalAyahs: 110, phase: 'arabic', handsfreeMode: 'normal', translationLanguage: 'en' }), { ayahNumber: 5, phase: 'translation' });
+});
+
 test('reverse handsfree starts Arabic on Al-Kahf when Indonesian recording is missing', () => {
   assert.deepEqual(getFirstAudioTrack(18, 5, 'reverse'), { ayahNumber: 5, phase: 'arabic' });
+  assert.deepEqual(getFirstAudioTrack(69, 38, 'reverse'), { ayahNumber: 38, phase: 'arabic' });
+  assert.deepEqual(getTranslationAudioCandidateUrls(69, 38), []);
   assert.deepEqual(getNextAudioTrack({ surahNumber: 18, ayahNumber: 5, phase: 'arabic', totalAyahs: 110, handsfreeMode: 'reverse', repeatMode: 'off', autoNext: true }), { ayahNumber: 6, phase: 'arabic' });
 });
 

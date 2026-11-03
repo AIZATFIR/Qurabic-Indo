@@ -30,7 +30,7 @@ export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold" title={surahNameArabic}>{surahNameIndo} · {t('Ayat', 'Verse')} {currentAyah || 1}/{totalAyahs}</p>
           <p className="truncate text-xs text-ink-secondary" aria-live="polite">
-            {isReadingTranslation ? t('Rekaman terjemahan Indonesia', 'Human Indonesian translation') : currentQariMeta.name}
+            {isReadingTranslation ? t('Rekaman terjemahan Indonesia', 'Human English translation') : currentQariMeta.name}
             {' · '}{formatTime(audio.currentTime)} / {formatTime(audio.duration)}
           </p>
         </div>
@@ -65,11 +65,11 @@ export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic
             <span className="shrink-0">Handsfree</span>
             <select aria-label={t('Mode handsfree', 'Handsfree mode')} value={handsfreeMode} onChange={event => audio.setHandsfreeMode(event.target.value as HandsfreeMode)} className={selectClass}>
               <option value="off">{t('Mati · tilawah saja', 'Off · recitation only')}</option>
-              <option value="normal">{t('Arab → Terjemahan Indonesia', 'Arabic → Indonesian translation')}</option>
-              <option value="reverse">{t('Terjemahan Indonesia → Arab', 'Indonesian translation → Arabic')}</option>
+              <option value="normal">{t('Arab → Terjemahan Indonesia', 'Arabic → English translation')}</option>
+              <option value="reverse">{t('Terjemahan Indonesia → Arab', 'English translation → Arabic')}</option>
             </select>
           </label>
-          {handsfreeMode !== 'off' && !audio.isHumanTranslationAvailableForCurrentSurah && <p role="status" className="mt-2 text-sm leading-relaxed text-ink-secondary">{t('Rekaman terjemahan manusia belum tersedia untuk surat ini. Tilawah Arab tetap lanjut ke ayat berikutnya.', 'Human Indonesian translation is unavailable for this surah. Arabic recitation continues to the next verse.')}</p>}
+          {handsfreeMode !== 'off' && !audio.isHumanTranslationAvailableForCurrentSurah && <p role="status" className="mt-2 text-sm leading-relaxed text-ink-secondary">{t('Rekaman terjemahan manusia belum tersedia untuk surat ini. Tilawah Arab tetap lanjut ke ayat berikutnya.', 'Human English translation is unavailable for this surah. Arabic recitation continues to the next verse.')}</p>}
         </div>
         {settingsOpen && <div className="space-y-3 border-t border-hairline px-3 py-3">
           <label className="block text-sm">{t('Qari', 'Reciter')}
@@ -79,7 +79,7 @@ export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic
           </label>
           {currentQariMeta.isSurahLevel && <p className="text-sm leading-relaxed text-ink-secondary">{t('Rekaman qari ini tersedia per surat penuh. Pilih qari lain untuk handsfree dan ulangi per ayat.', 'This reciter has full-surah recordings. Choose another reciter for handsfree and verse repeat.')}</p>}
           <label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" checked={audio.autoNext} onChange={event => audio.setAutoNext(event.target.checked)} className="h-4 w-4 accent-primary" />{t('Lanjut otomatis ke ayat berikutnya', 'Continue to the next verse automatically')}</label>
-          <p className="text-sm leading-relaxed text-ink-secondary">{t('Tilawah: Quran.com / EveryAyah / MP3Quran. Terjemahan Indonesia: rekaman manusia di Internet Archive. Ketersediaan mengikuti arsip; rekaman yang gagal dimuat dilewati.', 'Recitation: Quran.com / EveryAyah / MP3Quran. Indonesian translation: human recordings on Internet Archive. Availability follows the archive; failed translation recordings are skipped.')}</p>
+          <p className="text-sm leading-relaxed text-ink-secondary">{t('Tilawah: Quran.com / EveryAyah / MP3Quran. Terjemahan Indonesia: rekaman manusia di Internet Archive; sebagian surat belum tersedia.', 'Arabic recitation: Quran.com / EveryAyah / MP3Quran. English translation: Sahih International, read by Ibrahim Walk (EveryAyah). Failed files are skipped.')}</p>
         </div>}
         {audio.error && <p role="alert" className="border-t border-hairline px-3 py-2 text-sm leading-relaxed text-red-700 dark:text-red-300">{t(audio.error, 'The recitation could not be loaded. Check your connection and press Play to try again.')}</p>}
       </>}

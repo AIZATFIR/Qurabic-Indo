@@ -7,6 +7,7 @@ import {
   getAudioCandidateUrls,
   getTranslationAudioCandidateUrls,
   TranslationVoiceMode,
+  TranslationAudioLanguage,
 } from '../api/audio';
 
 const AUDIO_CACHE_NAME = 'qurabic-audio-cache-v1';
@@ -134,7 +135,8 @@ export async function preloadTranslationAudio(
   surahNumber: number,
   ayahNumber: number,
   translationText?: string,
-  mode: TranslationVoiceMode = 'human'
+  mode: TranslationVoiceMode = 'human',
+  language: TranslationAudioLanguage = 'id'
 ): Promise<string> {
   if (typeof window === 'undefined' || mode === 'off') return '';
 
@@ -142,7 +144,8 @@ export async function preloadTranslationAudio(
     surahNumber,
     ayahNumber,
     translationText,
-    mode
+    mode,
+    language
   );
   if (!candidates || candidates.length === 0) return '';
 
@@ -179,7 +182,8 @@ export function getCachedTranslationUrl(
   surahNumber: number,
   ayahNumber: number,
   translationText?: string,
-  mode: TranslationVoiceMode = 'human'
+  mode: TranslationVoiceMode = 'human',
+  language: TranslationAudioLanguage = 'id'
 ): string | undefined {
   if (mode === 'off') return undefined;
 
@@ -187,7 +191,8 @@ export function getCachedTranslationUrl(
     surahNumber,
     ayahNumber,
     translationText,
-    mode
+    mode,
+    language
   );
   for (const candidate of candidates) {
     const cached = blobUrlCache.get(candidate);
@@ -218,7 +223,8 @@ export function preloadUpcomingAyahs(
   totalAyahs: number,
   getTranslation?: (ayahNum: number) => string | undefined,
   qariId: string = 'alafasy',
-  mode: TranslationVoiceMode = 'human'
+  mode: TranslationVoiceMode = 'human',
+  language: TranslationAudioLanguage = 'id'
 ): void {
   if (typeof window === 'undefined') return;
 
@@ -228,7 +234,8 @@ export function preloadUpcomingAyahs(
       surahNumber,
       currentAyah,
       getTranslation?.(currentAyah),
-      mode
+      mode,
+      language
     ).catch(() => {});
   }
 
@@ -241,7 +248,8 @@ export function preloadUpcomingAyahs(
         surahNumber,
         nextAyah,
         getTranslation?.(nextAyah),
-        mode
+        mode,
+        language
       ).catch(() => {});
     }
   }
@@ -255,7 +263,8 @@ export function preloadUpcomingAyahs(
         surahNumber,
         aheadAyah,
         getTranslation?.(aheadAyah),
-        mode
+        mode,
+        language
       ).catch(() => {});
     }
   }

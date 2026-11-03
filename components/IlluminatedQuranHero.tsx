@@ -13,15 +13,15 @@ export default function IlluminatedQuranHero({ onOpenSearch, lastSearch }: Illum
   const { t } = useLanguage();
 
   return (
-    <header className="py-12 sm:py-16">
-      <h1 className="max-w-2xl text-3xl sm:text-4xl font-semibold text-ink-primary tracking-tight leading-[1.15]">
+    <header className="py-8 sm:py-16">
+      <h1 className="max-w-2xl text-2xl sm:text-3xl font-semibold text-ink-primary tracking-tight leading-[1.2]">
         {t("Baca Al-Qur'an.", 'Read the Quran.')}<br />
         {t('Pelajari katanya.', 'Explore every word.')}
       </h1>
-      <p className="mt-5 max-w-2xl text-base sm:text-lg leading-relaxed text-ink-secondary">
+      <p className="mt-4 max-w-2xl text-base sm:text-lg leading-relaxed text-ink-secondary">
         {t('Buka makna kata saat membaca, telusuri akar dan turunannya, lalu lihat rujukannya.', 'Read word meanings in context, explore roots and their forms, and consult the sources.')}
       </p>
-      <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-center">
+      <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-center">
         <Link
           href="/baca"
           className="inline-flex min-h-12 items-center justify-center gap-3 rounded-sm bg-primary px-6 py-3 text-base font-medium text-white hover:bg-primary-deep transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:ring-offset-canvas"

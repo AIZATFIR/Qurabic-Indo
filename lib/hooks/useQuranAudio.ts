@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { getAudioCandidateUrls, getTranslationAudioCandidateUrls, getFirstAudioTrack, getNextAudioTrack, isHumanTranslationAvailable, AVAILABLE_QARIS, QariMeta, TranslationVoiceMode, TRANSLATION_VOICE_OPTIONS, TranslationVoiceOption, AudioTrack } from '../api/audio';
+import { getAudioCandidateUrls, getTranslationAudioCandidateUrls, getFirstAudioTrack, getNextAudioTrack, isHumanTranslationAvailable, AVAILABLE_QARIS, QariMeta, TranslationVoiceMode, TRANSLATION_VOICE_OPTIONS, TranslationVoiceOption, AudioTrack, TranslationAudioLanguage } from '../api/audio';
 import { getCachedAudioUrl, preloadUpcomingAyahs } from '../audio/audio-preloader';
 
 export type PlaybackState = 'idle' | 'loading' | 'playing' | 'paused' | 'ended' | 'error';
@@ -13,6 +13,7 @@ export interface UseQuranAudioOptions {
   totalAyahs: number;
   autoScroll?: boolean;
   getAyahTranslation?: (ayahNumber: number) => string | undefined;
+  translationLanguage?: TranslationAudioLanguage;
 }
 
 export interface UseQuranAudioReturn {
@@ -58,7 +59,7 @@ export interface UseQuranAudioReturn {
   stop: () => void;
 }
 
-export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getAyahTranslation }: UseQuranAudioOptions): UseQuranAudioReturn {
+export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getAyahTranslation, translationLanguage = 'id' }: UseQuranAudioOptions): UseQuranAudioReturn {
   const [currentAyah, setCurrentAyah] = useState<number | null>(null);
   const [playbackState, setPlaybackState] = useState<PlaybackState>('idle');
   const [currentTime, setCurrentTime] = useState(0);
@@ -79,8 +80,9 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
   const startTrackRef = useRef<(track: AudioTrack) => void>(() => {});
   const playAyahRef = useRef<(ayah: number) => void>(() => {});
   const completeTrackRef = useRef<() => void>(() => {});
-  const prefsRef = useRef({ surahNumber, totalAyahs, repeatMode, autoNext, handsfreeMode, selectedQari, translationVoiceMode, getAyahTranslation, autoScroll });
-  prefsRef.current = { surahNumber, totalAyahs, repeatMode, autoNext, handsfreeMode, selectedQari, translationVoiceMode, getAyahTranslation, autoScroll };
+  const previousTranslationLanguageRef = useRef(translationLanguage);
+  const prefsRef = useRef({ surahNumber, totalAyahs, repeatMode, autoNext, handsfreeMode, selectedQari, translationVoiceMode, getAyahTranslation, autoScroll, translationLanguage });
+  prefsRef.current = { surahNumber, totalAyahs, repeatMode, autoNext, handsfreeMode, selectedQari, translationVoiceMode, getAyahTranslation, autoScroll, translationLanguage };
 
   const scrollToAyah = useCallback((ayah: number) => {
     if (!prefsRef.current.autoScroll) return;
@@ -125,7 +127,7 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
     scrollToAyah(track.ayahNumber);
     const prefs = prefsRef.current;
     const candidates = track.phase === 'translation'
-      ? getTranslationAudioCandidateUrls(prefs.surahNumber, track.ayahNumber, undefined, 'human')
+      ? getTranslationAudioCandidateUrls(prefs.surahNumber, track.ayahNumber, undefined, 'human', prefs.translationLanguage)
       : getAudioCandidateUrls(prefs.surahNumber, track.ayahNumber, prefs.selectedQari);
     let index = 0;
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -193,7 +195,7 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
     };
     if (!candidates.length) { missingTranslation(); return; }
     loadCandidate();
-    preloadUpcomingAyahs(prefs.surahNumber, track.ayahNumber, prefs.totalAyahs, prefs.getAyahTranslation, prefs.selectedQari, prefs.translationVoiceMode);
+    preloadUpcomingAyahs(prefs.surahNumber, track.ayahNumber, prefs.totalAyahs, prefs.getAyahTranslation, prefs.selectedQari, prefs.translationVoiceMode, prefs.translationLanguage);
   }, [scrollToAyah]);
   startTrackRef.current = startTrack;
 
@@ -201,7 +203,7 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
     const prefs = prefsRef.current;
     if (ayah < 1 || ayah > prefs.totalAyahs) return;
     const qari = AVAILABLE_QARIS.find(q => q.id === prefs.selectedQari);
-    startTrackRef.current(getFirstAudioTrack(prefs.surahNumber, qari?.isSurahLevel ? 1 : ayah, prefs.handsfreeMode));
+    startTrackRef.current(getFirstAudioTrack(prefs.surahNumber, qari?.isSurahLevel ? 1 : ayah, prefs.handsfreeMode, prefs.translationLanguage));
   }, []);
   playAyahRef.current = playAyah;
 
@@ -256,6 +258,13 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
     return () => { wantsPlaybackRef.current = false; requestRef.current++; cleanupTrackRef.current(); audio.pause(); audio.removeAttribute('src'); audio.load(); audioRef.current = null; };
   }, []);
   useEffect(() => { stop(); }, [surahNumber, totalAyahs, stop]);
+  useEffect(() => {
+    if (previousTranslationLanguageRef.current === translationLanguage) return;
+    previousTranslationLanguageRef.current = translationLanguage;
+    if (prefsRef.current.handsfreeMode === 'off' || !trackRef.current) return;
+    if (wantsPlaybackRef.current) playAyahRef.current(trackRef.current.ayahNumber);
+    else restartOnResumeRef.current = true;
+  }, [translationLanguage]);
 
   const setRepeatMode = useCallback((mode: RepeatMode) => {
     prefsRef.current.repeatMode = mode;
@@ -318,13 +327,13 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
     if (!('mediaSession' in navigator) || !currentAyah) return;
     const qari = AVAILABLE_QARIS.find(q => q.id === selectedQari) || AVAILABLE_QARIS[0];
     try {
-      navigator.mediaSession.metadata = new MediaMetadata({ title: `QS ${surahNumber}:${currentAyah}`, artist: isReadingTranslation ? 'Rekaman terjemahan Indonesia' : qari.name, album: 'Qurabic' });
+      navigator.mediaSession.metadata = new MediaMetadata({ title: `QS ${surahNumber}:${currentAyah}`, artist: isReadingTranslation ? (prefsRef.current.translationLanguage === 'en' ? 'English translation · Sahih International' : 'Terjemahan Indonesia') : qari.name, album: 'Qurabic' });
       navigator.mediaSession.setActionHandler('play', resume);
       navigator.mediaSession.setActionHandler('pause', pause);
       navigator.mediaSession.setActionHandler('nexttrack', nextAyah);
       navigator.mediaSession.setActionHandler('previoustrack', prevAyah);
     } catch { /* MediaSession is optional. */ }
-  }, [currentAyah, surahNumber, selectedQari, isReadingTranslation, resume, pause, nextAyah, prevAyah]);
+  }, [currentAyah, surahNumber, selectedQari, isReadingTranslation, translationLanguage, resume, pause, nextAyah, prevAyah]);
 
-  return { currentAyah, playbackState, isPlaying: playbackState === 'playing', isLoading: playbackState === 'loading', currentTime, duration, progress: duration > 0 ? Math.min(1, currentTime / duration) : 0, repeatMode, autoNext, error, selectedQari, setSelectedQari, currentQariMeta: AVAILABLE_QARIS.find(q => q.id === selectedQari) || AVAILABLE_QARIS[0], availableQaris: AVAILABLE_QARIS, translationVoiceMode, setTranslationVoiceMode, translationVoiceOptions: TRANSLATION_VOICE_OPTIONS, isHumanTranslationAvailableForCurrentSurah: isHumanTranslationAvailable(surahNumber), handsfreeMode, isTranslationReadingEnabled: handsfreeMode !== 'off', isReadingTranslation, translationSpeechSupported: true, setHandsfreeMode, toggleTranslationReading, setTranslationReadingEnabled, playAyah, togglePlayPause, pause, resume, nextAyah, prevAyah, setRepeatMode, cycleRepeatMode, setAutoNext, toggleAutoNext, seek, stop };
+  return { currentAyah, playbackState, isPlaying: playbackState === 'playing', isLoading: playbackState === 'loading', currentTime, duration, progress: duration > 0 ? Math.min(1, currentTime / duration) : 0, repeatMode, autoNext, error, selectedQari, setSelectedQari, currentQariMeta: AVAILABLE_QARIS.find(q => q.id === selectedQari) || AVAILABLE_QARIS[0], availableQaris: AVAILABLE_QARIS, translationVoiceMode, setTranslationVoiceMode, translationVoiceOptions: TRANSLATION_VOICE_OPTIONS, isHumanTranslationAvailableForCurrentSurah: isHumanTranslationAvailable(surahNumber, translationLanguage), handsfreeMode, isTranslationReadingEnabled: handsfreeMode !== 'off', isReadingTranslation, translationSpeechSupported: true, setHandsfreeMode, toggleTranslationReading, setTranslationReadingEnabled, playAyah, togglePlayPause, pause, resume, nextAyah, prevAyah, setRepeatMode, cycleRepeatMode, setAutoNext, toggleAutoNext, seek, stop };
 }

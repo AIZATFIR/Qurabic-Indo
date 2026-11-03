@@ -113,6 +113,7 @@ export const AVAILABLE_QARIS: QariMeta[] = [
 ];
 
 export type TranslationVoiceMode = 'human' | 'off';
+export type TranslationAudioLanguage = 'id' | 'en';
 
 export interface TranslationVoiceOption {
   id: TranslationVoiceMode;
@@ -138,15 +139,26 @@ export const TRANSLATION_VOICE_OPTIONS: TranslationVoiceOption[] = [
  * Individual files can still be missing or unavailable; playback skips failures.
  * This collection does not provide per-verse recordings for Surahs 3–39 and 42.
  */
-export const HUMAN_TRANSLATION_AVAILABLE_SURAHS = new Set<number>([
+export const HUMAN_INDONESIAN_TRANSLATION_AVAILABLE_SURAHS = new Set<number>([
   1, 2, 40, 41, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61,
   62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
   84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104,
   105, 106, 107, 108, 109, 110, 111, 112, 113, 114,
 ]);
 
-export function isHumanTranslationAvailable(surahNumber: number): boolean {
-  return HUMAN_TRANSLATION_AVAILABLE_SURAHS.has(surahNumber);
+/** Files 069038–069052 are absent from the source archive; failed files are skipped. */
+const HUMAN_INDONESIAN_TRANSLATION_MISSING_AYAHS: Record<number, ReadonlySet<number>> = {
+  69: new Set(Array.from({ length: 15 }, (_, index) => index + 38)),
+};
+
+export function isHumanTranslationAvailable(surahNumber: number, language: TranslationAudioLanguage = 'id', ayahNumber?: number): boolean {
+  return isHumanTranslationAvailableInLanguage(surahNumber, language, ayahNumber);
+}
+
+export function isHumanTranslationAvailableInLanguage(surahNumber: number, language: TranslationAudioLanguage = 'id', ayahNumber?: number): boolean {
+  if (language === 'en') return surahNumber >= 1 && surahNumber <= 114;
+  if (!HUMAN_INDONESIAN_TRANSLATION_AVAILABLE_SURAHS.has(surahNumber)) return false;
+  return ayahNumber === undefined || !HUMAN_INDONESIAN_TRANSLATION_MISSING_AYAHS[surahNumber]?.has(ayahNumber);
 }
 
 export interface AyahAudioMeta {
@@ -255,9 +267,10 @@ export function getFallbackAyahAudioUrl(
 /**
  * Resolves human-recorded Indonesian translation audio URLs from high-availability Archive.org mirror
  */
-export function getHumanTranslationAudioUrl(surahNumber: number, ayahNumber: number): string {
+export function getHumanTranslationAudioUrl(surahNumber: number, ayahNumber: number, language: TranslationAudioLanguage = 'id'): string {
   const s = padDigits(surahNumber, 3);
   const a = padDigits(ayahNumber, 3);
+  if (language === 'en') return `https://everyayah.com/data/English/Sahih_Intnl_Ibrahim_Walk_192kbps/${s}${a}.mp3`;
   return `https://archive.org/download/AlQuran-terjemahan-indonesia-tanpa-bahasa-arab/${s}${a}.mp3`;
 }
 
@@ -266,10 +279,11 @@ export function getTranslationAudioCandidateUrls(
   surahNumber: number,
   ayahNumber: number,
   _translationText?: string,
-  mode: TranslationVoiceMode = 'human'
+  mode: TranslationVoiceMode = 'human',
+  language: TranslationAudioLanguage = 'id'
 ): string[] {
-  if (mode === 'off' || !isHumanTranslationAvailable(surahNumber)) return [];
-  return [getHumanTranslationAudioUrl(surahNumber, ayahNumber)];
+  if (mode === 'off' || !isHumanTranslationAvailableInLanguage(surahNumber, language, ayahNumber)) return [];
+  return [getHumanTranslationAudioUrl(surahNumber, ayahNumber, language)];
 }
 
 export interface AudioTrack {
@@ -280,9 +294,10 @@ export interface AudioTrack {
 export function getFirstAudioTrack(
   surahNumber: number,
   ayahNumber: number,
-  handsfreeMode: 'off' | 'normal' | 'reverse'
+  handsfreeMode: 'off' | 'normal' | 'reverse',
+  language: TranslationAudioLanguage = 'id'
 ): AudioTrack {
-  return { ayahNumber, phase: handsfreeMode === 'reverse' && isHumanTranslationAvailable(surahNumber) ? 'translation' : 'arabic' };
+  return { ayahNumber, phase: handsfreeMode === 'reverse' && isHumanTranslationAvailableInLanguage(surahNumber, language, ayahNumber) ? 'translation' : 'arabic' };
 }
 
 /** One verse cycle includes its two phases; unavailable human recordings are skipped. */
@@ -292,15 +307,16 @@ export function getNextAudioTrack(options: {
   phase: AudioTrack['phase'];
   totalAyahs: number;
   handsfreeMode: 'off' | 'normal' | 'reverse';
+  translationLanguage?: TranslationAudioLanguage;
   repeatMode: 'off' | 'ayah' | 'surah';
   autoNext: boolean;
 }): AudioTrack | null {
-  const { surahNumber, ayahNumber, phase, totalAyahs, handsfreeMode, repeatMode, autoNext } = options;
+  const { surahNumber, ayahNumber, phase, totalAyahs, handsfreeMode, repeatMode, autoNext, translationLanguage = 'id' } = options;
   if (phase === 'translation' && handsfreeMode === 'reverse') return { ayahNumber, phase: 'arabic' };
-  if (phase === 'arabic' && handsfreeMode === 'normal' && isHumanTranslationAvailable(surahNumber)) {
+  if (phase === 'arabic' && handsfreeMode === 'normal' && isHumanTranslationAvailableInLanguage(surahNumber, translationLanguage, ayahNumber)) {
     return { ayahNumber, phase: 'translation' };
   }
-  if (repeatMode === 'ayah') return getFirstAudioTrack(surahNumber, ayahNumber, handsfreeMode);
-  if (ayahNumber >= totalAyahs) return repeatMode === 'surah' ? getFirstAudioTrack(surahNumber, 1, handsfreeMode) : null;
-  return autoNext ? getFirstAudioTrack(surahNumber, ayahNumber + 1, handsfreeMode) : null;
+  if (repeatMode === 'ayah') return getFirstAudioTrack(surahNumber, ayahNumber, handsfreeMode, translationLanguage);
+  if (ayahNumber >= totalAyahs) return repeatMode === 'surah' ? getFirstAudioTrack(surahNumber, 1, handsfreeMode, translationLanguage) : null;
+  return autoNext ? getFirstAudioTrack(surahNumber, ayahNumber + 1, handsfreeMode, translationLanguage) : null;
 }

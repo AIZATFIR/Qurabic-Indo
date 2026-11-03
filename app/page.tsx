@@ -47,7 +47,7 @@ export default function HomePage() {
           <Link
             key={item.href}
             href={item.href}
-            className="group grid grid-cols-[1fr_auto] sm:grid-cols-[13rem_1fr_auto] gap-x-6 gap-y-1 items-center py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset hover:bg-canvas-soft transition-colors"
+            className="group grid grid-cols-[1fr_auto] sm:grid-cols-[13rem_1fr_auto] gap-x-6 gap-y-1 items-center py-4 sm:py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset hover:bg-canvas-soft transition-colors"
           >
             <span className="text-lg font-medium text-ink-primary group-hover:text-primary">{t(item.title[0], item.title[1])}</span>
             <span className="row-start-2 sm:row-start-auto text-base leading-relaxed text-ink-secondary">{t(item.description[0], item.description[1])}</span>

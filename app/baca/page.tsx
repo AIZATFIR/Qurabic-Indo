@@ -103,6 +103,7 @@ function BacaQuranPageContent() {
     totalAyahs: currentSurahMeta.ayahsCount,
     autoScroll: true,
     getAyahTranslation,
+    translationLanguage: language,
   });
 
   const [isHeaderHandsfreeOpen, setIsHeaderHandsfreeOpen] = useState(false);
@@ -198,7 +199,7 @@ function BacaQuranPageContent() {
         if (cancelled) return;
         setAyahs(data);
         // Instant audio & translation warm-up ("ngeload sekalian terjemahan")
-        preloadUpcomingAyahs(selectedSurah, 1, data.length, (n) => data.find((a) => a.ayahNumber === n)?.textIndo);
+        preloadUpcomingAyahs(selectedSurah, 1, data.length, (n) => data.find((a) => a.ayahNumber === n)?.textIndo, 'alafasy', 'human', language);
       } catch (err) {
         console.error('Error fetching surah data:', err);
       } finally {
@@ -555,7 +556,7 @@ function BacaQuranPageContent() {
                       : 'bg-canvas-soft hover:bg-canvas-page text-ink-secondary hover:text-primary border-hairline'
                   }`}
                   title={t('Pilihan mode handsfree', 'Choose handsfree mode')}
-                  aria-label={t(t('Tadarus Handsfree', 'Handsfree'), 'Handsfree')}
+                  aria-label={t('Tadarus Handsfree', 'Handsfree')}
                   aria-haspopup="true"
                   aria-expanded={isHeaderHandsfreeOpen}
                 >
@@ -568,9 +569,9 @@ function BacaQuranPageContent() {
                   )}
                   <span>
                     {audio.handsfreeMode === 'normal'
-                      ? t('Handsfree: Arab → Makna', 'Handsfree: Arabic → Indonesian')
+                      ? t('Handsfree: Arab → Terjemahan Indonesia', 'Handsfree: Arabic → English')
                       : audio.handsfreeMode === 'reverse'
-                      ? t('Handsfree: Makna → Arab', 'Handsfree: Indonesian → Arabic')
+                      ? t('Handsfree: Terjemahan Indonesia → Arab', 'Handsfree: English → Arabic')
                       : t('Tadarus Handsfree', 'Handsfree')}
                   </span>
                 </button>
@@ -585,12 +586,12 @@ function BacaQuranPageContent() {
                       </div>
                       {audio.handsfreeMode !== 'off' && (
                         <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider">
-                          Aktif
+                          {t('Aktif', 'Active')}
                         </span>
                       )}
                     </div>
 
-                    {!audio.isHumanTranslationAvailableForCurrentSurah && <p className="text-sm text-ink-secondary">{t('Rekaman terjemahan manusia belum tersedia untuk surat ini. Tilawah Arab tetap berjalan.', 'A human Indonesian translation recording is unavailable for this surah. Arabic recitation will continue.')}</p>}
+                    {!audio.isHumanTranslationAvailableForCurrentSurah && <p className="text-sm text-ink-secondary">{t('Rekaman terjemahan manusia belum tersedia untuk surat ini. Tilawah Arab tetap berjalan.', 'A human English translation recording is unavailable for this surah. Arabic recitation will continue.')}</p>}
                     <div className="grid grid-cols-1 gap-1.5">
                       {/* Tombol Panah Kanan: Arab -> Makna (Normal) */}
                       <button
@@ -612,8 +613,8 @@ function BacaQuranPageContent() {
                             <ArrowRight className="w-4 h-4" />
                           </div>
                           <div>
-                            <div className="text-xs font-semibold">{t('Arab → Makna', 'Arabic → Indonesian')}</div>
-                            <div className="text-[10px] text-ink-mute">{t('Tilawah Arab dulu, baru terjemahan', 'Arabic recitation, then Indonesian translation')}</div>
+                            <div className="text-xs font-semibold">{t('Arab → Terjemahan Indonesia', 'Arabic → English')}</div>
+                            <div className="text-[10px] text-ink-mute">{t('Tilawah Arab dulu, baru terjemahan', 'Arabic recitation, then English translation')}</div>
                           </div>
                         </div>
                         {audio.handsfreeMode === 'normal' && <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
@@ -639,8 +640,8 @@ function BacaQuranPageContent() {
                             <ArrowLeft className="w-4 h-4" />
                           </div>
                           <div>
-                            <div className="text-xs font-semibold">{t('Makna → Arab (Reverse)', 'Indonesian → Arabic')}</div>
-                            <div className="text-[10px] text-ink-mute">{t('Terjemahan dibacakan dulu, baru Arab', 'Indonesian translation, then Arabic recitation')}</div>
+                            <div className="text-xs font-semibold">{t('Terjemahan Indonesia → Arab', 'English → Arabic')}</div>
+                            <div className="text-[10px] text-ink-mute">{t('Terjemahan dibacakan dulu, baru Arab', 'English translation, then Arabic recitation')}</div>
                           </div>
                         </div>
                         {audio.handsfreeMode === 'reverse' && <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
@@ -913,8 +914,8 @@ function BacaQuranPageContent() {
                         {isActiveAyah && audio.isReadingTranslation && (
                           <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-md font-semibold animate-pulse hidden sm:inline-flex">
                             {audio.handsfreeMode === 'reverse'
-                              ? t('Makna Terjemahan (ID) Dulu', 'Indonesian translation first')
-                              : t('Membacakan Terjemahan ID', 'Playing Indonesian translation')}
+                              ? t('Terjemahan Indonesia dulu', 'English translation first')
+                              : t('Membacakan terjemahan Indonesia', 'Playing English translation')}
                           </span>
                         )}
 

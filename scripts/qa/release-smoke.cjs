@@ -9,6 +9,12 @@ const base = process.env.QA_BASE_URL || 'http://localhost:3000';
 const out = process.env.QA_OUTPUT || '/tmp/qurabic-qa';
 fs.mkdirSync(out, { recursive: true });
 const fixtures = new Map();
+const mediaDir = '/tmp/qurabic-qa/real-media';
+const audioFixtures = {
+  arabic: fs.readFileSync(path.join(mediaDir, 'arabic-001001.mp3')),
+  english: fs.readFileSync(path.join(mediaDir, 'en-018001.mp3')),
+  indonesian: fs.readFileSync(path.join(mediaDir, 'id-001001.mp3')),
+};
 async function fixture(surah, language, page) {
   const key = `${surah}-${language}-${page}`;
   if (!fixtures.has(key)) {
@@ -34,7 +40,7 @@ async function fixture(surah, language, page) {
       window.__activeMedia = this; window.__played.push(this.src);
       Object.defineProperty(this, 'duration', { value: 10, configurable: true });
       Object.defineProperty(this, 'paused', { value: false, configurable: true });
-      if (window.__failTranslation && this.src.includes('archive.org')) return Promise.reject(new DOMException('Unavailable recording', 'NotSupportedError'));
+      if (window.__failTranslation && (this.src.includes('archive.org') || this.src.includes('/English/'))) return Promise.reject(new DOMException('Unavailable recording', 'NotSupportedError'));
       this.dispatchEvent(new Event('loadedmetadata')); this.dispatchEvent(new Event('playing')); return Promise.resolve();
     };
     window.__endTrack = () => window.__activeMedia?.dispatchEvent(new Event('ended'));
@@ -50,14 +56,19 @@ async function fixture(surah, language, page) {
     await route.fulfill({ json: data, headers: { 'access-control-allow-origin': '*' } });
   });
   await context.route(/https:\/\/(?:api\.alquran\.cloud|equran\.id|api\.quran\.gading\.dev)\//, route => route.fulfill({ json: { data: { ayahs: [], ayat: [], verses: [] } }, headers: { 'access-control-allow-origin': '*' } }));
-  await context.route(/https:\/\/.*(?:\.mp3|archive\.org\/download\/)/, route => route.fulfill({ status: 404, body: '' }));
+  await context.route(/https:\/\/.*(?:\.mp3|archive\.org\/download\/)/, route => {
+    const url = route.request().url();
+    if (['fetch', 'xhr'].includes(route.request().resourceType())) return route.fulfill({ status: 503, body: '' });
+    const body = url.includes('/English/') ? audioFixtures.english : url.includes('archive.org') ? audioFixtures.indonesian : audioFixtures.arabic;
+    return route.fulfill({ status: 200, body, contentType: 'audio/mpeg', headers: { 'access-control-allow-origin': '*' } });
+  });
   const page = await context.newPage();
   page.on('pageerror', err => errors.push(err.message));
   const wait = async condition => { await page.waitForFunction(condition, undefined, { timeout: 15000 }); };
   const log = message => console.log(`PASS ${message}`);
   await page.goto(base, { waitUntil: 'networkidle' });
   assert.equal(await page.getByText('Metode Eksplorasi Terpadu', { exact: true }).count(), 0);
-  await page.getByLabel('Bahasa', { exact: true }).first().selectOption('en');
+  await page.locator('select').first().selectOption('en');
   await page.getByRole('heading', { level: 1 }).filter({ hasText: 'Read the Quran.' }).waitFor();
   assert.equal(await page.evaluate(() => document.documentElement.lang), 'en');
   await page.reload({ waitUntil: 'networkidle' });
@@ -84,18 +95,21 @@ async function fixture(surah, language, page) {
   await page.getByRole('button', { name: 'Play verse 1', exact: true }).click();
   const player = page.getByRole('complementary', { name: 'Quran audio player' }); await player.waitFor();
   await player.getByLabel('Handsfree mode').selectOption('reverse');
-  await wait(() => window.__played.some(src => /018001\.mp3/.test(src)));
-  assert.ok((await player.innerText()).includes('unavailable for this surah'));
+  await wait(() => Array.from(document.querySelectorAll('aside')).some(el => el.innerText.includes('Human English translation')));
+  await wait(() => window.__played.some(src => /English\/Sahih_Intnl_Ibrahim_Walk_192kbps\/018001\.mp3/.test(src)));
+  assert.ok((await player.innerText()).includes('Human English translation'));
   await page.evaluate(() => window.__endTrack());
-  await wait(() => /018002\.mp3/.test(window.__played.at(-1)));
-  log('Al-Kahf reverse handsfree plays Arabic and advances without an Indonesian recording');
+  await wait(() => /018001\.mp3/.test(window.__played.at(-1)) && !window.__played.at(-1).includes('/English/'));
+  log('English reverse handsfree plays a human translation recording, then the same verse Arabic');
   await player.getByLabel('Repeat', { exact: true }).selectOption('ayah');
   await page.evaluate(() => window.__endTrack());
-  await wait(() => /018002\.mp3/.test(window.__played.at(-1)) && window.__played.length >= 4);
-  assert.match(await player.locator('p').first().innerText(), /Verse 2\//);
+  await wait(() => /English\/Sahih_Intnl_Ibrahim_Walk_192kbps\/018001\.mp3/.test(window.__played.at(-1)) && window.__played.length >= 4);
+  assert.match(await player.locator('p').first().innerText(), /Verse 1\//);
   await player.getByLabel('Repeat', { exact: true }).selectOption('off');
   await player.getByRole('button', { name: 'Audio settings', exact: true }).click();
   await player.getByRole('checkbox', { name: 'Continue to the next verse automatically' }).uncheck();
+  await page.evaluate(() => window.__endTrack());
+  await wait(() => /018001\.mp3/.test(window.__played.at(-1)) && !window.__played.at(-1).includes('/English/'));
   const count = await page.evaluate(() => window.__played.length);
   await page.evaluate(() => window.__endTrack());
   await player.getByRole('button', { name: 'Play', exact: true }).waitFor();
@@ -115,17 +129,17 @@ async function fixture(surah, language, page) {
   await page.getByRole('button', { name: 'Play verse 1', exact: true }).click();
   await player.getByLabel('Handsfree mode').selectOption('normal');
   await page.evaluate(() => window.__endTrack());
-  await wait(() => window.__played.at(-1).includes('archive.org'));
+  await wait(() => window.__played.at(-1).includes('/English/Sahih_Intnl_Ibrahim_Walk_192kbps/001001.mp3'));
   await page.evaluate(() => window.__endTrack());
   await wait(() => /001002\.mp3/.test(window.__played.at(-1)));
-  log('human translation plays with empty Indonesian text and then advances');
+  log('human English translation plays with empty Quran.com translation text and then advances');
   await page.evaluate(() => { window.__failTranslation = true; });
   await player.getByLabel('Handsfree mode').selectOption('reverse');
   await wait(() => /001002\.mp3/.test(window.__played.at(-1)));
   await player.getByLabel('Handsfree mode').selectOption('normal');
   await page.evaluate(() => window.__endTrack());
   await wait(() => /001003\.mp3/.test(window.__played.at(-1)));
-  log('unavailable human translation file falls back to same verse Arabic in reverse and next verse in normal');
+  log('unavailable human English translation file falls back to same verse Arabic in reverse and next verse in normal');
   const allTracks = await page.evaluate(() => window.__played);
   assert.ok(allTracks.every(src => !/translate_tts|audio-translation|tts/i.test(src)));
   assert.equal((await context.request.get(`${base}/api/audio-translation?text=test`)).status(), 410);
@@ -133,7 +147,7 @@ async function fixture(surah, language, page) {
   const detail = await (await context.request.get(`${base}/api/word-detail?location=9:1:1`)).json();
   assert.ok(detail.data.study.primaryMeaning.textEnglish);
   assert.ok(!detail.data.study.linguisticExplanation && !detail.data.study.grammarDerivation);
-  for (const [word, english] of [['وَ', 'and'], ['فِي', 'in'], ['كَلَّا', 'no']]) {
+  for (const [word, english] of [['وَ', 'and'], ['فِي', 'in'], ['كَلَّا', 'nay']]) {
     const data = await (await context.request.get(`${base}/api/word-detail?word=${encodeURIComponent(word)}`)).json();
     assert.ok(data.data.study.primaryMeaning.textEnglish.toLowerCase().includes(english));
   }

@@ -13,7 +13,8 @@
     "android:sync": "npx cap sync android",
     "android:open": "npx cap open android",
     "android:build": "(cd android && ./gradlew assembleDebug)",
-    "test:e2e": "node scripts/qa/release-smoke.cjs"
+    "test:e2e": "node scripts/qa/release-smoke.cjs",
+    "test:e2e:media": "node scripts/qa/real-media-smoke.cjs"
   },
   "dependencies": {
     "@capacitor-community/admob": "^8.2.1",
@@ -45,9 +46,13 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "^15.5.28",
     "playwright": "^1.64.1",
-    "postcss": "^8.4.41",
+    "postcss": "^8.5.32",
     "tailwindcss": "^3.4.10",
     "tsx": "^4.17.0",
     "typescript": "^5.5.4"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "^1.14.7",
+    "postcss": "^8.5.32"
   }
 }
