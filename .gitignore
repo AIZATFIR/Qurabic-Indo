@@ -42,3 +42,4 @@ data/lexicon/lane/raw/*.zip
 *.keystore
 
 .env*
+build_qurabic.log

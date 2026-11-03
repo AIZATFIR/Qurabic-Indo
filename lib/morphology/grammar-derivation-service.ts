@@ -316,9 +316,9 @@ export function getGrammarDerivation(params: {
         transliteration: transliterateArabic(baseLemmaAr),
         meaning: baseMeaning,
         formationNote: isNastain
-          ? 'Bentuk Form IV / Istif\'al dari akar ع و ن yang menjadi pangkal permohonan pertolongan.'
+          ? 'Bentuk Fi\'il Mudhari\' Wazan Istif\'al (Form X) dari akar ع-و-ن dengan fa\'il dhamir Nahnu (kami).'
           : `Bentuk Tsulatsi Mujarrad lampau dari akar ${stemLetters} yang melambangkan ketundukan mutlak.`,
-        posType: isNastain ? 'Fi\'il Madhi Form X' : 'Fi\'il Madhi Form I'
+        posType: isNastain ? 'Fi\'il Mudhari\' Form X' : 'Fi\'il Madhi Form I'
       },
       verseForm: {
         arabic: cleanWord,

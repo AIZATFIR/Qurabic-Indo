@@ -1,6 +1,17 @@
 import { QuranicUsagePattern } from '../types/morphology';
 import { ROOT_DATABASE } from './roots';
 import { getLaneRootRecord } from '../lexicon/lane-loader';
+import qbqRootsData from './quran-bil-quran-roots.json';
+
+interface QBQRootItem {
+  rootArabic: string;
+  meaningEn: string;
+  family: string;
+  frequency: number;
+  mufradatArabic: string;
+}
+
+const QBQ_ROOTS: Record<string, QBQRootItem> = (qbqRootsData as unknown) as Record<string, QBQRootItem>;
 
 export interface RootSemanticProfile {
   titleIndo: string;
@@ -940,9 +951,10 @@ export function getRootSemanticProfile(rootBw: string, rootArabic?: string): Roo
     }
   }
 
-  // 2. Query Lane's Arabic-English Lexicon (Book I, Perseus Digital Library)
-  const laneRoot = getLaneRootRecord(normalizedId) || getLaneRootRecord(cleanBw);
-  const rootArDisplay = rootArabic || laneRoot?.rootArabic || dbRoot?.rootArabic || cleanBw;
+  // 2. Query Quran-bil-Quran (QBQ) & Al-Mufradat fi Gharib al-Quran (Al-Raghib al-Isfahani)
+  const cleanArKey = (rootArabic || dbRoot?.rootArabic || '').replace(/\s+/g, '');
+  const qbqEntry = QBQ_ROOTS[cleanArKey];
+  const rootArDisplay = rootArabic || dbRoot?.rootArabic || cleanBw;
 
   const sampleVerbs = (dbRoot?.verbs || []).filter(v => v.arabic && !v.arabic.includes('('));
   const sampleNouns = (dbRoot?.nouns || []).filter(n => n.arabic && !n.arabic.includes('('));
@@ -962,6 +974,32 @@ export function getRootSemanticProfile(rootBw: string, rootArabic?: string): Roo
       examples: sampleNouns.slice(0, 4).map(n => n.arabic)
     });
   }
+
+  if (qbqEntry && (qbqEntry.meaningEn || qbqEntry.mufradatArabic)) {
+    const cleanTitle = dbRoot?.titleIndo && !dbRoot.titleIndo.startsWith('Konsep')
+      ? dbRoot.titleIndo.replace(/^Akar\s+[^\(]+\(/, '').replace(/\)$/, '').trim()
+      : `Akar ${rootArDisplay}`;
+
+    // Extract core semantic explanation
+    const coreMeaning = qbqEntry.meaningEn
+      ? `${qbqEntry.meaningEn}${qbqEntry.family ? ` [Keluarga makna: ${qbqEntry.family}]` : ''}`
+      : (qbqEntry.mufradatArabic ? qbqEntry.mufradatArabic.slice(0, 260) + '...' : `Akar kata Al-Qur'an ${rootArDisplay}`);
+
+    const contextualNote = qbqEntry.mufradatArabic
+      ? `Rujukan semantik: Al-Mufradat fi Gharib al-Qur'an (Al-Raghib al-Isfahani) & Maqayis al-Lughah (Ibnu Faris). Disarikan dari corpus quran-bil-quran.`
+      : `Rujukan semantik: Corpus Qur'an-bil-Qur'an & The Quranic Arabic Corpus (QAC).`;
+
+    return {
+      titleIndo: cleanTitle,
+      coreMeaning,
+      usagePatterns,
+      contextualNote,
+      meaningsIndonesian: [qbqEntry.meaningEn || `Akar ${rootArDisplay}`]
+    };
+  }
+
+  // 3. Fallback Query Lane's Arabic-English Lexicon
+  const laneRoot = getLaneRootRecord(normalizedId) || getLaneRootRecord(cleanBw);
 
   if (laneRoot && laneRoot.entries && laneRoot.entries.length > 0) {
     const entry = laneRoot.entries[0];

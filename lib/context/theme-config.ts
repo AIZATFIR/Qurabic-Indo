@@ -1,4 +1,4 @@
-export type ThemeType = 'light' | 'bookpaper' | 'green' | 'dark';
+export type ThemeType = 'half-bookpaper' | 'full-bookpaper' | 'langit' | 'earth' | 'dark' | 'bookpaper' | 'light' | 'green';
 
 export interface ThemeOption {
   id: ThemeType;
@@ -11,33 +11,41 @@ export interface ThemeOption {
 
 export const THEME_OPTIONS: ThemeOption[] = [
   {
-    id: 'bookpaper',
-    label: 'Bookpaper',
-    shortLabel: 'Paper',
-    bgHex: '#FAF5ED',
-    primaryHex: '#2D5A43',
-    borderHex: '#E2D6C5',
+    id: 'half-bookpaper',
+    label: 'Half Bookpaper',
+    shortLabel: 'Half Paper',
+    bgHex: '#FAF6EF',
+    primaryHex: '#2B5740',
+    borderHex: '#E5DACB',
   },
   {
-    id: 'light',
-    label: 'Terang',
-    shortLabel: 'Light',
-    bgHex: '#FAFCFA',
-    primaryHex: '#059669',
-    borderHex: '#E2ECE6',
+    id: 'full-bookpaper',
+    label: 'Full Bookpaper',
+    shortLabel: 'Full Paper',
+    bgHex: '#F3E9DA',
+    primaryHex: '#234934',
+    borderHex: '#DDD0BF',
   },
   {
-    id: 'green',
-    label: 'Hijau Zamrud',
-    shortLabel: 'Green',
-    bgHex: '#F0F9F4',
-    primaryHex: '#047857',
-    borderHex: '#CBE8D8',
+    id: 'langit',
+    label: 'Tema Langit',
+    shortLabel: 'Langit',
+    bgHex: '#F0F7FB',
+    primaryHex: '#0284C7',
+    borderHex: '#D1E6F3',
+  },
+  {
+    id: 'earth',
+    label: 'Tema Earth',
+    shortLabel: 'Earth',
+    bgHex: '#F5EFEB',
+    primaryHex: '#7C4A2D',
+    borderHex: '#DFCFC3',
   },
   {
     id: 'dark',
-    label: 'Malam',
-    shortLabel: 'Dark',
+    label: 'Malam Obsidian',
+    shortLabel: 'Malam',
     bgHex: '#0B1410',
     primaryHex: '#10B981',
     borderHex: '#1E3D30',
@@ -45,5 +53,5 @@ export const THEME_OPTIONS: ThemeOption[] = [
 ];
 
 export function isValidTheme(theme: string): theme is ThemeType {
-  return ['light', 'bookpaper', 'green', 'dark'].includes(theme);
+  return ['half-bookpaper', 'full-bookpaper', 'langit', 'earth', 'dark', 'bookpaper', 'light', 'green'].includes(theme);
 }
