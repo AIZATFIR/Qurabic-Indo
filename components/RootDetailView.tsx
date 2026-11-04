@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookOpen, ExternalLink } from 'lucide-react';
 import type { RootDetailModel } from '@/lib/morphology/canonical-service';
 import { useLanguage } from '@/lib/context/LanguageContext';
 import { useTheme } from '@/lib/context/ThemeContext';
@@ -72,6 +72,24 @@ export default function RootDetailView({ root, lemmaSamples }: RootDetailViewPro
           <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-secondary">{t('Data akar, lemma, dan frekuensi berikut berasal dari anotasi Quranic Arabic Corpus (University of Leeds). Kutipan definisi Lane ditampilkan terpisah agar arti leksikal tidak tercampur dengan pemakaian kata di ayat.', 'Root, lemma, and frequency data below come from Quranic Arabic Corpus (University of Leeds). Lane quotations are kept separate so lexical definitions are not confused with a word’s use in a verse.')}</p>
         </header>
       )}
+
+      <section aria-labelledby="root-meaning-heading" className={`scroll-mt-24 space-y-5 ${classic ? 'rounded-3xl border border-hairline bg-canvas-surface p-6 shadow-subtle sm:p-8' : 'border-y border-hairline py-7'}`}>
+        <div className="flex flex-wrap items-center gap-3 border-b border-hairline pb-4">
+          <BookOpen className="h-5 w-5 text-primary" aria-hidden="true" />
+          <div>
+            <h2 id="root-meaning-heading" className="text-xl font-semibold text-ink-primary">{t('Makna inti akar', 'Root meaning')}</h2>
+            <p className="mt-1 text-sm text-ink-secondary">{t('Ringkasan editorial Qurabic · dibantu AI', 'Qurabic editorial summary · AI-assisted')}</p>
+          </div>
+        </div>
+        <p className="max-w-4xl text-lg leading-relaxed text-ink-primary">{root.coreMeaning || t('Ringkasan akar belum tersedia.', 'A root summary is not available yet.')}</p>
+        {lexicon?.entries?.[0]?.senses?.[0]?.text && (
+          <div className="border-l-2 border-primary/50 pl-4 sm:pl-5">
+            <p className="mb-2 text-sm font-medium text-ink-secondary">{t('Definisi leksikal asli · Lane’s Arabic-English Lexicon', 'Original lexical definition · Lane’s Arabic-English Lexicon')}</p>
+            <p lang="en" dir="auto" className="max-w-prose whitespace-pre-line break-words text-base leading-relaxed text-ink-primary">{lexicon.entries[0].senses[0].text}</p>
+            <p className="mt-2 text-sm text-ink-secondary">Book I, Part {lexicon.entries[0].volume}, p. {lexicon.entries[0].page}</p>
+          </div>
+        )}
+      </section>
 
       <section aria-labelledby="root-distribution-heading" id="distribusi" className={`scroll-mt-24 space-y-5 ${classic ? 'border-y border-hairline py-8' : ''}`}>
         <div>
