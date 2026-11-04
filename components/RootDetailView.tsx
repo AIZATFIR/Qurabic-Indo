@@ -62,7 +62,7 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
     let active = true;
     setRootDataLoading(true);
     setRootDataError(false);
-    fetch(`/api/root-detail?root=${encodeURIComponent(initialRoot.id)}`)
+    fetch(`/api/root-detail?root=${encodeURIComponent(initialRoot.id)}&v=2`)
       .then((response) => response.ok ? response.json() : Promise.reject(new Error('Root data unavailable')))
       .then((data) => {
         if (!active) return;
