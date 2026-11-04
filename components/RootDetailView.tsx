@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, BookOpen, ExternalLink } from 'lucide-react';
 import type { RootDetailModel } from '@/lib/morphology/canonical-service';
@@ -28,7 +28,10 @@ export default function RootDetailView({ root, lemmaSamples }: RootDetailViewPro
   const classic = layoutMode === 'classic';
   const [visibleVerses, setVisibleVerses] = useState(20);
   const [selectedPos, setSelectedPos] = useState<'all' | 'V' | 'N'>('all');
-  const { statistics, lexicon } = root;
+  const [resolvedLexicon, setResolvedLexicon] = useState(root.lexicon);
+  const [lexiconLoading, setLexiconLoading] = useState(!root.lexicon);
+  const { statistics } = root;
+  const lexicon = resolvedLexicon;
   const rootTransliteration = transliterateRootArabic(root.rootArabic);
   const number = (value: number) => value.toLocaleString(language === 'en' ? 'en-US' : 'id-ID');
   const lemmas = statistics.lemmaDistribution.filter((lemma) => selectedPos === 'all' || (selectedPos === 'V' ? lemma.pos === 'V' : lemma.pos !== 'V'));
@@ -41,6 +44,34 @@ export default function RootDetailView({ root, lemmaSamples }: RootDetailViewPro
     return [...unique.values()];
   }, [root.occurrences]);
   const posLabel = (pos: string) => pos === 'V' ? t("Fi'il · kata kerja", 'Verb') : pos === 'ADJ' ? t('Sifat', 'Adjective') : pos === 'PN' ? t('Nama diri', 'Proper noun') : t('Isim · nomina', 'Noun');
+  const laneDefinition = lexicon?.entries
+    .flatMap((entry) => entry.senses.map((sense) => ({ entry, sense })))
+    .find(({ sense }) => Boolean(sense.englishText || sense.text));
+
+  useEffect(() => {
+    if (root.lexicon?.entries?.length) {
+      setResolvedLexicon(root.lexicon);
+      setLexiconLoading(false);
+      return;
+    }
+
+    let active = true;
+    setResolvedLexicon(null);
+    setLexiconLoading(true);
+    fetch(`/api/root-lexicon?root=${encodeURIComponent(root.id)}`)
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => {
+        if (active) setResolvedLexicon(data?.lexicon || null);
+      })
+      .catch(() => {
+        if (active) setResolvedLexicon(null);
+      })
+      .finally(() => {
+        if (active) setLexiconLoading(false);
+      });
+
+    return () => { active = false; };
+  }, [root.id, root.lexicon]);
 
   return (
     <div className={`mx-auto max-w-6xl px-5 py-8 font-sans sm:px-8 sm:py-12 ${classic ? 'space-y-14 pb-28' : 'space-y-12 pb-24'}`}>
@@ -82,13 +113,14 @@ export default function RootDetailView({ root, lemmaSamples }: RootDetailViewPro
           </div>
         </div>
         <p className="max-w-4xl text-lg leading-relaxed text-ink-primary">{root.coreMeaning || t('Ringkasan akar belum tersedia.', 'A root summary is not available yet.')}</p>
-        {lexicon?.entries?.[0]?.senses?.[0]?.text && (
+        {laneDefinition && (
           <div className="border-l-2 border-primary/50 pl-4 sm:pl-5">
             <p className="mb-2 text-sm font-medium text-ink-secondary">{t('Definisi leksikal asli · Lane’s Arabic-English Lexicon', 'Original lexical definition · Lane’s Arabic-English Lexicon')}</p>
-            <p lang="en" dir="auto" className="max-w-prose whitespace-pre-line break-words text-base leading-relaxed text-ink-primary">{lexicon.entries[0].senses[0].text}</p>
-            <p className="mt-2 text-sm text-ink-secondary">Book I, Part {lexicon.entries[0].volume}, p. {lexicon.entries[0].page}</p>
+            <p lang="en" dir="auto" className="max-w-prose whitespace-pre-line break-words text-base leading-relaxed text-ink-primary">{laneDefinition.sense.englishText || laneDefinition.sense.text}</p>
+            <p className="mt-2 text-sm text-ink-secondary">Book I, Part {laneDefinition.sense.citation?.volume || laneDefinition.entry.volume}, p. {laneDefinition.sense.citation?.page || laneDefinition.entry.page}</p>
           </div>
         )}
+        {lexiconLoading && <p role="status" className="text-base text-ink-secondary">{t('Memuat kutipan leksikon Lane…', 'Loading the Lane lexicon entry…')}</p>}
       </section>
 
       <section aria-labelledby="root-distribution-heading" id="distribusi" className={`scroll-mt-24 space-y-5 ${classic ? 'border-y border-hairline py-8' : ''}`}>
@@ -148,7 +180,7 @@ export default function RootDetailView({ root, lemmaSamples }: RootDetailViewPro
               </details>
             ))}
           </div>
-        ) : <p className="text-base text-ink-secondary">{t('Entri Lane untuk akar ini belum terindeks. Definisi kamus belum tersedia.', 'A Lane entry for this root has not been indexed. A dictionary definition is not available yet.')}</p>}
+        ) : <p className="text-base text-ink-secondary">{lexiconLoading ? t('Memuat entri Lane…', 'Loading Lane entry…') : t('Entri Lane untuk akar ini belum terindeks. Definisi kamus belum tersedia.', 'A Lane entry for this root has not been indexed. A dictionary definition is not available yet.')}</p>}
         <p className="max-w-prose text-sm leading-relaxed text-ink-secondary">{t(SOURCES_REGISTRY.laneLexicon.description, SOURCES_REGISTRY.laneLexicon.descriptionEnglish || SOURCES_REGISTRY.laneLexicon.name)}{' '}<a href={SOURCES_REGISTRY.laneLexicon.url} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-4 focus-visible:outline-primary">{t('Sumber digital Alpheios', 'Alpheios digital source')}</a>.</p>
       </section>
 
