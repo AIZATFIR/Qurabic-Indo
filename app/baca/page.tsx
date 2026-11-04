@@ -49,7 +49,8 @@ function BacaQuranPageContent() {
     initialSurah >= 1 && initialSurah <= 114 ? initialSurah : 1
   );
   const [isSurahModalOpen, setIsSurahModalOpen] = useState(false);
-  const { theme, setTheme, options } = useTheme();
+  const { theme, setTheme, options, layoutMode } = useTheme();
+  const classicLayout = layoutMode === 'classic';
   const [fontSize, setFontSize] = useState<'sm' | 'md' | 'lg' | 'xl'>('lg');
   const [readingMode, setReadingMode] = useState<'baca' | 'tadabbur'>('tadabbur');
   const [showTranslation, setShowTranslation] = useState(true);
@@ -511,7 +512,7 @@ function BacaQuranPageContent() {
       <div className="max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
         
         {/* Continuous Scholarly Reading Surface */}
-        <div className="bg-canvas-surface overflow-hidden">
+        <div className={`bg-canvas-surface overflow-hidden ${classicLayout ? 'rounded-3xl border border-hairline shadow-subtle' : ''}`}>
           
           {/* Surah Header */}
           <div className="p-6 sm:p-10 text-center space-y-4 border-b border-hairline bg-canvas-soft/40">
@@ -865,9 +866,9 @@ function BacaQuranPageContent() {
                     id={`ayah-${ayah.ayahNumber}`}
                     className={`scroll-mt-14 p-6 sm:p-8 md:p-10 transition-all space-y-5 ${
                       isActiveAyah
-                        ? 'bg-primary-subdued/25 border-l-4 border-l-primary shadow-subtle'
+                        ? `bg-primary-subdued/25 ${classicLayout ? 'shadow-subtle rounded-2xl' : ''}`
                         : isTargetFocused
-                        ? 'bg-primary-subdued/15 border-l-4 border-l-primary'
+                        ? `bg-primary-subdued/15 ${classicLayout ? 'rounded-2xl' : ''}`
                         : 'hover:bg-canvas-soft/20'
                     }`}
                   >

@@ -45,28 +45,33 @@ export default function RootDetailView({ root, lemmaSamples }: RootDetailViewPro
   return (
     <div className={`mx-auto max-w-6xl px-5 py-8 font-sans sm:px-8 sm:py-12 ${classic ? 'space-y-14 pb-28' : 'space-y-12 pb-24'}`}>
       <Link href="/morfologi" className="inline-flex min-h-11 items-center gap-2 text-base text-primary hover:underline underline-offset-4 focus-visible:outline-primary"><ArrowLeft className="h-4 w-4" aria-hidden="true" />{t('Kembali ke indeks akar', 'Back to the root index')}</Link>
-      <header className={classic ? 'grid gap-6 border-b border-hairline pb-8 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end' : ''}>
-        <div>
-          <p className="text-sm font-semibold text-primary">{t('Kamus akar Al-Qur’an', 'Quranic root dictionary')}</p>
-          <h1 className="mt-2 text-2xl font-semibold text-ink-primary sm:text-3xl">{t('Akar kata', 'Root')}: <span lang="ar" dir="rtl" className={`mt-3 block font-arabic leading-loose font-normal ${classic ? 'text-6xl sm:text-7xl' : 'text-5xl sm:text-6xl'}`}>{root.rootArabic}</span></h1>
+      {classic ? (
+        <header className="rounded-3xl border border-hairline bg-canvas-surface px-6 py-8 text-center shadow-subtle sm:px-10 sm:py-10">
+          <h1 className="font-arabic text-6xl leading-relaxed text-primary sm:text-8xl" lang="ar" dir="rtl">{root.rootArabic}</h1>
+          <p className="mt-2 text-2xl font-semibold tracking-tight text-ink-primary">{rootTransliteration}</p>
+          <dl className="mx-auto mt-6 flex max-w-3xl flex-wrap justify-center gap-x-7 gap-y-3 text-sm tabular-nums sm:gap-x-10">
+            {[
+              [t('Kemunculan', 'Occurrences'), number(statistics.totalOccurrences)],
+              [t('Ayat', 'Verses'), number(statistics.uniqueAyahs)],
+              [t('Surah', 'Surahs'), number(statistics.uniqueSurahs)],
+              [t('Lemma', 'Lemmas'), number(statistics.uniqueLemmas)],
+            ].map(([label, value]) => <div key={label} className="flex items-baseline gap-1.5"><dd className="font-semibold text-ink-primary">{value}</dd><dt className="text-ink-secondary">{label}</dt></div>)}
+          </dl>
+          <p className="mx-auto mt-5 max-w-3xl text-base leading-relaxed text-ink-secondary">{t('Data akar, lemma, dan frekuensi berasal dari anotasi Quranic Arabic Corpus (University of Leeds). Kutipan Lane ditampilkan sebagai sumber kamus tersendiri.', 'Root, lemma, and frequency data come from the Quranic Arabic Corpus (University of Leeds). Lane quotations are shown separately as dictionary sources.')}</p>
+          <nav aria-label={t('Bagian entri akar', 'Root entry sections')} className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-1 text-base font-medium text-primary">
+            <a className="min-h-11 inline-flex items-center hover:underline underline-offset-4 focus-visible:outline-primary" href="#leksikon">{t('Leksikon Lane', "Lane's Lexicon")}</a>
+            <a className="min-h-11 inline-flex items-center hover:underline underline-offset-4 focus-visible:outline-primary" href="#distribusi">{t('Distribusi', 'Distribution')}</a>
+            <a className="min-h-11 inline-flex items-center hover:underline underline-offset-4 focus-visible:outline-primary" href="#bentuk">{t('Bentuk kata', 'Word forms')}</a>
+            <a className="min-h-11 inline-flex items-center hover:underline underline-offset-4 focus-visible:outline-primary" href="#concordance">{t('Ayat penggunaan', 'Verse occurrences')}</a>
+          </nav>
+        </header>
+      ) : (
+        <header>
+          <h1 className="text-2xl font-semibold text-ink-primary">{t('Akar kata', 'Root')}: <span lang="ar" dir="rtl" className="mt-3 block font-arabic text-5xl leading-loose font-normal sm:text-6xl">{root.rootArabic}</span></h1>
           <p className="mt-2 text-lg text-ink-secondary">{rootTransliteration}</p>
-          <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-secondary">{t('Data akar, lemma, dan frekuensi berikut berasal dari anotasi Quranic Arabic Corpus (University of Leeds). Kutipan definisi Lane ditampilkan terpisah agar arti leksikal tidak tercampur dengan pemakaian kata di ayat.', 'Root, lemma, and frequency data below come from the Quranic Arabic Corpus (University of Leeds). Lane quotations are kept separate so lexical definitions are not confused with a word’s use in a verse.')}</p>
-        </div>
-        <dl className={`grid grid-cols-2 gap-x-8 gap-y-4 text-sm tabular-nums ${classic ? 'sm:min-w-80' : 'mt-4'}`}>
-          {[
-            [t('Kemunculan', 'Occurrences'), number(statistics.totalOccurrences)],
-            [t('Ayat', 'Verses'), number(statistics.uniqueAyahs)],
-            [t('Surah', 'Surahs'), number(statistics.uniqueSurahs)],
-            [t('Lemma', 'Lemmas'), number(statistics.uniqueLemmas)],
-          ].map(([label, value]) => <div key={label}><dt className="text-ink-secondary">{label}</dt><dd className="mt-1 text-xl font-semibold text-ink-primary">{value}</dd></div>)}
-        </dl>
-        <nav aria-label={t('Bagian entri akar', 'Root entry sections')} className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-base font-medium text-primary">
-          <a className="min-h-11 inline-flex items-center hover:underline underline-offset-4 focus-visible:outline-primary" href="#leksikon">{t('Leksikon Lane', "Lane's Lexicon")}</a>
-          <a className="min-h-11 inline-flex items-center hover:underline underline-offset-4 focus-visible:outline-primary" href="#distribusi">{t('Distribusi', 'Distribution')}</a>
-          <a className="min-h-11 inline-flex items-center hover:underline underline-offset-4 focus-visible:outline-primary" href="#bentuk">{t('Bentuk kata', 'Word forms')}</a>
-          <a className="min-h-11 inline-flex items-center hover:underline underline-offset-4 focus-visible:outline-primary" href="#concordance">{t('Ayat penggunaan', 'Verse occurrences')}</a>
-        </nav>
-      </header>
+          <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-secondary">{t('Data akar, lemma, dan frekuensi berikut berasal dari anotasi Quranic Arabic Corpus (University of Leeds). Kutipan definisi Lane ditampilkan terpisah agar arti leksikal tidak tercampur dengan pemakaian kata di ayat.', 'Root, lemma, and frequency data below come from Quranic Arabic Corpus (University of Leeds). Lane quotations are kept separate so lexical definitions are not confused with a word’s use in a verse.')}</p>
+        </header>
+      )}
 
       <section aria-labelledby="root-distribution-heading" id="distribusi" className={`scroll-mt-24 space-y-5 ${classic ? 'border-y border-hairline py-8' : ''}`}>
         <div>

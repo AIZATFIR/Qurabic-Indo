@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { useLanguage } from '@/lib/context/LanguageContext';
+import { useTheme } from '@/lib/context/ThemeContext';
 import { X, ShieldCheck, ExternalLink, BookOpen, Layers, Award } from 'lucide-react';
 import { SourceRegistry } from '@/lib/lexicon/types';
 import { useModalBackHandler } from '@/lib/hooks/useModalBackHandler';
@@ -20,6 +21,8 @@ export default function SourceDrawer({
   initialSourceId
 }: SourceDrawerProps) {
   const { t, language } = useLanguage();
+  const { layoutMode } = useTheme();
+  const classic = layoutMode === 'classic';
   const { handleClose } = useModalBackHandler(isOpen, onClose, { modalName: 'source_drawer' });
 
   useEffect(() => {
@@ -56,7 +59,7 @@ export default function SourceDrawer({
         aria-labelledby="word-source-title"
         data-lenis-prevent="true"
         onWheel={(e) => e.stopPropagation()}
-        className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto overscroll-contain bg-[var(--bg-surface)] text-[var(--color-ink-primary)] border border-hairline rounded-none shadow-2xl p-6 sm:p-7 space-y-5 animate-scale-up text-left opacity-100"
+        className={`relative w-full max-w-lg max-h-[85vh] overflow-y-auto overscroll-contain bg-[var(--bg-surface)] text-[var(--color-ink-primary)] border border-hairline ${classic ? 'rounded-2xl' : 'rounded-none'} shadow-2xl p-6 sm:p-7 space-y-5 animate-scale-up text-left opacity-100`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -138,7 +141,7 @@ export default function SourceDrawer({
         </div>
 
         {/* Footer Note */}
-        <div className="p-3 bg-canvas-soft rounded-none border border-hairline text-sm text-ink-mute text-center">
+        <div className={`p-3 bg-canvas-soft ${classic ? 'rounded-xl' : 'rounded-none'} border border-hairline text-sm text-ink-mute text-center`}>
           {t('Entry ini menampilkan terjemahan per kata dan anotasi sumber; narasi akar dan tasrif otomatis yang belum ditinjau tidak disertakan.', 'This entry shows sourced word translations and annotations. Unreviewed generated root narratives and conjugations are excluded.')}
         </div>
       </div>

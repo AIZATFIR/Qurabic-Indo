@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import WordStudy from './WordStudy';
 import { useLanguage } from '@/lib/context/LanguageContext';
+import { useTheme } from '@/lib/context/ThemeContext';
 import { WordStudyViewModel } from '@/lib/lexicon/types';
 import { useModalBackHandler } from '@/lib/hooks/useModalBackHandler';
 
@@ -44,6 +45,8 @@ export default function WordEtymologyModal({
   surahNameIndo,
 }: WordEtymologyModalProps) {
   const { t } = useLanguage();
+  const { layoutMode } = useTheme();
+  const classic = layoutMode === 'classic';
   const [loadError, setLoadError] = useState(false);
   const [asyncStudy, setAsyncStudy] = useState<WordStudyViewModel | null>(null);
 
@@ -125,12 +128,12 @@ export default function WordEtymologyModal({
         aria-labelledby="word-study-modal-title"
         data-lenis-prevent="true"
         onWheel={(e) => e.stopPropagation()}
-        className="relative w-full max-w-3xl lg:max-w-4xl max-h-[90vh] overflow-y-auto overscroll-contain bg-[var(--bg-surface)] text-[var(--color-ink-primary)] border border-hairline rounded-none shadow-2xl p-5 sm:p-8 space-y-6 animate-scale-up font-sans text-left opacity-100"
+        className={`relative w-full max-w-3xl lg:max-w-4xl max-h-[90vh] overflow-y-auto overscroll-contain bg-[var(--bg-surface)] text-[var(--color-ink-primary)] border border-hairline ${classic ? 'rounded-3xl' : 'rounded-none'} shadow-2xl p-5 sm:p-8 space-y-6 animate-scale-up font-sans text-left opacity-100`}
         dir="ltr"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Top Control Bar (Sticky with Glassmorphism) */}
-        <div className="sticky top-0 z-20 -mx-5 -mt-5 sm:-mx-8 sm:-mt-8 px-5 py-4 sm:px-8 sm:py-4.5 bg-[var(--bg-surface)]/90 backdrop-blur-md border-b border-hairline/80 flex items-center justify-between rounded-none shadow-xs">
+        <div className={`sticky top-0 z-20 -mx-5 -mt-5 sm:-mx-8 sm:-mt-8 px-5 py-4 sm:px-8 sm:py-4.5 bg-[var(--bg-surface)]/90 backdrop-blur-md border-b border-hairline/80 flex items-center justify-between ${classic ? 'rounded-t-3xl' : 'rounded-none'} shadow-xs`}>
           <div className="flex items-center space-x-2.5">
             <span id="word-study-modal-title" className="text-xs font-bold uppercase tracking-wider text-primary flex items-center space-x-1.5">
               <span>{t('Bedah kata Al-Qur’an', 'Quran word study')}</span>

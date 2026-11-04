@@ -22,6 +22,7 @@ import { stripArabicHarakat } from '@/lib/search/root-search';
 import { useBookmarks } from '@/lib/hooks/useBookmarks';
 import SourceDrawer from './SourceDrawer';
 import { useLanguage } from '@/lib/context/LanguageContext';
+import { useTheme } from '@/lib/context/ThemeContext';
 
 interface WordStudyProps {
   study: WordStudyViewModel;
@@ -50,6 +51,8 @@ function senseReferencesVerse(text: string, surahNumber?: number, ayahNumber?: n
 export default function WordStudy({ study, onClose, isModalMode = false }: WordStudyProps) {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const { language, t } = useLanguage();
+  const { layoutMode } = useTheme();
+  const classic = layoutMode === 'classic';
   const [isOccurrencesOpen, setIsOccurrencesOpen] = useState(false);
   const [isLexiconOpen, setIsLexiconOpen] = useState(false);
   const [isWordFamilyExpanded, setIsWordFamilyExpanded] = useState(false);
@@ -180,7 +183,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       {/* ========================================================================= */}
       {/* 1. HERO WORD SECTION (Identity, Crisp Arabic, Pronunciation & Meaning)     */}
       {/* ========================================================================= */}
-      <section className="p-6 sm:p-8 rounded-none bg-canvas-surface border border-hairline shadow-subtle space-y-5 text-center relative overflow-hidden">
+      <section className={`p-6 sm:p-8 ${classic ? 'rounded-3xl' : 'rounded-none'} bg-canvas-surface border border-hairline shadow-subtle space-y-5 text-center relative overflow-hidden`}>
         {/* Top Control Bar */}
         <div className="flex items-center justify-between border-b border-hairline pb-3.5 text-left">
           <div className="flex items-center space-x-2">
@@ -205,7 +208,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
               <button
                 onClick={() => toggleBookmark(activeBookmarkSlug, lexical.rootArabic || identity.arabic)}
                 title={isSavedBookmark ? t('Hapus dari tersimpan', 'Remove bookmark') : t('Simpan akar ini', 'Bookmark root')}
-                className={`p-2.5 sm:px-3.5 sm:py-2 rounded-none transition-all duration-200 border flex items-center space-x-1.5 ${
+                className={`p-2.5 sm:px-3.5 sm:py-2 ${classic ? 'rounded-xl' : 'rounded-none'} transition-all duration-200 border flex items-center space-x-1.5 ${
                   isSavedBookmark
                     ? 'bg-primary text-white border-primary shadow-subtle'
                     : 'bg-canvas-soft hover:bg-canvas-page text-ink-mute hover:text-primary border-hairline shadow-xs'
@@ -221,7 +224,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
               onClick={handlePlayAudio}
               disabled={isPlayingAudio || !resolvedSurahNumber || !resolvedAyahNumber || !context?.wordIndex}
               title={t('Dengarkan rekaman kata ini', 'Play word recording')}
-              className={`p-2.5 sm:px-3.5 sm:py-2 rounded-none transition-all duration-200 border flex items-center space-x-1.5 ${
+              className={`p-2.5 sm:px-3.5 sm:py-2 ${classic ? 'rounded-xl' : 'rounded-none'} transition-all duration-200 border flex items-center space-x-1.5 ${
                 isPlayingAudio
                   ? 'bg-primary text-white scale-105 shadow-md border-primary animate-pulse'
                   : 'bg-canvas-soft hover:bg-canvas-page text-ink-secondary hover:text-primary border-hairline shadow-xs'
@@ -235,7 +238,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
             <button
               onClick={() => openSourceDrawer()}
               title={t('Lihat sumber data', 'View data sources')}
-              className="p-2.5 rounded-none bg-canvas-soft hover:bg-canvas-page text-ink-mute hover:text-primary transition-colors border border-hairline shadow-xs"
+              className={`p-2.5 ${classic ? 'rounded-xl' : 'rounded-none'} bg-canvas-soft hover:bg-canvas-page text-ink-mute hover:text-primary transition-colors border border-hairline shadow-xs`}
             >
               <ShieldCheck aria-hidden="true" className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
@@ -243,7 +246,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
         </div>
 
         {/* Crisp Grand Arabic Word Display with Soft Ambient Glow */}
-        <div className="relative py-4 my-1 flex items-center justify-center overflow-hidden rounded-none bg-gradient-to-b from-primary/5 via-canvas-soft/40 to-transparent border border-hairline/40">
+        <div className={`relative py-4 my-1 flex items-center justify-center overflow-hidden ${classic ? 'rounded-2xl' : 'rounded-none'} bg-gradient-to-b from-primary/5 via-canvas-soft/40 to-transparent border border-hairline/40`}>
           <span
             className="font-arabic text-6xl sm:text-7xl lg:text-8xl font-bold text-primary tracking-wide block leading-[2.6] sm:leading-[2.8] select-text transition-transform duration-300 hover:scale-[1.02]"
             title={identity.arabic}
@@ -261,7 +264,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
         )}
 
         {/* Primary Readable Meaning Banner (Bahasa Indonesia) */}
-        <div className="p-5 sm:p-6 rounded-none bg-primary/10 border border-primary/25 space-y-2 text-center shadow-xs">
+        <div className={`p-5 sm:p-6 ${classic ? 'rounded-2xl' : 'rounded-none'} bg-primary/10 border border-primary/25 space-y-2 text-center shadow-xs`}>
           <div className="flex items-center justify-center space-x-2">
               <span className="text-xs font-bold uppercase tracking-wider text-primary">
               Makna Kata
@@ -297,7 +300,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                 {rootLettersList.map((letter, idx) => (
                   <div
                     key={idx}
-                    className="w-10 h-10 sm:w-11 sm:h-11 rounded-none bg-primary/10 border border-primary/25 text-primary font-arabic text-2xl font-extrabold flex items-center justify-center shadow-xs transition-transform hover:-translate-y-0.5 select-text"
+                    className={`w-10 h-10 sm:w-11 sm:h-11 ${classic ? 'rounded-xl' : 'rounded-none'} bg-primary/10 border border-primary/25 text-primary font-arabic text-2xl font-extrabold flex items-center justify-center shadow-xs transition-transform hover:-translate-y-0.5 select-text`}
                   >
                     {letter}
                   </div>
@@ -525,7 +528,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
               <Link
                 key={idx}
                 href={`/baca?surah=${occ.surahNumber}&ayah=${occ.ayahNumber}`}
-                className="block p-4 sm:p-5 rounded-none bg-canvas-soft hover:bg-canvas-page border border-hairline hover:border-primary/30 transition-all space-y-2 text-left group"
+                className={`block p-4 sm:p-5 ${classic ? 'rounded-2xl' : 'rounded-none'} bg-canvas-soft hover:bg-canvas-page border border-hairline hover:border-primary/30 transition-all space-y-2 text-left group`}
               >
                 <div className="flex items-center justify-between text-xs sm:text-sm text-ink-mute">
                   <span className="font-semibold text-primary group-hover:underline">
@@ -593,7 +596,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                   <span className="text-primary font-medium">{t('Teks Inggris', 'English source')}</span>
                 </div>
                 {relevantLaneSenseIndex >= 0 && (
-                  <p className="text-sm sm:text-base text-ink-secondary rounded-none bg-primary/5 p-3">
+                  <p className={`text-sm sm:text-base text-ink-secondary ${classic ? 'rounded-xl' : 'rounded-none'} bg-primary/5 p-3`}>
                     Sense #{relevantLaneSenseIndex + 1} {t('menyebut QS.', 'references Quran')} {resolvedSurahNumber}:{resolvedAyahNumber}.
                   </p>
                 )}
@@ -606,7 +609,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                     <details
                       key={idx}
                       open={isRelevant}
-                      className="group p-4 sm:p-5 rounded-none bg-canvas-surface border border-hairline shadow-xs border-l-4 border-l-primary"
+                      className={`group p-4 sm:p-5 ${classic ? 'rounded-2xl' : 'rounded-none'} bg-canvas-surface border border-hairline shadow-subtle`}
                     >
                       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm sm:text-base font-semibold text-ink-primary">
                         <span className="flex items-center gap-2">
@@ -647,7 +650,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                 })}
               </div>
             ) : (
-              <div className="p-6 rounded-none bg-canvas-soft border border-hairline text-center space-y-1.5 text-sm text-ink-secondary">
+              <div className={`p-6 ${classic ? 'rounded-2xl' : 'rounded-none'} bg-canvas-soft border border-hairline text-center space-y-1.5 text-sm text-ink-secondary`}>
                 <p className="font-bold text-ink-primary">Kajian Leksikografi &amp; Morfologi</p>
                 <p>{t('Definisi kamus belum terindeks untuk kata ini.', 'No dictionary definition is indexed for this word yet.')}</p>
               </div>
@@ -655,7 +658,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
           ) : (
             <button
               onClick={() => setIsLexiconOpen(true)}
-              className="w-full py-3 px-4 rounded-none bg-canvas-soft hover:bg-canvas-page border border-hairline text-xs sm:text-sm text-ink-secondary hover:text-primary font-semibold transition-all flex items-center justify-between"
+              className={`w-full py-3 px-4 ${classic ? 'rounded-xl' : 'rounded-none'} bg-canvas-soft hover:bg-canvas-page border border-hairline text-xs sm:text-sm text-ink-secondary hover:text-primary font-semibold transition-all flex items-center justify-between`}
             >
               <span>{t('Baca definisi asli Lane · English', 'Read Lane’s original definitions · English')}</span>
               <ChevronDown className="w-4 h-4 text-primary" />
