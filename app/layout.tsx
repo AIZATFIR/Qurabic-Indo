@@ -55,7 +55,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" className="scroll-smooth" data-theme="blend">
+    <html lang="id" className="scroll-smooth" data-theme="blend" data-layout="classic">
       <body className="min-h-screen flex flex-col bg-canvas text-ink-primary selection:bg-primary-subdued selection:text-primary-deep font-sans pb-16 md:pb-0">
         <a
           href="#main-content"

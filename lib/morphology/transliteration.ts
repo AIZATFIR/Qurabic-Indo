@@ -256,3 +256,11 @@ export function isRawBuckwalterRoot(text?: string): boolean {
     /^[\$\*][a-z]{1,3}$/.test(clean) ||
     /^[A-Z][a-z]{1,2}$/.test(clean) && !/[aeiou]/.test(clean.toLowerCase());
 }
+
+/** Displays root radicals with standard consonant transliteration, never raw Buckwalter. */
+export function transliterateRootArabic(rootArabic?: string): string {
+  if (!rootArabic) return '';
+  const clean = rootArabic.replace(/[\u064B-\u065F\u0670\u0640\u06D6-\u06ED]/g, '').trim();
+  const letters = clean.includes(' ') ? clean.split(/\s+/).filter(Boolean) : Array.from(clean);
+  return letters.map((letter) => transliterateArabic(letter)).join('-');
+}

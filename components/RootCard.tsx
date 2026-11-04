@@ -5,6 +5,7 @@ import { Bookmark, ArrowRight } from 'lucide-react';
 import { RootWord } from '@/lib/types/morphology';
 import { useBookmarks } from '@/lib/hooks/useBookmarks';
 import { useLanguage } from '@/lib/context/LanguageContext';
+import { transliterateRootArabic } from '@/lib/morphology/transliteration';
 
 interface RootCardProps { root: RootWord; }
 
@@ -17,7 +18,7 @@ export default function RootCard({ root }: RootCardProps) {
       <Link href={`/akar/${root.id}`} className="group flex min-w-0 flex-1 flex-wrap items-center gap-x-6 gap-y-2 py-2 focus-visible:outline-primary">
         <h3 lang="ar" dir="rtl" className="min-w-32 font-arabic text-3xl leading-loose text-ink-primary group-hover:text-primary">{root.rootArabic}</h3>
         <div className="min-w-0 flex-1 text-base text-ink-secondary">
-          <p>{root.rootLatin}</p>
+          <p>{transliterateRootArabic(root.rootArabic)}</p>
           <p className="mt-1 tabular-nums">{root.totalOccurrences.toLocaleString(language === 'en' ? 'en-US' : 'id-ID')} {t("kemunculan di Al-Qur'an", 'occurrences in the Quran')}</p>
           <p className="mt-1 text-sm">{root.verbsCount} {t("bentuk fi'il", 'verb forms')} · {root.nounsCount} {t('bentuk isim', 'noun forms')}</p>
         </div>

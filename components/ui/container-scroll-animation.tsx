@@ -1,16 +1,18 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { useScroll, useTransform, motion } from 'framer-motion';
+import { useScroll, useTransform, motion, useReducedMotion } from 'framer-motion';
 
 interface ContainerScrollProps {
   titleComponent: string | React.ReactNode;
   children: React.ReactNode;
+  compact?: boolean;
 }
 
 export const ContainerScroll = ({
   titleComponent,
   children,
+  compact = false,
 }: ContainerScrollProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -19,6 +21,7 @@ export const ContainerScroll = ({
   });
 
   const [isMobile, setIsMobile] = React.useState(false);
+  const reduceMotion = useReducedMotion();
 
   React.useEffect(() => {
     const checkMobile = () => {
@@ -31,27 +34,24 @@ export const ContainerScroll = ({
     };
   }, []);
 
-  const scaleDimensions = () => {
-    return isMobile ? [0.85, 0.95] : [1.05, 1];
-  };
-
-  const rotate = useTransform(scrollYProgress, [0, 0.6], [18, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.6], scaleDimensions());
-  const translate = useTransform(scrollYProgress, [0, 0.6], [0, -40]);
+  const shouldAnimate = !isMobile && !reduceMotion;
+  const rotate = useTransform(scrollYProgress, [0, 0.6], shouldAnimate ? [18, 0] : [0, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.6], shouldAnimate ? [1.05, 1] : [1, 1]);
+  const translate = useTransform(scrollYProgress, [0, 0.6], shouldAnimate ? [0, -40] : [0, 0]);
 
   return (
     <div
-      className="h-[60rem] md:h-[75rem] flex items-center justify-center relative p-2 md:p-16"
+      className={`flex items-center justify-center relative p-2 md:p-10 ${compact ? 'h-[35rem] md:h-[46rem]' : 'h-[60rem] md:h-[75rem]'}`}
       ref={containerRef}
     >
       <div
-        className="py-10 md:py-20 w-full relative"
+        className="w-full relative"
         style={{
           perspective: '1000px',
         }}
       >
         <Header translate={translate} titleComponent={titleComponent} />
-        <Card rotate={rotate} translate={translate} scale={scale}>
+        <Card rotate={rotate} translate={translate} scale={scale} compact={compact}>
           {children}
         </Card>
       </div>
@@ -75,11 +75,13 @@ export const Header = ({ translate, titleComponent }: any) => {
 export const Card = ({
   rotate,
   scale,
+  compact = false,
   children,
 }: {
   rotate: any;
   scale: any;
   translate: any;
+  compact?: boolean;
   children: React.ReactNode;
 }) => {
   return (
@@ -90,7 +92,7 @@ export const Card = ({
         boxShadow:
           '0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003',
       }}
-      className="max-w-5xl -mt-12 mx-auto h-[30rem] md:h-[40rem] w-full p-2 md:p-6 bg-canvas-surface/90 backdrop-blur-md border border-hairline rounded-[30px] shadow-2xl overflow-hidden"
+      className={`max-w-5xl -mt-7 mx-auto w-full p-2 md:p-5 bg-canvas-surface border border-hairline rounded-[30px] shadow-2xl overflow-hidden ${compact ? 'h-[21rem] md:h-[29rem]' : 'h-[30rem] md:h-[40rem]'}`}
     >
       <div className="bg-canvas-page h-full w-full rounded-2xl overflow-hidden border border-hairline/80 flex flex-col">
         {children}

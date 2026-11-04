@@ -7,7 +7,7 @@ import { useLanguage } from '@/lib/context/LanguageContext';
 import { ThemeType } from '@/lib/context/theme-config';
 
 export default function ThemeSelector() {
-  const { theme, setTheme, options } = useTheme();
+  const { theme, setTheme, options, layoutMode, setLayoutMode } = useTheme();
   const { t } = useLanguage();
   const optionsId = useId();
   const themeLabels: Record<ThemeType, string> = {
@@ -58,9 +58,35 @@ export default function ThemeSelector() {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div id={optionsId} role="group" aria-label={t('Pilihan tampilan', 'Appearance')} className="absolute right-0 mt-2 w-[min(19rem,calc(100vw-2rem))] rounded-2xl border border-hairline bg-canvas-surface p-2 shadow-hover z-50 animate-in fade-in zoom-in-95 duration-100">
+        <div id={optionsId} role="group" aria-label={t('Pilihan tampilan', 'Appearance')} className="absolute right-0 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-2xl border border-hairline bg-canvas-surface p-2 shadow-hover z-50 animate-in fade-in zoom-in-95 duration-100">
           <div className="px-3 pb-2 pt-1 text-sm font-semibold text-ink-primary font-sans">
-            {t('Tampilan', 'Appearance')}
+            {t('Gaya antarmuka', 'Interface style')}
+          </div>
+          <div className="space-y-1">
+            {([
+              { id: 'classic' as const, idLabel: t('Klasik', 'Classic'), desc: t('Hero foto dan kajian akar lebih lengkap', 'Photo hero and fuller root studies') },
+              { id: 'minimal' as const, idLabel: t('Ringkas', 'Minimal'), desc: t('Tampilan baru yang lebih sederhana', 'The newer, simpler layout') },
+            ]).map((mode) => (
+              <button
+                key={mode.id}
+                type="button"
+                aria-pressed={layoutMode === mode.id}
+                onClick={() => setLayoutMode(mode.id)}
+                className={`w-full flex items-center gap-3 min-h-12 px-3 py-2 text-left font-sans transition-colors ${layoutMode === mode.id ? 'bg-primary-fixed text-primary-deep' : 'text-ink-secondary hover:bg-canvas-soft'}`}
+                style={{ borderRadius: 'var(--radius-control)' }}
+              >
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-semibold">{mode.idLabel}</span>
+                  <span className="mt-0.5 block text-xs leading-relaxed text-ink-mute">{mode.desc}</span>
+                </span>
+                {layoutMode === mode.id && <Check className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />}
+              </button>
+            ))}
+          </div>
+
+          <div className="mx-3 my-2 border-t border-hairline" aria-hidden="true" />
+          <div className="px-3 pb-2 pt-1 text-sm font-semibold text-ink-primary font-sans">
+            {t('Warna', 'Colors')}
           </div>
 
           <div className="space-y-1">

@@ -15,10 +15,10 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   if (pathname === '/baca') return null;
   return <>
-    <header className="sticky top-0 z-40 bg-canvas-page border-b border-hairline">
+    <header data-ui="primary-navigation" className="sticky top-0 z-40 bg-canvas-page border-b border-hairline">
       <div className="mx-auto max-w-7xl min-h-16 px-4 sm:px-8 flex items-center justify-between gap-3">
         <Link href="/" className="text-xl font-semibold text-ink-primary tracking-tight">Qurabic</Link>
-        <nav aria-label={t('Navigasi utama', 'Main navigation')} className="hidden lg:flex items-center gap-6 text-sm text-ink-primary">
+        <nav data-ui="primary-navigation-links" aria-label={t('Navigasi utama', 'Main navigation')} className="hidden lg:flex items-center gap-6 text-sm text-ink-primary">
           <Link href="/baca" className="min-h-11 flex items-center hover:text-primary">{t('Baca Al-Qur’an', 'Read Quran')}</Link>
           <Link href="/morfologi" className="min-h-11 flex items-center hover:text-primary">{t('Indeks akar', 'Root index')}</Link>
           <Link href="/favorit" className="min-h-11 flex items-center hover:text-primary">{t('Tersimpan', 'Saved')}</Link>

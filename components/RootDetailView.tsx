@@ -5,7 +5,9 @@ import Link from 'next/link';
 import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react';
 import type { RootDetailModel } from '@/lib/morphology/canonical-service';
 import { useLanguage } from '@/lib/context/LanguageContext';
+import { useTheme } from '@/lib/context/ThemeContext';
 import { SOURCES_REGISTRY } from '@/lib/data/sources';
+import { transliterateRootArabic } from '@/lib/morphology/transliteration';
 
 export interface RootLemmaSample {
   coordinate: string;
@@ -22,9 +24,12 @@ interface RootDetailViewProps {
 
 export default function RootDetailView({ root, lemmaSamples }: RootDetailViewProps) {
   const { language, t } = useLanguage();
+  const { layoutMode } = useTheme();
+  const classic = layoutMode === 'classic';
   const [visibleVerses, setVisibleVerses] = useState(20);
   const [selectedPos, setSelectedPos] = useState<'all' | 'V' | 'N'>('all');
   const { statistics, lexicon } = root;
+  const rootTransliteration = transliterateRootArabic(root.rootArabic);
   const number = (value: number) => value.toLocaleString(language === 'en' ? 'en-US' : 'id-ID');
   const lemmas = statistics.lemmaDistribution.filter((lemma) => selectedPos === 'all' || (selectedPos === 'V' ? lemma.pos === 'V' : lemma.pos !== 'V'));
   const verses = useMemo(() => {
@@ -38,21 +43,65 @@ export default function RootDetailView({ root, lemmaSamples }: RootDetailViewPro
   const posLabel = (pos: string) => pos === 'V' ? t("Fi'il · kata kerja", 'Verb') : pos === 'ADJ' ? t('Sifat', 'Adjective') : pos === 'PN' ? t('Nama diri', 'Proper noun') : t('Isim · nomina', 'Noun');
 
   return (
-    <div className="mx-auto max-w-5xl px-5 sm:px-8 py-8 sm:py-12 pb-24 space-y-12 font-sans">
+    <div className={`mx-auto max-w-6xl px-5 py-8 font-sans sm:px-8 sm:py-12 ${classic ? 'space-y-14 pb-28' : 'space-y-12 pb-24'}`}>
       <Link href="/morfologi" className="inline-flex min-h-11 items-center gap-2 text-base text-primary hover:underline underline-offset-4 focus-visible:outline-primary"><ArrowLeft className="h-4 w-4" aria-hidden="true" />{t('Kembali ke indeks akar', 'Back to the root index')}</Link>
-      <header>
-        <h1 className="text-2xl font-semibold text-ink-primary">{t('Akar kata', 'Root')}: <span lang="ar" dir="rtl" className="mt-3 block font-arabic text-5xl sm:text-6xl leading-loose font-normal">{root.rootArabic}</span></h1>
-        <p className="mt-2 text-lg text-ink-secondary">{root.rootLatin}</p>
-        <p className="mt-4 text-base leading-relaxed tabular-nums text-ink-secondary">{number(statistics.totalOccurrences)} {t('kemunculan', 'occurrences')} · {number(statistics.uniqueAyahs)} {t('ayat', 'verses')} · {number(statistics.uniqueSurahs)} {t('surah', 'surahs')} · {number(statistics.uniqueLemmas)} {t('lemma', 'lemmas')}</p>
-        <p className="mt-3 max-w-2xl text-base leading-relaxed text-ink-secondary">{t('Satu akar dapat membentuk beberapa kata dengan makna berbeda. Bandingkan definisi kamus dengan penggunaan kata pada ayatnya.', 'A root can produce several words with different meanings. Compare dictionary definitions with how each word is used in its verse.')}</p>
+      <header className={classic ? 'grid gap-6 border-b border-hairline pb-8 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end' : ''}>
+        <div>
+          <p className="text-sm font-semibold text-primary">{t('Kamus akar Al-Qur’an', 'Quranic root dictionary')}</p>
+          <h1 className="mt-2 text-2xl font-semibold text-ink-primary sm:text-3xl">{t('Akar kata', 'Root')}: <span lang="ar" dir="rtl" className={`mt-3 block font-arabic leading-loose font-normal ${classic ? 'text-6xl sm:text-7xl' : 'text-5xl sm:text-6xl'}`}>{root.rootArabic}</span></h1>
+          <p className="mt-2 text-lg text-ink-secondary">{rootTransliteration}</p>
+          <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-secondary">{t('Data akar, lemma, dan frekuensi berikut berasal dari anotasi Quranic Arabic Corpus (University of Leeds). Kutipan definisi Lane ditampilkan terpisah agar arti leksikal tidak tercampur dengan pemakaian kata di ayat.', 'Root, lemma, and frequency data below come from the Quranic Arabic Corpus (University of Leeds). Lane quotations are kept separate so lexical definitions are not confused with a word’s use in a verse.')}</p>
+        </div>
+        <dl className={`grid grid-cols-2 gap-x-8 gap-y-4 text-sm tabular-nums ${classic ? 'sm:min-w-80' : 'mt-4'}`}>
+          {[
+            [t('Kemunculan', 'Occurrences'), number(statistics.totalOccurrences)],
+            [t('Ayat', 'Verses'), number(statistics.uniqueAyahs)],
+            [t('Surah', 'Surahs'), number(statistics.uniqueSurahs)],
+            [t('Lemma', 'Lemmas'), number(statistics.uniqueLemmas)],
+          ].map(([label, value]) => <div key={label}><dt className="text-ink-secondary">{label}</dt><dd className="mt-1 text-xl font-semibold text-ink-primary">{value}</dd></div>)}
+        </dl>
         <nav aria-label={t('Bagian entri akar', 'Root entry sections')} className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-base font-medium text-primary">
           <a className="min-h-11 inline-flex items-center hover:underline underline-offset-4 focus-visible:outline-primary" href="#leksikon">{t('Leksikon Lane', "Lane's Lexicon")}</a>
+          <a className="min-h-11 inline-flex items-center hover:underline underline-offset-4 focus-visible:outline-primary" href="#distribusi">{t('Distribusi', 'Distribution')}</a>
           <a className="min-h-11 inline-flex items-center hover:underline underline-offset-4 focus-visible:outline-primary" href="#bentuk">{t('Bentuk kata', 'Word forms')}</a>
           <a className="min-h-11 inline-flex items-center hover:underline underline-offset-4 focus-visible:outline-primary" href="#concordance">{t('Ayat penggunaan', 'Verse occurrences')}</a>
         </nav>
       </header>
 
-      <section id="leksikon" aria-labelledby="lane-heading" className="scroll-mt-24 space-y-5">
+      <section aria-labelledby="root-distribution-heading" id="distribusi" className={`scroll-mt-24 space-y-5 ${classic ? 'border-y border-hairline py-8' : ''}`}>
+        <div>
+          <h2 id="root-distribution-heading" className="text-2xl font-semibold text-ink-primary">{t('Peta penggunaan akar', 'Root usage')}</h2>
+          <p className="mt-2 max-w-2xl text-base leading-relaxed text-ink-secondary">{t('Distribusi part of speech dan lemma dihitung dari anotasi korpus; setiap bentuk dapat dibuka pada ayat contohnya.', 'Part of speech and lemma distributions come from corpus annotations; each form links to an example verse.')}</p>
+        </div>
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+          <div>
+            <h3 className="mb-3 text-base font-semibold text-ink-primary">{t('Kelas kata', 'Word classes')}</h3>
+            <ul className="space-y-4">
+              {statistics.posDistribution.map((item) => {
+                const width = statistics.totalOccurrences > 0 ? Math.max(2, (item.count / statistics.totalOccurrences) * 100) : 0;
+                return <li key={item.pos}>
+                  <div className="mb-1 flex justify-between gap-4 text-sm"><span className="text-ink-primary">{item.labelIndo}</span><span className="tabular-nums text-ink-secondary">{number(item.count)}</span></div>
+                  <div className="h-2 overflow-hidden bg-canvas-soft" style={{ borderRadius: 'var(--radius-control)' }}><div className="h-full bg-primary" style={{ width: `${width}%` }} /></div>
+                </li>;
+              })}
+            </ul>
+          </div>
+          <div>
+            <div className="mb-3 flex flex-wrap items-baseline justify-between gap-3">
+              <h3 className="text-base font-semibold text-ink-primary">{t('Lemma yang paling sering muncul', 'Most frequent lemmas')}</h3>
+              <span className="text-sm text-ink-secondary">{t('Urutan frekuensi · QAC', 'Frequency order · QAC')}</span>
+            </div>
+            <ul className="grid gap-x-8 sm:grid-cols-2">
+              {statistics.lemmaDistribution.slice(0, 8).map((lemma) => <li key={`${lemma.pos}:${lemma.lemmaBw}`} className="flex min-h-14 items-center justify-between gap-4 border-b border-hairline py-2">
+                <span className="flex min-w-0 items-center gap-3"><span lang="ar" dir="rtl" className="shrink-0 font-arabic text-2xl leading-relaxed text-ink-primary">{lemma.lemmaArabic}</span><span className="truncate text-sm text-ink-secondary">{posLabel(lemma.pos)}</span></span>
+                <span className="shrink-0 text-sm tabular-nums text-ink-secondary">{number(lemma.count)}×</span>
+              </li>)}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="leksikon" aria-labelledby="lane-heading" className={`scroll-mt-24 space-y-5 ${classic ? 'rounded-[var(--radius-surface)] bg-canvas-soft px-5 py-6 sm:px-8 sm:py-8' : ''}`}>
         <h2 id="lane-heading" className="text-2xl font-semibold text-ink-primary">Lane&apos;s Arabic-English Lexicon</h2>
         <p className="max-w-2xl text-base leading-relaxed text-ink-secondary">{t('Teks kamus asli berbahasa Inggris. Setiap entri dan sense di bawah merupakan makna leksikal; tidak semuanya berlaku pada setiap ayat.', 'Original English dictionary text. Each entry and sense below is a lexical meaning; not every sense applies to every verse.')}</p>
         {lexicon?.entries?.length ? (
@@ -80,7 +129,7 @@ export default function RootDetailView({ root, lemmaSamples }: RootDetailViewPro
         <p className="max-w-prose text-sm leading-relaxed text-ink-secondary">{t(SOURCES_REGISTRY.laneLexicon.description, SOURCES_REGISTRY.laneLexicon.descriptionEnglish || SOURCES_REGISTRY.laneLexicon.name)}{' '}<a href={SOURCES_REGISTRY.laneLexicon.url} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-4 focus-visible:outline-primary">{t('Sumber digital Alpheios', 'Alpheios digital source')}</a>.</p>
       </section>
 
-      <section id="bentuk" aria-labelledby="forms-heading" className="scroll-mt-24 space-y-5">
+      <section id="bentuk" aria-labelledby="forms-heading" className={`scroll-mt-24 space-y-5 ${classic ? 'border-t border-hairline pt-8' : ''}`}>
         <h2 id="forms-heading" className="text-2xl font-semibold text-ink-primary">{t("Bentuk dalam Al-Qur'an", 'Forms in the Quran')}</h2>
         <p className="max-w-2xl text-base leading-relaxed text-ink-secondary">{t('Lemma dan frekuensi dari Quranic Arabic Corpus. Arti di setiap baris adalah terjemahan kata pada contoh ayat yang ditautkan, bukan definisi tunggal seluruh akar.', 'Lemmas and frequencies from Quranic Arabic Corpus. Each meaning below is the word translation in the linked example verse, not a single definition for the whole root.')}</p>
         <div className="flex flex-wrap gap-2" aria-label={t('Filter kelas kata', 'Filter word class')}>
@@ -105,7 +154,7 @@ export default function RootDetailView({ root, lemmaSamples }: RootDetailViewPro
         <a href={`https://corpus.quran.com/qurandictionary.jsp?q=${encodeURIComponent(root.id.replace(/-/g, ''))}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-base text-primary underline underline-offset-4 focus-visible:outline-primary">{t('Bandingkan di Quranic Arabic Corpus', 'Compare with Quranic Arabic Corpus')}<ExternalLink className="h-4 w-4" aria-hidden="true" /></a>
       </section>
 
-      <section id="concordance" aria-labelledby="verses-heading" className="scroll-mt-24 space-y-5">
+      <section id="concordance" aria-labelledby="verses-heading" className={`scroll-mt-24 space-y-5 ${classic ? 'border-t border-hairline pt-8' : ''}`}>
         <h2 id="verses-heading" className="text-2xl font-semibold text-ink-primary">{t('Ayat penggunaan', 'Verse occurrences')}</h2>
         <p className="text-base leading-relaxed text-ink-secondary">{t('Buka mushaf untuk membaca ayat lengkap dan terjemahannya.', 'Open the reader for the full verse and its translation.')}</p>
         <ol className="divide-y divide-hairline border-y border-hairline">

@@ -9,6 +9,9 @@ import { useLanguage } from '@/lib/context/LanguageContext';
 import { useTheme } from '@/lib/context/ThemeContext';
 import OmniSearch from '@/components/OmniSearch';
 import IlluminatedQuranHero from '@/components/IlluminatedQuranHero';
+import RootCard from '@/components/RootCard';
+import { ContainerScroll } from '@/components/ui/container-scroll-animation';
+import { transliterateRootArabic } from '@/lib/morphology/transliteration';
 
 const STARTING_ROOT_IDS = ['S-l-w', 'S-b-r', 'E-l-m', 'r-H-m', 'k-t-b', 'q-w-l'];
 const STARTING_ROOTS = STARTING_ROOT_IDS.flatMap((id) => {
@@ -24,7 +27,7 @@ const EXPLORE_LINKS = [
 
 export default function HomePage() {
   const { language, t } = useLanguage();
-  const { theme } = useTheme();
+  const { theme, layoutMode } = useTheme();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [lastSearch, setLastSearch] = useState<string | null>(null);
   const { isBookmarked, toggleBookmark } = useBookmarks();
@@ -36,6 +39,100 @@ export default function HomePage() {
       // Reading and search remain available when browser storage is disabled.
     }
   }, [isSearchOpen]);
+
+  if (layoutMode === 'classic') {
+    const featuredRoot = STARTING_ROOTS[0];
+    const sampleForms = featuredRoot
+      ? [...featuredRoot.nouns, ...featuredRoot.verbs].sort((a, b) => b.frequency - a.frequency).slice(0, 4)
+      : [];
+
+    return (
+      <div className="pb-16 sm:pb-24 font-sans">
+        <IlluminatedQuranHero onOpenSearch={() => setIsSearchOpen(true)} lastSearch={lastSearch || undefined} />
+
+        {featuredRoot && <section aria-labelledby="root-showcase-heading" className="mx-auto max-w-7xl px-4 sm:px-8">
+          <ContainerScroll
+            compact
+            titleComponent={
+              <div className="mb-6 space-y-3">
+                <h2 id="root-showcase-heading" className="text-3xl font-semibold tracking-tight text-ink-primary sm:text-5xl">
+                  {t('Satu akar, banyak kata.', 'One root, many words.')}
+                </h2>
+                <p className="mx-auto max-w-2xl text-base leading-relaxed text-ink-secondary sm:text-lg">
+                  {t('Bandingkan bentuk dan frekuensinya di dalam korpus.', 'Compare forms and frequencies in the corpus.')}
+                </p>
+              </div>
+            }
+          >
+            <div className="flex h-full flex-col bg-[#edf2ed] p-5 text-[#1c2b22] sm:p-8" data-ui="root-corpus-preview">
+              <div className="flex items-center justify-between border-b border-[#d9ddd4] pb-4 text-sm">
+                <span className="font-semibold">Qurabic · {t('Indeks akar', 'Root index')}</span>
+                <span className="text-[#657168]">Quranic Arabic Corpus</span>
+              </div>
+              <div className="flex flex-1 flex-col justify-center py-5 sm:flex-row sm:items-center sm:gap-10">
+                <div className="text-center sm:min-w-56">
+                  <p lang="ar" dir="rtl" className="font-arabic text-6xl leading-relaxed text-[#205b43] sm:text-7xl">{featuredRoot.rootArabic}</p>
+                  <p className="mt-1 text-lg font-semibold">{transliterateRootArabic(featuredRoot.rootArabic)}</p>
+                  <p className="mt-2 text-sm text-[#657168]">{featuredRoot.totalOccurrences.toLocaleString(language === 'en' ? 'en-US' : 'id-ID')} {t('kemunculan', 'occurrences')}</p>
+                </div>
+                <div className="mt-5 flex-1 border-t border-[#d9ddd4] pt-4 sm:mt-0 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0">
+                  <h3 className="mb-3 text-sm font-semibold text-[#526057]">{t('Contoh bentuk dalam korpus', 'Examples in the corpus')}</h3>
+                  <ul className="divide-y divide-[#d9ddd4]">
+                    {sampleForms.map((form, index) => (
+                      <li key={form.id} className={`items-center justify-between gap-4 py-2.5 ${index < 2 ? 'flex' : 'hidden sm:flex'}`}>
+                        <span lang="ar" dir="rtl" className="font-arabic text-2xl">{form.arabic}</span>
+                        <span className="text-right text-sm text-[#657168]">{form.frequency}×</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#d9ddd4] pt-4">
+                <p className="text-xs leading-relaxed text-[#657168]">{t('Frekuensi dan anotasi morfologi bersumber dari Quranic Arabic Corpus.', 'Frequency and morphology annotations are from the Quranic Arabic Corpus.')}</p>
+                <Link href={`/akar/${featuredRoot.id}`} className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#205b43] hover:underline underline-offset-4 focus-visible:outline-primary">
+                  {t('Bedah akar ini', 'Explore this root')} <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+              </div>
+            </div>
+          </ContainerScroll>
+        </section>}
+
+        <section aria-labelledby="roots-heading" className="mx-auto max-w-7xl px-5 pt-12 sm:px-8 sm:pt-16">
+          <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-hairline pb-4">
+            <div>
+              <h2 id="roots-heading" className="text-2xl font-semibold tracking-tight text-ink-primary sm:text-3xl">{t('Akar kata populer', 'Popular roots')}</h2>
+              <p className="mt-2 max-w-2xl text-base leading-relaxed text-ink-secondary">{t('Buka satu akar untuk melihat bentuk korpus, entri leksikon, dan ayat pemakaiannya.', 'Open a root to explore corpus forms, lexicon entries, and verse occurrences.')}</p>
+            </div>
+            <Link href="/morfologi" className="inline-flex min-h-11 items-center gap-2 text-base font-medium text-primary hover:underline underline-offset-4 focus-visible:outline-primary">
+              {t('Lihat semua akar', 'Browse all roots')} <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </div>
+          <div className="mt-2 divide-y divide-hairline">
+            {STARTING_ROOTS.slice(0, 6).map((root) => <RootCard key={root.id} root={root} />)}
+          </div>
+        </section>
+
+        <nav aria-label={t('Jelajahi Qurabic', 'Explore Qurabic')} className="mx-auto mt-14 max-w-7xl divide-y divide-hairline border-y border-hairline px-5 sm:px-8">
+          {EXPLORE_LINKS.map((item) => (
+            <Link key={item.href} href={item.href} className="group grid grid-cols-[1fr_auto] items-center gap-x-6 gap-y-1 py-4 transition-colors hover:bg-canvas-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset sm:grid-cols-[13rem_1fr_auto] sm:py-5">
+              <span className="text-lg font-medium text-ink-primary group-hover:text-primary">{t(item.title[0], item.title[1])}</span>
+              <span className="row-start-2 text-base leading-relaxed text-ink-secondary sm:row-start-auto">{t(item.description[0], item.description[1])}</span>
+              <ArrowRight className="col-start-2 row-start-1 h-5 w-5 text-primary sm:col-start-3" aria-hidden="true" />
+            </Link>
+          ))}
+        </nav>
+
+        <section aria-labelledby="sources-heading" className="mx-auto max-w-7xl px-5 pt-14 sm:px-8 sm:pt-16">
+          <div className="flex flex-wrap items-baseline justify-between gap-3">
+            <h2 id="sources-heading" className="text-2xl font-semibold tracking-tight text-ink-primary">{t('Sumber data', 'Sources')}</h2>
+            <Link href="/tentang" className="inline-flex min-h-11 items-center gap-2 text-base font-medium text-primary hover:underline underline-offset-4 focus-visible:outline-primary">{t('Tentang data', 'About the data')} <ArrowRight className="h-4 w-4" aria-hidden="true" /></Link>
+          </div>
+          <p className="mt-3 max-w-3xl text-base leading-relaxed text-ink-secondary">{t('Teks dan terjemahan ayat dari Quran.com (Kemenag RI dan Saheeh International). Akar serta morfologi dari Quranic Arabic Corpus. Definisi klasik ditampilkan sebagai kutipan Lane dengan rujukan volume dan halaman.', 'Verse text and translations from Quran.com (Kemenag RI and Saheeh International). Roots and morphology from the Quranic Arabic Corpus. Classical definitions appear as Lane quotations with volume and page references.')}</p>
+        </section>
+        <OmniSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-5xl px-5 sm:px-8 pb-16 sm:pb-24 font-sans">
