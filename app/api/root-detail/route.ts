@@ -44,6 +44,25 @@ export async function GET(request: NextRequest) {
     };
   }
 
+  if (!root.occurrences.length) {
+    const verses = new Map<string, typeof root.occurrences[number]>();
+    for (const record of records) {
+      if (verses.has(record.ayahLocationKey)) continue;
+      verses.set(record.ayahLocationKey, {
+        surahNumber: record.surah,
+        ayahNumber: record.ayah,
+        surahNameIndo: '',
+        surahNameArabic: '',
+        verseArabic: '',
+        verseIndo: '',
+        matchedWordArabic: record.formArabic,
+        matchedWordIndo: meaningsIndo[record.wordLocationKey] || '',
+        wordLocation: record.wordLocationKey,
+      });
+    }
+    root.occurrences = [...verses.values()];
+  }
+
   const response = NextResponse.json({ root, lemmaSamples });
   response.headers.set('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
   return response;
