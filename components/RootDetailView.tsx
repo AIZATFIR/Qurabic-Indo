@@ -122,11 +122,12 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
         </div>
         <p className="max-w-4xl text-lg leading-relaxed text-ink-primary">{root.coreMeaning || t('Ringkasan akar belum tersedia.', 'A root summary is not available yet.')}</p>
         {laneDefinition && (
-          <div className="border-l-2 border-primary/50 pl-4 sm:pl-5">
-            <p className="mb-2 text-sm font-medium text-ink-secondary">{t('Definisi leksikal asli · Lane’s Arabic-English Lexicon', 'Original lexical definition · Lane’s Arabic-English Lexicon')}</p>
+          <details className="border-l-2 border-primary/50 pl-4 sm:pl-5">
+            <summary className="min-h-11 cursor-pointer py-2 text-base font-medium text-ink-secondary focus-visible:outline-primary">{t('Buka kutipan asli · Lane’s Arabic-English Lexicon', 'Open original entry · Lane’s Arabic-English Lexicon')}</summary>
+            <p className="mb-2 text-sm font-medium text-ink-secondary">{t('Teks sumber asli dalam bahasa Inggris', 'Original source text in English')}</p>
             <p lang="en" dir="auto" className="max-w-prose whitespace-pre-line break-words text-base leading-relaxed text-ink-primary">{laneDefinition.sense.englishText || laneDefinition.sense.text}</p>
             <p className="mt-2 text-sm text-ink-secondary">Book I, Part {laneDefinition.sense.citation?.volume || laneDefinition.entry.volume}, p. {laneDefinition.sense.citation?.page || laneDefinition.entry.page}</p>
-          </div>
+          </details>
         )}
         {rootDataLoading && <p role="status" className="text-base text-ink-secondary">{t('Memuat kutipan leksikon Lane…', 'Loading the Lane lexicon entry…')}</p>}
       </section>
