@@ -14,6 +14,9 @@ export function generateStaticParams() {
 
 // Allow dynamic params for all 1,642 roots on demand
 export const dynamicParams = true;
+// Root entries can be generated on demand and Vercel keeps ISR output across
+// deployments, so periodically refresh cached HTML when the interface changes.
+export const revalidate = 60;
 
 interface PageProps {
   params: Promise<{
