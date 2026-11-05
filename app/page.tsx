@@ -107,7 +107,7 @@ export default function HomePage() {
               {t('Lihat semua akar', 'Browse all roots')} <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
-          <div className="mt-2 divide-y divide-hairline">
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {STARTING_ROOTS.slice(0, 6).map((root) => <RootCard key={root.id} root={root} />)}
           </div>
         </section>
