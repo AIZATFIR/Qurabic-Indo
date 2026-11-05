@@ -52,7 +52,6 @@ export default function HomePage() {
 
         {featuredRoot && <section aria-labelledby="root-showcase-heading" className="mx-auto max-w-7xl px-4 sm:px-8">
           <ContainerScroll
-            compact
             titleComponent={
               <div className="mb-6 space-y-3">
                 <h2 id="root-showcase-heading" className="text-3xl font-semibold tracking-tight text-ink-primary sm:text-5xl">

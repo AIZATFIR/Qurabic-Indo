@@ -46,6 +46,8 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
     return [...unique.values()];
   }, [root.occurrences]);
   const posLabel = (pos: string) => pos === 'V' ? t("Fi'il · kata kerja", 'Verb') : pos === 'ADJ' ? t('Sifat', 'Adjective') : pos === 'PN' ? t('Nama diri', 'Proper noun') : t('Isim · nomina', 'Noun');
+  const posEnglish = (pos: string) => pos === 'V' ? 'Verb' : pos === 'ADJ' ? 'Adjective' : pos === 'PN' ? 'Proper noun' : 'Noun';
+  const familyLemmas = statistics.lemmaDistribution.slice(0, 6);
   const laneDefinition = lexicon?.entries
     .flatMap((entry) => entry.senses.map((sense) => ({ entry, sense })))
     .find(({ sense }) => Boolean(sense.englishText || sense.text));
@@ -117,10 +119,20 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
           <BookOpen className="h-5 w-5 text-primary" aria-hidden="true" />
           <div>
             <h2 id="root-meaning-heading" className="text-xl font-semibold text-ink-primary">{t('Makna inti akar', 'Root meaning')}</h2>
-            <p className="mt-1 text-sm text-ink-secondary">{t('Ringkasan editorial Qurabic · dibantu AI', 'Qurabic editorial summary · AI-assisted')}</p>
+            <p className="mt-1 text-sm text-ink-secondary">{t('Ringkasan editorial Qurabic · dibantu AI', 'Original English source excerpt · Lane, 1863')}</p>
           </div>
         </div>
-        <p className="max-w-4xl text-lg leading-relaxed text-ink-primary">{root.coreMeaning || t('Ringkasan akar belum tersedia.', 'A root summary is not available yet.')}</p>
+        {language === 'id' ? (
+          <p className="max-w-4xl text-lg leading-relaxed text-ink-primary">{root.coreMeaning || t('Ringkasan akar belum tersedia.', 'A root summary is not available yet.')}</p>
+        ) : laneDefinition ? (
+          <div className="max-w-4xl space-y-2">
+            <p className="text-sm font-medium text-ink-secondary">Classical dictionary evidence · Edward William Lane (1863)</p>
+            <p lang="en" className="text-lg leading-relaxed text-ink-primary">{(laneDefinition.sense.englishText || laneDefinition.sense.text).slice(0, 760)}{(laneDefinition.sense.englishText || laneDefinition.sense.text).length > 760 ? '…' : ''}</p>
+            <p className="text-sm text-ink-secondary">Book I, Part {laneDefinition.sense.citation?.volume || laneDefinition.entry.volume}, p. {laneDefinition.sense.citation?.page || laneDefinition.entry.page}</p>
+          </div>
+        ) : (
+          <p className="max-w-4xl text-base leading-relaxed text-ink-secondary">No English root summary is available yet. Consult the indexed dictionary entry below when one is available.</p>
+        )}
         {laneDefinition && (
           <details className="border-l-2 border-primary/50 pl-4 sm:pl-5">
             <summary className="min-h-11 cursor-pointer py-2 text-base font-medium text-ink-secondary focus-visible:outline-primary">{t('Buka kutipan asli · Lane’s Arabic-English Lexicon', 'Open original entry · Lane’s Arabic-English Lexicon')}</summary>
@@ -131,6 +143,37 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
         )}
         {rootDataLoading && <p role="status" className="text-base text-ink-secondary">{t('Memuat kutipan leksikon Lane…', 'Loading the Lane lexicon entry…')}</p>}
       </section>
+
+      {familyLemmas.length > 0 && <section aria-labelledby="word-family-heading" className={`scroll-mt-24 space-y-5 ${classic ? 'border-b border-hairline pb-10' : 'border-b border-hairline pb-8'}`}>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 id="word-family-heading" className="text-2xl font-semibold tracking-tight text-ink-primary">{t('Keluarga kata dalam Al-Qur’an', 'Word family in the Quran')}</h2>
+            <p className="mt-2 max-w-3xl text-base leading-relaxed text-ink-secondary">{t('Lemma yang berbagi akar ini, diurutkan berdasarkan frekuensi anotasi Quranic Arabic Corpus. Pilih bentuk untuk melihat contoh ayatnya.', 'Lemmas sharing this root, ordered by Quranic Arabic Corpus annotation frequency. Select a form to see its verse examples.')}</p>
+          </div>
+          <span className="text-sm text-ink-secondary">QAC · {number(statistics.uniqueLemmas)} {t('lemma', 'lemmas')}</span>
+        </div>
+        <div className="overflow-x-auto pb-2" aria-label={t('Diagram keluarga kata', 'Word family diagram')}>
+          <div className="relative min-w-[42rem] px-4 pb-3 pt-2">
+            <svg aria-hidden="true" viewBox="0 0 960 112" preserveAspectRatio="none" className="pointer-events-none absolute inset-x-0 top-12 h-20 w-full text-primary/45">
+              <path d="M480 2 C480 42 80 36 80 108 M480 2 C480 42 240 36 240 108 M480 2 C480 42 400 36 400 108 M480 2 C480 42 560 36 560 108 M480 2 C480 42 720 36 720 108 M480 2 C480 42 880 36 880 108" fill="none" stroke="currentColor" strokeWidth="2" />
+              <circle cx="480" cy="3" r="5" fill="currentColor" />
+            </svg>
+            <div className="relative mx-auto mb-6 flex w-fit items-center gap-3 border border-primary/25 bg-primary/10 px-4 py-2" style={{ borderRadius: 'var(--radius-control)' }}>
+              <span lang="ar" dir="rtl" className="font-arabic text-2xl text-primary">{root.rootArabic}</span>
+              <span className="text-sm font-medium text-ink-primary">{rootTransliteration}</span>
+            </div>
+            <div className="grid grid-cols-6 gap-3">
+              {familyLemmas.map((lemma) => {
+                const sample = lemmaSamples[`${lemma.pos}:${lemma.lemmaBw}`];
+                return <Link key={`${lemma.pos}:${lemma.lemmaBw}`} href={sample ? `/kata/${encodeURIComponent(sample.formArabic || lemma.lemmaArabic)}?location=${encodeURIComponent(sample.coordinate)}` : '#bentuk'} className="flex min-h-28 flex-col items-center justify-center border border-hairline bg-canvas-surface px-2 py-3 text-center transition-colors hover:border-primary/50 hover:bg-canvas-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" style={{ borderRadius: 'var(--radius-control)' }}>
+                  <span lang="ar" dir="rtl" className="font-arabic text-2xl leading-relaxed text-ink-primary">{lemma.lemmaArabic}</span>
+                  <span className="mt-1 text-xs text-ink-secondary">{t(posLabel(lemma.pos), posEnglish(lemma.pos))} · {number(lemma.count)}×</span>
+                </Link>;
+              })}
+            </div>
+          </div>
+        </div>
+      </section>}
 
       <section aria-labelledby="root-distribution-heading" id="distribusi" className={`scroll-mt-24 space-y-5 ${classic ? 'border-y border-hairline py-8' : ''}`}>
         <div>
@@ -144,7 +187,7 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
               {statistics.posDistribution.map((item) => {
                 const width = statistics.totalOccurrences > 0 ? Math.max(2, (item.count / statistics.totalOccurrences) * 100) : 0;
                 return <li key={item.pos}>
-                  <div className="mb-1 flex justify-between gap-4 text-sm"><span className="text-ink-primary">{item.labelIndo}</span><span className="tabular-nums text-ink-secondary">{number(item.count)}</span></div>
+                  <div className="mb-1 flex justify-between gap-4 text-sm"><span className="text-ink-primary">{language === 'en' ? posEnglish(item.pos) : item.labelIndo}</span><span className="tabular-nums text-ink-secondary">{number(item.count)}</span></div>
                   <div className="h-2 overflow-hidden bg-canvas-soft" style={{ borderRadius: 'var(--radius-control)' }}><div className="h-full bg-primary" style={{ width: `${width}%` }} /></div>
                 </li>;
               })}

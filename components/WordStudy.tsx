@@ -263,11 +263,11 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
           </p>
         )}
 
-        {/* Primary Readable Meaning Banner (Bahasa Indonesia) */}
+        {/* Primary readable meaning */}
         <div className={`p-5 sm:p-6 ${classic ? 'rounded-2xl' : 'rounded-none'} bg-primary/10 border border-primary/25 space-y-2 text-center shadow-xs`}>
           <div className="flex items-center justify-center space-x-2">
               <span className="text-xs font-bold uppercase tracking-wider text-primary">
-              Makna Kata
+              {t('Makna Kata', 'Word meaning')}
             </span>
             <button
               onClick={() => openSourceDrawer(displaySourceId)}
@@ -451,7 +451,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
           <div className="flex items-center justify-between text-xs sm:text-sm text-ink-mute border-b border-hairline pb-3">
             <span className="font-bold text-primary flex items-center space-x-2 text-sm sm:text-base">
               <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-              <span>{t('Konteks ayat', 'Verse context')} (QS. {resolvedSurahNameIndo || (resolvedSurahNumber ? `Surah ${resolvedSurahNumber}` : '')}: {resolvedAyahNumber})</span>
+              <span>{t('Konteks ayat', 'Verse context')} (QS. {resolvedSurahNumber}:{resolvedAyahNumber})</span>
             </span>
             <span className="text-xs font-sans font-medium px-2.5 py-0.5 rounded-md bg-canvas-soft border border-hairline text-ink-secondary">
               {t('Teks ayat', 'Verse text')}
