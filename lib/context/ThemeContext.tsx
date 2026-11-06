@@ -20,7 +20,10 @@ const ThemeContext = createContext<ThemeContextValue>({
 });
 
 const STORAGE_KEY = 'qurabic_theme_preference';
-const LAYOUT_STORAGE_KEY = 'qurabic_layout_preference';
+// Start everyone on the restored classic interface once. The previous key may
+// contain `minimal` from the interim redesign and would otherwise keep the
+// restored interface hidden after deployment.
+const LAYOUT_STORAGE_KEY = 'qurabic_layout_preference_v2';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeType>('blend');
