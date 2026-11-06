@@ -15,7 +15,7 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   if (pathname === '/baca') return null;
   return <>
-    <header data-ui="primary-navigation" className="sticky top-0 z-40 bg-canvas-page border-b border-hairline">
+    <header data-ui="primary-navigation" className="sticky top-0 z-40 bg-canvas-page/75 backdrop-blur-md border-b border-hairline/40 transition-colors">
       <div className="mx-auto max-w-7xl min-h-16 px-4 sm:px-8 flex items-center justify-between gap-3">
         <Link href="/" className="text-xl font-semibold text-ink-primary tracking-tight">Qurabic</Link>
         <nav data-ui="primary-navigation-links" aria-label={t('Navigasi utama', 'Main navigation')} className="hidden lg:flex items-center gap-6 text-sm text-ink-primary">
