@@ -192,6 +192,10 @@ export function getWordStudy(
   const laneRootSense = laneRoot?.entries
     .flatMap((entry) => entry.senses.map((sense) => ({ entry, sense })))
     .find(({ sense }) => Boolean(sense.englishText || sense.text));
+  const laneRootRawText = laneRootSense?.sense.englishText || laneRootSense?.sense.text || '';
+  // Lane often places a concise English gloss in square brackets inside the
+  // fuller transliterated entry. Prefer that authentic excerpt for readability.
+  const laneRootReadableExcerpt = laneRootRawText.match(/\[\s*([^\]]{30,})\]/)?.[1]?.trim() || laneRootRawText;
 
   // 2. Build Word Family (Keluarga Kata) from actual QAC corpus records
   const wordFamily: WordFamilyItem[] = [];
@@ -346,7 +350,7 @@ export function getWordStudy(
       volume: lex?.volume,
       page: lex?.page,
       rootExcerpt: laneRootSense ? {
-        text: laneRootSense.sense.englishText || laneRootSense.sense.text,
+        text: laneRootReadableExcerpt,
         volume: laneRootSense.sense.citation?.volume || laneRootSense.entry.volume,
         page: laneRootSense.sense.citation?.page || laneRootSense.entry.page,
       } : undefined,
