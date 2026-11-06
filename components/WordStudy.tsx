@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   BookOpen,
@@ -73,6 +73,29 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
     provenance,
     context
   } = study;
+  const [rootExcerpt, setRootExcerpt] = useState(study.lexical.rootExcerpt);
+
+  useEffect(() => {
+    if (study.lexical.rootExcerpt) {
+      setRootExcerpt(study.lexical.rootExcerpt);
+      return;
+    }
+    if (morphology.isParticle || !identity.coordinate || !lexical.rootSlug) return;
+
+    const controller = new AbortController();
+    const params = new URLSearchParams({ location: identity.coordinate, excerpt: 'lane-root-v1' });
+    fetch(`/api/word-detail?${params}`, { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error('Root lexicon unavailable')))
+      .then((payload) => {
+        const excerpt = payload?.data?.study?.lexical?.rootExcerpt;
+        if (excerpt?.text) setRootExcerpt(excerpt);
+      })
+      .catch((error) => {
+        if (error?.name !== 'AbortError') return;
+      });
+
+    return () => controller.abort();
+  }, [identity.coordinate, lexical.rootSlug, morphology.isParticle, study.lexical.rootExcerpt]);
 
   const displayPrimary = language === 'en' ? (primaryMeaning.textEnglish || 'Word translation unavailable') : primaryMeaning.text;
   const displaySourceBadge = language === 'en' ? (primaryMeaning.sourceBadgeEnglish || 'Quran.com · English') : primaryMeaning.sourceBadge;
@@ -332,11 +355,11 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
             </div>
           </div>
 
-          {lexical.rootExcerpt && (
+          {rootExcerpt && (
             <blockquote className="max-w-3xl border-l-2 border-primary/40 pl-4 text-sm leading-relaxed text-ink-secondary sm:pl-5">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-primary">{t('Kutipan akar · Lane, sumber asli Inggris', 'Root lexicon · Lane, original English')}</p>
-              <p lang="en">{lexical.rootExcerpt.text}</p>
-              <cite className="mt-2 block not-italic text-xs">Edward William Lane, <i>An Arabic-English Lexicon</i>, Book I, Part {lexical.rootExcerpt.volume}, p. {lexical.rootExcerpt.page}</cite>
+              <p lang="en">{rootExcerpt.text}</p>
+              <cite className="mt-2 block not-italic text-xs">Edward William Lane, <i>An Arabic-English Lexicon</i>, Book I, Part {rootExcerpt.volume}, p. {rootExcerpt.page}</cite>
             </blockquote>
           )}
         </section>

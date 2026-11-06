@@ -8,7 +8,7 @@ export default defineConfig({
   retries: 0,
   workers: 1,
   use: {
-    baseURL: 'http://127.0.0.1:3008',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:3008',
     trace: 'on-first-retry',
     viewport: { width: 1280, height: 950 },
   },
