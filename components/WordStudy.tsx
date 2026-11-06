@@ -332,10 +332,12 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
             </div>
           </div>
 
-          {isModalMode && (
-            <p className="text-sm text-ink-secondary leading-relaxed">
-              {t('Arti tiap turunan mengikuti contoh ayatnya. Akar yang sama dapat membentuk kata dengan arti berbeda.', 'Each form is translated in its sample verse. Words sharing a root can have different meanings.')}
-            </p>
+          {lexical.rootExcerpt && (
+            <blockquote className="max-w-3xl border-l-2 border-primary/40 pl-4 text-sm leading-relaxed text-ink-secondary sm:pl-5">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-primary">{t('Kutipan akar · Lane, sumber asli Inggris', 'Root lexicon · Lane, original English')}</p>
+              <p lang="en">{lexical.rootExcerpt.text}</p>
+              <cite className="mt-2 block not-italic text-xs">Edward William Lane, <i>An Arabic-English Lexicon</i>, Book I, Part {lexical.rootExcerpt.volume}, p. {lexical.rootExcerpt.page}</cite>
+            </blockquote>
           )}
         </section>
       )}

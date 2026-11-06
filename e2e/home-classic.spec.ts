@@ -6,6 +6,7 @@ test('restored classic layout takes precedence over the interim saved minimal pr
   await expect(page.getByRole('heading', { name: /Membedah Kedalaman|Explore the depth of/i })).toBeVisible();
   await expect(page.getByRole('heading', { name: /Akar kata populer|Popular roots/i })).toBeVisible();
   await expect(page.locator('section[aria-labelledby="root-showcase-heading"]')).toBeVisible();
+  await expect(page.locator('[data-ui="root-corpus-preview"]')).toHaveCount(0);
 });
 
 test('classic homepage presents popular roots as distinct study cards', async ({ page }) => {

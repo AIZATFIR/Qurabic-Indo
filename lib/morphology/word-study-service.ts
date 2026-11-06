@@ -19,6 +19,7 @@ import { buckwalterToArabic } from './buckwalter';
 import { stripArabicHarakat } from '../search/root-search';
 import { transliterateArabic, isRawBuckwalterRoot } from './transliteration';
 import { getRootOccurrencesFromChunk } from './morphology-service';
+import { getLaneRootRecord } from '../lexicon/lane-loader';
 import wbwIndonesianGlosses from '../data/wbw-indonesian-glosses.json';
 import wbwEnglishGlosses from '../data/wbw-english-glosses.json';
 
@@ -187,6 +188,10 @@ export function getWordStudy(
   const detail = resolveCanonicalWordDetail(particleEntry?.location || tokenOrLocation, context);
   const qacIndex = getQACAuthoritativeIndex();
   const rootBw = detail.lexical.root;
+  const laneRoot = rootBw && !detail.morphology.isParticle ? getLaneRootRecord(rootBw) : null;
+  const laneRootSense = laneRoot?.entries
+    .flatMap((entry) => entry.senses.map((sense) => ({ entry, sense })))
+    .find(({ sense }) => Boolean(sense.englishText || sense.text));
 
   // 2. Build Word Family (Keluarga Kata) from actual QAC corpus records
   const wordFamily: WordFamilyItem[] = [];
@@ -340,6 +345,11 @@ export function getWordStudy(
       sourceCitation: lex?.sourceCitation || "Lane's Arabic-English Lexicon",
       volume: lex?.volume,
       page: lex?.page,
+      rootExcerpt: laneRootSense ? {
+        text: laneRootSense.sense.englishText || laneRootSense.sense.text,
+        volume: laneRootSense.sense.citation?.volume || laneRootSense.entry.volume,
+        page: laneRootSense.sense.citation?.page || laneRootSense.entry.page,
+      } : undefined,
       meanings: [primaryText],
     },
     wordFamily,

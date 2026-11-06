@@ -1,6 +1,14 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
+  test('root explanation uses a cited Lane source instead of generic placeholder copy', async ({ page }) => {
+    await page.goto('/kata/%D8%A7%D9%84%D8%B1%D9%91%D9%8E%D8%AD%D9%90%D9%8A%D9%85%D9%90?location=1%3A1%3A4', { waitUntil: 'networkidle' });
+
+    await expect(page.getByText('Each form is translated in its sample verse. Words sharing a root can have different meanings.')).toHaveCount(0);
+    await expect(page.getByText('Edward William Lane, An Arabic-English Lexicon', { exact: false }).first()).toBeVisible();
+    await expect(page.getByText(/He had mercy, or pity, or compassion/).first()).toBeVisible();
+  });
+
   test('halaman نَسْتَعِينُ menampilkan bento akar, filosofi semantik, dan keluarga kata', async ({ page }) => {
     await page.goto('/kata/%D9%86%D9%8E%D8%B3%D9%91%D8%AA%D9%8E%D8%B9%D9%90%D9%8A%D9%86%D9%8F', { waitUntil: 'networkidle' });
 

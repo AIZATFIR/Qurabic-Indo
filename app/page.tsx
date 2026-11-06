@@ -10,7 +10,6 @@ import { useTheme } from '@/lib/context/ThemeContext';
 import OmniSearch from '@/components/OmniSearch';
 import IlluminatedQuranHero from '@/components/IlluminatedQuranHero';
 import RootCard from '@/components/RootCard';
-import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 import { transliterateRootArabic } from '@/lib/morphology/transliteration';
 
 const STARTING_ROOT_IDS = ['S-l-w', 'S-b-r', 'E-l-m', 'r-H-m', 'k-t-b', 'q-w-l'];
@@ -42,59 +41,36 @@ export default function HomePage() {
 
   if (layoutMode === 'classic') {
     const featuredRoot = STARTING_ROOTS[0];
-    const sampleForms = featuredRoot
-      ? [...featuredRoot.nouns, ...featuredRoot.verbs].sort((a, b) => b.frequency - a.frequency).slice(0, 4)
-      : [];
 
     return (
       <div className="pb-16 sm:pb-24 font-sans">
         <IlluminatedQuranHero onOpenSearch={() => setIsSearchOpen(true)} lastSearch={lastSearch || undefined} />
 
-        {featuredRoot && <section aria-labelledby="root-showcase-heading" className="mx-auto max-w-7xl px-4 sm:px-8">
-          <ContainerScroll
-            titleComponent={
-              <div className="mb-6 space-y-3">
-                <h2 id="root-showcase-heading" className="text-3xl font-semibold tracking-tight text-ink-primary sm:text-5xl">
-                  {t('Satu akar, banyak kata.', 'One root, many words.')}
-                </h2>
-                <p className="mx-auto max-w-2xl text-base leading-relaxed text-ink-secondary sm:text-lg">
-                  {t('Bandingkan bentuk dan frekuensinya di dalam korpus.', 'Compare forms and frequencies in the corpus.')}
-                </p>
-              </div>
-            }
-          >
-            <div className="flex h-full flex-col bg-[#edf2ed] p-5 text-[#1c2b22] sm:p-8" data-ui="root-corpus-preview">
-              <div className="flex items-center justify-between border-b border-[#d9ddd4] pb-4 text-sm">
-                <span className="font-semibold">Qurabic · {t('Indeks akar', 'Root index')}</span>
-                <span className="text-[#657168]">Quranic Arabic Corpus</span>
-              </div>
-              <div className="flex flex-1 flex-col justify-center py-5 sm:flex-row sm:items-center sm:gap-10">
-                <div className="text-center sm:min-w-56">
-                  <p lang="ar" dir="rtl" className="font-arabic text-6xl leading-relaxed text-[#205b43] sm:text-7xl">{featuredRoot.rootArabic}</p>
-                  <p className="mt-1 text-lg font-semibold">{transliterateRootArabic(featuredRoot.rootArabic)}</p>
-                  <p className="mt-2 text-sm text-[#657168]">{featuredRoot.totalOccurrences.toLocaleString(language === 'en' ? 'en-US' : 'id-ID')} {t('kemunculan', 'occurrences')}</p>
-                </div>
-                <div className="mt-5 flex-1 border-t border-[#d9ddd4] pt-4 sm:mt-0 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0">
-                  <h3 className="mb-3 text-sm font-semibold text-[#526057]">{t('Contoh bentuk dalam korpus', 'Examples in the corpus')}</h3>
-                  <ul className="divide-y divide-[#d9ddd4]">
-                    {sampleForms.map((form, index) => (
-                      <li key={form.id} className={`items-center justify-between gap-4 py-2.5 ${index < 2 ? 'flex' : 'hidden sm:flex'}`}>
-                        <span lang="ar" dir="rtl" className="font-arabic text-2xl">{form.arabic}</span>
-                        <span className="text-right text-sm text-[#657168]">{form.frequency}×</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#d9ddd4] pt-4">
-                <p className="text-xs leading-relaxed text-[#657168]">{t('Frekuensi dan anotasi morfologi bersumber dari Quranic Arabic Corpus.', 'Frequency and morphology annotations are from the Quranic Arabic Corpus.')}</p>
-                <Link href={`/akar/${featuredRoot.id}`} className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#205b43] hover:underline underline-offset-4 focus-visible:outline-primary">
-                  {t('Bedah akar ini', 'Explore this root')} <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-              </div>
+        {featuredRoot && (() => {
+          const bookmarked = isBookmarked(featuredRoot.id);
+          const featuredStyle: CSSProperties = {
+            borderRadius: 'var(--radius-surface)',
+            backgroundColor: theme === 'modern' ? 'var(--color-primary)' : theme === 'blend' ? 'var(--color-primary-subdued)' : 'var(--bg-soft)',
+            color: theme === 'modern' ? '#fff' : 'var(--color-ink-primary)',
+          };
+          return <section aria-labelledby="root-showcase-heading" className="mx-auto max-w-5xl px-5 sm:px-8">
+            <h2 id="root-showcase-heading" className="sr-only">{t('Akar pilihan', 'Featured root')}</h2>
+            <div className="flex items-center gap-4 overflow-hidden px-4 py-4 sm:gap-6 sm:px-7 sm:py-5" style={featuredStyle}>
+              <Link href={`/akar/${featuredRoot.id}`} className="group flex min-h-16 min-w-0 flex-1 items-center gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:gap-6">
+                <span lang="ar" dir="rtl" className={`shrink-0 font-arabic text-4xl leading-tight sm:text-5xl ${theme === 'modern' ? 'text-white' : 'text-primary'}`}>{featuredRoot.rootArabic}</span>
+                <span className="min-w-0 flex-1">
+                  <span className={`block text-xs font-medium ${theme === 'modern' ? 'text-white/75' : 'text-ink-secondary'}`}>{t('Akar pilihan', 'Featured root')}</span>
+                  <span className="mt-1 block text-lg font-semibold group-hover:underline underline-offset-4">{transliterateRootArabic(featuredRoot.rootArabic)}</span>
+                  <span className={`mt-0.5 block text-sm ${theme === 'modern' ? 'text-white/80' : 'text-ink-secondary'}`}>{featuredRoot.totalOccurrences.toLocaleString(language === 'en' ? 'en-US' : 'id-ID')}{t(' kemunculan', ' occurrences')}</span>
+                </span>
+                <ArrowRight className="h-5 w-5 shrink-0" aria-hidden="true" />
+              </Link>
+              <button type="button" aria-label={`${bookmarked ? t('Hapus simpanan', 'Remove saved root') : t('Simpan akar', 'Save root')} ${featuredRoot.rootArabic}`} aria-pressed={bookmarked} onClick={() => toggleBookmark(featuredRoot.id, featuredRoot.rootArabic)} className="inline-flex h-11 w-11 shrink-0 items-center justify-center transition-colors hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+                <Bookmark className={`h-5 w-5 ${bookmarked ? 'fill-current' : ''}`} aria-hidden="true" />
+              </button>
             </div>
-          </ContainerScroll>
-        </section>}
+          </section>;
+        })()}
 
         <section aria-labelledby="roots-heading" className="mx-auto max-w-7xl px-5 pt-12 sm:px-8 sm:pt-16">
           <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-hairline pb-4">
