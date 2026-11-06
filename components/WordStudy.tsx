@@ -310,7 +310,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       {/* 2. ROOT CONCEPT BANNER (Akar Kata & Filosofi Makna) — KALAAM BEST PRACTICE */}
       {/* ========================================================================= */}
       {!morphology.isParticle && lexical.rootArabic && (
-        <section className="py-6 border-t border-hairline space-y-4">
+        <section className={`${classic ? 'p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle' : 'py-6 border-t border-hairline'} space-y-4`}>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-hairline pb-3.5">
             <div className="flex items-center space-x-3">
               <span className="text-xs font-bold uppercase tracking-wider text-ink-mute flex items-center space-x-1.5">
@@ -369,7 +369,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       {/* 3. KELUARGA KATA DALAM AL-QUR'AN (WORD FAMILY) — THE CENTERPIECE AT TOP    */}
       {/* ========================================================================= */}
       {!morphology.isParticle && wordFamily.length > 0 && (
-        <section className="py-6 border-t border-hairline space-y-4">
+        <section className={`${classic ? 'p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle' : 'py-6 border-t border-hairline'} space-y-4`}>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-hairline pb-3.5">
             <div>
               <h3 className="text-base sm:text-lg font-bold text-ink-primary flex items-center space-x-2">
@@ -396,7 +396,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
           </div>
 
           {/* Spacious Responsive Grid (2 cols mobile, 3 cols desktop for generous breathing room) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-0">
+          <div className={classic ? "grid grid-cols-2 sm:grid-cols-3 gap-3" : "grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-0"}>
             {visibleWordFamily.map((item, idx) => {
               const displayMeaning = language === 'en' ? (item.meaningEnglish || 'Translation unavailable') : (item.meaningIndo || 'Makna belum tersedia');
               const isVerb = item.pos === "Fi'il";
@@ -407,7 +407,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
                 <Link
                   key={idx}
                   href={`/kata/${encodeURIComponent(item.arabic)}${item.sampleCoordinate ? `?location=${item.sampleCoordinate.split(':').slice(0, 3).join(':')}` : ''}`}
-                  className={`py-5 transition-colors text-center space-y-2.5 group flex flex-col justify-between border-b ${
+                  className={`${classic ? 'p-3 sm:p-4 rounded-2xl border' : 'py-5 border-b'} transition-colors text-center space-y-2.5 group flex flex-col justify-between ${
                     isCurrentWord
                       ? 'bg-primary/10 border-primary/40 ring-2 ring-primary/20'
                       : 'bg-canvas-soft hover:bg-canvas-page border-hairline hover:border-primary/40'
@@ -472,7 +472,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       {/* 4. KONTEKS AYAT LENGKAP DENGAN PENANDA KATA AKTIF                          */}
       {/* ========================================================================= */}
       {resolvedAyahArabic && resolvedAyahIndo && (
-        <section className="py-6 border-t border-hairline text-left space-y-4">
+        <section className={`${classic ? 'p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle' : 'py-6 border-t border-hairline'} text-left space-y-4`}>
           <div className="flex items-center justify-between text-xs sm:text-sm text-ink-mute border-b border-hairline pb-3">
             <span className="font-bold text-primary flex items-center space-x-2 text-sm sm:text-base">
               <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
@@ -506,7 +506,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       {/* 6. STRUKTUR TATA BAHASA & DERIVASI MORFOLOGI (Nahwu, Sharaf & QAC)        */}
       {/* ========================================================================= */}
       {(
-        <section className="py-6 border-t border-hairline space-y-4">
+        <section className={`${classic ? 'p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle' : 'py-6 border-t border-hairline'} space-y-4`}>
           <h3 className="text-base sm:text-lg font-bold text-ink-primary">{t('Struktur kata', 'Word structure')}</h3>
           <dl className="grid grid-cols-2 gap-3 text-sm sm:text-base">
             <div className="border-b border-hairline py-3">
@@ -533,7 +533,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       {/* 7. SEMUA KEMUNCULAN DI AL-QUR'AN (CONCORDANCE OCCURRENCES)                */}
       {/* ========================================================================= */}
       {!isModalMode && !morphology.isParticle && occurrences.items.length > 0 && (
-        <section className="py-6 border-t border-hairline space-y-4">
+        <section className={`${classic ? 'p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle' : 'py-6 border-t border-hairline'} space-y-4`}>
           <div className="flex items-center justify-between border-b border-hairline pb-3">
             <h3 className="text-base sm:text-lg font-bold text-ink-primary flex items-center space-x-2">
               <BookOpen className="w-5 h-5 text-primary" />
@@ -581,7 +581,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       {/* 8. RUJUKAN LEKSIKON KLASIK: Edward William Lane (London, 1863)            */}
       {/* ========================================================================= */}
       {lexical.senses.length > 0 && (
-        <section className="py-6 border-t border-hairline space-y-4">
+        <section className={`${classic ? 'p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle' : 'py-6 border-t border-hairline'} space-y-4`}>
           <div className="flex items-center justify-between border-b border-hairline pb-3">
             <h3 className="text-base sm:text-lg font-bold text-ink-primary flex items-center space-x-2">
               <Library className="w-5 h-5 text-primary" />

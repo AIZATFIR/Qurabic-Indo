@@ -41,11 +41,11 @@ export const ContainerScroll = ({
 
   return (
     <div
-      className={`flex items-center justify-center relative p-2 md:p-10 ${compact ? 'h-[35rem] md:h-[46rem]' : 'h-[60rem] md:h-[75rem]'}`}
+      className={`flex items-center justify-center relative p-2 md:p-16 ${compact ? 'h-[35rem] md:h-[46rem]' : 'h-[60rem] md:h-[75rem]'}`}
       ref={containerRef}
     >
       <div
-        className="w-full relative"
+        className="py-10 md:py-20 w-full relative"
         style={{
           perspective: '1000px',
         }}
@@ -92,7 +92,7 @@ export const Card = ({
         boxShadow:
           '0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003',
       }}
-      className={`max-w-5xl -mt-7 mx-auto w-full p-2 md:p-5 bg-canvas-surface border border-hairline rounded-[30px] shadow-2xl overflow-hidden ${compact ? 'h-[21rem] md:h-[29rem]' : 'h-[30rem] md:h-[40rem]'}`}
+      className={`max-w-5xl -mt-12 mx-auto w-full p-2 md:p-6 bg-canvas-surface/90 backdrop-blur-md border border-hairline rounded-[30px] shadow-2xl overflow-hidden ${compact ? 'h-[21rem] md:h-[29rem]' : 'h-[30rem] md:h-[40rem]'}`}
     >
       <div className="bg-canvas-page h-full w-full rounded-2xl overflow-hidden border border-hairline/80 flex flex-col">
         {children}

@@ -60,9 +60,9 @@ export default function MorfologiPage() {
   });
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header Banner */}
-      <div className="space-y-5">
+      <div className="p-8 sm:p-10 rounded-2xl bg-canvas-surface border border-hairline shadow-subtle space-y-5">
         <h1 className="text-3xl sm:text-4xl font-light text-ink-primary tracking-tight font-sans">
           {t("Indeks akar kata Al-Qur'an", 'Quran root index')}
         </h1>
@@ -81,14 +81,14 @@ export default function MorfologiPage() {
               onChange={(e) => setFilterQuery(e.target.value)}
               aria-label={t('Cari akar kata', 'Search roots')}
               placeholder={t('Cari akar kata, contoh: sabar, كتب', 'Search a root, for example: كتب, rahman')}
-              className="w-full pl-11 pr-4 py-2.5 rounded-sm bg-canvas-surface border border-hairline text-base text-ink-primary placeholder:text-ink-mute focus:outline-none focus:ring-2 focus:ring-primary/20 font-sans"
+              className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-canvas-surface border border-hairline text-base text-ink-primary placeholder:text-ink-mute focus:outline-none focus:ring-2 focus:ring-primary/20 font-sans"
             />
           </div>
 
-          <div className="flex items-center space-x-1 p-1 rounded-sm bg-canvas-soft border border-hairline text-sm w-full sm:w-auto font-sans">
+          <div className="flex items-center space-x-1 p-1 rounded-xl bg-canvas-soft border border-hairline text-sm w-full sm:w-auto font-sans">
             <button
               onClick={() => setSelectedCategory('all')}
-              className={`px-3 min-h-11 py-1.5 rounded-sm font-medium transition-all ${
+              className={`px-3 min-h-11 py-1.5 rounded-xl font-medium transition-all ${
                 selectedCategory === 'all'
                   ? 'bg-canvas-surface text-primary font-semibold'
                   : 'text-ink-mute hover:text-ink-primary'
@@ -98,7 +98,7 @@ export default function MorfologiPage() {
             </button>
             <button
               onClick={() => setSelectedCategory('high_verbs')}
-              className={`px-3 min-h-11 py-1.5 rounded-sm font-medium transition-all ${
+              className={`px-3 min-h-11 py-1.5 rounded-xl font-medium transition-all ${
                 selectedCategory === 'high_verbs'
                   ? 'bg-canvas-surface text-primary font-semibold'
                   : 'text-ink-mute hover:text-ink-primary'
@@ -108,7 +108,7 @@ export default function MorfologiPage() {
             </button>
             <button
               onClick={() => setSelectedCategory('high_nouns')}
-              className={`px-3 min-h-11 py-1.5 rounded-sm font-medium transition-all ${
+              className={`px-3 min-h-11 py-1.5 rounded-xl font-medium transition-all ${
                 selectedCategory === 'high_nouns'
                   ? 'bg-canvas-surface text-primary font-semibold'
                   : 'text-ink-mute hover:text-ink-primary'
@@ -145,7 +145,7 @@ export default function MorfologiPage() {
                   aria-label={t(`Akar diawali huruf ${letter}`, `Root beginning with ${letter}`)}
                   aria-pressed={isSelected}
                   onClick={() => setSelectedLetter(isSelected ? null : letter)}
-                  className={`w-11 h-11 rounded-sm font-arabic text-lg font-bold transition-all flex items-center justify-center ${
+                  className={`w-11 h-11 rounded-xl font-arabic text-lg font-bold transition-all flex items-center justify-center ${
                     isSelected
                       ? 'bg-primary text-white scale-105'
                       : 'bg-canvas-soft hover:bg-primary-fixed border border-hairline text-ink-primary'
@@ -178,7 +178,7 @@ export default function MorfologiPage() {
                 setSortBy(e.target.value as SortOption);
                 setVisibleCount(48);
               }}
-              className="bg-canvas-surface border border-hairline rounded-sm px-3 py-1.5 text-sm text-ink-primary font-sans font-medium focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="bg-canvas-surface border border-hairline rounded-xl px-3 py-1.5 text-sm text-ink-primary font-sans font-medium focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
               <option value="frequency_desc">{t('Kemunculan Terbanyak', 'Most occurrences')}</option>
               <option value="alphabet_ar">{t('Abjad Arab (أ - ي)', 'Arabic alphabet (أ - ي)')}</option>
@@ -190,12 +190,12 @@ export default function MorfologiPage() {
         </div>
 
         {filteredRoots.length === 0 ? (
-          <div className="p-12 text-center bg-canvas-surface border border-hairline rounded-sm text-ink-mute font-sans">
+          <div className="p-12 text-center bg-canvas-surface border border-hairline rounded-xl text-ink-mute font-sans">
             {t('Tidak ada akar yang cocok. Hapus filter huruf atau coba kata kunci lain.', 'No roots match. Clear the letter filter or try another search.')}
           </div>
         ) : (
           <>
-            <div className="space-y-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredRoots.slice(0, visibleCount).map((root) => (
                 <RootCard key={root.id} root={root} />
               ))}
@@ -205,7 +205,7 @@ export default function MorfologiPage() {
               <div className="pt-6 flex justify-center">
                 <button
                   onClick={() => setVisibleCount((prev) => prev + 48)}
-                  className="px-6 py-2.5 rounded-sm bg-canvas-surface border border-hairline hover:border-primary/40 text-primary text-sm sm:text-base font-semibold transition-all"
+                  className="px-6 py-2.5 rounded-xl bg-canvas-surface border border-hairline hover:border-primary/40 text-primary text-sm sm:text-base font-semibold transition-all"
                 >
                   {t('Muat lebih banyak', 'Load more')} ({filteredRoots.length - visibleCount} {t('akar tersisa', 'roots remaining')})
                 </button>

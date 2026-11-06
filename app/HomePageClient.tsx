@@ -2,7 +2,7 @@
 
 import { useState, useEffect, type CSSProperties } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Bookmark, ExternalLink } from 'lucide-react';
+import { ArrowRight, Bookmark, ExternalLink, Volume2 } from 'lucide-react';
 import { ROOT_DATABASE } from '@/lib/data/roots';
 import { useBookmarks } from '@/lib/hooks/useBookmarks';
 import { useLanguage } from '@/lib/context/LanguageContext';
@@ -10,7 +10,7 @@ import { useTheme } from '@/lib/context/ThemeContext';
 import OmniSearch from '@/components/OmniSearch';
 import IlluminatedQuranHero from '@/components/IlluminatedQuranHero';
 import RootCard from '@/components/RootCard';
-import { transliterateRootArabic } from '@/lib/morphology/transliteration';
+import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 
 const STARTING_ROOT_IDS = ['S-l-w', 'S-b-r', 'E-l-m', 'r-H-m', 'k-t-b', 'q-w-l'];
 const STARTING_ROOTS = STARTING_ROOT_IDS.flatMap((id) => {
@@ -40,37 +40,48 @@ export default function HomePage() {
   }, [isSearchOpen]);
 
   if (layoutMode === 'classic') {
-    const featuredRoot = STARTING_ROOTS[0];
 
     return (
       <div className="pb-16 sm:pb-24 font-sans">
         <IlluminatedQuranHero onOpenSearch={() => setIsSearchOpen(true)} lastSearch={lastSearch || undefined} />
 
-        {featuredRoot && (() => {
-          const bookmarked = isBookmarked(featuredRoot.id);
-          const featuredStyle: CSSProperties = {
-            borderRadius: 'var(--radius-surface)',
-            backgroundColor: theme === 'modern' ? 'var(--color-primary)' : theme === 'blend' ? 'var(--color-primary-subdued)' : 'var(--bg-soft)',
-            color: theme === 'modern' ? '#fff' : 'var(--color-ink-primary)',
-          };
-          return <section aria-labelledby="root-showcase-heading" className="mx-auto max-w-5xl px-5 sm:px-8">
-            <h2 id="root-showcase-heading" className="sr-only">{t('Akar pilihan', 'Featured root')}</h2>
-            <div className="flex items-center gap-4 overflow-hidden px-4 py-4 sm:gap-6 sm:px-7 sm:py-5" style={featuredStyle}>
-              <Link href={`/akar/${featuredRoot.id}`} className="group flex min-h-16 min-w-0 flex-1 items-center gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:gap-6">
-                <span lang="ar" dir="rtl" className={`shrink-0 font-arabic text-4xl leading-tight sm:text-5xl ${theme === 'modern' ? 'text-white' : 'text-primary'}`}>{featuredRoot.rootArabic}</span>
-                <span className="min-w-0 flex-1">
-                  <span className={`block text-xs font-medium ${theme === 'modern' ? 'text-white/75' : 'text-ink-secondary'}`}>{t('Akar pilihan', 'Featured root')}</span>
-                  <span className="mt-1 block text-lg font-semibold group-hover:underline underline-offset-4">{transliterateRootArabic(featuredRoot.rootArabic)}</span>
-                  <span className={`mt-0.5 block text-sm ${theme === 'modern' ? 'text-white/80' : 'text-ink-secondary'}`}>{featuredRoot.totalOccurrences.toLocaleString(language === 'en' ? 'en-US' : 'id-ID')}{t(' kemunculan', ' occurrences')}</span>
-                </span>
-                <ArrowRight className="h-5 w-5 shrink-0" aria-hidden="true" />
-              </Link>
-              <button type="button" aria-label={`${bookmarked ? t('Hapus simpanan', 'Remove saved root') : t('Simpan akar', 'Save root')} ${featuredRoot.rootArabic}`} aria-pressed={bookmarked} onClick={() => toggleBookmark(featuredRoot.id, featuredRoot.rootArabic)} className="inline-flex h-11 w-11 shrink-0 items-center justify-center transition-colors hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-                <Bookmark className={`h-5 w-5 ${bookmarked ? 'fill-current' : ''}`} aria-hidden="true" />
-              </button>
+        <section aria-labelledby="root-showcase-heading" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ContainerScroll titleComponent={
+            <div className="space-y-4 mb-8">
+              <h2 id="root-showcase-heading" className="text-3xl sm:text-5xl font-light text-ink-primary tracking-tight font-sans">
+                {t('Membedah Satu Ayat', 'Explore one verse')} <br />
+                <span className="font-semibold text-primary">{t('Hingga ke Akar Maknanya', 'Down to the roots of its words')}</span>
+              </h2>
+              <p className="text-sm sm:text-base text-ink-mute max-w-xl mx-auto font-sans leading-relaxed">
+                {t('Buka kata dalam ayat untuk melihat terjemahan, akar, dan rujukannya.', 'Open a word in its verse to explore its translation, root, and sources.')}
+              </p>
             </div>
-          </section>;
-        })()}
+          }>
+            <div data-ui="verse-study-preview" className="p-5 sm:p-10 flex flex-col justify-between h-full gap-4 sm:gap-6 overflow-hidden">
+              <div className="flex items-center justify-between gap-2 border-b border-hairline pb-4 text-xs font-sans text-ink-mute">
+                <div className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-primary" aria-hidden="true" /><span className="font-semibold text-ink-primary">{t('QS. Al-Baqarah 2:255 · Ayat Kursi', 'Al-Baqarah 2:255 · Ayat al-Kursi')}</span></div>
+                <span className="hidden sm:inline px-2.5 py-0.5 rounded-md bg-canvas-soft border border-hairline font-mono text-[11px]">{t('Mushaf', 'Quran reader')}</span>
+              </div>
+              <div className="space-y-4 sm:space-y-6 text-center my-auto">
+                <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-4 font-arabic text-2xl sm:text-3xl lg:text-4xl text-ink-primary font-bold leading-loose" dir="rtl" lang="ar">
+                  <span className="p-2 rounded-xl">اللَّهُ</span>
+                  <span className="p-2 rounded-xl">لَا إِلَـٰهَ</span>
+                  <span className="p-2 rounded-xl">إِلَّا هُوَ</span>
+                  <span className="p-2 rounded-xl bg-primary-subdued text-primary ring-2 ring-primary/30">الْحَيُّ</span>
+                  <span className="p-2 rounded-xl bg-canvas-soft border border-hairline">الْقَيُّومُ</span>
+                </div>
+                <div className="p-4 sm:p-5 rounded-2xl bg-canvas-soft/80 border border-hairline max-w-2xl mx-auto space-y-2 text-left">
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-sans"><span className="font-semibold text-primary">{t('Makna kata', 'Word meaning')} · Quran.com</span><span className="text-ink-mute font-mono">{t('Akar', 'Root')}: ح - ي - ي (ḥ-y-y)</span></div>
+                  <p className="text-sm sm:text-base text-ink-secondary leading-relaxed font-sans"><strong className="text-ink-primary" lang="ar">الْحَيُّ</strong> — {t('yang hidup', 'the Ever-Living')}</p>
+                </div>
+              </div>
+              <div className="pt-4 border-t border-hairline flex items-center justify-between gap-3 text-xs text-ink-mute font-sans">
+                <div className="flex items-center gap-2"><Volume2 className="w-4 h-4 text-primary" aria-hidden="true" /><span>{t('Tilawah: Mishary Rashid Al-Afasy', 'Recitation: Mishary Rashid Al-Afasy')}</span></div>
+                <Link href="/baca?surah=2&ayah=255" className="inline-flex items-center gap-1.5 text-primary font-semibold hover:underline"><span>{t('Buka ayat', 'Open verse')}</span><ArrowRight className="w-3.5 h-3.5" aria-hidden="true" /></Link>
+              </div>
+            </div>
+          </ContainerScroll>
+        </section>
 
         <section aria-labelledby="roots-heading" className="mx-auto max-w-7xl px-5 pt-12 sm:px-8 sm:pt-16">
           <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-hairline pb-4">

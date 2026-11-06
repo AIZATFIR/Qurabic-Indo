@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+import ClassicIlluminatedQuranHero from './ClassicIlluminatedQuranHero';
 import { ArrowRight, Search } from 'lucide-react';
 import { useLanguage } from '@/lib/context/LanguageContext';
 import { useTheme } from '@/lib/context/ThemeContext';
@@ -18,39 +18,7 @@ export default function IlluminatedQuranHero({ onOpenSearch, lastSearch }: Illum
   const modern = theme === 'modern';
 
   if (layoutMode === 'classic') {
-    return (
-      <header className="relative isolate flex min-h-[38rem] items-center justify-center overflow-hidden border-b border-hairline text-center sm:min-h-[45rem]">
-        <Image
-          src="/images/quran.jpg"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="-z-20 object-cover object-[50%_42%]"
-        />
-        <div aria-hidden="true" className="absolute inset-0 -z-10" style={{ background: theme === 'modern' ? 'radial-gradient(ellipse 90% 82% at 50% 42%, rgba(7,22,16,.76), rgba(7,22,16,.9) 72%, #071610)' : 'radial-gradient(ellipse 90% 78% at 50% 40%, rgba(249,246,239,.74), rgba(249,246,239,.91) 67%, var(--bg-page))' }} />
-        <div className="mx-auto w-full max-w-5xl px-5 py-24 sm:px-8 sm:py-28">
-          <div className="mx-auto max-w-4xl">
-            <h1 className={`text-4xl font-light leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl ${theme === 'modern' ? 'text-white' : 'text-ink-primary'}`}>
-              {t('Membedah Kedalaman', 'Explore the depth of')}<br />
-              <span className="font-semibold text-primary">{t("Bahasa Al-Qur'an", 'Quranic Arabic')}</span>
-            </h1>
-            <p className={`mx-auto mt-6 max-w-2xl text-base leading-relaxed sm:text-lg ${theme === 'modern' ? 'text-white/85' : 'text-ink-secondary'}`}>
-              {t('Telusuri akar kata, bentuk dalam ayat, dan rujukan leksikon klasik dengan sumber yang jelas.', 'Explore word roots, forms in context, and classical lexicon sources with clear citations.')}
-            </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-              <Link href="/baca" className={`inline-flex min-h-12 items-center gap-3 px-7 py-3 text-base font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${theme === 'modern' ? 'bg-white text-primary-deep hover:bg-primary-fixed' : 'bg-primary text-white hover:bg-primary-deep'}`} style={{ borderRadius: 'var(--radius-control)' }}>
-                {t("Buka Al-Qur'an", 'Open the Quran')} <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </Link>
-              <button type="button" onClick={onOpenSearch} className={`inline-flex min-h-12 items-center gap-3 border px-6 py-3 text-base font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${theme === 'modern' ? 'border-white/50 text-white hover:bg-white/10' : 'border-hairline bg-canvas-surface/85 text-ink-primary hover:bg-canvas-surface'}`} style={{ borderRadius: 'var(--radius-control)' }}>
-                <Search className="h-4 w-4" aria-hidden="true" /> {t('Cari kata atau akar', 'Find a word or root')}
-              </button>
-            </div>
-            {lastSearch && <p className={`mt-5 text-sm ${theme === 'modern' ? 'text-white/80' : 'text-ink-secondary'}`}>{t('Pencarian terakhir:', 'Last search:')} <button type="button" onClick={onOpenSearch} className="underline underline-offset-4">{lastSearch}</button></p>}
-          </div>
-        </div>
-      </header>
-    );
+    return <ClassicIlluminatedQuranHero onOpenSearch={onOpenSearch} lastSearch={lastSearch} />;
   }
 
   return (
