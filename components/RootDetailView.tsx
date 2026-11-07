@@ -218,7 +218,7 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
                 <summary className="cursor-pointer text-base text-ink-primary focus-visible:outline-primary">
                   <span lang="ar" dir="rtl" className="ml-2 font-arabic text-2xl leading-loose">{entry.headwordArabic}</span>{' '}
                   {entry.itype && <span>{t('Bentuk', 'Form')} {entry.itype} · </span>}
-                  <span className="text-ink-secondary">Book I, Part {entry.volume}, p. {entry.page} · {entry.senses.length} {t('sense', 'senses')}</span>
+                  <span className="text-ink-secondary">Book I, Part {entry.volume}, p. {entry.page} · {entry.senses.length} {language === 'en' ? (entry.senses.length === 1 ? 'sense' : 'senses') : 'sense'}</span>
                 </summary>
                 <div className="mt-4 space-y-4 sm:pl-5">
                   {entry.senses.length ? entry.senses.map((sense, senseIndex) => (
