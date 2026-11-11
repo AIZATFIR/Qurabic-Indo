@@ -8,33 +8,33 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-arabic: 'Amiri Quran', 'Scheherazade New', 'Amiri', 'Noto Naskh Arabic', serif;
 
-  --bg-page: #F4F6F2;
-  --bg-surface: #FBFCFA;
-  --bg-soft: #E7EDE7;
-  --color-primary: #205B43;
-  --color-primary-deep: #174733;
-  --color-primary-subdued: #DDEBE2;
-  --color-primary-fixed: #EDF4EF;
-  --color-ink-primary: #232922;
-  --color-ink-secondary: #44564A;
-  --color-ink-mute: #708076;
-  --color-border: #DDE3DC;
+  --bg-page: #FAF6EF;
+  --bg-surface: #FFFDF9;
+  --bg-soft: #F2E9DC;
+  --color-primary: #6E4C34;
+  --color-primary-deep: #533521;
+  --color-primary-subdued: #F0E5D8;
+  --color-primary-fixed: #F8F0E7;
+  --color-ink-primary: #26211C;
+  --color-ink-secondary: #52473D;
+  --color-ink-mute: #85786D;
+  --color-border: #E5DACB;
   --radius-surface: 1.5rem;
   --radius-control: 0.875rem;
 }
 
 [data-theme="blend"] {
-  --bg-page: #F4F6F2;
-  --bg-surface: #FBFCFA;
-  --bg-soft: #E7EDE7;
-  --color-primary: #205B43;
-  --color-primary-deep: #174733;
-  --color-primary-subdued: #DDEBE2;
-  --color-primary-fixed: #EDF4EF;
-  --color-ink-primary: #232922;
-  --color-ink-secondary: #44564A;
-  --color-ink-mute: #708076;
-  --color-border: #DDE3DC;
+  --bg-page: #FAF6EF;
+  --bg-surface: #FFFDF9;
+  --bg-soft: #F2E9DC;
+  --color-primary: #6E4C34;
+  --color-primary-deep: #533521;
+  --color-primary-subdued: #F0E5D8;
+  --color-primary-fixed: #F8F0E7;
+  --color-ink-primary: #26211C;
+  --color-ink-secondary: #52473D;
+  --color-ink-mute: #85786D;
+  --color-border: #E5DACB;
   --radius-surface: 1.5rem;
   --radius-control: 0.875rem;
 }
@@ -90,11 +90,11 @@ body {
 
 /* Elevation Shadows */
 .shadow-soft {
-  box-shadow: 0 4px 20px -4px rgba(5, 150, 105, 0.08);
+  box-shadow: 0 4px 20px -4px rgba(83, 53, 33, 0.09);
 }
 
 .shadow-hover {
-  box-shadow: 0 12px 30px -6px rgba(5, 150, 105, 0.14);
+  box-shadow: 0 12px 30px -6px rgba(83, 53, 33, 0.15);
 }
 
 .shadow-subtle {

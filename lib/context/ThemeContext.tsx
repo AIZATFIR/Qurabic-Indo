@@ -23,7 +23,6 @@ const STORAGE_KEY = 'qurabic_theme_preference';
 // Start everyone on the restored classic interface once. The previous key may
 // contain `minimal` from the interim redesign and would otherwise keep the
 // restored interface hidden after deployment.
-const LAYOUT_STORAGE_KEY = 'qurabic_layout_preference_v2';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeType>('blend');
@@ -35,8 +34,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const saved = localStorage.getItem(STORAGE_KEY);
       const normalized = saved ? normalizeTheme(saved) : null;
       if (normalized) setThemeState(normalized);
-      const savedLayout = localStorage.getItem(LAYOUT_STORAGE_KEY);
-      if (savedLayout === 'classic' || savedLayout === 'minimal') setLayoutModeState(savedLayout);
+      // The restored bookpaper interface has one shared visual language.
+      // Clear the interim layout preference so an older "minimal" choice
+      // cannot leave isolated square panels in an otherwise classic reader.
+      localStorage.removeItem('qurabic_layout_preference_v2');
     } catch (e) {
       console.warn('LocalStorage theme access not permitted', e);
     }
@@ -56,18 +57,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!mounted) return;
-    try {
-      localStorage.setItem(LAYOUT_STORAGE_KEY, layoutMode);
-    } catch (e) {}
-    document.documentElement.setAttribute('data-layout', layoutMode);
-  }, [layoutMode, mounted]);
+    document.documentElement.setAttribute('data-layout', 'classic');
+  }, [mounted]);
 
   const setTheme = (nextTheme: ThemeType) => {
     setThemeState(nextTheme);
   };
 
-  const setLayoutMode = (nextMode: 'classic' | 'minimal') => {
-    setLayoutModeState(nextMode);
+  const setLayoutMode = () => {
+    setLayoutModeState('classic');
   };
 
   return (

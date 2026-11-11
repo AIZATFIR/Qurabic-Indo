@@ -83,7 +83,7 @@ export default function SurahSearchModal({
         aria-labelledby={headingId}
         data-lenis-prevent="true"
         onWheel={(e) => e.stopPropagation()}
-        className="relative w-full max-w-xl max-h-[82vh] flex flex-col bg-[var(--bg-surface)] text-ink-primary border border-hairline shadow-hover z-10 overflow-hidden overscroll-contain animate-in zoom-in-95 duration-150"
+        className="relative w-full max-w-xl max-h-[82vh] flex flex-col rounded-2xl bg-[var(--bg-surface)] text-ink-primary border border-hairline shadow-hover z-10 overflow-hidden overscroll-contain animate-in zoom-in-95 duration-150"
       >
         
         {/* Search Header */}
@@ -98,7 +98,7 @@ export default function SurahSearchModal({
             <button
               onClick={handleClose}
               aria-label={t('Tutup pencarian surah', 'Close surah search')}
-              className="min-h-11 min-w-11 flex items-center justify-center p-1  text-ink-mute hover:text-ink-primary hover:bg-canvas-soft transition-colors"
+              className="min-h-11 min-w-11 flex items-center justify-center rounded-full p-1 text-ink-mute hover:text-ink-primary hover:bg-canvas-soft transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -114,7 +114,7 @@ export default function SurahSearchModal({
               onChange={(e) => setQuery(e.target.value)}
               aria-label={t('Cari surah', 'Search surahs')}
               placeholder={t('Cari nomor atau nama surah…', 'Search by surah number or name…')}
-              className="w-full pl-10 pr-9 py-2.5  border border-hairline bg-canvas-soft text-sm text-ink-primary placeholder:text-ink-mute focus:outline-none focus:ring-2 focus:ring-primary/20 font-sans transition-all"
+              className="w-full rounded-xl pl-10 pr-9 py-2.5 border border-hairline bg-canvas-soft text-sm text-ink-primary placeholder:text-ink-mute focus:outline-none focus:ring-2 focus:ring-primary/20 font-sans transition-all"
             />
             {query && (
               <button
@@ -142,7 +142,7 @@ export default function SurahSearchModal({
               <button
                 key={qs.num}
                 onClick={() => handleSelect(qs.num)}
-                className={`px-2 min-h-11 py-1 text-sm font-medium transition-all font-sans ${
+                className={`min-h-11 rounded-md px-2 py-1 text-sm font-medium transition-all font-sans ${
                   selectedSurah === qs.num
                     ? 'bg-primary text-white font-semibold'
                     : 'bg-canvas-soft hover:bg-primary-fixed text-ink-secondary'
@@ -170,7 +170,7 @@ export default function SurahSearchModal({
                   key={surah.number}
                   onClick={() => handleSelect(surah.number)}
                   aria-pressed={isSelected}
-                  className={`w-full flex items-center justify-between p-3  transition-all text-left ${
+                  className={`w-full rounded-xl flex items-center justify-between p-3 transition-all text-left ${
                     isSelected
                       ? 'bg-primary-fixed text-primary font-bold'
                       : 'hover:bg-canvas-soft text-ink-primary'
