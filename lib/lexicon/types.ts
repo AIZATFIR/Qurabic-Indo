@@ -177,6 +177,7 @@ export interface WordStudyViewModel {
     arabic: string;
     cleanArabic: string;
     transliteration?: string;
+    qabasLemmaId?: string;
   };
   primaryMeaning: {
     text: string;

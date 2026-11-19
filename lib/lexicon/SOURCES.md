@@ -23,3 +23,9 @@ The interface preserves the transcribed English text. It no longer guesses which
 A word gloss is not a definition of its entire root. A root-entry match is not proof that each dictionary sense applies to the selected verse. Lane source language remains English and is labeled. Generated root narratives, unreviewed philosophical summaries and automatically constructed conjugations are excluded from word and root detail displays.
 
 [QUL morphology resources](https://qul.tarteel.ai/resources/morphology) provide roots, lemmas and stems, and [QUL translations](https://qul.tarteel.ai/resources/translation) provide downloadable word and verse translations. These resources can support the corpus layer, but do not themselves supply a classical root dictionary interpretation.
+
+## Qabas lemma links
+
+- The per-word lemma IDs come from the QuranMorph word-level annotation dataset by Akra, Hammouda, and Jarrar (2025), which maps Quran word coordinates to Qabas lemma IDs. Source paper: [QuranMorph](https://jarrar.info/publications/AHJ25.pdf).
+- QuranMorph is identified as CC BY 4.0 in SinaLab's resource catalog. The compact local index stores only each Quran word's Qabas lemma ID; Qurabic does not copy Qabas definitions. Links open the corresponding entry at [Qabas](https://sina.birzeit.edu/qabas).
+- The source CSV was downloaded from the pinned mirror commit `079cdc74cd494ec1b35011363288d80cae047c51` of [taziksh/quran-frequencies](https://github.com/taziksh/quran-frequencies). It contained 77,429 word rows; IDs were ordered by Quran word position and checked for missing or duplicate positions before generating `data/qabas-lemma-ids.json`.

@@ -23,6 +23,7 @@ import { getLaneRootRecord } from '../lexicon/lane-loader';
 import { getQuranicParticleEnglishMeaning, getQuranicParticleInfo } from './particles-dictionary';
 import wbwIndonesianGlosses from '../data/wbw-indonesian-glosses.json';
 import wbwEnglishGlosses from '../data/wbw-english-glosses.json';
+import { getQabasLemmaId } from '../lexicon/qabas-lemma-lookup';
 
 const WBW_ID = wbwIndonesianGlosses.meanings as Record<string, string>;
 const WBW_EN = wbwEnglishGlosses.meanings as Record<string, string>;
@@ -313,6 +314,7 @@ export function getWordStudy(
   return {
     identity: {
       coordinate: detail.identity.coordinate,
+      qabasLemmaId: getQabasLemmaId(detail.identity.coordinate),
       arabic: particleEntry ? tokenOrLocation : detail.identity.arabic,
       cleanArabic: particleEntry ? standalone : detail.identity.cleanArabic,
       transliteration: (detail.identity.transliteration && !isRawBuckwalterRoot(detail.identity.transliteration))

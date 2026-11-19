@@ -104,6 +104,7 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     await expect(page.getByText('Each form is translated in its sample verse. Words sharing a root can have different meanings.')).toHaveCount(0);
     await expect(page.getByText('Edward William Lane, An Arabic-English Lexicon', { exact: false }).first()).toBeVisible();
     await expect(page.getByText(/He had mercy, or pity, or compassion/).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /Qabas · Birzeit/ })).toHaveAttribute('href', 'https://sina.birzeit.edu/qabas/lemma/202003981');
   });
 
   test('halaman نَسْتَعِينُ menampilkan bento akar, filosofi semantik, dan keluarga kata', async ({ page }) => {
