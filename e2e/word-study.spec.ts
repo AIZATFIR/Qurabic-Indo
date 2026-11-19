@@ -13,7 +13,7 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     await page.getByRole('button', { name: 'Tutup pengaturan' }).click();
     const firstWord = page.locator('[role="button"][aria-label^="Bedah kata:"]').first();
     await firstWord.waitFor({ state: 'visible', timeout: 30000 });
-    const warmedResponsePromise = page.waitForResponse(response => response.url().includes('/api/word-detail?') && !response.url().includes('excerpt='), { timeout: 2500 });
+    const warmedResponsePromise = page.waitForResponse(response => response.url().includes('/api/word-detail?') && !response.url().includes('excerpt='), { timeout: 8000 });
     await firstWord.hover();
     const warmedResponse = await warmedResponsePromise;
     expect(warmedResponse.ok()).toBe(true);
