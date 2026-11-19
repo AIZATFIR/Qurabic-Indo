@@ -22,6 +22,25 @@ export interface QuranicParticleInfo {
   quranicNuances: string[];
 }
 
+const PARTICLE_PRIMARY_ENGLISH: Record<string, string> = {
+  في: 'in / inside', من: 'from / among', الى: 'to / toward / until', على: 'on / over / against',
+  عن: 'from / about', حتى: 'until / so that', ب: 'with / by', ل: 'for / to / belonging to',
+  ك: 'like / as', و: 'and / by', ف: 'so / then', ثم: 'then / afterward', او: 'or',
+  ام: 'or (in a question)', بل: 'rather / instead', ان: 'indeed / that',
+  ان_nafi: 'if / whether', كلا: 'No indeed! / Nay!', لا: 'no / not', ما: 'what / not',
+  لم: 'did not', لن: 'will not', هل: 'whether / (question marker)', اذا: 'when / if',
+  ان_syarat: 'if', الا: 'except / unless', يا: 'O (vocative)', لعل: 'perhaps / may',
+  ليت: 'if only / would that', س: 'will / soon', سوف: 'will / in the future',
+};
+
+export function getQuranicParticleEnglishMeaning(token: string, tag?: string): string | undefined {
+  const clean = stripArabicHarakat(token).trim();
+  if (clean === 'ان' && tag === 'NEG') return PARTICLE_PRIMARY_ENGLISH['ان_nafi'];
+  if (clean === 'ان' && (tag === 'COND' || tag === 'SUB')) return PARTICLE_PRIMARY_ENGLISH['ان_syarat'];
+  if (clean === 'ان' && (tag === 'ACC' || token.includes('\u0651'))) return 'indeed / that';
+  return PARTICLE_PRIMARY_ENGLISH[clean] || (clean === 'فى' ? PARTICLE_PRIMARY_ENGLISH['في'] : undefined);
+}
+
 export const QURANIC_PARTICLES_DICTIONARY: Record<string, QuranicParticleInfo> = {
   // Preposisi / Harf Jarr
   'في': {

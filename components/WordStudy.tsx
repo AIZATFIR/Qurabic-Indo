@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import {
   BookOpen,
@@ -10,7 +10,6 @@ import {
   ChevronUp,
   ShieldCheck,
   GitFork,
-  Compass,
   Library,
   Tag,
   Bookmark
@@ -73,29 +72,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
     provenance,
     context
   } = study;
-  const [rootExcerpt, setRootExcerpt] = useState(study.lexical.rootExcerpt);
-
-  useEffect(() => {
-    if (study.lexical.rootExcerpt) {
-      setRootExcerpt(study.lexical.rootExcerpt);
-      return;
-    }
-    if (morphology.isParticle || !identity.coordinate || !lexical.rootSlug) return;
-
-    const controller = new AbortController();
-    const params = new URLSearchParams({ location: identity.coordinate, excerpt: 'lane-root-v1' });
-    fetch(`/api/word-detail?${params}`, { signal: controller.signal })
-      .then((response) => response.ok ? response.json() : Promise.reject(new Error('Root lexicon unavailable')))
-      .then((payload) => {
-        const excerpt = payload?.data?.study?.lexical?.rootExcerpt;
-        if (excerpt?.text) setRootExcerpt(excerpt);
-      })
-      .catch((error) => {
-        if (error?.name !== 'AbortError') return;
-      });
-
-    return () => controller.abort();
-  }, [identity.coordinate, lexical.rootSlug, morphology.isParticle, study.lexical.rootExcerpt]);
+  const rootExcerpt = lexical.rootExcerpt;
 
   const displayPrimary = language === 'en' ? (primaryMeaning.textEnglish || 'Word translation unavailable') : primaryMeaning.text;
   const displaySourceBadge = language === 'en' ? (primaryMeaning.sourceBadgeEnglish || 'Quran.com · English') : primaryMeaning.sourceBadge;
@@ -303,6 +280,9 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
           <p className="text-2xl sm:text-3xl font-extrabold text-ink-primary tracking-tight leading-snug select-text">
             {displayPrimary}
           </p>
+          <a href="https://sina.birzeit.edu/qabas" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center justify-center gap-1 text-sm font-medium text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
+            {t('Cari lema Arab umum di Qabas · Birzeit', 'Look up the broader Arabic lemma in Qabas · Birzeit')} <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" />
+          </a>
         </div>
       </section>
 
@@ -313,8 +293,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
         <section className={`${classic ? 'p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle' : 'py-6 border-t border-hairline'} space-y-4`}>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-hairline pb-3.5">
             <div className="flex items-center space-x-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-ink-mute flex items-center space-x-1.5">
-                <Compass className="w-4 h-4 text-primary" />
+              <span className="text-xs font-bold uppercase tracking-wider text-ink-mute">
                 <span>{t('Akar Kata', 'Root')}</span>
               </span>
 
@@ -362,6 +341,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
               <cite className="mt-2 block not-italic text-xs">Edward William Lane, <i>An Arabic-English Lexicon</i>, Book I, Part {rootExcerpt.volume}, p. {rootExcerpt.page}</cite>
             </blockquote>
           )}
+          {!rootExcerpt && <p className="max-w-prose text-sm leading-relaxed text-ink-secondary">{t('Kutipan Lane untuk akar ini belum tersedia di indeks. Keluarga kata dan frekuensinya tetap merujuk pada Quranic Arabic Corpus.', 'A Lane quotation for this root is not available in the index. The word family and frequency still come from the Quranic Arabic Corpus.')}</p>}
         </section>
       )}
 

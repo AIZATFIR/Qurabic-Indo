@@ -39,8 +39,7 @@ export default function ThemeSelector() {
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 min-h-11 px-3 py-1.5 border border-hairline bg-canvas-surface hover:border-primary/50 text-xs text-ink-secondary transition-colors"
-        style={{ borderRadius: 'var(--radius-control)' }}
+        className="flex items-center space-x-2 min-h-10 px-3 py-1.5 rounded-full border border-transparent bg-transparent hover:bg-canvas-surface/70 text-xs text-ink-secondary transition-colors"
         title={t('Pilih tema tampilan', 'Choose a theme')}
         aria-label={t('Pilih tema tampilan', 'Choose a theme')}
         aria-expanded={isOpen}

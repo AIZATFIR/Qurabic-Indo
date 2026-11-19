@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Play, Pause, SkipBack, SkipForward, X, Loader2, Settings2, ChevronDown, ChevronUp } from 'lucide-react';
 import { UseQuranAudioReturn, HandsfreeMode, RepeatMode } from '@/lib/hooks/useQuranAudio';
 import { useLanguage } from '@/lib/context/LanguageContext';
+import { estimateAudioProgress, stabilizeAudioProgress } from '@/lib/audio/smooth-progress';
 
 interface QuranAudioPlayerProps {
   audio: UseQuranAudioReturn;
@@ -13,10 +14,44 @@ interface QuranAudioPlayerProps {
 }
 
 export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic, totalAyahs }: QuranAudioPlayerProps) {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [minimized, setMinimized] = useState(false);
-  const { currentAyah, playbackState, isPlaying, isLoading, isReadingTranslation, handsfreeMode, currentQariMeta } = audio;
+  const progressFillRef = useRef<HTMLSpanElement>(null);
+  const progressThumbRef = useRef<HTMLSpanElement>(null);
+  const displayedProgressRef = useRef(audio.progress);
+  const observedTimeRef = useRef(audio.currentTime);
+  const trackIdentityRef = useRef(`${audio.currentAyah}:${audio.isReadingTranslation}`);
+  const { currentAyah, playbackState, isPlaying, isLoading, isReadingTranslation, isAiGeneratedTranslation, handsfreeMode, currentQariMeta } = audio;
+
+  useEffect(() => {
+    let frame = 0;
+    const observedAt = performance.now();
+    const trackIdentity = `${audio.currentAyah}:${audio.isReadingTranslation}`;
+    const newTrack = trackIdentityRef.current !== trackIdentity;
+    const soughtBack = audio.currentTime < observedTimeRef.current - 0.25;
+    if (newTrack || soughtBack) displayedProgressRef.current = audio.progress;
+    trackIdentityRef.current = trackIdentity;
+    observedTimeRef.current = audio.currentTime;
+    const renderProgress = (now: number) => {
+      const estimated = estimateAudioProgress({
+        currentTime: audio.currentTime,
+        duration: audio.duration,
+        observedAt,
+        now,
+        isPlaying: audio.isPlaying,
+        progress: audio.progress,
+      });
+      const progress = stabilizeAudioProgress(estimated, displayedProgressRef.current);
+      displayedProgressRef.current = progress;
+      progressFillRef.current?.style.setProperty('transform', `scaleX(${progress})`);
+      progressThumbRef.current?.style.setProperty('left', `${progress * 100}%`);
+      if (audio.isPlaying) frame = requestAnimationFrame(renderProgress);
+    };
+    renderProgress(observedAt);
+    return () => cancelAnimationFrame(frame);
+  }, [audio.currentAyah, audio.currentTime, audio.duration, audio.isPlaying, audio.isReadingTranslation]);
+
   if (playbackState === 'idle' && currentAyah === null) return null;
   const formatTime = (seconds: number) => Number.isFinite(seconds) && seconds >= 0 ? `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}` : '0:00';
   const repeatLabel = audio.repeatMode === 'ayah' ? t('Ayat', 'Verse') : audio.repeatMode === 'surah' ? t('Surat', 'Surah') : t('Mati', 'Off');
@@ -30,7 +65,13 @@ export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold" title={surahNameArabic}>{surahNameIndo} · {t('Ayat', 'Verse')} {currentAyah || 1}/{totalAyahs}</p>
           <p className="truncate text-xs text-ink-secondary" aria-live="polite">
-            {isReadingTranslation ? t('Rekaman terjemahan Indonesia', 'Human English translation') : currentQariMeta.name}
+            {isReadingTranslation
+              ? isAiGeneratedTranslation
+                ? t('Suara AI · Gemini TTS', 'AI voice · Gemini TTS')
+                : language === 'en'
+                  ? t('Rekaman terjemahan Indonesia', 'Human English translation')
+                  : t('Terjemahan Indonesia · suara manusia', 'Indonesian translation · human recording')
+              : currentQariMeta.name}
             {' · '}{formatTime(audio.currentTime)} / {formatTime(audio.duration)}
           </p>
         </div>
@@ -45,7 +86,13 @@ export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic
       {!minimized && <>
         <label className="block px-3 pt-1">
           <span className="sr-only">{t('Posisi audio', 'Audio position')}</span>
-          <input aria-label={t('Posisi audio', 'Audio position')} type="range" min={0} max={1000} value={Math.round(audio.progress * 1000)} onChange={event => audio.seek(Number(event.target.value) / 1000)} disabled={!audio.duration} className="h-6 w-full accent-primary" />
+          <span className="relative flex h-11 w-full items-center" data-audio-progress>
+            <span aria-hidden="true" className="absolute inset-x-0 h-1.5 overflow-hidden rounded-full bg-canvas-soft">
+              <span ref={progressFillRef} className="block h-full origin-left rounded-full bg-primary" style={{ transform: 'scaleX(0)' }} />
+            </span>
+            <span ref={progressThumbRef} aria-hidden="true" className="absolute h-3 w-3 -translate-x-1/2 rounded-full border-2 border-canvas-surface bg-primary shadow-subtle" style={{ left: '0%' }} />
+            <input aria-label={t('Posisi audio', 'Audio position')} type="range" min={0} max={1000} value={Math.round(audio.progress * 1000)} onChange={event => { const progress = Number(event.target.value) / 1000; displayedProgressRef.current = progress; audio.seek(progress); }} disabled={!audio.duration} className="absolute inset-0 h-11 w-full cursor-pointer opacity-0 focus-visible:rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:cursor-default" />
+          </span>
         </label>
         <div className="flex items-center gap-2 px-3 pb-2">
           <button className={controlClass} onClick={audio.prevAyah} disabled={(currentAyah || 1) <= 1 && audio.currentTime <= 3} aria-label={t('Ayat sebelumnya', 'Previous verse')}><SkipBack className="h-4 w-4" /></button>
@@ -69,9 +116,27 @@ export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic
               <option value="reverse">{t('Terjemahan Indonesia → Arab', 'English translation → Arabic')}</option>
             </select>
           </label>
-          {handsfreeMode !== 'off' && !audio.isHumanTranslationAvailableForCurrentSurah && <p role="status" className="mt-2 text-sm leading-relaxed text-ink-secondary">{t('Rekaman terjemahan manusia belum tersedia untuk surat ini. Tilawah Arab tetap lanjut ke ayat berikutnya.', 'Human English translation is unavailable for this surah. Arabic recitation continues to the next verse.')}</p>}
+          {handsfreeMode !== 'off' && !audio.isHumanTranslationAvailableForCurrentSurah && <p role="status" className="mt-2 text-sm leading-relaxed text-ink-secondary">{audio.translationVoiceMode === 'ai-fallback' && language === 'id'
+            ? t('Tidak ada rekaman manusia untuk surat ini; terjemahannya memakai suara AI yang ditandai jelas.', 'No human translation recordings are listed for this surah; its translation uses the clearly labeled AI voice.')
+            : t('Rekaman terjemahan manusia tidak tersedia untuk surat ini. Mode manusia akan melanjutkan tilawah Arab tanpa menebak audio.', 'Human translation recordings are unavailable for this surah. Human-only mode continues Arabic recitation without guessing an audio source.')}</p>}
         </div>
         {settingsOpen && <div className="space-y-3 border-t border-hairline px-3 py-3">
+          <label className="block text-sm">{t('Audio terjemahan', 'Translation audio')}
+            <select aria-label={t('Audio terjemahan', 'Translation audio')} value={audio.translationVoiceMode} onChange={event => audio.setTranslationVoiceMode(event.target.value as typeof audio.translationVoiceMode)} className={selectClass}>
+              {audio.translationVoiceOptions.map(option => <option key={option.id} value={option.id}>{option.id === 'human'
+                ? t('Rekaman manusia saja', 'Human recordings only')
+                : option.id === 'ai-fallback'
+                  ? t('Manusia, lalu suara AI (Indonesia)', 'Human, then AI voice (Indonesian)')
+                  : t('Audio terjemahan nonaktif', 'Translation audio off')}</option>)}
+            </select>
+          </label>
+          {audio.translationVoiceMode === 'ai-fallback' && <p className="text-sm leading-relaxed text-ink-secondary">
+            {language === 'id'
+              ? t('Rekaman manusia dipakai lebih dulu; TTS hanya mengisi ayat Indonesia yang tidak memiliki rekaman. Ini suara AI Gemini, bukan pembaca manusia, dan pelafalan atau jedanya bisa kurang tepat.', 'Human recordings play first; TTS fills only Indonesian verses without a human recording. This is Gemini AI voice, not a human reader; pronunciation or pacing may be imperfect.')
+              : t('Fallback suara AI ini hanya tersedia untuk audio Indonesia. Audio Inggris tetap memakai rekaman manusia yang tersedia.', 'AI voice fallback is only available for Indonesian audio. English audio continues to use available human recordings.')}{' '}
+            {language === 'id' && <a href="https://huggingface.co/datasets/insanalamin/quran-terjemahan-indonesia-audio-by-ayah" target="_blank" rel="noopener noreferrer" className="font-medium text-primary underline underline-offset-2">{t('Sumber & batas penggunaan', 'Source & usage terms')}</a>}
+            {language === 'id' && <span> {t('Lisensi sumber membatasi penggunaan audio AI untuk edukasi, pendengaran keagamaan, aksesibilitas, dan referensi non-komersial.', 'The source license limits AI audio use to non-commercial education, religious listening, accessibility, and reference.')}</span>}
+          </p>}
           <label className="block text-sm">{t('Qari', 'Reciter')}
             <select aria-label={t('Qari', 'Reciter')} value={audio.selectedQari} onChange={event => audio.setSelectedQari(event.target.value)} className={selectClass}>
               {audio.availableQaris.map(qari => <option key={qari.id} value={qari.id}>{qari.name}</option>)}

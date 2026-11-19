@@ -1,8 +1,10 @@
 /**
  * Quran Recitation Audio Source Abstraction
  * Provides multi-qari per-ayah audio URLs using high-availability CDNs (EveryAyah, QuranCDN)
- * and human-recorded Indonesian translation audio.
+ * and human or explicitly disclosed AI-generated translation audio.
  */
+
+import { SURAH_LIST } from '../data/surah-list';
 
 export interface QariMeta {
   id: string;
@@ -112,8 +114,10 @@ export const AVAILABLE_QARIS: QariMeta[] = [
   },
 ];
 
-export type TranslationVoiceMode = 'human' | 'off';
+export type TranslationVoiceMode = 'human' | 'ai-fallback' | 'off';
 export type TranslationAudioLanguage = 'id' | 'en';
+export const DEFAULT_TRANSLATION_VOICE_MODE: TranslationVoiceMode = 'ai-fallback';
+export const AUDIO_STARTUP_TIMEOUT_MS = { arabic: 12000, translation: 4000, translationFallback: 2000 } as const;
 
 export interface TranslationVoiceOption {
   id: TranslationVoiceMode;
@@ -126,6 +130,11 @@ export const TRANSLATION_VOICE_OPTIONS: TranslationVoiceOption[] = [
     id: 'human',
     name: 'Rekaman Suara Manusia (Asli)',
     description: 'Rekaman terjemahan manusia, mengikuti ketersediaan arsip per ayat.',
+  },
+  {
+    id: 'ai-fallback',
+    name: 'Manusia + AI TTS jika rekaman tidak ada',
+    description: 'Memakai rekaman manusia lebih dulu; Gemini TTS dipakai hanya untuk ayat tanpa rekaman manusia.',
   },
   {
     id: 'off',
@@ -159,6 +168,22 @@ export function isHumanTranslationAvailableInLanguage(surahNumber: number, langu
   if (language === 'en') return surahNumber >= 1 && surahNumber <= 114;
   if (!HUMAN_INDONESIAN_TRANSLATION_AVAILABLE_SURAHS.has(surahNumber)) return false;
   return ayahNumber === undefined || !HUMAN_INDONESIAN_TRANSLATION_MISSING_AYAHS[surahNumber]?.has(ayahNumber);
+}
+
+export function isAiTranslationAvailable(surahNumber: number, ayahNumber: number, language: TranslationAudioLanguage = 'id'): boolean {
+  const surah = SURAH_LIST[surahNumber - 1];
+  return language === 'id' && Boolean(surah && ayahNumber >= 1 && ayahNumber <= surah.ayahsCount);
+}
+
+export function isTranslationAudioAvailable(
+  surahNumber: number,
+  language: TranslationAudioLanguage = 'id',
+  mode: TranslationVoiceMode = 'human',
+  ayahNumber = 1
+): boolean {
+  if (mode === 'off') return false;
+  return isHumanTranslationAvailableInLanguage(surahNumber, language, ayahNumber)
+    || (mode === 'ai-fallback' && isAiTranslationAvailable(surahNumber, ayahNumber, language));
 }
 
 export interface AyahAudioMeta {
@@ -274,7 +299,17 @@ export function getHumanTranslationAudioUrl(surahNumber: number, ayahNumber: num
   return `https://archive.org/download/AlQuran-terjemahan-indonesia-tanpa-bahasa-arab/${s}${a}.mp3`;
 }
 
-/** Returns only existing human recording candidates; never synthesizes translation audio. */
+export function getAiTranslationAudioUrl(surahNumber: number, ayahNumber: number): string {
+  const s = padDigits(surahNumber, 3);
+  const a = padDigits(ayahNumber, 3);
+  return `https://huggingface.co/datasets/insanalamin/quran-terjemahan-indonesia-audio-by-ayah/resolve/main/audio_m4a/${s}/${s}${a}.m4a?download=true`;
+}
+
+export function isAiTranslationAudioUrl(url: string): boolean {
+  return url.includes('quran-terjemahan-indonesia-audio-by-ayah');
+}
+
+/** Human audio is preferred; AI fallback appears only when explicitly selected. */
 export function getTranslationAudioCandidateUrls(
   surahNumber: number,
   ayahNumber: number,
@@ -282,8 +317,15 @@ export function getTranslationAudioCandidateUrls(
   mode: TranslationVoiceMode = 'human',
   language: TranslationAudioLanguage = 'id'
 ): string[] {
-  if (mode === 'off' || !isHumanTranslationAvailableInLanguage(surahNumber, language, ayahNumber)) return [];
-  return [getHumanTranslationAudioUrl(surahNumber, ayahNumber, language)];
+  if (mode === 'off') return [];
+  const candidates: string[] = [];
+  if (isHumanTranslationAvailableInLanguage(surahNumber, language, ayahNumber)) {
+    candidates.push(getHumanTranslationAudioUrl(surahNumber, ayahNumber, language));
+  }
+  if (mode === 'ai-fallback' && isAiTranslationAvailable(surahNumber, ayahNumber, language)) {
+    candidates.push(getAiTranslationAudioUrl(surahNumber, ayahNumber));
+  }
+  return candidates;
 }
 
 export interface AudioTrack {
@@ -295,9 +337,10 @@ export function getFirstAudioTrack(
   surahNumber: number,
   ayahNumber: number,
   handsfreeMode: 'off' | 'normal' | 'reverse',
-  language: TranslationAudioLanguage = 'id'
+  language: TranslationAudioLanguage = 'id',
+  translationVoiceMode: TranslationVoiceMode = 'human'
 ): AudioTrack {
-  return { ayahNumber, phase: handsfreeMode === 'reverse' && isHumanTranslationAvailableInLanguage(surahNumber, language, ayahNumber) ? 'translation' : 'arabic' };
+  return { ayahNumber, phase: handsfreeMode === 'reverse' && isTranslationAudioAvailable(surahNumber, language, translationVoiceMode, ayahNumber) ? 'translation' : 'arabic' };
 }
 
 /** One verse cycle includes its two phases; unavailable human recordings are skipped. */
@@ -308,15 +351,16 @@ export function getNextAudioTrack(options: {
   totalAyahs: number;
   handsfreeMode: 'off' | 'normal' | 'reverse';
   translationLanguage?: TranslationAudioLanguage;
+  translationVoiceMode?: TranslationVoiceMode;
   repeatMode: 'off' | 'ayah' | 'surah';
   autoNext: boolean;
 }): AudioTrack | null {
-  const { surahNumber, ayahNumber, phase, totalAyahs, handsfreeMode, repeatMode, autoNext, translationLanguage = 'id' } = options;
+  const { surahNumber, ayahNumber, phase, totalAyahs, handsfreeMode, repeatMode, autoNext, translationLanguage = 'id', translationVoiceMode = 'human' } = options;
   if (phase === 'translation' && handsfreeMode === 'reverse') return { ayahNumber, phase: 'arabic' };
-  if (phase === 'arabic' && handsfreeMode === 'normal' && isHumanTranslationAvailableInLanguage(surahNumber, translationLanguage, ayahNumber)) {
+  if (phase === 'arabic' && handsfreeMode === 'normal' && isTranslationAudioAvailable(surahNumber, translationLanguage, translationVoiceMode, ayahNumber)) {
     return { ayahNumber, phase: 'translation' };
   }
-  if (repeatMode === 'ayah') return getFirstAudioTrack(surahNumber, ayahNumber, handsfreeMode, translationLanguage);
-  if (ayahNumber >= totalAyahs) return repeatMode === 'surah' ? getFirstAudioTrack(surahNumber, 1, handsfreeMode, translationLanguage) : null;
-  return autoNext ? getFirstAudioTrack(surahNumber, ayahNumber + 1, handsfreeMode, translationLanguage) : null;
+  if (repeatMode === 'ayah') return getFirstAudioTrack(surahNumber, ayahNumber, handsfreeMode, translationLanguage, translationVoiceMode);
+  if (ayahNumber >= totalAyahs) return repeatMode === 'surah' ? getFirstAudioTrack(surahNumber, 1, handsfreeMode, translationLanguage, translationVoiceMode) : null;
+  return autoNext ? getFirstAudioTrack(surahNumber, ayahNumber + 1, handsfreeMode, translationLanguage, translationVoiceMode) : null;
 }

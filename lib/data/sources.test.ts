@@ -27,4 +27,12 @@ if (!morphSource.authority.includes('Leeds') && !morphSource.name.includes('Qura
 }
 console.log('✅ Test passed: Morphology is correctly attributed to Quranic Arabic Corpus (University of Leeds)');
 
+// Root glosses from Quran bil-Quran have source-level attribution but no
+// Lane page citation; keep that limitation attached to the registered source.
+const rootGlossSource = getSourceInfo('quranBilQuran');
+if (!rootGlossSource.url.includes('github.com/R3GENESI5/quran-bil-quran') || !rootGlossSource.description.includes('volume/page')) {
+  throw new Error('Quran bil-Quran root glosses must retain their upstream link and missing page-citation note');
+}
+console.log('✅ Test passed: root gloss source and citation limitation are registered.');
+
 console.log('🎉 ALL SOURCE REGISTRY & AUTHENTICITY TESTS PASSED SUCCESSFULLY!');

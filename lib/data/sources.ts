@@ -24,7 +24,7 @@ export interface SourceMetadata extends SourceRegistry {
 }
 
 export const SOURCES_REGISTRY: Record<
-  'quranText' | 'translation' | 'wordTranslation' | 'morphology' | 'lexicon' | 'laneLexicon' | 'recitation',
+  'quranText' | 'translation' | 'wordTranslation' | 'morphology' | 'particleGloss' | 'lexicon' | 'laneLexicon' | 'quranBilQuran' | 'recitation' | 'aiTranslationAudio',
   SourceMetadata
 > = {
   quranText: {
@@ -75,6 +75,17 @@ export const SOURCES_REGISTRY: Record<
     language: 'ar',
     description: 'Anotasi tata bahasa komputasional, penandaan kelas kata (Part-of-Speech/POS), dan dekomposisi morfologi Sharaf per kata.',
   },
+  particleGloss: {
+    id: 'qurabic-editorial-particle-gloss',
+    name: 'Qurabic — editorial particle gloss',
+    shortName: 'Qurabic gloss',
+    descriptionEnglish: 'Short Indonesian and English glosses for common particles, written for this interface. QAC supplies the morphology and grammatical classification; the glosses are editorial and are not presented as dictionary quotations.',
+    authority: 'Qurabic editorial team; grammatical classification informed by the Quranic Arabic Corpus',
+    url: 'https://corpus.quran.com/documentation/morphologicalfeatures.jsp',
+    version: 'Concise bilingual particle glossary',
+    language: 'id',
+    description: 'Padanan ringkas untuk partikel umum ditulis sebagai glos editorial Qurabic. QAC menjadi rujukan kelas kata dan morfologi; glos bukan kutipan kamus atau terjemahan resmi.',
+  },
   lexicon: {
     id: 'classical-arabic-lexicon',
     name: 'Quranic Arabic Corpus — Quran Dictionary',
@@ -97,6 +108,17 @@ export const SOURCES_REGISTRY: Record<
     language: 'en',
     description: 'Transkripsi Inggris-Arab leksikon Edward William Lane, didigitalkan Perseus dan dikoreksi Alpheios; indeks lokal diolah dari LexiconDatabase. Kutipan jilid dan halaman mengikuti data sumber. Transkripsi dan pemetaan akar dapat mengandung kesalahan; padanan akar bukan jaminan bahwa setiap sense berlaku untuk kata ini.',
   },
+  quranBilQuran: {
+    id: 'quran-bil-quran-root-index',
+    name: 'Quran bil-Quran · root index',
+    shortName: 'Quran bil-Quran',
+    authority: 'R3GENESI5 project contributors',
+    url: 'https://github.com/R3GENESI5/quran-bil-quran',
+    version: 'Root index and Mufradat excerpt export',
+    license: 'MIT (upstream project)',
+    language: 'en',
+    description: 'The upstream project credits its root meanings to a Lane’s Lexicon dataset and separately identifies Mufradat al-Quran excerpts by al-Raghib al-Isfahani. The local English glosses do not include Lane volume/page citations; semantic families are upstream editorial classifications.',
+  },
   recitation: {
     id: 'alafasy-recitation',
     name: 'Tilawah Al-Qur\'an Per-Ayat Syaikh Mishary Rashid Al-Afasy',
@@ -106,6 +128,19 @@ export const SOURCES_REGISTRY: Record<
     version: '128kbps HQ Murattal',
     language: 'ar',
     description: 'Rekaman audio tilawah Al-Qur\'an otentik berkualitas tinggi yang disinkronisasikan per ayat untuk mendukung tadabbur bacaan.',
+  },
+  aiTranslationAudio: {
+    id: 'indonesian-translation-ai-tts',
+    name: 'Quran Indonesian Translation Audio by Ayah',
+    shortName: 'AI TTS Indonesia',
+    nameEnglish: 'AI-generated Indonesian translation audio',
+    authority: 'Dataset published by insanalamin on Hugging Face',
+    url: 'https://huggingface.co/datasets/insanalamin/quran-terjemahan-indonesia-audio-by-ayah',
+    version: '6,236 verse files · Gemini 3.1 Flash TTS Preview · voice Enceladus',
+    license: 'Custom restricted license: non-commercial educational, religious listening, accessibility, and reference use only',
+    language: 'id',
+    description: 'Audio TTS, bukan rekaman manusia. Dataset menyatakan teks terjemahan bersumber dari Kemenag/LPMQ; hak atas teks sumber tetap berlaku. Audio dapat memiliki kekeliruan pelafalan dan prosodi. Sumber membatasi penggunaan untuk kegiatan non-komersial edukasi, pendengaran keagamaan, aksesibilitas, dan referensi.',
+    descriptionEnglish: 'TTS audio, not a human recording. The dataset identifies Kemenag/LPMQ as the translation text source; underlying text rights still apply. Pronunciation and prosody may be imperfect. The source limits use to non-commercial educational, religious listening, accessibility, and reference purposes.',
   },
 };
 

@@ -4,7 +4,7 @@
 import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, BookMarked, Search, Compass, BookOpen } from 'lucide-react';
+import { ArrowRight, BookMarked, Search, BookOpen } from 'lucide-react';
 import { useTheme } from '@/lib/context/ThemeContext';
 import { useLanguage } from '@/lib/context/LanguageContext';
 import { gsap } from 'gsap';
@@ -28,7 +28,6 @@ export default function ClassicIlluminatedQuranHero({ onOpenSearch, lastSearch }
   const heroContainerRef = useRef<HTMLDivElement | null>(null);
   const imageWrapperRef = useRef<HTMLDivElement | null>(null);
   const lightBeamRef = useRef<HTMLDivElement | null>(null);
-  const badgeRef = useRef<HTMLDivElement | null>(null);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
   const descriptionRef = useRef<HTMLParagraphElement | null>(null);
   const actionsRef = useRef<HTMLDivElement | null>(null);
@@ -81,7 +80,6 @@ export default function ClassicIlluminatedQuranHero({ onOpenSearch, lastSearch }
 
       // Sequential text reveal
       const textElements = [
-        badgeRef.current,
         headingRef.current,
         descriptionRef.current,
         actionsRef.current,
@@ -252,14 +250,6 @@ export default function ClassicIlluminatedQuranHero({ onOpenSearch, lastSearch }
       {/* 6. CENTRAL HERO CONTENT (HIGH-LEGIBILITY TYPOGRAPHY) */}
       <div className="max-w-4xl mx-auto px-6 text-center relative z-10 space-y-7 py-20">
         
-        {/* Badge Indicator */}
-        <div ref={badgeRef} className="flex justify-center">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-canvas-surface/85 backdrop-blur-md border border-hairline text-ink-secondary text-xs font-medium shadow-subtle">
-            <Compass className="w-3.5 h-3.5 text-primary" />
-            <span>{t('Korpus Bahasa Al-Qur’an', 'Quranic Arabic corpus')}</span>
-          </div>
-        </div>
-
         {/* Majestic Central Title */}
         <h1
           ref={headingRef}

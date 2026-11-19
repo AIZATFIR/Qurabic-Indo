@@ -7,6 +7,10 @@ const noun = getWordStudy('9:1:1');
 assert.equal(noun.primaryMeaning.text.toLowerCase(), 'pemutusan perhubungan');
 assert.equal(noun.primaryMeaning.sourceId, 'quran-com-wbw');
 assert.equal(noun.primaryMeaning.sourceBadge, 'Quran.com · Indonesia');
+const unknown = getWordStudy('xzx');
+assert.equal(unknown.primaryMeaning.sourceId, undefined, 'Unknown tokens must not be attributed to Quran.com');
+assert.equal(unknown.primaryMeaning.sourceBadge, 'Sumber belum tersedia');
+assert.equal(unknown.primaryMeaning.sourceIdEnglish, undefined);
 assert.equal(noun.linguisticExplanation, undefined, 'Unreviewed narratives must not masquerade as scholarship');
 assert.equal(noun.grammarDerivation, undefined, 'Generic generated derivation is not corpus evidence');
 for (const [location, expected] of [['18:3:2', 'di dalamnya'], ['78:4:1', 'sekali-kali tidak']] as const) {

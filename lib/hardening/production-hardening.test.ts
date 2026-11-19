@@ -80,6 +80,13 @@ async function runHardeningTests() {
   const bodyValid = await resValid.json();
   assert(bodyValid.success === true && bodyValid.data !== null, 'API body returns success=true and structured data');
 
+  const excerptRequest = new Request('http://localhost:3000/api/word-detail?location=2%3A153%3A3&excerpt=lane-root-v1');
+  const excerptResponse = await wordDetailGet(excerptRequest as any);
+  const excerptBody = await excerptResponse.json();
+  assert(excerptResponse.status === 200, 'Lane excerpt endpoint accepts a canonical Quran word location');
+  assert(Boolean(excerptBody.data?.study?.lexical?.rootExcerpt?.text), 'Lane excerpt endpoint returns source text');
+  assert(!('wordFamily' in (excerptBody.data?.study || {})), 'Lane excerpt endpoint avoids building the full word study');
+
   // Test oversized query attack protection (>200 chars)
   const hugePayload = 'A'.repeat(500);
   const reqOversized = new Request(`http://localhost:3000/api/word-detail?q=${hugePayload}`);

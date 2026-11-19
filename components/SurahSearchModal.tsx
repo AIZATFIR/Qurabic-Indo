@@ -83,7 +83,7 @@ export default function SurahSearchModal({
         aria-labelledby={headingId}
         data-lenis-prevent="true"
         onWheel={(e) => e.stopPropagation()}
-        className="relative w-full max-w-xl max-h-[82vh] flex flex-col rounded-2xl bg-[var(--bg-surface)] text-ink-primary border border-hairline shadow-hover z-10 overflow-hidden overscroll-contain animate-in zoom-in-95 duration-150"
+        className="relative w-full max-w-xl max-h-[82vh] flex flex-col rounded-[var(--radius-surface)] bg-canvas-surface text-ink-primary border border-hairline shadow-hover z-10 overflow-hidden overscroll-contain animate-in zoom-in-95 duration-150"
       >
         
         {/* Search Header */}
@@ -114,7 +114,7 @@ export default function SurahSearchModal({
               onChange={(e) => setQuery(e.target.value)}
               aria-label={t('Cari surah', 'Search surahs')}
               placeholder={t('Cari nomor atau nama surah…', 'Search by surah number or name…')}
-              className="w-full rounded-xl pl-10 pr-9 py-2.5 border border-hairline bg-canvas-soft text-sm text-ink-primary placeholder:text-ink-mute focus:outline-none focus:ring-2 focus:ring-primary/20 font-sans transition-all"
+              className="w-full rounded-[var(--radius-control)] pl-10 pr-9 py-2.5 border border-hairline bg-canvas-soft text-sm text-ink-primary placeholder:text-ink-mute focus:outline-none focus:ring-2 focus:ring-primary/20 font-sans transition-all"
             />
             {query && (
               <button
@@ -142,9 +142,9 @@ export default function SurahSearchModal({
               <button
                 key={qs.num}
                 onClick={() => handleSelect(qs.num)}
-                className={`min-h-11 rounded-md px-2 py-1 text-sm font-medium transition-all font-sans ${
+                className={`min-h-11 rounded-[var(--radius-control)] px-3 py-1 text-sm font-medium transition-all font-sans ${
                   selectedSurah === qs.num
-                    ? 'bg-primary text-white font-semibold'
+                    ? 'bg-primary-fixed text-primary ring-1 ring-primary/20 font-semibold'
                     : 'bg-canvas-soft hover:bg-primary-fixed text-ink-secondary'
                 }`}
               >
@@ -170,7 +170,7 @@ export default function SurahSearchModal({
                   key={surah.number}
                   onClick={() => handleSelect(surah.number)}
                   aria-pressed={isSelected}
-                  className={`w-full rounded-xl flex items-center justify-between p-3 transition-all text-left ${
+                  className={`w-full rounded-[var(--radius-control)] flex items-center justify-between p-3 transition-all text-left ${
                     isSelected
                       ? 'bg-primary-fixed text-primary font-bold'
                       : 'hover:bg-canvas-soft text-ink-primary'
@@ -178,9 +178,9 @@ export default function SurahSearchModal({
                 >
                   <div className="flex items-center space-x-3">
                     <span
-                      className={`w-7 h-7 rounded-lg text-xs font-bold font-sans flex items-center justify-center shrink-0 ${
+                      className={`w-8 h-8 rounded-[var(--radius-control)] text-xs font-bold font-sans flex items-center justify-center shrink-0 ${
                         isSelected
-                          ? 'bg-primary text-white shadow-subtle'
+                          ? 'bg-primary-fixed text-primary border border-primary/25'
                           : 'bg-canvas-soft text-ink-secondary border border-hairline'
                       }`}
                     >

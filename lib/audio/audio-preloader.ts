@@ -5,6 +5,7 @@
 
 import {
   getAudioCandidateUrls,
+  getNextAudioTrack,
   getTranslationAudioCandidateUrls,
   TranslationVoiceMode,
   TranslationAudioLanguage,
@@ -214,58 +215,41 @@ export async function preloadArabicAudio(
   return await preloadAudioBlob(candidates[0], 4000);
 }
 
-/**
- * Preloads upcoming Ayahs (current, N+1, N+2) in the background for zero-latency seamless playback
- */
-export function preloadUpcomingAyahs(
-  surahNumber: number,
-  currentAyah: number,
-  totalAyahs: number,
-  getTranslation?: (ayahNum: number) => string | undefined,
-  qariId: string = 'alafasy',
-  mode: TranslationVoiceMode = 'human',
-  language: TranslationAudioLanguage = 'id'
-): void {
+export interface NextAudioPreloadOptions {
+  surahNumber: number;
+  currentAyah: number;
+  phase: 'arabic' | 'translation';
+  totalAyahs: number;
+  handsfreeMode: 'off' | 'normal' | 'reverse';
+  repeatMode: 'off' | 'ayah' | 'surah';
+  autoNext: boolean;
+  qariId: string;
+  translationLanguage: TranslationAudioLanguage;
+  translationVoiceMode?: TranslationVoiceMode;
+}
+
+export function getNextAudioPreloadUrl(options: NextAudioPreloadOptions): string | undefined {
+  const nextTrack = getNextAudioTrack({
+    surahNumber: options.surahNumber,
+    ayahNumber: options.currentAyah,
+    phase: options.phase,
+    totalAyahs: options.totalAyahs,
+    handsfreeMode: options.handsfreeMode,
+    repeatMode: options.repeatMode,
+    autoNext: options.autoNext,
+    translationLanguage: options.translationLanguage,
+    translationVoiceMode: options.translationVoiceMode,
+  });
+  if (!nextTrack) return undefined;
+  const candidates = nextTrack.phase === 'translation'
+    ? getTranslationAudioCandidateUrls(options.surahNumber, nextTrack.ayahNumber, undefined, options.translationVoiceMode ?? 'human', options.translationLanguage)
+    : getAudioCandidateUrls(options.surahNumber, nextTrack.ayahNumber, options.qariId);
+  return candidates[0];
+}
+
+/** Warm only the immediate next track so background requests do not compete with playback. */
+export function preloadNextAudioTrack(options: NextAudioPreloadOptions): void {
   if (typeof window === 'undefined') return;
-
-  // Preload current ayah translation immediately
-  if (mode !== 'off') {
-    preloadTranslationAudio(
-      surahNumber,
-      currentAyah,
-      getTranslation?.(currentAyah),
-      mode,
-      language
-    ).catch(() => {});
-  }
-
-  // Preload next ayah Arabic + translation
-  if (currentAyah < totalAyahs) {
-    const nextAyah = currentAyah + 1;
-    preloadArabicAudio(surahNumber, nextAyah, qariId).catch(() => {});
-    if (mode !== 'off') {
-      preloadTranslationAudio(
-        surahNumber,
-        nextAyah,
-        getTranslation?.(nextAyah),
-        mode,
-        language
-      ).catch(() => {});
-    }
-  }
-
-  // Preload Ayah + 2 in the background
-  if (currentAyah + 1 < totalAyahs) {
-    const aheadAyah = currentAyah + 2;
-    preloadArabicAudio(surahNumber, aheadAyah, qariId).catch(() => {});
-    if (mode !== 'off') {
-      preloadTranslationAudio(
-        surahNumber,
-        aheadAyah,
-        getTranslation?.(aheadAyah),
-        mode,
-        language
-      ).catch(() => {});
-    }
-  }
+  const url = getNextAudioPreloadUrl(options);
+  if (url) void preloadAudioBlob(url, 4000).catch(() => {});
 }

@@ -1,8 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCanonicalWordDetail } from '@/lib/morphology/canonical-service';
 import { getWordStudy } from '@/lib/morphology/word-study-service';
+import { getLaneRootRecord } from '@/lib/lexicon/lane-loader';
 
 export const dynamic = 'force-dynamic';
+
+function getReadableLaneExcerpt(rootBw?: string) {
+  if (!rootBw) return undefined;
+  const root = getLaneRootRecord(rootBw);
+  const match = root?.entries
+    .flatMap((entry) => entry.senses.map((sense) => ({ entry, sense })))
+    .find(({ sense }) => Boolean(sense.englishText || sense.text));
+  const sourceText = match?.sense.englishText || match?.sense.text || '';
+  if (!match || !sourceText) return undefined;
+  return {
+    text: sourceText.match(/\[\s*([^\]]{30,})\]/)?.[1]?.trim() || sourceText,
+    volume: match.sense.citation?.volume || match.entry.volume,
+    page: match.sense.citation?.page || match.entry.page,
+  };
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -60,7 +76,19 @@ export async function GET(request: NextRequest) {
     };
 
     const detail = getCanonicalWordDetail(targetInput, context);
-    const study = getWordStudy(targetInput, context);
+    if (searchParams.get('excerpt') === 'lane-root-v1') {
+      if (!detail) {
+        return NextResponse.json({ error: 'Kata tidak ditemukan dalam indeks morfologi Al-Qur\'an' }, { status: 404 });
+      }
+      const response = NextResponse.json({
+        success: true,
+        data: { study: { lexical: { rootExcerpt: getReadableLaneExcerpt(detail.lexical.root) } } },
+      });
+      response.headers.set('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
+      return response;
+    }
+
+    const study = getWordStudy(targetInput, context, detail || undefined);
 
     if (!detail && !study) {
       return NextResponse.json(
@@ -81,7 +109,7 @@ export async function GET(request: NextRequest) {
     // Cache immutable Quranic linguistic data at the Edge / Browser level
     response.headers.set(
       'Cache-Control',
-      'public, s-maxage=86400, stale-while-revalidate=43200'
+      'public, max-age=300, s-maxage=86400, stale-while-revalidate=43200'
     );
 
     return response;

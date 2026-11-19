@@ -68,7 +68,7 @@ export default function MorfologiPage() {
         </h1>
 
         <p className="text-base text-ink-secondary max-w-2xl leading-relaxed font-sans">
-          {t('Telusuri akar, bentuk kata, dan kemunculannya. Anotasi morfologi menggunakan Quranic Arabic Corpus; definisi kamus tersedia pada sebagian entri.', 'Browse roots, word forms, and their occurrences. Morphology annotations come from Quranic Arabic Corpus; dictionary definitions are available for some entries.')}
+          {t('Telusuri akar, bentuk kata, dan ayat tempatnya digunakan. Rujukan morfologi dan definisi kamus dicantumkan pada entri yang tersedia.', 'Explore roots, word forms, and the verses where they appear. Morphology and dictionary sources are credited on entries where available.')}
         </p>
 
         {/* Filter & Search Bar */}

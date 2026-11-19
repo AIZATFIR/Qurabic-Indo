@@ -15,8 +15,8 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   if (pathname === '/baca') return null;
   return <>
-    <header data-ui="primary-navigation" className="sticky top-0 z-40 bg-canvas-page/75 backdrop-blur-md border-b border-hairline/40 transition-colors">
-      <div className="mx-auto max-w-7xl min-h-16 px-4 sm:px-8 flex items-center justify-between gap-3">
+    <header data-ui="primary-navigation" className="sticky top-3 z-40 px-3 sm:px-6 transition-colors">
+      <div className="mx-auto max-w-7xl min-h-14 px-4 sm:px-6 flex items-center justify-between gap-3 rounded-[var(--radius-surface)] border border-hairline/80 bg-canvas-surface/95 shadow-subtle backdrop-blur-md">
         <Link href="/" className="text-xl font-semibold text-ink-primary tracking-tight">Qurabic</Link>
         <nav data-ui="primary-navigation-links" aria-label={t('Navigasi utama', 'Main navigation')} className="hidden lg:flex items-center gap-6 text-sm text-ink-primary">
           <Link href="/baca" className="min-h-11 flex items-center hover:text-primary">{t('Baca Al-Qur’an', 'Read Quran')}</Link>
@@ -24,8 +24,8 @@ export default function Navbar() {
           <Link href="/favorit" className="min-h-11 flex items-center hover:text-primary">{t('Tersimpan', 'Saved')}</Link>
           <Link href="/tentang" className="min-h-11 flex items-center hover:text-primary">{t('Sumber', 'Sources')}</Link>
         </nav>
-        <div className="flex items-center gap-2">
-          <button data-search-trigger type="button" onClick={() => setIsSearchOpen(true)} aria-label={t('Cari', 'Search')} className="min-h-11 min-w-11 flex items-center justify-center text-ink-primary hover:bg-canvas-soft focus-visible:outline-primary"><Search className="w-5 h-5" /></button>
+        <div className="flex items-center gap-1 rounded-[var(--radius-control)] border border-hairline/70 bg-canvas-soft/55 p-1">
+          <button data-search-trigger type="button" onClick={() => setIsSearchOpen(true)} aria-label={t('Cari', 'Search')} className="min-h-10 min-w-10 rounded-full flex items-center justify-center text-ink-primary hover:bg-canvas-soft focus-visible:outline-primary"><Search className="w-5 h-5" /></button>
           <LanguageSelector />
           <ThemeSelector />
         </div>

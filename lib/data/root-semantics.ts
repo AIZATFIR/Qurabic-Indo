@@ -16,6 +16,8 @@ const QBQ_ROOTS: Record<string, QBQRootItem> = (qbqRootsData as unknown) as Reco
 export interface RootSemanticProfile {
   titleIndo: string;
   coreMeaning: string;
+  coreMeaningEnglish?: string;
+  classicalArabicExcerpt?: string;
   usagePatterns: QuranicUsagePattern[];
   contextualNote?: string;
   meaningsIndonesian: string[];
@@ -980,21 +982,23 @@ export function getRootSemanticProfile(rootBw: string, rootArabic?: string): Roo
       ? dbRoot.titleIndo.replace(/^Akar\s+[^\(]+\(/, '').replace(/\)$/, '').trim()
       : `Akar ${rootArDisplay}`;
 
-    // Extract core semantic explanation
-    const coreMeaning = qbqEntry.meaningEn
-      ? `${qbqEntry.meaningEn}${qbqEntry.family ? ` [Keluarga makna: ${qbqEntry.family}]` : ''}`
-      : (qbqEntry.mufradatArabic ? qbqEntry.mufradatArabic.slice(0, 260) + '...' : `Akar kata Al-Qur'an ${rootArDisplay}`);
+    // Keep upstream English glosses out of the Indonesian field. The upstream
+    // project credits its root-meaning dataset to Lane, but gives no page-level
+    // citation for these concise summaries.
+    const coreMeaningEnglish = qbqEntry.meaningEn || undefined;
 
     const contextualNote = qbqEntry.mufradatArabic
-      ? `Rujukan semantik: Al-Mufradat fi Gharib al-Qur'an (Al-Raghib al-Isfahani) & Maqayis al-Lughah (Ibnu Faris). Disarikan dari corpus quran-bil-quran.`
-      : `Rujukan semantik: Corpus Qur'an-bil-Qur'an & The Quranic Arabic Corpus (QAC).`;
+      ? 'Kutipan Arab: al-Mufradat fi Gharib al-Qur’an karya al-Raghib al-Isfahani. Ringkasan Inggris berasal dari Quran bil-Quran; proyek itu menyebut Lane’s Lexicon sebagai sumber makna akar, tanpa nomor halaman pada ekspor ini.'
+      : 'Ringkasan Inggris berasal dari Quran bil-Quran; proyek itu menyebut Lane’s Lexicon sebagai sumber makna akar, tanpa nomor halaman pada ekspor ini.';
 
     return {
       titleIndo: cleanTitle,
-      coreMeaning,
+      coreMeaning: '',
+      coreMeaningEnglish,
+      classicalArabicExcerpt: qbqEntry.mufradatArabic || undefined,
       usagePatterns,
       contextualNote,
-      meaningsIndonesian: [qbqEntry.meaningEn || `Akar ${rootArDisplay}`]
+      meaningsIndonesian: []
     };
   }
 
@@ -1029,23 +1033,7 @@ export function getRootSemanticProfile(rootBw: string, rootArabic?: string): Roo
     };
   }
 
-  // 3. Fallback for unindexed roots without Lane's entry
-  if (dbRoot) {
-    const allExamples = sampleVerbs.concat(sampleNouns).slice(0, 4).map(x => x.arabic);
-    const cleanTitle = dbRoot.titleIndo && !dbRoot.titleIndo.startsWith('Konsep')
-      ? dbRoot.titleIndo.replace(/^Akar\s+[^\(]+\(/, '').replace(/\)$/, '').trim()
-      : `Akar ${rootArDisplay}`;
-
-    return {
-      titleIndo: cleanTitle,
-      coreMeaning: allExamples.length > 0
-        ? `Akar ${rootArDisplay} membentuk kosakata Al-Qur'an yang mencakup bentuk kata ${allExamples.join(', ')} sebagaimana terindeks secara kanonikal dalam The Quranic Arabic Corpus.`
-        : `Akar ${rootArDisplay} terindeks dalam leksikografi bahasa Arab Al-Qur'an dengan ragam wazan sharaf yang terdistribusi di dalam mushaf.`,
-      usagePatterns,
-      contextualNote: `Data morfologi bersumber dari The Quranic Arabic Corpus (University of Leeds).`,
-      meaningsIndonesian: allExamples.length > 0 ? allExamples : [`Akar ${rootArDisplay}`]
-    };
-  }
-
+  // QAC morphology can prove which forms share a root, but it cannot define
+  // that root. Leave the summary absent when no lexical source was found.
   return null;
 }

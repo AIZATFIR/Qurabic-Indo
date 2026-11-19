@@ -85,6 +85,8 @@ export interface RootDetailModel {
   rootLatin: string;
   titleIndo: string;
   coreMeaning: string;
+  coreMeaningEnglish?: string;
+  classicalArabicExcerpt?: string;
   contextualNote?: string;
   meaningsIndonesian: string[];
   statistics: RootDistributionStats;
@@ -486,62 +488,6 @@ export function getCanonicalWordDetail(
         page: effectiveLaneEntry.page || laneRoot.page,
         sourceCitation: laneRoot.sourceCitation
       };
-    } else if (
-      matchedRoot &&
-      ((matchedRoot.coreMeaning && !matchedRoot.coreMeaning.includes('memiliki peranan penting')) ||
-       (matchedRoot.meaningsIndonesian && matchedRoot.meaningsIndonesian.some(m => !m.startsWith('Gagasan pokok') && !m.startsWith('Ragam makna') && !m.includes('memiliki peranan penting'))))
-    ) {
-      const senses: any[] = [];
-      if (matchedRoot.coreMeaning && !matchedRoot.coreMeaning.includes('memiliki peranan penting')) {
-        senses.push({
-          senseIndex: 1,
-          text: matchedRoot.coreMeaning,
-          source: "Leksikon Bahasa Arab Klasik (Mu'jam Al-Mufradat & Hans Wehr)",
-          citation: {
-            volume: 1,
-            page: 1,
-            entryId: matchedRoot.id
-          }
-        });
-      }
-      if (matchedRoot.meaningsIndonesian) {
-        matchedRoot.meaningsIndonesian.forEach((m, idx) => {
-          if (
-            m !== matchedRoot.coreMeaning &&
-            !m.startsWith('Gagasan pokok') &&
-            !m.startsWith('Ragam makna') &&
-            !m.includes('memiliki peranan penting')
-          ) {
-            senses.push({
-              senseIndex: senses.length + 1,
-              text: m,
-              source: "Kajian Semantik & Leksikografi Al-Qur'an",
-              citation: {
-                volume: 1,
-                page: idx + 1,
-                entryId: matchedRoot.id
-              }
-            });
-          }
-        });
-      }
-
-      lexiconResult = {
-        hasLexicalData: true,
-        source: "Leksikon Akar Kata Bahasa Arab Klasik",
-        rootArabic: matchedRoot.rootArabic,
-        rootBw: matchedRoot.id.replace(/-/g, ''),
-        matchedLemmaArabic: lemmaArabic,
-        matchedLemmaBw: lemmaBw,
-        definition: matchedRoot.coreMeaning || matchedRoot.titleIndo,
-        indonesianDefinition: matchedRoot.coreMeaning || matchedRoot.titleIndo,
-        translationMethod: 'classical_source',
-        isRootEntry: true,
-        senses,
-        volume: 1,
-        page: 1,
-        sourceCitation: "Kajian Leksikografi & Mu'jam Al-Mufradat fi Gharib Al-Qur'an (Ar-Raghib Al-Ashfahani)"
-      };
     } else {
       lexiconResult = {
         hasLexicalData: false,
@@ -578,7 +524,7 @@ export function getCanonicalWordDetail(
       root: isParticle ? undefined : rootBw,
       rootArabic: isParticle ? undefined : (matchedRoot?.rootArabic || (rootBw ? buckwalterToArabic(rootBw).split('').join(' ') : undefined)),
       rootSlug: isParticle ? undefined : matchedRoot?.id,
-      coreMeaning: isParticle ? undefined : (curatedDict?.rootExplanation || semanticProfile?.coreMeaning || matchedRoot?.coreMeaning)
+      coreMeaning: isParticle ? undefined : (curatedDict?.rootExplanation || semanticProfile?.coreMeaning || (matchedRoot?.coreMeaning && !matchedRoot.coreMeaning.includes('memiliki peranan penting dalam kosakata Al-Qur\'an') ? matchedRoot.coreMeaning : undefined))
     },
     morphology: {
       ...morphInfo,
@@ -725,11 +671,11 @@ export function getCanonicalRootDetail(slug: string): RootDetailModel | null {
 
   const cleanTitle = (matchedRoot.titleIndo && !matchedRoot.titleIndo.startsWith('Konsep & Turunan') && !matchedRoot.titleIndo.startsWith('Akar Kata'))
     ? matchedRoot.titleIndo
-    : (rootProfile?.titleIndo || `Akar ${matchedRoot.rootArabic} (${rootProfile?.coreMeaning || 'Kosakata Al-Qur\'an'})`);
+    : (rootProfile?.titleIndo || `Akar ${matchedRoot.rootArabic}`);
 
   const cleanCoreMeaning = (matchedRoot.coreMeaning && !matchedRoot.coreMeaning.includes('memiliki peranan penting dalam kosakata Al-Qur\'an'))
     ? matchedRoot.coreMeaning
-    : (rootProfile?.coreMeaning || matchedRoot.coreMeaning || 'Makna leksikal terindeks dalam Al-Qur\'an.');
+    : (rootProfile?.coreMeaning || '');
 
   return {
     id: matchedRoot.id,
@@ -738,8 +684,12 @@ export function getCanonicalRootDetail(slug: string): RootDetailModel | null {
     rootLatin: matchedRoot.rootLatin,
     titleIndo: semanticProfile?.titleIndo || cleanTitle,
     coreMeaning: semanticProfile?.coreMeaning || cleanCoreMeaning,
+    coreMeaningEnglish: semanticProfile?.coreMeaningEnglish,
+    classicalArabicExcerpt: semanticProfile?.classicalArabicExcerpt,
     contextualNote: semanticProfile?.contextualNote || matchedRoot.contextualNote,
-    meaningsIndonesian: semanticProfile?.meaningsIndonesian || matchedRoot.meaningsIndonesian || [matchedRoot.coreMeaning],
+    meaningsIndonesian: semanticProfile?.meaningsIndonesian.length
+      ? semanticProfile.meaningsIndonesian
+      : (matchedRoot.coreMeaning && !matchedRoot.coreMeaning.includes('memiliki peranan penting dalam kosakata Al-Qur\'an') ? matchedRoot.meaningsIndonesian || [] : []),
     statistics: {
       totalOccurrences: qacRecords.length || matchedRoot.totalOccurrences || occurrences.length,
       uniqueAyahs: uniqueAyahsSet.size || occurrences.length,

@@ -87,7 +87,7 @@ export default function HomePage() {
           <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-hairline pb-4">
             <div>
               <h2 id="roots-heading" className="text-2xl font-semibold tracking-tight text-ink-primary sm:text-3xl">{t('Akar kata populer', 'Popular roots')}</h2>
-              <p className="mt-2 max-w-2xl text-base leading-relaxed text-ink-secondary">{t('Buka satu akar untuk melihat bentuk korpus, entri leksikon, dan ayat pemakaiannya.', 'Open a root to explore corpus forms, lexicon entries, and verse occurrences.')}</p>
+              <p className="mt-2 max-w-2xl text-base leading-relaxed text-ink-secondary">{t('Buka satu akar untuk melihat bentuk kata, rujukan kamus, dan ayat pemakaiannya.', 'Open a root to explore word forms, dictionary sources, and verse occurrences.')}</p>
             </div>
             <Link href="/morfologi" className="inline-flex min-h-11 items-center gap-2 text-base font-medium text-primary hover:underline underline-offset-4 focus-visible:outline-primary">
               {t('Lihat semua akar', 'Browse all roots')} <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -113,7 +113,7 @@ export default function HomePage() {
             <h2 id="sources-heading" className="text-2xl font-semibold tracking-tight text-ink-primary">{t('Sumber data', 'Sources')}</h2>
             <Link href="/tentang" className="inline-flex min-h-11 items-center gap-2 text-base font-medium text-primary hover:underline underline-offset-4 focus-visible:outline-primary">{t('Tentang data', 'About the data')} <ArrowRight className="h-4 w-4" aria-hidden="true" /></Link>
           </div>
-          <p className="mt-3 max-w-3xl text-base leading-relaxed text-ink-secondary">{t('Teks dan terjemahan ayat dari Quran.com (Kemenag RI dan Saheeh International). Akar serta morfologi dari Quranic Arabic Corpus. Definisi klasik ditampilkan sebagai kutipan Lane dengan rujukan volume dan halaman.', 'Verse text and translations from Quran.com (Kemenag RI and Saheeh International). Roots and morphology from the Quranic Arabic Corpus. Classical definitions appear as Lane quotations with volume and page references.')}</p>
+          <p className="mt-3 max-w-3xl text-base leading-relaxed text-ink-secondary">{t('Terjemahan ayat bersumber dari Kemenag RI dan Saheeh International. Entri mencantumkan rujukan morfologi dan kamus; kutipan Lane dilengkapi jilid dan halaman.', 'Verse translations come from Kemenag RI and Saheeh International. Entries credit their morphology and dictionary references; Lane quotations include volume and page numbers.')}</p>
         </section>
         <OmniSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       </div>

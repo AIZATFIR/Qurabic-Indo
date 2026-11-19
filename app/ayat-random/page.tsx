@@ -71,42 +71,22 @@ export default function RandomAyahPage() {
     setCopied(false);
 
     try {
-      // Pick a random surah (1..114) and a random ayah within that surah's total ayahs
-      const randomSurahIdx = Math.floor(Math.random() * SURAH_LIST.length);
-      const surahMeta = SURAH_LIST[randomSurahIdx] || SURAH_LIST[0];
-      const randomAyahNum = Math.floor(Math.random() * surahMeta.ayahsCount) + 1;
-      const targetVerseKey = `${surahMeta.number}:${randomAyahNum}`;
-
-      // Fetch by key directly to guarantee 100% Indonesian words (avoids upstream /verses/random English bug)
-      const res = await fetch(
-        `https://api.quran.com/api/v4/verses/by_key/${targetVerseKey}?language=id&words=true&word_fields=text_uthmani,transliteration,translation,location&translations=33`
-      );
+      // Zero-latency internal DB fetch via SQLite + local WBW chunks
+      const res = await fetch('/api/ayah-random');
 
       if (res.ok) {
-        const json = await res.json();
-        const v = json.verse;
-        const surahNum = surahMeta.number;
-        const ayahNum = randomAyahNum;
+        const data = await res.json();
+        const surahNum = data.surahNumber;
+        const ayahNum = data.ayahNumber;
 
-        const surahNameIndo = surahMeta.nameIndo || `Surah Ke-${surahNum}`;
-        const surahNameArabic = surahMeta.nameArabic || '';
-
-        // Sort words strictly by position to guarantee exact sequential Quranic text flow
-        const rawWords = [...(v.words || [])].sort((a: any, b: any) => (a.position || 0) - (b.position || 0));
-
-        const parsedWords: RandomAyahWord[] = rawWords.map((w: any) => {
-          const arabic = w.text_uthmani || w.text || '';
-          const transliteration = w.transliteration?.text || '';
-          const rawMeaning = w.translation?.text || '';
+        const parsedWords: RandomAyahWord[] = (data.words || []).map((w: any) => {
+          const arabic = w.arabic || '';
+          const transliteration = w.transliteration || '';
+          const rawMeaning = w.meaningIndo || '';
           const matchedRoot = findBestMatchingRoot(arabic);
           const grammar = inferGrammarRole(arabic);
           const fallbackMeaning = getAuthenticWordMeaning(arabic, matchedRoot?.id);
           const meaningIndo = cleanGlossToIndonesian(rawMeaning, fallbackMeaning);
-
-          let audioUrl: string | undefined;
-          if (w.audio_url) {
-            audioUrl = w.audio_url.startsWith('http') ? w.audio_url : `https://audio.qurancdn.com/${w.audio_url}`;
-          }
 
           return {
             id: w.id || w.position,
@@ -114,8 +94,8 @@ export default function RandomAyahPage() {
             arabic,
             transliteration,
             meaningIndo,
-            audioUrl,
-            charType: (w.char_type_name === 'end' ? 'end' : 'word') as 'word' | 'end',
+            audioUrl: w.audioUrl,
+            charType: (w.charType === 'end' ? 'end' : 'word') as 'word' | 'end',
             rootLetters: matchedRoot ? matchedRoot.rootArabic : extractArabicRootLetters(arabic),
             rootSlug: matchedRoot?.id,
             posTag: grammar.posCategory,
@@ -123,16 +103,13 @@ export default function RandomAyahPage() {
           };
         });
 
-        const translationIndo = v.translations?.[0]?.text?.replace(/<sup.*?<\/sup>/g, '') || '';
-        const arabicFull = v.text_uthmani || parsedWords.filter(w => w.charType === 'word').map(w => w.arabic).join(' ');
-
         setAyah({
           surahNumber: surahNum,
-          surahNameIndo,
-          surahNameArabic,
+          surahNameIndo: data.surahNameIndo,
+          surahNameArabic: data.surahNameArabic,
           ayahNumber: ayahNum,
-          verseArabic: arabicFull,
-          verseIndo: translationIndo,
+          verseArabic: data.verseArabic,
+          verseIndo: data.verseIndo,
           audioUrl: getAyahAudioUrl(surahNum, ayahNum),
           words: parsedWords
         });

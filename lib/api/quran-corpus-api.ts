@@ -1,6 +1,7 @@
 import { RootWord, VerseOccurrence, WordSegment } from '../types/morphology';
 import { extractArabicRootLetters, findBestMatchingRoot, inferGrammarRole } from '../search/root-search';
 import { cleanGlossToIndonesian } from '../search/word-dictionary';
+import { fetchJsonWithTimeout } from './request';
 
 // AlQuran Cloud Search API response types
 export interface ApiSearchMatch {
@@ -47,70 +48,29 @@ const SURAH_WBW_EN_CACHE = new Map<number, FullAyahWBW[]>();
  * Queries multiple verified sources (equran.id official Kemenag, Quran Gading Dev, AlQuran Cloud)
  */
 async function fetchIndonesianSurahTranslationFallback(surahNumber: number): Promise<Map<number, string>> {
-  const map = new Map<number, string>();
+  const sources = await Promise.allSettled([
+    fetchJsonWithTimeout(`https://equran.id/api/v2/surat/${surahNumber}`, { next: { revalidate: 86400 } }, 3500)
+      .then(({ response, data }) => response.ok ? (data?.data?.ayat || []).reduce((map: Map<number, string>, ayah: any) => {
+        if (ayah.nomorAyat && ayah.teksIndonesia) map.set(ayah.nomorAyat, ayah.teksIndonesia);
+        return map;
+      }, new Map<number, string>()) : new Map<number, string>()),
+    fetchJsonWithTimeout(`https://api.quran.gading.dev/surah/${surahNumber}`, { next: { revalidate: 86400 } }, 3500)
+      .then(({ response, data }) => response.ok ? (data?.data?.verses || []).reduce((map: Map<number, string>, verse: any) => {
+        const number = verse.number?.inSurah;
+        if (number && verse.translation?.id) map.set(number, verse.translation.id);
+        return map;
+      }, new Map<number, string>()) : new Map<number, string>()),
+    fetchJsonWithTimeout(`https://api.alquran.cloud/v1/surah/${surahNumber}/id.indonesian`, { next: { revalidate: 86400 } }, 3500)
+      .then(({ response, data }) => response.ok ? (data?.data?.ayahs || []).reduce((map: Map<number, string>, ayah: any) => {
+        if (ayah.numberInSurah && ayah.text) map.set(ayah.numberInSurah, ayah.text);
+        return map;
+      }, new Map<number, string>()) : new Map<number, string>()),
+  ]);
 
-  // 1. Primary fallback: equran.id v2 (Official Kemenag RI Translation)
-  try {
-    const res = await fetch(`https://equran.id/api/v2/surat/${surahNumber}`, {
-      next: { revalidate: 86400 },
-      signal: AbortSignal.timeout(4000),
-    });
-    if (res.ok) {
-      const json = await res.json();
-      const ayat = json.data?.ayat || [];
-      ayat.forEach((a: any) => {
-        if (a.nomorAyat && a.teksIndonesia) {
-          map.set(a.nomorAyat, a.teksIndonesia);
-        }
-      });
-      if (map.size > 0) return map;
-    }
-  } catch (err) {
-    console.warn(`[QuranCorpus] equran.id fallback failed for surah ${surahNumber}:`, err);
+  for (const source of sources) {
+    if (source.status === 'fulfilled' && source.value.size > 0) return source.value;
   }
-
-  // 2. Secondary fallback: api.quran.gading.dev
-  try {
-    const res = await fetch(`https://api.quran.gading.dev/surah/${surahNumber}`, {
-      next: { revalidate: 86400 },
-      signal: AbortSignal.timeout(4000),
-    });
-    if (res.ok) {
-      const json = await res.json();
-      const verses = json.data?.verses || [];
-      verses.forEach((v: any) => {
-        const num = v.number?.inSurah;
-        const text = v.translation?.id;
-        if (num && text) {
-          map.set(num, text);
-        }
-      });
-      if (map.size > 0) return map;
-    }
-  } catch (err) {
-    console.warn(`[QuranCorpus] gading.dev fallback failed for surah ${surahNumber}:`, err);
-  }
-
-  // 3. Tertiary fallback: alquran.cloud id.indonesian
-  try {
-    const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/id.indonesian`, {
-      next: { revalidate: 86400 },
-      signal: AbortSignal.timeout(4000),
-    });
-    if (res.ok) {
-      const json = await res.json();
-      const ayahs = json.data?.ayahs || [];
-      ayahs.forEach((a: any) => {
-        if (a.numberInSurah && a.text) {
-          map.set(a.numberInSurah, a.text);
-        }
-      });
-    }
-  } catch (err) {
-    console.warn(`[QuranCorpus] alquran.cloud fallback failed for surah ${surahNumber}:`, err);
-  }
-
-  return map;
+  return new Map();
 }
 
 /**
@@ -123,22 +83,20 @@ export async function fetchSurahWithWBW(surahNumber: number, language: 'id' | 'e
   const fetchTranslationFallback = async () => {
     if (language === 'id') return fetchIndonesianSurahTranslationFallback(surahNumber);
     const result = new Map<number, string>();
-    const response = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`, { signal: AbortSignal.timeout(8000) });
+    const { response, data } = await fetchJsonWithTimeout(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`, {}, 6000);
     if (response.ok) {
-      const json = await response.json();
-      for (const ayah of json.data?.ayahs || []) if (ayah.numberInSurah && ayah.text) result.set(ayah.numberInSurah, ayah.text);
+      for (const ayah of data?.data?.ayahs || []) if (ayah.numberInSurah && ayah.text) result.set(ayah.numberInSurah, ayah.text);
     }
     return result;
   };
 
   try {
-    const page1Res = await fetch(
+    const { response: page1Res, data: page1Json } = await fetchJsonWithTimeout(
       `https://api.quran.com/api/v4/verses/by_chapter/${surahNumber}?language=${language}&words=true&word_fields=text_uthmani,transliteration,translation,location&translations=${translationId}&per_page=50&page=1`,
-      { next: { revalidate: 86400 } }
+      { next: { revalidate: 86400 } }, 7000
     );
 
     if (!page1Res.ok) throw new Error('Quran.com API error');
-    const page1Json = await page1Res.json();
     const totalPages = page1Json.pagination?.total_pages || 1;
     let allVerses = [...(page1Json.verses || [])];
 
@@ -146,10 +104,10 @@ export async function fetchSurahWithWBW(surahNumber: number, language: 'id' | 'e
       const pagePromises = [];
       for (let p = 2; p <= totalPages; p++) {
         pagePromises.push(
-          fetch(
+          fetchJsonWithTimeout(
             `https://api.quran.com/api/v4/verses/by_chapter/${surahNumber}?language=${language}&words=true&word_fields=text_uthmani,transliteration,translation,location&translations=${translationId}&per_page=50&page=${p}`,
-            { next: { revalidate: 86400 } }
-          ).then(r => r.ok ? r.json() : { verses: [] })
+            { next: { revalidate: 86400 } }, 7000
+          ).then(({ response, data }) => response.ok ? data : { verses: [] })
         );
       }
       const otherPages = await Promise.all(pagePromises);
@@ -227,21 +185,17 @@ export async function fetchSurahWithWBW(surahNumber: number, language: 'id' | 'e
   } catch (err) {
     console.warn('Fallback to Multi-Resource Indonesian Quran API:', err);
     // Multi-source fallback: fetch Arabic text and Indonesian translations
-    const fallbackMap = await fetchTranslationFallback();
-
-    const [arRes, idRes] = await Promise.all([
-      fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`),
-      fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/${language === 'en' ? 'en.sahih' : 'id.indonesian'}`)
+    const [arResult, fallbackMap] = await Promise.all([
+      fetchJsonWithTimeout(`https://api.alquran.cloud/v1/surah/${surahNumber}`, {}, 5000),
+      fetchTranslationFallback()
     ]);
 
-    if (!arRes.ok) return [];
-    const arJson = await arRes.json();
-    const idJson = idRes.ok ? await idRes.json() : null;
+    if (!arResult.response.ok) return [];
+    const arJson = arResult.data;
 
     const arAyahs = arJson.data?.ayahs || [];
-    const idAyahs = idJson?.data?.ayahs || [];
 
-    const fallbackFormatted: FullAyahWBW[] = arAyahs.map((ar: any, idx: number) => {
+    const fallbackFormatted: FullAyahWBW[] = arAyahs.map((ar: any) => {
       const ayahNum = ar.numberInSurah;
       const wordsRaw = ar.text.split(' ');
       const parsedWords: WBWWord[] = wordsRaw.map((w: string, wIdx: number) => {
@@ -262,7 +216,7 @@ export async function fetchSurahWithWBW(surahNumber: number, language: 'id' | 'e
         };
       });
 
-      const textIndo = fallbackMap.get(ayahNum) || idAyahs[idx]?.text || '';
+      const textIndo = fallbackMap.get(ayahNum) || '';
 
       return {
         ayahNumber: ayahNum,

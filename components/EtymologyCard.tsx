@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, Compass, ShieldCheck } from 'lucide-react';
+import { BookOpen, ShieldCheck } from 'lucide-react';
 import { QuranicUsagePattern } from '@/lib/types/morphology';
 
 interface EtymologyCardProps {
@@ -49,8 +49,7 @@ export default function EtymologyCard({
       {/* 1. Makna Inti */}
       {displayCoreMeaning && (
         <div className="space-y-2">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-mute flex items-center space-x-1.5 font-sans">
-            <Compass className="w-3.5 h-3.5 text-primary" />
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-mute font-sans">
             <span>Makna Inti</span>
           </h4>
           <p className="text-base sm:text-lg text-ink-primary leading-relaxed font-normal">

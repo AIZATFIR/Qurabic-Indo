@@ -44,6 +44,19 @@ test('Particles Dictionary & Zero-Fallback Placeholder Tests', async (t) => {
     assert.ok(!study.lexical.rootPhilosophy?.includes('memiliki peranan penting dalam kosakata Al-Qur\'an dengan berbagai bentuk turunan verba'));
   });
 
+  await t.test('6. Standalone particles get short bilingual entry glosses with honest attribution', () => {
+    const lam = getWordStudy('لِ');
+    assert.equal(lam.morphology.pos, 'Harf');
+    assert.match(lam.primaryMeaning.text, /Untuk|Milik|Bagi/);
+    assert.match(lam.primaryMeaning.textEnglish || '', /for|to|belong/i);
+    assert.equal(lam.primaryMeaning.sourceBadge, 'Qurabic · gloss editorial');
+    assert.equal(lam.primaryMeaning.sourceBadgeEnglish, 'Qurabic · editorial gloss');
+
+    const waw = getWordStudy('وَ');
+    assert.match(waw.primaryMeaning.text, /Dan/);
+    assert.equal(waw.primaryMeaning.textEnglish, 'and');
+  });
+
   await t.test('3. Root ك و ن (k-w-n) displays a sourced contextual gloss, without invented philosophy', () => {
     const study = getWordStudy('كَانَ');
     assert.equal(study.lexical.rootArabic, 'ك و ن');

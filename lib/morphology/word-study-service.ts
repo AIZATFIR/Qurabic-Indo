@@ -12,7 +12,7 @@
  */
 
 import { WordStudyViewModel, WordFamilyItem, SyntaxAnalysis, LexicalStatus } from '../lexicon/types';
-import { resolveCanonicalWordDetail, CanonicalWordContext } from './canonical-service';
+import { resolveCanonicalWordDetail, CanonicalWordContext, WordDetailModel } from './canonical-service';
 import { getQACAuthoritativeIndex } from './qac-parser';
 import { SOURCES_REGISTRY } from '../data/sources';
 import { buckwalterToArabic } from './buckwalter';
@@ -20,6 +20,7 @@ import { stripArabicHarakat } from '../search/root-search';
 import { transliterateArabic, isRawBuckwalterRoot } from './transliteration';
 import { getRootOccurrencesFromChunk } from './morphology-service';
 import { getLaneRootRecord } from '../lexicon/lane-loader';
+import { getQuranicParticleEnglishMeaning, getQuranicParticleInfo } from './particles-dictionary';
 import wbwIndonesianGlosses from '../data/wbw-indonesian-glosses.json';
 import wbwEnglishGlosses from '../data/wbw-english-glosses.json';
 
@@ -174,7 +175,8 @@ function parseSyntacticFeatures(rawTag?: string, rawFeatures?: string): SyntaxAn
  */
 export function getWordStudy(
   tokenOrLocation: string,
-  context?: CanonicalWordContext
+  context?: CanonicalWordContext,
+  resolvedDetail?: WordDetailModel
 ): WordStudyViewModel {
   // 1. Resolve canonical details using authoritative QAC parser
   const standalone = !/\d+:\d+/.test(tokenOrLocation) && !context?.wordIndex
@@ -185,7 +187,10 @@ export function getWordStudy(
     'في': { id: 'Di dalam', en: 'in', location: '2:10:1' },
     'كلا': { id: 'Sekali-kali tidak', en: 'Nay!', location: '78:4:1' },
   } as Record<string, { id: string; en: string; location?: string }>)[standalone];
-  const detail = resolveCanonicalWordDetail(particleEntry?.location || tokenOrLocation, context);
+  const detail = resolvedDetail || resolveCanonicalWordDetail(particleEntry?.location || tokenOrLocation, context);
+  const particleInfo = detail.morphology.isParticle
+    ? getQuranicParticleInfo(detail.identity.cleanArabic || standalone, detail.morphology.rawTag)
+    : null;
   const qacIndex = getQACAuthoritativeIndex();
   const rootBw = detail.lexical.root;
   const laneRoot = rootBw && !detail.morphology.isParticle ? getLaneRootRecord(rootBw) : null;
@@ -273,14 +278,19 @@ export function getWordStudy(
   // Only bundled, location-matched translations carry word-meaning provenance.
   // Caller-supplied display text and root commentary are not lexical evidence.
   const location = wordLocation(detail.identity.coordinate);
-  const primaryText = particleEntry?.id || WBW_ID[location] || 'Makna kata belum tersedia';
-  const primaryEnglish = particleEntry?.en || WBW_EN[location];
+  const primaryText = particleEntry?.id || WBW_ID[location] || particleInfo?.primaryMeaning || (detail.morphology.isParticle ? detail.translation.primaryMeaning : '') || 'Makna kata belum tersedia';
+  const primaryEnglish = particleEntry?.en || WBW_EN[location] || getQuranicParticleEnglishMeaning(detail.identity.cleanArabic || standalone, detail.morphology.rawTag);
+  const isEditorialParticleGloss = Boolean(particleEntry || (particleInfo && !WBW_ID[location]));
+  const hasIndonesianWordGloss = Boolean(WBW_ID[location] || particleEntry || isEditorialParticleGloss);
+  const hasEnglishWordGloss = Boolean(WBW_EN[location] || particleEntry || isEditorialParticleGloss);
+  const meaningSource = isEditorialParticleGloss ? SOURCES_REGISTRY.particleGloss : SOURCES_REGISTRY.wordTranslation;
 
   // 6. Build Syntactic Breakdown
   const syntax = parseSyntacticFeatures(detail.morphology.rawTag, detail.morphology.rawFeatures);
 
   const provenance = [SOURCES_REGISTRY.quranText, SOURCES_REGISTRY.morphology,
     SOURCES_REGISTRY.translation, SOURCES_REGISTRY.wordTranslation];
+  if (isEditorialParticleGloss) provenance.push(SOURCES_REGISTRY.particleGloss);
   if (lex?.hasLexicalData) provenance.push(SOURCES_REGISTRY.laneLexicon);
 
   const effectiveOccItems = detail.relatedOccurrences.length > 0
@@ -312,14 +322,14 @@ export function getWordStudy(
     },
     primaryMeaning: {
       text: primaryText,
-      source: particleEntry ? SOURCES_REGISTRY.morphology.name : SOURCES_REGISTRY.wordTranslation.name,
-      sourceBadge: particleEntry ? 'QAC · label Indonesia' : 'Quran.com · Indonesia',
-      sourceId: particleEntry ? 'quranic-arabic-corpus' : 'quran-com-wbw',
+      source: isEditorialParticleGloss ? meaningSource.name : hasIndonesianWordGloss ? SOURCES_REGISTRY.wordTranslation.name : 'Sumber terjemahan per kata belum tersedia',
+      sourceBadge: isEditorialParticleGloss ? 'Qurabic · gloss editorial' : hasIndonesianWordGloss ? 'Quran.com · Indonesia' : 'Sumber belum tersedia',
+      sourceId: isEditorialParticleGloss ? SOURCES_REGISTRY.particleGloss.id : hasIndonesianWordGloss ? 'quran-com-wbw' : undefined,
       textEnglish: primaryEnglish,
-      sourceEnglish: particleEntry ? SOURCES_REGISTRY.morphology.name : SOURCES_REGISTRY.wordTranslation.name,
-      sourceBadgeEnglish: particleEntry ? 'QAC · English' : 'Quran.com · English',
-      sourceIdEnglish: particleEntry ? 'quranic-arabic-corpus' : 'quran-com-wbw',
-      isEditorialSummary: !!particleEntry
+      sourceEnglish: isEditorialParticleGloss ? meaningSource.name : hasEnglishWordGloss ? SOURCES_REGISTRY.wordTranslation.name : 'Word-by-word source unavailable',
+      sourceBadgeEnglish: isEditorialParticleGloss ? 'Qurabic · editorial gloss' : hasEnglishWordGloss ? 'Quran.com · English' : 'Source unavailable',
+      sourceIdEnglish: isEditorialParticleGloss ? SOURCES_REGISTRY.particleGloss.id : hasEnglishWordGloss ? 'quran-com-wbw' : undefined,
+      isEditorialSummary: isEditorialParticleGloss
     },
     morphology: {
       pos: detail.morphology.pos,

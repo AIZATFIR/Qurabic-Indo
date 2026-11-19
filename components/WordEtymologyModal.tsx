@@ -49,6 +49,7 @@ export default function WordEtymologyModal({
   const classic = layoutMode === 'classic';
   const [loadError, setLoadError] = useState(false);
   const [asyncStudy, setAsyncStudy] = useState<WordStudyViewModel | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   // Reset asyncStudy when wordArabic changes or modal closes
   useEffect(() => {
@@ -74,7 +75,10 @@ export default function WordEtymologyModal({
       ayahIndo: ayahIndo || ''
     });
 
-    fetch(`/api/word-detail?${query.toString()}`)
+    const controller = new AbortController();
+    let timedOut = false;
+    const timeout = window.setTimeout(() => { timedOut = true; controller.abort(); }, 12000);
+    fetch(`/api/word-detail?${query.toString()}`, { signal: controller.signal })
       .then(res => res.ok ? res.json() : null)
       .then(json => {
         const payload = json?.data?.study || json?.study;
@@ -82,12 +86,15 @@ export default function WordEtymologyModal({
           setAsyncStudy(payload);
         } else if (isMounted) { setLoadError(true); }
       })
-      .catch(() => { if (isMounted) setLoadError(true); });
+      .catch((error) => { if (isMounted && (timedOut || error?.name !== 'AbortError')) setLoadError(true); })
+      .finally(() => window.clearTimeout(timeout));
 
     return () => {
       isMounted = false;
+      window.clearTimeout(timeout);
+      controller.abort();
     };
-  }, [isOpen, wordArabic, surahNumber, ayahNumber, wordIndex, meaningIndo, surahNameIndo, ayahArabic, ayahIndo]);
+  }, [isOpen, wordArabic, surahNumber, ayahNumber, wordIndex, meaningIndo, surahNameIndo, ayahArabic, ayahIndo, retryCount]);
 
   // Mobile Back Button / Browser History Interception
   const { handleClose } = useModalBackHandler(isOpen, onClose, { modalName: 'word_study' });
@@ -156,7 +163,25 @@ export default function WordEtymologyModal({
         </div>
 
         {/* Main Word Study Card */}
-        {asyncStudy ? <WordStudy study={asyncStudy} onClose={handleClose} isModalMode={true} /> : <p role={loadError ? 'alert' : 'status'} className="py-12 text-center text-ink-secondary">{loadError ? t('Data kata tidak dapat dimuat. Tutup lalu buka kembali untuk mencoba lagi.', 'Word data could not be loaded. Close and reopen to retry.') : t('Memuat sumber kata…', 'Loading word sources…')}</p>}
+        {asyncStudy ? <WordStudy study={asyncStudy} onClose={handleClose} isModalMode={true} /> : <div className="mx-auto max-w-2xl py-8 sm:py-12">
+          <div className="text-center">
+            <p className="font-arabic text-4xl sm:text-5xl leading-relaxed text-primary" dir="rtl">{wordArabic}</p>
+            {transliteration && <p className="mt-1 text-sm text-ink-secondary">{transliteration}</p>}
+          </div>
+
+          {meaningIndo && <section className="mt-6 border-y border-hairline py-4" aria-label={t('Padanan kata dalam ayat', 'Word gloss in this verse')}>
+            <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+              <h2 className="text-sm font-semibold text-ink-primary">{t('Padanan kata dalam ayat', 'Word gloss in this verse')}</h2>
+              <span className="text-xs text-ink-mute">Quran.com · {t('terjemahan per kata', 'word by word')}</span>
+            </div>
+            <p className="mt-2 text-lg leading-relaxed text-ink-primary">{meaningIndo}</p>
+          </section>}
+
+          <div className="py-5 text-center" role={loadError ? 'alert' : 'status'} aria-live="polite">
+            <p className="text-sm text-ink-secondary">{loadError ? t('Analisis lengkap belum termuat. Padanan ayat di atas tetap tersedia.', 'The full analysis did not load. The verse gloss above is still available.') : t('Memuat akar, keluarga kata, dan rujukan leksikon…', 'Loading root, word family, and lexicon references…')}</p>
+            {loadError && <button type="button" onClick={() => { setLoadError(false); setRetryCount((count) => count + 1); }} className="mt-4 min-h-11 rounded-full border border-hairline px-4 text-sm font-semibold text-ink-primary hover:bg-canvas-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">{t('Coba lagi', 'Try again')}</button>}
+          </div>
+        </div>}
       </div>
     </div>
   );

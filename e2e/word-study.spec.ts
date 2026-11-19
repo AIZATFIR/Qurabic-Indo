@@ -1,6 +1,37 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
+  test('root without a lexical entry does not show a corpus placeholder as its definition', async ({ page }) => {
+    await page.goto('/akar/r-A-y', { waitUntil: 'networkidle' });
+
+    const meaningSection = page.locator('section[aria-labelledby="root-meaning-heading"]');
+    await expect(meaningSection).toContainText('Ringkasan akar belum tersedia.');
+    await expect(meaningSection).not.toContainText('memiliki peranan penting dalam kosakata Al-Qur’an');
+  });
+
+  test('root gloss stays in English only when English is selected', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('qurabic_language', 'id'));
+    await page.goto('/akar/m-l-k', { waitUntil: 'domcontentloaded' });
+    const indonesianMeaning = page.locator('section[aria-labelledby="root-meaning-heading"]');
+    await expect(indonesianMeaning).toContainText('Kepemilikan hakiki');
+    await expect(indonesianMeaning).not.toContainText('The root ملك (mlk) primarily means');
+
+    await page.addInitScript(() => localStorage.setItem('qurabic_language', 'en'));
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    const englishMeaning = page.locator('section[aria-labelledby="root-meaning-heading"]');
+    await expect(englishMeaning).toContainText('The root ملك (mlk) primarily means');
+    await expect(englishMeaning).toContainText('Quran bil-Quran');
+  });
+
+  test('English root entry labels the indexed Lane text accurately', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('qurabic_language', 'en'));
+    await page.goto('/akar/r-H-m', { waitUntil: 'domcontentloaded' });
+
+    await expect(page.getByText('Indexed classical dictionary entry · Lane, 1863')).toBeVisible();
+    await expect(page.getByText('Original English source excerpt · Lane, 1863')).toHaveCount(0);
+    await expect(page.locator('section[aria-labelledby="root-meaning-heading"]')).toContainText('Classical dictionary evidence · Edward William Lane (1863)');
+  });
+
   test('root explanation uses a cited Lane source instead of generic placeholder copy', async ({ page }) => {
     await page.goto('/kata/%D8%A7%D9%84%D8%B1%D9%91%D9%8E%D8%AD%D9%90%D9%8A%D9%85%D9%90?location=1%3A1%3A4', { waitUntil: 'networkidle' });
 

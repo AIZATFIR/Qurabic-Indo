@@ -19,23 +19,23 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://qurabic-indo-corpus.vercel.app'),
   title: {
-    default: 'Qurabic (Indo) — Quranic Arabic Corpus & Root Word Explorer',
+    default: 'Qurabic — Bedah Kata Al-Qur’an',
     template: '%s | Qurabic',
   },
-  description: "Quranic Arabic Corpus & Root Word Explorer berbahasa Indonesia. Analisis morfologi, akar kata, lemma, leksikon klasik Lane's Lexicon, dan konkordansi ayat Al-Qur'an secara mendalam.",
-  keywords: ['qurabic', 'quranic corpus', 'akar kata quran', 'morfologi arab', 'bahasa indonesia', 'leksikon arab klasik', 'lanes lexicon', 'sharaf nahwu', 'mushaf al quran'],
+  description: "Baca ayat, telusuri akar kata Arab, dan bandingkan maknanya dengan rujukan leksikon klasik.",
+  keywords: ['qurabic', 'akar kata quran', 'morfologi arab', 'bahasa indonesia', 'leksikon arab klasik', 'lanes lexicon', 'sharaf nahwu', 'mushaf al quran'],
   authors: [{ name: 'Qurabic Team' }],
   openGraph: {
-    title: 'Qurabic (Indo) — Quranic Arabic Corpus & Root Word Explorer',
-    description: "Eksplorasi morfologi, akar kata, dan leksikon Al-Qur'an terpercaya berbasis Quranic Arabic Corpus dan Lane's Lexicon.",
+    title: 'Qurabic — Bedah Kata Al-Qur’an',
+    description: "Baca ayat, telusuri akar kata Arab, dan bandingkan maknanya dengan rujukan leksikon klasik.",
     siteName: 'Qurabic',
     locale: 'id_ID',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Qurabic (Indo) — Quranic Arabic Corpus & Root Word Explorer',
-    description: "Eksplorasi morfologi, akar kata, dan leksikon Al-Qur'an terpercaya.",
+    title: 'Qurabic — Bedah Kata Al-Qur’an',
+    description: "Telusuri akar kata, makna, dan ayat Al-Qur’an.",
   },
   robots: {
     index: true,
