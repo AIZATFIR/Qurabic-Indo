@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { X } from 'lucide-react';
 import WordStudy from './WordStudy';
 import { useLanguage } from '@/lib/context/LanguageContext';
@@ -181,6 +182,17 @@ export default function WordEtymologyModal({
               <span className="text-xs text-ink-mute">Quran.com · {t('terjemahan per kata', 'word by word')}</span>
             </div>
             <p className="mt-2 text-lg leading-relaxed text-ink-primary">{meaningIndo}</p>
+          </section>}
+
+          {rootLetters && matchedRootSlug && <section className="mt-5 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-hairline pb-4" aria-label={t('Akar Kata', 'Root')}>
+            <div>
+              <h2 className="text-sm font-semibold text-ink-primary">{t('Akar kata', 'Root')}</h2>
+              <p className="mt-1 font-arabic text-2xl leading-relaxed text-primary" dir="rtl">{rootLetters}</p>
+            </div>
+            <div className="text-right text-xs text-ink-mute">
+              <Link href={`/akar/${encodeURIComponent(matchedRootSlug)}`} className="font-medium text-primary underline-offset-2 hover:underline">{t('Indeks akar', 'Root index')}</Link>
+              <p>{t('Morfologi · Quranic Arabic Corpus', 'Morphology · Quranic Arabic Corpus')}</p>
+            </div>
           </section>}
 
           <div className="py-5 text-center" role={loadError ? 'alert' : 'status'} aria-live="polite">

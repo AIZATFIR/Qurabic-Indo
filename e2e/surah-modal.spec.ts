@@ -241,6 +241,10 @@ test('word study modal reports a stalled detail request and offers retry', async
   try {
     await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
     await page.getByRole('heading', { name: /Surah Al-Kahf/ }).waitFor();
+    await page.waitForFunction(() => {
+      const button = document.querySelector('button[aria-label="Pengaturan Tampilan"]');
+      return button && Object.keys(button).some((key) => key.startsWith('__reactProps$'));
+    });
     await page.getByRole('button', { name: 'Pengaturan Tampilan' }).click();
     await expect(page.getByText('Pengaturan Bacaan', { exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Tutup pengaturan' }).click();
@@ -249,6 +253,7 @@ test('word study modal reports a stalled detail request and offers retry', async
     await firstWord.click();
 
     const dialog = page.getByRole('dialog');
+    await expect(dialog.getByLabel(/Akar Kata|Root/)).toContainText(/ح م د|حمد/);
     await expect(dialog.getByRole('alert')).toContainText(/full analysis did not load|Analisis lengkap belum termuat/, { timeout: 9000 });
     await expect(dialog.getByRole('button', { name: /Try again|Coba lagi/ })).toBeVisible();
   } finally {
