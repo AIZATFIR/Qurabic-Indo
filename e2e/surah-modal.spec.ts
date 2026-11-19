@@ -90,6 +90,27 @@ test('AI translation fallback is disclosed and retained by handsfree', async ({ 
   await expect(player.getByRole('status')).toContainText(/suara AI/i);
 });
 
+test('handsfree status identifies AI audio while its file is loading', async ({ page }) => {
+  let translationRequestStarted = false;
+  await page.addInitScript(() => localStorage.setItem('qurabic_language', 'id'));
+  await page.route('**/quran-terjemahan-indonesia-audio-by-ayah/**', async (route) => {
+    translationRequestStarted = true;
+    await new Promise((resolve) => setTimeout(resolve, 2500));
+    await route.continue();
+  });
+  await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('heading', { name: /Surah Al-Kahf/ }).waitFor();
+  await page.getByRole('button', { name: 'Putar Tilawah', exact: true }).click();
+
+  const player = page.getByLabel('Pemutar audio Al-Qur’an');
+  await player.getByRole('button', { name: 'Pengaturan audio' }).click();
+  await player.getByRole('combobox', { name: 'Audio terjemahan' }).selectOption('ai-fallback');
+  await player.getByRole('combobox', { name: 'Mode handsfree' }).selectOption('reverse');
+
+  await expect.poll(() => translationRequestStarted).toBe(true);
+  await expect(player.locator('[aria-live="polite"]')).toContainText('Memuat suara AI · Gemini TTS');
+});
+
 test('failed Indonesian translation audio is reported instead of silently skipping the verse', async ({ page }) => {
   let blockedTranslationRequests = 0;
   await page.route('**/quran-terjemahan-indonesia-audio-by-ayah/**', async (route) => {

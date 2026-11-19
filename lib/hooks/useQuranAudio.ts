@@ -39,6 +39,7 @@ export interface UseQuranAudioReturn {
   translationVoiceOptions: TranslationVoiceOption[];
   isHumanTranslationAvailableForCurrentSurah: boolean;
   isAiGeneratedTranslation: boolean;
+  isAiTranslationCandidate: boolean;
   // Tadarus Handsfree (Indonesian Translation Speech)
   handsfreeMode: HandsfreeMode;
   isTranslationReadingEnabled: boolean;
@@ -75,6 +76,7 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
   const [handsfreeMode, setHandsfreeModeState] = useState<HandsfreeMode>('off');
   const [isReadingTranslation, setIsReadingTranslation] = useState(false);
   const [isAiGeneratedTranslation, setIsAiGeneratedTranslation] = useState(false);
+  const [isAiTranslationCandidate, setIsAiTranslationCandidate] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const trackRef = useRef<AudioTrack | null>(null);
   const requestRef = useRef(0);
@@ -126,6 +128,7 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
     setCurrentAyah(track.ayahNumber);
     setIsReadingTranslation(track.phase === 'translation');
     setIsAiGeneratedTranslation(false);
+    setIsAiTranslationCandidate(false);
     setCurrentTime(0);
     setDuration(0);
     lastTimePublishAtRef.current = 0;
@@ -153,6 +156,7 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
     };
     const missingTranslation = () => {
       cleanupTrackRef.current();
+      setIsAiTranslationCandidate(false);
       if (track.phase === 'translation' && prefsRef.current.translationVoiceMode === 'ai-fallback') {
         wantsPlaybackRef.current = false;
         setIsAiGeneratedTranslation(false);
@@ -170,6 +174,7 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
       clearTimer();
       if (index + 1 < candidates.length) { index++; loadCandidate(); return; }
       setIsAiGeneratedTranslation(false);
+      setIsAiTranslationCandidate(false);
       if (track.phase === 'translation') { missingTranslation(); return; }
       wantsPlaybackRef.current = false;
       setPlaybackState('error');
@@ -179,6 +184,7 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
       if (!isCurrent()) return;
       const candidateIndex = index;
       setIsAiGeneratedTranslation(false);
+      setIsAiTranslationCandidate(track.phase === 'translation' && isAiTranslationAudioUrl(candidates[index]));
       audio.src = getCachedAudioUrl(candidates[index]) || candidates[index];
       audio.load();
       armTimer();
@@ -186,7 +192,9 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
         if (!isCurrent() || candidateIndex !== index) return;
         if (!wantsPlaybackRef.current) { audio.pause(); return; }
         clearTimer();
-        setIsAiGeneratedTranslation(track.phase === 'translation' && isAiTranslationAudioUrl(candidates[candidateIndex]));
+        const isAi = track.phase === 'translation' && isAiTranslationAudioUrl(candidates[candidateIndex]);
+        setIsAiGeneratedTranslation(isAi);
+        setIsAiTranslationCandidate(isAi);
         setPlaybackState('playing');
       }).catch((err: DOMException) => {
         if (!isCurrent() || candidateIndex !== index || !wantsPlaybackRef.current) return;
@@ -194,7 +202,7 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
         else if (err.name !== 'AbortError') failCandidate();
       });
     };
-    const onPlaying = () => { if (isCurrent() && wantsPlaybackRef.current) { clearTimer(); setIsAiGeneratedTranslation(track.phase === 'translation' && isAiTranslationAudioUrl(candidates[index])); setPlaybackState('playing'); } };
+    const onPlaying = () => { if (isCurrent() && wantsPlaybackRef.current) { clearTimer(); const isAi = track.phase === 'translation' && isAiTranslationAudioUrl(candidates[index]); setIsAiGeneratedTranslation(isAi); setIsAiTranslationCandidate(isAi); setPlaybackState('playing'); } };
     const onPause = () => { if (isCurrent() && !audio.ended) { clearTimer(); setPlaybackState('paused'); } };
     const onWaiting = () => { if (isCurrent() && wantsPlaybackRef.current) { setPlaybackState('loading'); armTimer(); } };
     const onTime = () => {
@@ -280,6 +288,7 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
     setPlaybackState('idle');
     setIsReadingTranslation(false);
     setIsAiGeneratedTranslation(false);
+    setIsAiTranslationCandidate(false);
     setCurrentTime(0);
     setDuration(0);
     setError(null);
@@ -381,5 +390,5 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
     } catch { /* MediaSession is optional. */ }
   }, [currentAyah, surahNumber, selectedQari, isReadingTranslation, translationLanguage, resume, pause, nextAyah, prevAyah]);
 
-  return { currentAyah, playbackState, isPlaying: playbackState === 'playing', isLoading: playbackState === 'loading', currentTime, duration, progress: duration > 0 ? Math.min(1, currentTime / duration) : 0, repeatMode, autoNext, error, selectedQari, setSelectedQari, currentQariMeta: AVAILABLE_QARIS.find(q => q.id === selectedQari) || AVAILABLE_QARIS[0], availableQaris: AVAILABLE_QARIS, translationVoiceMode, setTranslationVoiceMode, translationVoiceOptions: TRANSLATION_VOICE_OPTIONS, isHumanTranslationAvailableForCurrentSurah: isHumanTranslationAvailable(surahNumber, translationLanguage), isAiGeneratedTranslation, handsfreeMode, isTranslationReadingEnabled: handsfreeMode !== 'off', isReadingTranslation, translationSpeechSupported: true, setHandsfreeMode, toggleTranslationReading, setTranslationReadingEnabled, playAyah, togglePlayPause, pause, resume, nextAyah, prevAyah, setRepeatMode, cycleRepeatMode, setAutoNext, toggleAutoNext, seek, stop };
+  return { currentAyah, playbackState, isPlaying: playbackState === 'playing', isLoading: playbackState === 'loading', currentTime, duration, progress: duration > 0 ? Math.min(1, currentTime / duration) : 0, repeatMode, autoNext, error, selectedQari, setSelectedQari, currentQariMeta: AVAILABLE_QARIS.find(q => q.id === selectedQari) || AVAILABLE_QARIS[0], availableQaris: AVAILABLE_QARIS, translationVoiceMode, setTranslationVoiceMode, translationVoiceOptions: TRANSLATION_VOICE_OPTIONS, isHumanTranslationAvailableForCurrentSurah: isHumanTranslationAvailable(surahNumber, translationLanguage), isAiGeneratedTranslation, isAiTranslationCandidate, handsfreeMode, isTranslationReadingEnabled: handsfreeMode !== 'off', isReadingTranslation, translationSpeechSupported: true, setHandsfreeMode, toggleTranslationReading, setTranslationReadingEnabled, playAyah, togglePlayPause, pause, resume, nextAyah, prevAyah, setRepeatMode, cycleRepeatMode, setAutoNext, toggleAutoNext, seek, stop };
 }

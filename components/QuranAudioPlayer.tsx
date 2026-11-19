@@ -29,7 +29,7 @@ export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic
     progress: audio.progress,
     observedAt: performance.now(),
   });
-  const { currentAyah, playbackState, isPlaying, isLoading, isReadingTranslation, isAiGeneratedTranslation, handsfreeMode, currentQariMeta } = audio;
+  const { currentAyah, playbackState, isPlaying, isLoading, isReadingTranslation, isAiGeneratedTranslation, isAiTranslationCandidate, handsfreeMode, currentQariMeta } = audio;
 
   useEffect(() => {
     const trackIdentity = `${audio.currentAyah}:${audio.isReadingTranslation}`;
@@ -85,6 +85,10 @@ export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic
             {isReadingTranslation
               ? isAiGeneratedTranslation
                 ? t('Suara AI · Gemini TTS', 'AI voice · Gemini TTS')
+                : isAiTranslationCandidate
+                  ? isLoading
+                    ? t('Memuat suara AI · Gemini TTS', 'Loading AI voice · Gemini TTS')
+                    : t('Suara AI · Gemini TTS', 'AI voice · Gemini TTS')
                 : language === 'en'
                   ? t('Rekaman terjemahan Indonesia', 'Human English translation')
                   : t('Terjemahan Indonesia · suara manusia', 'Indonesian translation · human recording')
