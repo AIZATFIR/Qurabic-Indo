@@ -13,6 +13,21 @@ interface QBQRootItem {
 
 const QBQ_ROOTS: Record<string, QBQRootItem> = (qbqRootsData as unknown) as Record<string, QBQRootItem>;
 
+const normalizeArabicRoot = (root: string) => root.replace(/\s+/g, '').replace(/[أإآٱ]/g, 'ا');
+const QBQ_ROOTS_NORMALIZED = new Map<string, QBQRootItem>();
+const AMBIGUOUS_QBQ_ROOTS = new Set<string>();
+for (const item of Object.values(QBQ_ROOTS)) {
+  const key = normalizeArabicRoot(item.rootArabic);
+  if (QBQ_ROOTS_NORMALIZED.has(key)) AMBIGUOUS_QBQ_ROOTS.add(key);
+  else QBQ_ROOTS_NORMALIZED.set(key, item);
+}
+for (const key of AMBIGUOUS_QBQ_ROOTS) QBQ_ROOTS_NORMALIZED.delete(key);
+
+export function getQbqRootEntry(rootArabic: string): QBQRootItem | undefined {
+  const cleanKey = rootArabic.replace(/\s+/g, '');
+  return QBQ_ROOTS[cleanKey] || QBQ_ROOTS_NORMALIZED.get(normalizeArabicRoot(cleanKey));
+}
+
 export interface RootSemanticProfile {
   titleIndo: string;
   coreMeaning: string;
@@ -954,8 +969,8 @@ export function getRootSemanticProfile(rootBw: string, rootArabic?: string): Roo
   }
 
   // 2. Query Quran-bil-Quran (QBQ) & Al-Mufradat fi Gharib al-Quran (Al-Raghib al-Isfahani)
-  const cleanArKey = (rootArabic || dbRoot?.rootArabic || '').replace(/\s+/g, '');
-  const qbqEntry = QBQ_ROOTS[cleanArKey];
+  const cleanArKey = rootArabic || dbRoot?.rootArabic || '';
+  const qbqEntry = getQbqRootEntry(cleanArKey);
   const rootArDisplay = rootArabic || dbRoot?.rootArabic || cleanBw;
 
   const sampleVerbs = (dbRoot?.verbs || []).filter(v => v.arabic && !v.arabic.includes('('));

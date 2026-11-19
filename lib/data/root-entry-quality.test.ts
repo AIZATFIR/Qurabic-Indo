@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { getCanonicalRootDetail } from '../morphology/canonical-service';
-import { getRootSemanticProfile } from './root-semantics';
+import { getQbqRootEntry, getRootSemanticProfile } from './root-semantics';
 import { ROOT_DATABASE } from './roots';
 
 // These roots had only a generated occurrence-count sentence in the root data.
@@ -22,6 +22,8 @@ const malikRoot = getCanonicalRootDetail('m-l-k');
 assert.ok(malikRoot?.coreMeaningEnglish, 'The root page should receive the English gloss');
 assert.ok(malikRoot.coreMeaning, 'The root page should retain an available Indonesian summary');
 assert.notEqual(malikRoot.coreMeaning, malikRoot.coreMeaningEnglish, 'The root page must keep Indonesian and English summaries separate');
+
+assert.equal(getQbqRootEntry('ا ل ه')?.meaningEn.startsWith('Allah ('), true, 'Alif in the corpus root should match the hamza-on-alif spelling in the sourced QBQ gloss');
 
 let checkedEnglishGlosses = 0;
 for (const root of ROOT_DATABASE) {
