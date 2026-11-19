@@ -60,42 +60,42 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     const meaningSection = page.locator('section[aria-labelledby="root-meaning-heading"]');
     expect(renderedHtml).not.toContain('Memuat data akar dan kamus');
     expect(supplementalRequests).toHaveLength(0);
-    await expect(meaningSection).toContainText('English gloss · Quran bil-Quran');
+    await expect(meaningSection).toContainText('Glos akar bahasa Inggris · Quran bil-Quran · tanpa rujukan halaman');
     await expect(meaningSection).toContainText('The root رَأَى primarily means');
     await expect(meaningSection.getByRole('link', { name: 'Lihat lema terkait di Qabas · Birzeit' })).toHaveAttribute('href', 'https://sina.birzeit.edu/qabas/lemma/202001196');
   });
 
-  test('Indonesian root page shows a sourced English gloss when no Indonesian summary exists', async ({ page }) => {
+  test('Indonesian root page prefers a cited Lane entry over an editorial summary', async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem('qurabic_language', 'id'));
     await page.goto('/akar/d-y-n', { waitUntil: 'domcontentloaded' });
 
     const meaningSection = page.locator('section[aria-labelledby="root-meaning-heading"]');
-    await expect(meaningSection).toContainText('English gloss · Quran bil-Quran');
-    await expect(meaningSection.locator('p[lang="en"]').first()).toContainText('The root "dyn" primarily means');
-    await expect(meaningSection.getByRole('link', { name: 'Quran bil-Quran' })).toHaveAttribute('href', /quran-bil-quran/);
+    await expect(meaningSection).toContainText('Kutipan asli Lane · bahasa Inggris · belum diterjemahkan');
+    await expect(meaningSection.locator('p[lang="en"]').first()).toContainText('He was, or became, obedient');
+    await expect(meaningSection).toContainText('Part 3, p. 943');
   });
 
-  test('root gloss stays in English only when English is selected', async ({ page }) => {
+  test('cited Lane root definition is consistent across Indonesian and English modes', async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem('qurabic_language', 'id'));
     await page.goto('/akar/m-l-k', { waitUntil: 'domcontentloaded' });
     const indonesianMeaning = page.locator('section[aria-labelledby="root-meaning-heading"]');
-    await expect(indonesianMeaning).toContainText('Kepemilikan hakiki');
-    await expect(indonesianMeaning).not.toContainText('The root ملك (mlk) primarily means');
+    await expect(indonesianMeaning).toContainText('Kutipan asli Lane · bahasa Inggris · belum diterjemahkan');
+    await expect(indonesianMeaning.locator('p[lang="en"]').first()).toContainText('He possessed it, or owned it');
 
     await page.addInitScript(() => localStorage.setItem('qurabic_language', 'en'));
     await page.reload({ waitUntil: 'domcontentloaded' });
     const englishMeaning = page.locator('section[aria-labelledby="root-meaning-heading"]');
-    await expect(englishMeaning).toContainText('The root ملك (mlk) primarily means');
-    await expect(englishMeaning).toContainText('Quran bil-Quran');
+    await expect(englishMeaning).toContainText('Original English dictionary entry · Lane, 1863');
+    await expect(englishMeaning.locator('p[lang="en"]').first()).toContainText('He possessed it, or owned it');
   });
 
   test('English root entry labels the indexed Lane text accurately', async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem('qurabic_language', 'en'));
     await page.goto('/akar/r-H-m', { waitUntil: 'domcontentloaded' });
 
-    await expect(page.getByText('Indexed classical dictionary entry · Lane, 1863')).toBeVisible();
+    await expect(page.getByText('Original English dictionary entry · Lane, 1863')).toBeVisible();
     await expect(page.getByText('Original English source excerpt · Lane, 1863')).toHaveCount(0);
-    await expect(page.locator('section[aria-labelledby="root-meaning-heading"]')).toContainText('Classical dictionary evidence · Edward William Lane (1863)');
+    await expect(page.locator('section[aria-labelledby="root-meaning-heading"]')).toContainText('Edward William Lane, An Arabic-English Lexicon');
   });
 
   test('root explanation uses a cited Lane source instead of generic placeholder copy', async ({ page }) => {
