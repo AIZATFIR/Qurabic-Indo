@@ -7,6 +7,10 @@ export interface AudioProgressSample {
   progress: number;
 }
 
+export function shouldPublishAudioTime(now: number, lastPublishedAt: number, minimumIntervalMs = 500): boolean {
+  return now - lastPublishedAt >= minimumIntervalMs;
+}
+
 export function estimateAudioProgress(sample: AudioProgressSample): number {
   const { currentTime, duration, observedAt, now, isPlaying, progress } = sample;
   if (!Number.isFinite(duration) || duration <= 0) {

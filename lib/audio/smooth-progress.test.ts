@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { estimateAudioProgress, stabilizeAudioProgress } from './smooth-progress';
+import { estimateAudioProgress, shouldPublishAudioTime, stabilizeAudioProgress } from './smooth-progress';
 
 test('audio progress interpolation follows playback between browser timeupdate events', () => {
   assert.equal(estimateAudioProgress({ currentTime: 10, duration: 100, observedAt: 1000, now: 1500, isPlaying: true, progress: 0.1 }), 0.105);
@@ -19,4 +19,9 @@ test('audio progress ignores small backward updates but permits an intentional s
   assert.equal(stabilizeAudioProgress(0.42, 0.45), 0.45);
   assert.equal(stabilizeAudioProgress(0.42, 0.45, true), 0.42);
   assert.equal(stabilizeAudioProgress(1.4, 0.45), 1);
+});
+
+test('audio time state publishes at most twice per second while progress remains frame-interpolated', () => {
+  assert.equal(shouldPublishAudioTime(1499, 1000), false);
+  assert.equal(shouldPublishAudioTime(1500, 1000), true);
 });

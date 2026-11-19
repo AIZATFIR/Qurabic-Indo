@@ -90,6 +90,26 @@ test('AI translation fallback is disclosed and retained by handsfree', async ({ 
   await expect(player.getByRole('status')).toContainText(/suara AI/i);
 });
 
+test('failed Indonesian translation audio is reported instead of silently skipping the verse', async ({ page }) => {
+  let blockedTranslationRequests = 0;
+  await page.route('**/quran-terjemahan-indonesia-audio-by-ayah/**', async (route) => {
+    blockedTranslationRequests++;
+    await route.abort();
+  });
+  await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('heading', { name: /Surah Al-Kahf/ }).waitFor();
+  await page.getByRole('button', { name: 'Putar Tilawah', exact: true }).click();
+
+  const player = page.getByLabel('Pemutar audio Al-Qur’an');
+  await player.getByRole('button', { name: 'Pengaturan audio' }).click();
+  await player.getByRole('combobox', { name: 'Audio terjemahan' }).selectOption('ai-fallback');
+  await player.getByRole('combobox', { name: 'Mode handsfree' }).selectOption('reverse');
+
+  await expect.poll(() => blockedTranslationRequests).toBeGreaterThan(0);
+  await expect(player.getByRole('alert')).toContainText(/Audio terjemahan ayat ini gagal dimuat/);
+  await expect(player.getByText(/(?:Ayat|Verse) 1\/110/)).toBeVisible();
+});
+
 test('word study modal leaves loading state and renders the source-backed entry', async ({ page }) => {
   test.setTimeout(60000);
   const extraExcerptRequests: string[] = [];

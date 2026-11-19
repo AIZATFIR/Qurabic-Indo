@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { DEFAULT_TRANSLATION_VOICE_MODE, getAudioCandidateUrls, getTranslationAudioCandidateUrls, getFirstAudioTrack, getNextAudioTrack, isHumanTranslationAvailable, isAiTranslationAudioUrl, AVAILABLE_QARIS, QariMeta, TranslationVoiceMode, TRANSLATION_VOICE_OPTIONS, TranslationVoiceOption, AudioTrack, TranslationAudioLanguage, AUDIO_STARTUP_TIMEOUT_MS } from '../api/audio';
 import { getCachedAudioUrl, preloadNextAudioTrack } from '../audio/audio-preloader';
+import { shouldPublishAudioTime } from '../audio/smooth-progress';
 
 export type PlaybackState = 'idle' | 'loading' | 'playing' | 'paused' | 'ended' | 'error';
 export type RepeatMode = 'off' | 'ayah' | 'surah';
@@ -65,6 +66,7 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
   const [playbackState, setPlaybackState] = useState<PlaybackState>('idle');
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const lastTimePublishAtRef = useRef(0);
   const [repeatMode, setRepeatModeState] = useState<RepeatMode>('off');
   const [autoNext, setAutoNextState] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -126,6 +128,7 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
     setIsAiGeneratedTranslation(false);
     setCurrentTime(0);
     setDuration(0);
+    lastTimePublishAtRef.current = 0;
     setError(null);
     setPlaybackState('loading');
     scrollToAyah(track.ayahNumber);
@@ -150,6 +153,13 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
     };
     const missingTranslation = () => {
       cleanupTrackRef.current();
+      if (track.phase === 'translation' && prefsRef.current.translationVoiceMode === 'ai-fallback') {
+        wantsPlaybackRef.current = false;
+        setIsAiGeneratedTranslation(false);
+        setPlaybackState('error');
+        setError('Audio terjemahan ayat ini gagal dimuat. Periksa koneksi lalu tekan Putar untuk mencoba lagi.');
+        return;
+      }
       // The Arabic half of reverse mode must still play the SAME verse.
       if (prefsRef.current.handsfreeMode === 'reverse') startTrackRef.current({ ...track, phase: 'arabic' });
       else completeTrackRef.current();
@@ -187,7 +197,15 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
     const onPlaying = () => { if (isCurrent() && wantsPlaybackRef.current) { clearTimer(); setIsAiGeneratedTranslation(track.phase === 'translation' && isAiTranslationAudioUrl(candidates[index])); setPlaybackState('playing'); } };
     const onPause = () => { if (isCurrent() && !audio.ended) { clearTimer(); setPlaybackState('paused'); } };
     const onWaiting = () => { if (isCurrent() && wantsPlaybackRef.current) { setPlaybackState('loading'); armTimer(); } };
-    const onTime = () => { if (isCurrent()) { setCurrentTime(audio.currentTime); if (Number.isFinite(audio.duration)) setDuration(audio.duration); } };
+    const onTime = () => {
+      if (!isCurrent()) return;
+      const now = performance.now();
+      if (shouldPublishAudioTime(now, lastTimePublishAtRef.current)) {
+        lastTimePublishAtRef.current = now;
+        setCurrentTime(audio.currentTime);
+      }
+      if (Number.isFinite(audio.duration)) setDuration(audio.duration);
+    };
     const onEnded = () => { if (isCurrent() && wantsPlaybackRef.current) { clearTimer(); completeTrackRef.current(); } };
     audio.addEventListener('playing', onPlaying);
     audio.addEventListener('pause', onPause);
