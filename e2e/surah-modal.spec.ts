@@ -159,7 +159,9 @@ test('slow Indonesian human audio falls back to TTS within 2.5 seconds', async (
   });
   await page.goto('/baca?surah=2', { waitUntil: 'domcontentloaded' });
   await page.getByRole('heading', { name: /Surah Al-Baqarah/ }).waitFor();
-  await page.getByRole('button', { name: 'Putar Tilawah Ayat 1', exact: true }).click();
+  const firstVersePlay = page.getByRole('button', { name: 'Putar Tilawah Ayat 1', exact: true });
+  await firstVersePlay.waitFor({ state: 'visible', timeout: 30000 });
+  await firstVersePlay.click();
 
   const player = page.getByLabel('Pemutar audio Al-Qur’an');
   await expect(player).toBeVisible();
