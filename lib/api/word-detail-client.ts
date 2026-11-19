@@ -16,7 +16,7 @@ export interface WordDetailPayload {
 }
 
 const MAX_CACHED_WORD_DETAILS = 24;
-const WORD_DETAIL_TIMEOUT_MS = 8_000;
+const WORD_DETAIL_TIMEOUT_MS = 5_000;
 const wordDetailRequests = new Map<string, Promise<WordDetailPayload>>();
 
 export function getWordDetailUrl(query: WordDetailQuery): string {
