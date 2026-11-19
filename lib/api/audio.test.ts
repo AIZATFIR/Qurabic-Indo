@@ -48,7 +48,7 @@ test('reverse handsfree starts Arabic on Al-Kahf when Indonesian recording is mi
   assert.deepEqual(getFirstAudioTrack(69, 38, 'reverse'), { ayahNumber: 38, phase: 'arabic' });
   assert.deepEqual(getTranslationAudioCandidateUrls(69, 38), []);
   assert.equal(AUDIO_STARTUP_TIMEOUT_MS.translation, 4000, 'Failed translation audio advances after four seconds');
-  assert.equal(AUDIO_STARTUP_TIMEOUT_MS.translationFallback, 2000, 'When selected, missing human audio falls back to TTS after two seconds');
+  assert.equal(AUDIO_STARTUP_TIMEOUT_MS.translationFallback, 6000, 'Slow human Indonesian recordings get time to start before TTS fallback');
   assert.deepEqual(getNextAudioTrack({ surahNumber: 18, ayahNumber: 5, phase: 'arabic', totalAyahs: 110, handsfreeMode: 'reverse', repeatMode: 'off', autoNext: true }), { ayahNumber: 6, phase: 'arabic' });
 });
 

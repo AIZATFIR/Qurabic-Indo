@@ -90,6 +90,50 @@ test('AI translation fallback is disclosed and retained by handsfree', async ({ 
   await expect(player.getByRole('status')).toContainText(/suara AI/i);
 });
 
+test('slow Indonesian human audio gets time to start before TTS fallback', async ({ page }) => {
+  test.setTimeout(30000);
+  await page.addInitScript(() => {
+    const audioWindow = window as typeof window & { __audioSources?: string[] };
+    audioWindow.__audioSources = [];
+    const source = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'src');
+    if (source?.set) Object.defineProperty(HTMLMediaElement.prototype, 'src', {
+      ...source,
+      set(value: string) {
+        if (this instanceof HTMLAudioElement) audioWindow.__audioSources?.push(value);
+        source.set!.call(this, value);
+      },
+    });
+  });
+
+  let humanAudioRequests = 0;
+  await page.route(/archive\.org\/download\/AlQuran-terjemahan-indonesia-tanpa-bahasa-arab\/002001\.mp3/, async route => {
+    humanAudioRequests++;
+    await new Promise(resolve => setTimeout(resolve, 6000));
+    await route.abort();
+  });
+  await page.route('**/quran-terjemahan-indonesia-audio-by-ayah/**', route => route.abort());
+
+  await page.addInitScript(() => {
+    localStorage.setItem('qurabic_language', 'id');
+    localStorage.setItem('qurabic_audio_translation_voice', 'ai-fallback');
+  });
+  await page.goto('/baca?surah=2', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('heading', { name: /Surah Al-Baqarah/ }).waitFor();
+  await page.getByRole('button', { name: 'Putar Tilawah Ayat 1', exact: true }).click();
+
+  const player = page.getByLabel('Pemutar audio Al-Qur’an');
+  await expect(player).toBeVisible();
+  await player.getByRole('button', { name: 'Pengaturan audio' }).click();
+  await player.getByRole('combobox', { name: 'Audio terjemahan' }).selectOption('ai-fallback');
+  await player.getByRole('combobox', { name: 'Mode handsfree' }).selectOption('reverse');
+  await expect.poll(() => page.evaluate(() => (window as typeof window & { __audioSources?: string[] }).__audioSources || []), { timeout: 5000 })
+    .toContainEqual(expect.stringContaining('archive.org/download/AlQuran-terjemahan-indonesia-tanpa-bahasa-arab/002001.mp3'));
+  await page.waitForTimeout(2500);
+  const sources = await page.evaluate(() => (window as typeof window & { __audioSources?: string[] }).__audioSources || []);
+  expect(sources.at(-1)).toContain('archive.org/download/AlQuran-terjemahan-indonesia-tanpa-bahasa-arab/002001.mp3');
+  expect(humanAudioRequests).toBeGreaterThan(0);
+});
+
 test('handsfree status identifies AI audio while its file is loading', async ({ page }) => {
   let translationRequestStarted = false;
   await page.addInitScript(() => localStorage.setItem('qurabic_language', 'id'));
