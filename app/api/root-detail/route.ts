@@ -7,7 +7,7 @@ import wbwIndonesian from '@/lib/data/wbw-indonesian-glosses.json';
 import wbwEnglish from '@/lib/data/wbw-english-glosses.json';
 import { getQabasLemmaId } from '@/lib/lexicon/qabas-lemma-lookup';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 86_400;
 
 export async function GET(request: NextRequest) {
   const rootId = request.nextUrl.searchParams.get('root')?.trim() || '';
