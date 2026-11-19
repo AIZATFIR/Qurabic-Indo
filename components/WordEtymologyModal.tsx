@@ -27,6 +27,8 @@ interface WordEtymologyModalProps {
   ayahIndo?: string;
 }
 
+const WORD_STUDY_REQUEST_TIMEOUT_MS = 8_000;
+
 export default function WordEtymologyModal({
   isOpen,
   onClose,
@@ -80,7 +82,7 @@ export default function WordEtymologyModal({
 
     const controller = new AbortController();
     let timedOut = false;
-    const timeout = window.setTimeout(() => { timedOut = true; controller.abort(); }, 12000);
+    const timeout = window.setTimeout(() => { timedOut = true; controller.abort(); }, WORD_STUDY_REQUEST_TIMEOUT_MS);
     fetch(`/api/word-detail?${query.toString()}`, { signal: controller.signal })
       .then(res => res.ok ? res.json() : null)
       .then(json => {

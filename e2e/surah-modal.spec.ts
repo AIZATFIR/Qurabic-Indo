@@ -174,3 +174,30 @@ test('word study modal leaves loading state and renders the source-backed entry'
   await expect(dialog.getByRole('status')).toHaveCount(0);
   expect(extraExcerptRequests).toHaveLength(0);
 });
+
+test('word study modal reports a stalled detail request and offers retry', async ({ page }) => {
+  test.setTimeout(20000);
+  let releaseRequest!: () => void;
+  const stalledRequest = new Promise<void>((resolve) => { releaseRequest = resolve; });
+  await page.route('**/api/word-detail?*', async (route) => {
+    await stalledRequest;
+    await route.fulfill({ status: 503, json: { error: 'test request released' } }).catch(() => {});
+  });
+
+  try {
+    await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
+    await page.getByRole('heading', { name: /Surah Al-Kahf/ }).waitFor();
+    await page.getByRole('button', { name: 'Pengaturan Tampilan' }).click();
+    await expect(page.getByText('Pengaturan Bacaan', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Tutup pengaturan' }).click();
+    const firstWord = page.locator('[role="button"][aria-label^="Bedah kata:"]').first();
+    await firstWord.waitFor({ state: 'visible', timeout: 30000 });
+    await firstWord.click();
+
+    const dialog = page.getByRole('dialog');
+    await expect(dialog.getByRole('alert')).toContainText(/full analysis did not load|Analisis lengkap belum termuat/, { timeout: 9000 });
+    await expect(dialog.getByRole('button', { name: /Try again|Coba lagi/ })).toBeVisible();
+  } finally {
+    releaseRequest();
+  }
+});
