@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, memo } from 'react';
+import React, { useEffect, useRef, useState, memo } from 'react';
 import { useLanguage } from '@/lib/context/LanguageContext';
 import WordEtymologyModal from './WordEtymologyModal';
+import { prefetchWordDetail } from '@/lib/api/word-detail-client';
 
 export interface QuranWordClickData {
   wordArabic: string;
@@ -117,6 +118,11 @@ function QuranWordInteractiveComponent({
 }: QuranWordInteractiveProps) {
   const { t } = useLanguage();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const prefetchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => {
+    if (prefetchTimerRef.current) clearTimeout(prefetchTimerRef.current);
+  }, []);
 
   const displayTransliteration = transliteration && !transliteration.startsWith('Kata ')
     ? transliteration
@@ -160,7 +166,21 @@ function QuranWordInteractiveComponent({
       ? 'px-4.5 py-4 min-w-[140px] sm:min-w-[165px]'
       : 'px-6 py-5 min-w-[180px] sm:min-w-[215px]';
 
+  const scheduleWordPrefetch = (event: React.PointerEvent<HTMLSpanElement>) => {
+    if (event.pointerType !== 'mouse' || !surahNumber || !ayahNumber || !wordIndex) return;
+    if (prefetchTimerRef.current) clearTimeout(prefetchTimerRef.current);
+    prefetchTimerRef.current = setTimeout(() => {
+      prefetchWordDetail({ word: wordArabic, location: `${surahNumber}:${ayahNumber}:${wordIndex}` });
+    }, 120);
+  };
+
+  const clearWordPrefetch = () => {
+    if (prefetchTimerRef.current) clearTimeout(prefetchTimerRef.current);
+    prefetchTimerRef.current = null;
+  };
+
   const handleClick = () => {
+    clearWordPrefetch();
     if (onWordClick) {
       onWordClick({
         wordArabic,
@@ -200,6 +220,8 @@ function QuranWordInteractiveComponent({
         <span
           role="button"
           tabIndex={0}
+          onPointerEnter={scheduleWordPrefetch}
+          onPointerLeave={clearWordPrefetch}
           onClick={handleClick}
           onKeyDown={handleKeyDown}
           aria-label={a11yLabel}
@@ -216,6 +238,8 @@ function QuranWordInteractiveComponent({
         <span
           role="button"
           tabIndex={0}
+          onPointerEnter={scheduleWordPrefetch}
+          onPointerLeave={clearWordPrefetch}
           onClick={handleClick}
           onKeyDown={handleKeyDown}
           aria-label={a11yLabel}

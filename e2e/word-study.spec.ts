@@ -1,6 +1,28 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
+  test('hovering a Quran word warms its entry before opening the study card', async ({ page }) => {
+    const requests: string[] = [];
+    page.on('request', request => {
+      if (request.url().includes('/api/word-detail?')) requests.push(request.url());
+    });
+    await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
+    await page.getByRole('heading', { name: /Surah Al-Kahf/ }).waitFor();
+    await page.getByRole('button', { name: 'Pengaturan Tampilan' }).click();
+    await expect(page.getByText('Pengaturan Bacaan', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Tutup pengaturan' }).click();
+    const firstWord = page.locator('[role="button"][aria-label^="Bedah kata:"]').first();
+    await firstWord.waitFor({ state: 'visible', timeout: 30000 });
+    await firstWord.hover();
+    const warmedResponse = await page.waitForResponse(response => response.url().includes('/api/word-detail?') && !response.url().includes('excerpt='), { timeout: 2500 });
+    expect(warmedResponse.ok()).toBe(true);
+    expect(new URL(warmedResponse.url()).searchParams.get('location')).toMatch(/^18:\d+:\d+$/);
+
+    await firstWord.click();
+    await expect(page.getByRole('dialog').getByText(/Makna Kata|Word meaning/, { exact: true })).toBeVisible();
+    expect(requests).toHaveLength(1);
+  });
+
   test('root without a lexical entry does not show a corpus placeholder as its definition', async ({ page }) => {
     const supplementalRequests: string[] = [];
     page.on('request', request => {

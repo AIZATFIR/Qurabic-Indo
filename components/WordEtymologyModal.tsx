@@ -7,6 +7,7 @@ import { useLanguage } from '@/lib/context/LanguageContext';
 import { useTheme } from '@/lib/context/ThemeContext';
 import { WordStudyViewModel } from '@/lib/lexicon/types';
 import { useModalBackHandler } from '@/lib/hooks/useModalBackHandler';
+import { getWordDetailUrl, loadWordDetail } from '@/lib/api/word-detail-client';
 
 interface WordEtymologyModalProps {
   isOpen: boolean;
@@ -26,8 +27,6 @@ interface WordEtymologyModalProps {
   ayahArabic?: string;
   ayahIndo?: string;
 }
-
-const WORD_STUDY_REQUEST_TIMEOUT_MS = 8_000;
 
 export default function WordEtymologyModal({
   isOpen,
@@ -67,26 +66,20 @@ export default function WordEtymologyModal({
     const locParam = (surahNumber && ayahNumber && wordIndex) ? `${surahNumber}:${ayahNumber}:${wordIndex}` : '';
     // A verse coordinate fully identifies a Quran word. Keeping the cache key
     // independent of interface language and verse text lets CDN responses be reused.
-    const query = locParam
-      ? new URLSearchParams({ location: locParam })
-      : new URLSearchParams({
-          word: wordArabic,
-          surah: surahNumber ? String(surahNumber) : '',
-          ayah: ayahNumber ? String(ayahNumber) : '',
-          wordIndex: wordIndex ? String(wordIndex) : '',
-          meaning: meaningIndo || '',
-          surahNameIndo: surahNameIndo || '',
-          ayahArabic: ayahArabic || '',
-          ayahIndo: ayahIndo || ''
-        });
-
-    const controller = new AbortController();
-    let timedOut = false;
-    const timeout = window.setTimeout(() => { timedOut = true; controller.abort(); }, WORD_STUDY_REQUEST_TIMEOUT_MS);
-    fetch(`/api/word-detail?${query.toString()}`, { signal: controller.signal })
-      .then(res => res.ok ? res.json() : null)
+    const url = getWordDetailUrl({
+      word: wordArabic,
+      location: locParam || undefined,
+      surahNumber,
+      ayahNumber,
+      wordIndex,
+      meaningIndo,
+      surahNameIndo,
+      ayahArabic,
+      ayahIndo,
+    });
+    loadWordDetail(url)
       .then(json => {
-        const payload = json?.data?.study || json?.study;
+        const payload = (json.data?.study || json.study) as WordStudyViewModel | undefined;
         if (isMounted && payload) {
           setAsyncStudy(locParam ? {
             ...payload,
@@ -102,13 +95,10 @@ export default function WordEtymologyModal({
           } : payload);
         } else if (isMounted) { setLoadError(true); }
       })
-      .catch((error) => { if (isMounted && (timedOut || error?.name !== 'AbortError')) setLoadError(true); })
-      .finally(() => window.clearTimeout(timeout));
+      .catch(() => { if (isMounted) setLoadError(true); });
 
     return () => {
       isMounted = false;
-      window.clearTimeout(timeout);
-      controller.abort();
     };
   }, [isOpen, wordArabic, surahNumber, ayahNumber, wordIndex, meaningIndo, surahNameIndo, ayahArabic, ayahIndo, retryCount]);
 
