@@ -5,6 +5,7 @@ import { getCanonicalRootDetail } from '@/lib/morphology/canonical-service';
 import { buckwalterToArabic } from '@/lib/morphology/buckwalter';
 import wbwIndonesian from '@/lib/data/wbw-indonesian-glosses.json';
 import wbwEnglish from '@/lib/data/wbw-english-glosses.json';
+import { getQabasLemmaId } from '@/lib/lexicon/qabas-lemma-lookup';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,18 +30,21 @@ export async function GET(request: NextRequest) {
     verbForm?: string;
     meaningIndo?: string;
     meaningEnglish?: string;
+    qabasLemmaId?: string;
   }> = {};
 
   for (const record of records) {
     if (!record.lemma) continue;
     const key = `${record.pos}:${record.lemma}`;
     if (lemmaSamples[key]) continue;
+    const qabasLemmaId = getQabasLemmaId(record.wordLocationKey);
     lemmaSamples[key] = {
       coordinate: record.wordLocationKey,
       formArabic: record.formArabic || buckwalterToArabic(record.lemma),
       ...(record.verbForm ? { verbForm: record.verbForm } : {}),
       ...(meaningsIndo[record.wordLocationKey] ? { meaningIndo: meaningsIndo[record.wordLocationKey] } : {}),
       ...(meaningsEnglish[record.wordLocationKey] ? { meaningEnglish: meaningsEnglish[record.wordLocationKey] } : {}),
+      ...(qabasLemmaId ? { qabasLemmaId } : {}),
     };
   }
 

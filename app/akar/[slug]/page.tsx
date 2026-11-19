@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation';
 import RootDetailView, { type RootLemmaSample } from '@/components/RootDetailView';
 import wbwIndonesian from '@/lib/data/wbw-indonesian-glosses.json';
 import wbwEnglish from '@/lib/data/wbw-english-glosses.json';
+import { getQabasLemmaId } from '@/lib/lexicon/qabas-lemma-lookup';
 
 export function generateStaticParams() {
   // Render root pages on demand via dynamicParams = true to eliminate build-time CPU/memory locks
@@ -83,12 +84,14 @@ export default async function RootDetailPage({ params: paramsPromise }: PageProp
     if (!record.lemma) continue;
     const key = `${record.pos}:${record.lemma}`;
     if (lemmaSamples[key]) continue;
+    const qabasLemmaId = getQabasLemmaId(record.wordLocationKey);
     lemmaSamples[key] = {
       coordinate: record.wordLocationKey,
       formArabic: record.formArabic,
       ...(record.verbForm ? { verbForm: record.verbForm } : {}),
       ...(meaningsIndo[record.wordLocationKey] ? { meaningIndo: meaningsIndo[record.wordLocationKey] } : {}),
       ...(meaningsEnglish[record.wordLocationKey] ? { meaningEnglish: meaningsEnglish[record.wordLocationKey] } : {}),
+      ...(qabasLemmaId ? { qabasLemmaId } : {}),
     };
   }
 

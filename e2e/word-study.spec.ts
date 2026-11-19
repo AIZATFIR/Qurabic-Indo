@@ -48,7 +48,7 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     expect(requests).toHaveLength(1);
   });
 
-  test('root without a lexical entry does not show a corpus placeholder as its definition', async ({ page }) => {
+  test('root page shows its sourced gloss and links a Quranic lemma directly to Qabas', async ({ page }) => {
     const supplementalRequests: string[] = [];
     page.on('request', request => {
       if (request.url().includes('/api/root-detail?')) supplementalRequests.push(request.url());
@@ -60,9 +60,9 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     const meaningSection = page.locator('section[aria-labelledby="root-meaning-heading"]');
     expect(renderedHtml).not.toContain('Memuat data akar dan kamus');
     expect(supplementalRequests).toHaveLength(0);
-    await expect(meaningSection).toContainText('Ringkasan akar belum tersedia dari sumber yang terindeks.');
-    await expect(meaningSection).not.toContainText('memiliki peranan penting dalam kosakata Al-Qur’an');
-    await expect(meaningSection.getByRole('link', { name: 'Cari kata terkait di Qabas · Birzeit' })).toHaveAttribute('href', 'https://sina.birzeit.edu/qabas');
+    await expect(meaningSection).toContainText('English gloss · Quran bil-Quran');
+    await expect(meaningSection).toContainText('The root رَأَى primarily means');
+    await expect(meaningSection.getByRole('link', { name: 'Lihat lema terkait di Qabas · Birzeit' })).toHaveAttribute('href', 'https://sina.birzeit.edu/qabas/lemma/202001196');
   });
 
   test('Indonesian root page shows a sourced English gloss when no Indonesian summary exists', async ({ page }) => {

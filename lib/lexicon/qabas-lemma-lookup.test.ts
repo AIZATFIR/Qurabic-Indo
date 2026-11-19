@@ -11,5 +11,6 @@ assert.equal(getQabasLemmaId('1:1:5', index), undefined);
 assert.equal(getQabasLemmaId('invalid', index), undefined);
 assert.equal(getQabasLemmaId(undefined, index), undefined);
 assert.equal(getQabasLemmaId('1:1:4'), '202003981');
+assert.equal(getQabasLemmaId('2:55:8'), '202001196');
 
 console.log('Passed: Qabas lemma lookup uses Quran word coordinates and safely handles missing coordinates.');

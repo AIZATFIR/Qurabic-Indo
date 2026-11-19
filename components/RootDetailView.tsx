@@ -15,6 +15,7 @@ export interface RootLemmaSample {
   verbForm?: string;
   meaningIndo?: string;
   meaningEnglish?: string;
+  qabasLemmaId?: string;
 }
 
 interface RootDetailViewProps {
@@ -48,6 +49,9 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
   const posLabel = (pos: string) => pos === 'V' ? t("Fi'il · kata kerja", 'Verb') : pos === 'ADJ' ? t('Sifat', 'Adjective') : pos === 'PN' ? t('Nama diri', 'Proper noun') : t('Isim · nomina', 'Noun');
   const posEnglish = (pos: string) => pos === 'V' ? 'Verb' : pos === 'ADJ' ? 'Adjective' : pos === 'PN' ? 'Proper noun' : 'Noun';
   const familyLemmas = statistics.lemmaDistribution.slice(0, 6);
+  const firstQabasLemmaId = familyLemmas
+    .map((lemma) => lemmaSamples[`${lemma.pos}:${lemma.lemmaBw}`]?.qabasLemmaId)
+    .find(Boolean);
   const laneDefinition = lexicon?.entries
     .flatMap((entry) => entry.senses.map((sense) => ({ entry, sense })))
     .find(({ sense }) => Boolean(sense.englishText || sense.text));
@@ -158,8 +162,8 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
         ) : (
           <p className="max-w-4xl text-base leading-relaxed text-ink-secondary">No English root summary is available yet. Consult the indexed dictionary entry below when one is available.</p>
         ))}
-        {!root.coreMeaning && !root.coreMeaningEnglish && !laneDefinition && <a href="https://sina.birzeit.edu/qabas" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
-          <span>{t('Cari kata terkait di Qabas · Birzeit', 'Look up related lemmas in Qabas · Birzeit')}</span><ExternalLink className="h-4 w-4" aria-hidden="true" />
+        {firstQabasLemmaId && <a href={`https://sina.birzeit.edu/qabas/lemma/${firstQabasLemmaId}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
+          <span>{t('Lihat lema terkait di Qabas · Birzeit', 'Open a related Qur’anic lemma in Qabas · Birzeit')}</span><ExternalLink className="h-4 w-4" aria-hidden="true" />
         </a>}
         {root.classicalArabicExcerpt && <details className="border-l-2 border-primary/40 pl-4 sm:pl-5">
           <summary className="min-h-11 cursor-pointer py-2 text-base font-medium text-ink-secondary focus-visible:outline-primary">{t('Buka kutipan Arab · Al-Mufradat karya al-Raghib', 'Open Arabic excerpt · al-Raghib’s Al-Mufradat')}</summary>
