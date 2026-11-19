@@ -22,35 +22,52 @@ export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic
   const displayedProgressRef = useRef(audio.progress);
   const observedTimeRef = useRef(audio.currentTime);
   const trackIdentityRef = useRef(`${audio.currentAyah}:${audio.isReadingTranslation}`);
+  const progressSampleRef = useRef({
+    currentTime: audio.currentTime,
+    duration: audio.duration,
+    isPlaying: audio.isPlaying,
+    progress: audio.progress,
+    observedAt: performance.now(),
+  });
   const { currentAyah, playbackState, isPlaying, isLoading, isReadingTranslation, isAiGeneratedTranslation, handsfreeMode, currentQariMeta } = audio;
 
   useEffect(() => {
-    let frame = 0;
-    const observedAt = performance.now();
     const trackIdentity = `${audio.currentAyah}:${audio.isReadingTranslation}`;
     const newTrack = trackIdentityRef.current !== trackIdentity;
     const soughtBack = audio.currentTime < observedTimeRef.current - 0.25;
     if (newTrack || soughtBack) displayedProgressRef.current = audio.progress;
     trackIdentityRef.current = trackIdentity;
     observedTimeRef.current = audio.currentTime;
+    progressSampleRef.current = {
+      currentTime: audio.currentTime,
+      duration: audio.duration,
+      isPlaying: audio.isPlaying,
+      progress: audio.progress,
+      observedAt: performance.now(),
+    };
+  }, [audio.currentAyah, audio.currentTime, audio.duration, audio.isPlaying, audio.isReadingTranslation, audio.progress]);
+
+  useEffect(() => {
+    let frame = 0;
     const renderProgress = (now: number) => {
+      const sample = progressSampleRef.current;
       const estimated = estimateAudioProgress({
-        currentTime: audio.currentTime,
-        duration: audio.duration,
-        observedAt,
+        currentTime: sample.currentTime,
+        duration: sample.duration,
+        observedAt: sample.observedAt,
         now,
-        isPlaying: audio.isPlaying,
-        progress: audio.progress,
+        isPlaying: sample.isPlaying,
+        progress: sample.progress,
       });
       const progress = stabilizeAudioProgress(estimated, displayedProgressRef.current);
       displayedProgressRef.current = progress;
       progressFillRef.current?.style.setProperty('transform', `scaleX(${progress})`);
       progressThumbRef.current?.style.setProperty('left', `${progress * 100}%`);
-      if (audio.isPlaying) frame = requestAnimationFrame(renderProgress);
+      if (sample.isPlaying) frame = requestAnimationFrame(renderProgress);
     };
-    renderProgress(observedAt);
+    renderProgress(performance.now());
     return () => cancelAnimationFrame(frame);
-  }, [audio.currentAyah, audio.currentTime, audio.duration, audio.isPlaying, audio.isReadingTranslation]);
+  }, [audio.currentAyah, audio.isPlaying, audio.isReadingTranslation]);
 
   if (playbackState === 'idle' && currentAyah === null) return null;
   const formatTime = (seconds: number) => Number.isFinite(seconds) && seconds >= 0 ? `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}` : '0:00';
