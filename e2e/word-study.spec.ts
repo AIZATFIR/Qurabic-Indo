@@ -2,9 +2,17 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
   test('root without a lexical entry does not show a corpus placeholder as its definition', async ({ page }) => {
-    await page.goto('/akar/r-A-y', { waitUntil: 'domcontentloaded' });
+    const supplementalRequests: string[] = [];
+    page.on('request', request => {
+      if (request.url().includes('/api/root-detail?')) supplementalRequests.push(request.url());
+    });
+    const response = await page.goto('/akar/r-A-y', { waitUntil: 'domcontentloaded' });
+    const renderedHtml = await response?.text() || '';
+    await page.waitForLoadState('networkidle');
 
     const meaningSection = page.locator('section[aria-labelledby="root-meaning-heading"]');
+    expect(renderedHtml).not.toContain('Memuat data akar dan kamus');
+    expect(supplementalRequests).toHaveLength(0);
     await expect(meaningSection).toContainText('Ringkasan akar belum tersedia dari sumber yang terindeks.');
     await expect(meaningSection).not.toContainText('memiliki peranan penting dalam kosakata Al-Qur’an');
   });

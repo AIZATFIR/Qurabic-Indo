@@ -30,7 +30,7 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
   const [selectedPos, setSelectedPos] = useState<'all' | 'V' | 'N'>('all');
   const [root, setRoot] = useState(initialRoot);
   const [lemmaSamples, setLemmaSamples] = useState(initialLemmaSamples);
-  const [rootDataLoading, setRootDataLoading] = useState(initialRoot.statistics.uniqueAyahs === 0 || !initialRoot.lexicon);
+  const [rootDataLoading, setRootDataLoading] = useState(initialRoot.statistics.uniqueAyahs === 0 || initialRoot.lexicon === undefined);
   const [rootDataError, setRootDataError] = useState(false);
   const { statistics } = root;
   const { lexicon } = root;
@@ -53,7 +53,7 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
     .find(({ sense }) => Boolean(sense.englishText || sense.text));
 
   useEffect(() => {
-    if (initialRoot.statistics.uniqueAyahs > 0 && initialRoot.lexicon?.entries?.length) {
+    if (initialRoot.statistics.uniqueAyahs > 0 && initialRoot.lexicon !== undefined) {
       setRoot(initialRoot);
       setLemmaSamples(initialLemmaSamples);
       setRootDataLoading(false);
