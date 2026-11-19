@@ -4,6 +4,7 @@ const nextConfig = {
   outputFileTracingIncludes: {
       '/api/**/*': [
         './lib/quranic-corpus-morphology-0.4.txt',
+        './lib/lexicon/data/manifest.json',
         './lib/lexicon/data/chunks/**/*',
       ],
     },

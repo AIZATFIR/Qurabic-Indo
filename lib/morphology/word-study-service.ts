@@ -193,7 +193,7 @@ export function getWordStudy(
     : null;
   const qacIndex = getQACAuthoritativeIndex();
   const rootBw = detail.lexical.root;
-  const laneRoot = rootBw && !detail.morphology.isParticle ? getLaneRootRecord(rootBw) : null;
+  const laneRoot = rootBw && !detail.morphology.isParticle ? getLaneRootRecord(rootBw, true) : null;
   const laneRootSense = laneRoot?.entries
     .flatMap((entry) => entry.senses.map((sense) => ({ entry, sense })))
     .find(({ sense }) => Boolean(sense.englishText || sense.text));

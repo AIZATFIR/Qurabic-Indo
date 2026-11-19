@@ -1003,7 +1003,7 @@ export function getRootSemanticProfile(rootBw: string, rootArabic?: string): Roo
   }
 
   // 3. Fallback Query Lane's Arabic-English Lexicon
-  const laneRoot = getLaneRootRecord(normalizedId) || getLaneRootRecord(cleanBw);
+  const laneRoot = getLaneRootRecord(normalizedId, true) || getLaneRootRecord(cleanBw, true);
 
   if (laneRoot && laneRoot.entries && laneRoot.entries.length > 0) {
     const entry = laneRoot.entries[0];

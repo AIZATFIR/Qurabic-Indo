@@ -7,6 +7,12 @@ import fs from 'fs';
 import path from 'path';
 
 describe('Qurabic Lexical Ingestion Layer (Mass Lane Lexicon & QAC Join)', () => {
+  it('general Arabic dictionary lookup retains Lane entries outside the Quran corpus', () => {
+    const entry = getLaneRootRecord('اثف')?.entries.find((candidate) => candidate.headwordArabic.includes('أَثَفَ'));
+    assert.ok(entry, 'full Lane manifest should resolve this non-Quran root');
+    assert.ok(entry.senses.length > 0);
+  });
+
   it('Mass Ingestion Integrity: Manifest contains > 5,000 unique roots and all chunk files exist', () => {
     const rootKeys = Object.keys(manifestData);
     assert.ok(rootKeys.length >= 5000, `Expected >= 5000 roots in manifest, found ${rootKeys.length}`);

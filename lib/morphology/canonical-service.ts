@@ -442,7 +442,8 @@ export function getCanonicalWordDetail(
   // Step 1: Direct Lemma / Preposition / Headword match in Lane
   const laneLemma = getLaneLemmaRecord(cleanLemmaBw, lemmaArabic || cleanInput || cleanArabic, {
     isParticle,
-    pos: morphInfo.pos
+    pos: morphInfo.pos,
+    quranOnly: Boolean(qacLookup || stemRecord)
   });
 
   if (laneLemma && laneLemma.senses && laneLemma.senses.length > 0) {
@@ -465,9 +466,9 @@ export function getCanonicalWordDetail(
     };
   } else if (rootBw && !isParticle) {
     // Step 2: Root & Form Match
-    const laneRoot = getLaneRootRecord(rootBw);
+    const laneRoot = getLaneRootRecord(rootBw, Boolean(qacLookup || stemRecord));
     const verbForm = ('verbForm' in morphInfo ? morphInfo.verbForm : undefined) || morphInfo.wazanOrForm;
-    const laneEntry = laneRoot ? getLaneEntryForLemma(rootBw, lemmaBw, verbForm, morphInfo.pos === "Fi'il" ? 'V' : 'N') : null;
+    const laneEntry = laneRoot ? getLaneEntryForLemma(rootBw, lemmaBw, verbForm, morphInfo.pos === "Fi'il" ? 'V' : 'N', Boolean(qacLookup || stemRecord)) : null;
     const effectiveLaneEntry = laneEntry || (laneRoot && laneRoot.entries.length > 0 ? laneRoot.entries[0] : null);
 
     if (laneRoot && effectiveLaneEntry && effectiveLaneEntry.senses && effectiveLaneEntry.senses.length > 0) {
@@ -706,7 +707,7 @@ export function getCanonicalRootDetail(slug: string): RootDetailModel | null {
     verbs: enrichedVerbs,
     nouns: enrichedNouns,
     occurrences,
-    lexicon: getLaneRootRecord(rootBw)
+    lexicon: getLaneRootRecord(rootBw, true)
   };
 }
 

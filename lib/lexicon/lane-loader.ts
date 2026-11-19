@@ -1,11 +1,35 @@
 import { LaneRootLexicon, LaneEntryRecord, LexicalLookupResult } from './types';
-import manifestData from './data/manifest.json';
+import quranManifestData from './data/quran-manifest.json';
 import { buckwalterToArabic, arabicToBuckwalter } from '../morphology/buckwalter';
+import { createLaneManifestLookup } from './manifest-lookup';
 
 declare const __non_webpack_require__: any;
 
-const MANIFEST: Record<string, string> = manifestData as Record<string, string>;
+const QURAN_MANIFEST: Record<string, string | null> = quranManifestData as Record<string, string | null>;
 const CHUNK_CACHE: Map<string, LaneEntryRecord[]> = new Map();
+
+function loadFullManifest(): Record<string, string> {
+  try {
+    const nodeReq = typeof __non_webpack_require__ === 'function'
+      ? __non_webpack_require__
+      : (globalThis as any).require || eval('require');
+    const fs = nodeReq ? nodeReq('fs') : process.getBuiltinModule('fs');
+    const path = nodeReq ? nodeReq('path') : process.getBuiltinModule('path');
+    const candidates = [
+      path.join(process.cwd(), 'lib', 'lexicon', 'data', 'manifest.json'),
+      path.join(__dirname, 'data', 'manifest.json'),
+      path.join(__dirname, '..', '..', 'lib', 'lexicon', 'data', 'manifest.json'),
+      path.join(process.cwd(), '.next', 'server', 'lib', 'lexicon', 'data', 'manifest.json'),
+    ];
+    const manifestPath = candidates.find((candidate: string) => fs.existsSync(candidate));
+    if (manifestPath) return JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as Record<string, string>;
+  } catch (error) {
+    console.warn('Could not load the full Lane manifest:', error);
+  }
+  return {};
+}
+
+const getManifestChunk = createLaneManifestLookup(QURAN_MANIFEST, loadFullManifest);
 
 function normalizeArabicKey(text: string): string {
   if (!text) return '';
@@ -102,7 +126,7 @@ function getRootKeyVariants(rootBw: string): string[] {
 export function getLaneLemmaRecord(
   lemmaBw?: string,
   lemmaArabic?: string,
-  options?: { isParticle?: boolean; pos?: string }
+  options?: { isParticle?: boolean; pos?: string; quranOnly?: boolean }
 ): LaneEntryRecord | null {
   if (!lemmaBw && !lemmaArabic) return null;
 
@@ -138,7 +162,7 @@ export function getLaneLemmaRecord(
   let highestScore = -1;
 
   for (const k of lookupKeys) {
-    const chunkFilename = MANIFEST[k];
+    const chunkFilename = getManifestChunk(k, options?.quranOnly);
     if (chunkFilename) {
       const chunk = loadChunk(chunkFilename);
       if (chunk) {
@@ -207,15 +231,15 @@ export function getLaneLemmaRecord(
  * Retrieves the raw verified Lane Lexicon record for a given Buckwalter or Arabic root
  * @param rootBw Case-sensitive Buckwalter root identifier (e.g. "Ewn", "Sbr", "xlT", "ryb", "Dmm", "hdy") or Arabic root
  */
-export function getLaneRootRecord(rootBw: string): LaneRootLexicon | null {
+export function getLaneRootRecord(rootBw: string, quranOnly = false): LaneRootLexicon | null {
   if (!rootBw) return null;
   const candidates = getRootKeyVariants(rootBw);
 
   for (const cand of candidates) {
     const chunkFilename =
-      MANIFEST[`root_bw:${cand}`] ||
-      MANIFEST[`root_ar:${cand}`] ||
-      MANIFEST[`root_norm:${normalizeArabicKey(cand)}`];
+      getManifestChunk(`root_bw:${cand}`, quranOnly) ||
+      getManifestChunk(`root_ar:${cand}`, quranOnly) ||
+      getManifestChunk(`root_norm:${normalizeArabicKey(cand)}`, quranOnly);
 
     if (chunkFilename) {
       const chunk = loadChunk(chunkFilename);
@@ -268,9 +292,10 @@ export function getLaneEntryForLemma(
   rootBw: string,
   lemmaBw?: string,
   verbForm?: string,
-  pos?: string
+  pos?: string,
+  quranOnly = false
 ): LaneEntryRecord | null {
-  const rootRec = getLaneRootRecord(rootBw);
+  const rootRec = getLaneRootRecord(rootBw, quranOnly);
   if (!rootRec || !rootRec.entries || rootRec.entries.length === 0) return null;
 
   // 1. Try matching by verb form (itype) if verb
