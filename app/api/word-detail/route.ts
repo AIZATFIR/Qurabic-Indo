@@ -3,7 +3,7 @@ import { getCanonicalWordDetail } from '@/lib/morphology/canonical-service';
 import { getWordStudy } from '@/lib/morphology/word-study-service';
 import { getLaneRootRecord } from '@/lib/lexicon/lane-loader';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 86_400;
 
 function getReadableLaneExcerpt(rootBw?: string) {
   if (!rootBw) return undefined;
