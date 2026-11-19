@@ -111,6 +111,57 @@ test('handsfree status identifies AI audio while its file is loading', async ({ 
   await expect(player.locator('[aria-live="polite"]')).toContainText('Memuat suara AI · Gemini TTS');
 });
 
+test('focusing handsfree preloads the current verse translation before mode selection', async ({ page }) => {
+  await page.addInitScript(() => {
+    const appWindow = window as typeof window & { __qurabicAudioBlobs?: string[] };
+    appWindow.__qurabicAudioBlobs = [];
+    const createObjectUrl = URL.createObjectURL.bind(URL);
+    URL.createObjectURL = (object) => {
+      const url = createObjectUrl(object);
+      appWindow.__qurabicAudioBlobs?.push(url);
+      return url;
+    };
+  });
+  const translationRequests: string[] = [];
+  const sampleRate = 8000;
+  const sampleCount = sampleRate * 3;
+  const wav = Buffer.alloc(44 + sampleCount, 128);
+  wav.write('RIFF', 0);
+  wav.writeUInt32LE(36 + sampleCount, 4);
+  wav.write('WAVEfmt ', 8);
+  wav.writeUInt32LE(16, 16);
+  wav.writeUInt16LE(1, 20);
+  wav.writeUInt16LE(1, 22);
+  wav.writeUInt32LE(sampleRate, 24);
+  wav.writeUInt32LE(sampleRate, 28);
+  wav.writeUInt16LE(1, 32);
+  wav.writeUInt16LE(8, 34);
+  wav.write('data', 36);
+  wav.writeUInt32LE(sampleCount, 40);
+  await page.route('**/quran-terjemahan-indonesia-audio-by-ayah/**', async (route) => {
+    translationRequests.push(route.request().url());
+    await route.fulfill({
+      status: 200,
+      headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'audio/wav' },
+      body: wav,
+    });
+  });
+
+  await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('heading', { name: /Surah Al-Kahf/ }).waitFor();
+  await page.getByRole('button', { name: 'Putar Tilawah', exact: true }).click();
+  const player = page.getByLabel('Pemutar audio Al-Qur’an');
+  const handsfree = player.getByRole('combobox', { name: 'Mode handsfree' });
+  await handsfree.focus();
+
+  await expect.poll(() => translationRequests.length, { timeout: 2000 }).toBeGreaterThan(0);
+  expect(translationRequests[0]).toContain('/audio_m4a/018/018001.m4a');
+  await page.waitForFunction(() => Boolean((window as typeof window & { __qurabicAudioBlobs?: string[] }).__qurabicAudioBlobs?.length), null, { timeout: 2000 });
+  await handsfree.selectOption('reverse');
+  await expect(player.locator('[aria-live="polite"]')).toContainText(/Suara AI|AI voice/, { timeout: 3000 });
+  expect(translationRequests).toHaveLength(1);
+});
+
 test('failed Indonesian translation audio is reported instead of silently skipping the verse', async ({ page }) => {
   let blockedTranslationRequests = 0;
   await page.route('**/quran-terjemahan-indonesia-audio-by-ayah/**', async (route) => {

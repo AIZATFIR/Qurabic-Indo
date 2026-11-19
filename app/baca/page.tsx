@@ -1121,6 +1121,7 @@ function BacaQuranPageContent() {
         audio={audio}
         surahNameIndo={currentSurahMeta.nameIndo}
         surahNameArabic={currentSurahMeta.nameArabic}
+        surahNumber={currentSurahMeta.number}
         totalAyahs={currentSurahMeta.ayahsCount}
       />
 

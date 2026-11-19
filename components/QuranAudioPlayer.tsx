@@ -5,15 +5,17 @@ import { Play, Pause, SkipBack, SkipForward, X, Loader2, Settings2, ChevronDown,
 import { UseQuranAudioReturn, HandsfreeMode, RepeatMode } from '@/lib/hooks/useQuranAudio';
 import { useLanguage } from '@/lib/context/LanguageContext';
 import { estimateAudioProgress, stabilizeAudioProgress } from '@/lib/audio/smooth-progress';
+import { preloadTranslationAudio } from '@/lib/audio/audio-preloader';
 
 interface QuranAudioPlayerProps {
   audio: UseQuranAudioReturn;
   surahNameIndo: string;
   surahNameArabic: string;
+  surahNumber: number;
   totalAyahs: number;
 }
 
-export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic, totalAyahs }: QuranAudioPlayerProps) {
+export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic, surahNumber, totalAyahs }: QuranAudioPlayerProps) {
   const { language, t } = useLanguage();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [minimized, setMinimized] = useState(false);
@@ -75,6 +77,10 @@ export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic
   const toggleLabel = isPlaying || isLoading ? t('Jeda', 'Pause') : t('Putar', 'Play');
   const controlClass = 'inline-flex min-h-11 min-w-11 items-center justify-center text-ink-secondary hover:bg-canvas-soft hover:text-ink-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-40';
   const selectClass = 'min-h-11 w-full border-b border-hairline bg-canvas-surface py-2 text-sm text-ink-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary';
+  const warmCurrentTranslation = () => {
+    if (!currentAyah) return;
+    void preloadTranslationAudio(surahNumber, currentAyah, undefined, audio.translationVoiceMode, language).catch(() => {});
+  };
 
   return (
     <aside aria-label={t('Pemutar audio Al-Qur’an', 'Quran audio player')} className="fixed bottom-0 inset-x-0 z-40 border-t border-hairline bg-canvas-surface text-ink-primary shadow-subtle sm:bottom-4 sm:left-auto sm:right-4 sm:w-[480px] sm:border font-sans">
@@ -131,7 +137,7 @@ export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic
         <div className="border-t border-hairline px-3 py-2">
           <label className="flex items-center gap-3 text-sm">
             <span className="shrink-0">Handsfree</span>
-            <select aria-label={t('Mode handsfree', 'Handsfree mode')} value={handsfreeMode} onChange={event => audio.setHandsfreeMode(event.target.value as HandsfreeMode)} className={selectClass}>
+            <select aria-label={t('Mode handsfree', 'Handsfree mode')} value={handsfreeMode} onFocus={warmCurrentTranslation} onChange={event => audio.setHandsfreeMode(event.target.value as HandsfreeMode)} className={selectClass}>
               <option value="off">{t('Mati · tilawah saja', 'Off · recitation only')}</option>
               <option value="normal">{t('Arab → Terjemahan Indonesia', 'Arabic → English translation')}</option>
               <option value="reverse">{t('Terjemahan Indonesia → Arab', 'English translation → Arabic')}</option>
