@@ -13,7 +13,7 @@
 
 import { WordStudyViewModel, WordFamilyItem, SyntaxAnalysis, LexicalStatus } from '../lexicon/types';
 import { resolveCanonicalWordDetail, CanonicalWordContext, WordDetailModel } from './canonical-service';
-import { getQACAuthoritativeIndex } from './qac-parser';
+import { getQACRecordsByRoot } from './qac-parser';
 import { SOURCES_REGISTRY } from '../data/sources';
 import { buckwalterToArabic } from './buckwalter';
 import { stripArabicHarakat } from '../search/root-search';
@@ -191,7 +191,6 @@ export function getWordStudy(
   const particleInfo = detail.morphology.isParticle
     ? getQuranicParticleInfo(detail.identity.cleanArabic || standalone, detail.morphology.rawTag)
     : null;
-  const qacIndex = getQACAuthoritativeIndex();
   const rootBw = detail.lexical.root;
   const laneRoot = rootBw && !detail.morphology.isParticle ? getLaneRootRecord(rootBw, true) : null;
   const laneRootSense = laneRoot?.entries
@@ -205,7 +204,7 @@ export function getWordStudy(
   // 2. Build Word Family (Keluarga Kata) from actual QAC corpus records
   const wordFamily: WordFamilyItem[] = [];
   if (rootBw && !detail.morphology.isParticle) {
-    const records = qacIndex.recordsByRoot.get(rootBw) || [];
+    const records = getQACRecordsByRoot(rootBw);
     const grouped = new Map<string, { arabic: string; bw: string; lemmaAr: string; lemmaBw: string; pos: 'Isim' | "Fi'il" | 'Harf'; count: number; sampleLoc?: string }>();
 
     for (const rec of records) {

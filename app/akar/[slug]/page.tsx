@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getCanonicalRootDetail } from '@/lib/morphology/canonical-service';
-import { getQACAuthoritativeIndex } from '@/lib/morphology/qac-parser';
+import { getQACRecordsByRoot } from '@/lib/morphology/qac-parser';
 import { fetchLiveRoot } from '@/lib/api/quran-corpus-api';
 import { notFound } from 'next/navigation';
 import RootDetailView, { type RootLemmaSample } from '@/components/RootDetailView';
@@ -76,7 +76,7 @@ export default async function RootDetailPage({ params: paramsPromise }: PageProp
   }
 
   const lemmaSamples: Record<string, RootLemmaSample> = {};
-  const records = getQACAuthoritativeIndex().recordsByRoot.get(rootModel.id.replace(/-/g, '')) || [];
+  const records = getQACRecordsByRoot(rootModel.id.replace(/-/g, ''));
   const meaningsIndo = wbwIndonesian.meanings as Record<string, string>;
   const meaningsEnglish = wbwEnglish.meanings as Record<string, string>;
   for (const record of records) {

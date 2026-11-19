@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ROOT_DATABASE } from '@/lib/data/roots';
-import { getQACAuthoritativeIndex } from '@/lib/morphology/qac-parser';
+import { getQACRecordsByRoot } from '@/lib/morphology/qac-parser';
 import { getCanonicalRootDetail } from '@/lib/morphology/canonical-service';
 import { buckwalterToArabic } from '@/lib/morphology/buckwalter';
 import wbwIndonesian from '@/lib/data/wbw-indonesian-glosses.json';
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
 
   const meaningsIndo = wbwIndonesian.meanings as Record<string, string>;
   const meaningsEnglish = wbwEnglish.meanings as Record<string, string>;
-  const records = getQACAuthoritativeIndex().recordsByRoot.get(matchedRoot.id.replace(/-/g, '')) || [];
+  const records = getQACRecordsByRoot(matchedRoot.id.replace(/-/g, ''));
   const lemmaSamples: Record<string, {
     coordinate: string;
     formArabic: string;

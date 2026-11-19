@@ -14,6 +14,11 @@ export interface QACAuthoritativeIndex {
 }
 
 let cachedIndex: QACAuthoritativeIndex | null = null;
+let cachedRawLines: string[] | null = null;
+const targetedRootRecords = new Map<string, NormalizedMorphologyRecord[]>();
+const targetedWordRecords = new Map<string, NormalizedMorphologyRecord[]>();
+const MAX_TARGETED_ROOTS = 32;
+const MAX_TARGETED_WORDS = 64;
 
 function normalizeArabicText(text: string): string {
   if (!text) return '';
@@ -21,6 +26,155 @@ function normalizeArabicText(text: string): string {
   norm = norm.replace(/[\u0622\u0623\u0625\u0671\u0672\u0673\u0675]/g, '\u0627');
   norm = norm.replace(/\u0649/g, '\u064A');
   return norm.trim();
+}
+
+function parseMorphologyLine(line: string): NormalizedMorphologyRecord | undefined {
+  if (!line || line.startsWith('#') || line.startsWith('LOCATION')) return undefined;
+  const parts = line.split('\t');
+  if (parts.length < 4) return undefined;
+
+  const locRaw = parts[0].replace(/[()]/g, '');
+  const [sStr, aStr, wStr, segStr] = locRaw.split(':');
+  const surah = parseInt(sStr, 10);
+  const ayah = parseInt(aStr, 10);
+  const word = parseInt(wStr, 10);
+  const segment = parseInt(segStr, 10);
+  const form = parts[1];
+  const tag = parts[2];
+  const rawFeatures = parts[3];
+  const root = rawFeatures.match(/ROOT:([^|]+)/)?.[1];
+  const lemma = rawFeatures.match(/LEM:([^|]+)/)?.[1];
+  const pos = rawFeatures.match(/POS:([^|]+)/)?.[1] || tag;
+  const rootArabic = root ? buckwalterToArabic(root).split('').join(' ') : undefined;
+  const lemmaArabic = lemma ? buckwalterToArabic(lemma) : undefined;
+  const isPerf = rawFeatures.includes('PERF');
+  const isImpf = rawFeatures.includes('IMPF');
+  const isImpv = rawFeatures.includes('IMPV');
+  const isFormII = rawFeatures.includes('(II)');
+  const isActPcpl = rawFeatures.includes('ACT|PCPL');
+  const isPassPcpl = rawFeatures.includes('PASS|PCPL');
+  const isVn = rawFeatures.includes('VN');
+
+  let verbType: 'PERF' | 'IMPF' | 'IMPV' | undefined;
+  if (isPerf) verbType = 'PERF';
+  else if (isImpf) verbType = 'IMPF';
+  else if (isImpv) verbType = 'IMPV';
+
+  const verbFormMatch = rawFeatures.match(/\((I|II|III|IV|V|VI|VII|VIII|IX|X)\)/);
+  const verbForm = verbFormMatch ? `Form ${verbFormMatch[1]}` : pos === 'V' ? 'Form I' : undefined;
+  let nounType: 'ACT_PCPL' | 'PASS_PCPL' | 'VN' | 'NOUN' | undefined;
+  if (isActPcpl) nounType = 'ACT_PCPL';
+  else if (isPassPcpl) nounType = 'PASS_PCPL';
+  else if (isVn) nounType = 'VN';
+  else if (pos === 'N') nounType = 'NOUN';
+
+  let normalizedCategory = '';
+  let linguisticInterpretation = '';
+  if (pos === 'V') {
+    normalizedCategory = `Verb + Form ${isFormII ? 'II' : 'I'} + ${verbType || 'General'}`;
+    linguisticInterpretation = `Fi'il ${verbType === 'PERF' ? 'Madhi' : verbType === 'IMPF' ? 'Mudhari\'' : 'Amr'} Form ${isFormII ? "II (Fa''ala)" : 'I (Mujarrad)'}`;
+  } else if (pos === 'N') {
+    if (isActPcpl) {
+      normalizedCategory = 'Noun + Active Participle (ACT|PCPL)';
+      linguisticInterpretation = 'Isim Fa\'il';
+    } else if (isPassPcpl) {
+      normalizedCategory = 'Noun + Passive Participle (PASS|PCPL)';
+      linguisticInterpretation = 'Isim Maf\'ul';
+    } else if (isVn) {
+      normalizedCategory = 'Noun + Verbal Noun (VN)';
+      linguisticInterpretation = 'Isim Masdar';
+    } else {
+      normalizedCategory = 'Noun (General)';
+      linguisticInterpretation = 'Isim / Masdar Asal';
+    }
+  } else {
+    normalizedCategory = `Particle / Other (${pos})`;
+    linguisticInterpretation = `Harf / Partikel (${pos})`;
+  }
+
+  const locationKey = `${surah}:${ayah}:${word}:${segment}`;
+  const wordLocationKey = `${surah}:${ayah}:${word}`;
+  const ayahLocationKey = `${surah}:${ayah}`;
+  const sourceEvidence = `QAC POS:${pos}${isPerf ? ' + PERF' : ''}${isImpf ? ' + IMPF' : ''}${isImpv ? ' + IMPV' : ''}${isActPcpl ? ' + ACT|PCPL' : ''}${isVn ? ' + VN' : ''}${isFormII ? ' + Form (II)' : ''}`;
+
+  return {
+    surah, ayah, word, segment, locationKey, wordLocationKey, ayahLocationKey,
+    form, formArabic: buckwalterToArabic(form), tag, pos, root, rootArabic,
+    lemma, lemmaArabic, verbType, verbForm, nounType, rawTag: tag, rawFeatures,
+    normalizedCategory, linguisticInterpretation,
+    interpretationContract: {
+      label: linguisticInterpretation,
+      sourceEvidence,
+      layer: 'interpretation',
+      derivation: 'derived'
+    }
+  };
+}
+
+function getRawQACLines(): string[] | undefined {
+  if (cachedRawLines) return cachedRawLines;
+  if (typeof window !== 'undefined') return undefined;
+  try {
+    const nodeReq = (globalThis as any).require || eval('require');
+    const fs = nodeReq('fs');
+    const path = nodeReq('path');
+    const candidates = [
+      path.join(process.cwd(), 'lib/quranic-corpus-morphology-0.4.txt'),
+      path.join(__dirname, 'quranic-corpus-morphology-0.4.txt'),
+      path.join(__dirname, '..', 'quranic-corpus-morphology-0.4.txt'),
+      path.join(__dirname, '..', '..', 'lib', 'quranic-corpus-morphology-0.4.txt'),
+      path.join(process.cwd(), '.next/server/lib/quranic-corpus-morphology-0.4.txt'),
+    ];
+    const sourcePath = candidates.find((candidate: string) => fs.existsSync(candidate));
+    if (!sourcePath) return undefined;
+    cachedRawLines = fs.readFileSync(sourcePath, 'utf8').split('\n');
+    return cachedRawLines!;
+  } catch {
+    return undefined;
+  }
+}
+
+export function getQACRecordsByWordLocation(location: string): NormalizedMorphologyRecord[] {
+  const key = location.split(':').slice(0, 3).join(':');
+  const cached = targetedWordRecords.get(key);
+  if (cached) return cached;
+  const lines = getRawQACLines();
+  if (!lines) return getQACAuthoritativeIndex().recordsByWordLocation.get(key) || [];
+
+  const records: NormalizedMorphologyRecord[] = [];
+  const prefix = `(${key}:`;
+  for (const line of lines) {
+    if (!line.startsWith(prefix)) continue;
+    const record = parseMorphologyLine(line.trim());
+    if (record) records.push(record);
+  }
+  targetedWordRecords.set(key, records);
+  if (targetedWordRecords.size > MAX_TARGETED_WORDS) {
+    targetedWordRecords.delete(targetedWordRecords.keys().next().value!);
+  }
+  return records;
+}
+
+export function getQACRecordsByRoot(root: string): NormalizedMorphologyRecord[] {
+  const cached = targetedRootRecords.get(root);
+  if (cached) return cached;
+  const lines = getRawQACLines();
+  if (!lines) return getQACAuthoritativeIndex().recordsByRoot.get(root) || [];
+
+  const exactRoot = `|ROOT:${root}`;
+  const records: NormalizedMorphologyRecord[] = [];
+  for (const line of lines) {
+    if (!line.includes(exactRoot)) continue;
+    const afterRoot = line.slice(line.indexOf(exactRoot) + exactRoot.length);
+    if (afterRoot && afterRoot[0] !== '|' && afterRoot[0] !== '\t') continue;
+    const record = parseMorphologyLine(line.trim());
+    if (record?.root === root) records.push(record);
+  }
+  targetedRootRecords.set(root, records);
+  if (targetedRootRecords.size > MAX_TARGETED_ROOTS) {
+    targetedRootRecords.delete(targetedRootRecords.keys().next().value!);
+  }
+  return records;
 }
 
 /**
@@ -197,8 +351,8 @@ export function getQACAuthoritativeIndex(): QACAuthoritativeIndex {
       }
     }
 
-    const content = fs.readFileSync(resolvedPath, 'utf8');
-    const lines = content.split('\n');
+    const lines = cachedRawLines || fs.readFileSync(resolvedPath, 'utf8').split('\n');
+    cachedRawLines = lines;
 
     const recordsByRoot = new Map<string, NormalizedMorphologyRecord[]>();
     const recordsByLemma = new Map<string, NormalizedMorphologyRecord[]>();
@@ -208,159 +362,26 @@ export function getQACAuthoritativeIndex(): QACAuthoritativeIndex {
     let totalRecords = 0;
     let rootBearingRecordsCount = 0;
 
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (!line || line.startsWith('#') || line.startsWith('LOCATION')) {
-        continue;
-      }
+    for (const rawLine of lines) {
+      const line = rawLine.trim();
+      if (!line || line.startsWith('#') || line.startsWith('LOCATION')) continue;
 
       totalRecords++;
-      const parts = line.split('\t');
-      if (parts.length < 4) continue;
+      const record = parseMorphologyLine(line);
+      if (!record) continue;
+      if (record.root) rootBearingRecordsCount++;
 
-      const locRaw = parts[0].replace(/[()]/g, '');
-      const [sStr, aStr, wStr, segStr] = locRaw.split(':');
-      const surah = parseInt(sStr, 10);
-      const ayah = parseInt(aStr, 10);
-      const word = parseInt(wStr, 10);
-      const segment = parseInt(segStr, 10);
+      recordsByLocation.set(record.locationKey, record);
+      if (!recordsByWordLocation.has(record.wordLocationKey)) recordsByWordLocation.set(record.wordLocationKey, []);
+      recordsByWordLocation.get(record.wordLocationKey)!.push(record);
 
-      const form = parts[1];
-      const tag = parts[2];
-      const rawFeatures = parts[3];
-
-      // Extract Root
-      const rootMatch = rawFeatures.match(/ROOT:([^|]+)/);
-      const root = rootMatch ? rootMatch[1] : undefined;
-      const rootArabic = root ? buckwalterToArabic(root).split('').join(' ') : undefined;
-
-      // Extract Lemma
-      const lemMatch = rawFeatures.match(/LEM:([^|]+)/);
-      const lemma = lemMatch ? lemMatch[1] : undefined;
-      const lemmaArabic = lemma ? buckwalterToArabic(lemma) : undefined;
-
-      // Extract POS
-      const posMatch = rawFeatures.match(/POS:([^|]+)/);
-      const pos = posMatch ? posMatch[1] : tag;
-
-      // Layer 2: Normalized Morphology (Strict Deterministic)
-      const isPerf = rawFeatures.includes('PERF');
-      const isImpf = rawFeatures.includes('IMPF');
-      const isImpv = rawFeatures.includes('IMPV');
-      const isFormII = rawFeatures.includes('(II)');
-      const isActPcpl = rawFeatures.includes('ACT|PCPL');
-      const isPassPcpl = rawFeatures.includes('PASS|PCPL');
-      const isVn = rawFeatures.includes('VN');
-
-      let verbType: 'PERF' | 'IMPF' | 'IMPV' | undefined;
-      if (isPerf) verbType = 'PERF';
-      else if (isImpf) verbType = 'IMPF';
-      else if (isImpv) verbType = 'IMPV';
-
-      const verbFormMatch = rawFeatures.match(/\((I|II|III|IV|V|VI|VII|VIII|IX|X)\)/);
-      const verbForm = verbFormMatch
-        ? `Form ${verbFormMatch[1]}`
-        : pos === 'V'
-        ? 'Form I'
-        : undefined;
-
-      let nounType: 'ACT_PCPL' | 'PASS_PCPL' | 'VN' | 'NOUN' | undefined;
-      if (isActPcpl) nounType = 'ACT_PCPL';
-      else if (isPassPcpl) nounType = 'PASS_PCPL';
-      else if (isVn) nounType = 'VN';
-      else if (pos === 'N') nounType = 'NOUN';
-
-      let normalizedCategory = '';
-      let linguisticInterpretation = '';
-
-      if (pos === 'V') {
-        if (isFormII) {
-          normalizedCategory = `Verb + Form II + ${verbType || 'General'}`;
-          linguisticInterpretation = `Fi'il ${verbType === 'PERF' ? 'Madhi' : verbType === 'IMPF' ? 'Mudhari\'' : 'Amr'} Form II (Fa''ala)`;
-        } else {
-          normalizedCategory = `Verb + Form I + ${verbType || 'General'}`;
-          linguisticInterpretation = `Fi'il ${verbType === 'PERF' ? 'Madhi' : verbType === 'IMPF' ? 'Mudhari\'' : 'Amr'} Form I (Mujarrad)`;
-        }
-      } else if (pos === 'N') {
-        if (isActPcpl) {
-          normalizedCategory = 'Noun + Active Participle (ACT|PCPL)';
-          linguisticInterpretation = 'Isim Fa\'il';
-        } else if (isPassPcpl) {
-          normalizedCategory = 'Noun + Passive Participle (PASS|PCPL)';
-          linguisticInterpretation = 'Isim Maf\'ul';
-        } else if (isVn) {
-          normalizedCategory = 'Noun + Verbal Noun (VN)';
-          linguisticInterpretation = 'Isim Masdar';
-        } else {
-          normalizedCategory = 'Noun (General)';
-          linguisticInterpretation = 'Isim / Masdar Asal';
-        }
-      } else {
-        normalizedCategory = `Particle / Other (${pos})`;
-        linguisticInterpretation = `Harf / Partikel (${pos})`;
+      if (record.root) {
+        if (!recordsByRoot.has(record.root)) recordsByRoot.set(record.root, []);
+        recordsByRoot.get(record.root)!.push(record);
       }
-
-      const locationKey = `${surah}:${ayah}:${word}:${segment}`;
-      const wordLocationKey = `${surah}:${ayah}:${word}`;
-      const ayahLocationKey = `${surah}:${ayah}`;
-
-      const sourceEvidence = `QAC POS:${pos}${rawFeatures.includes('PERF') ? ' + PERF' : ''}${rawFeatures.includes('IMPF') ? ' + IMPF' : ''}${rawFeatures.includes('IMPV') ? ' + IMPV' : ''}${rawFeatures.includes('ACT|PCPL') ? ' + ACT|PCPL' : ''}${rawFeatures.includes('VN') ? ' + VN' : ''}${isFormII ? ' + Form (II)' : ''}`;
-
-      const record: NormalizedMorphologyRecord = {
-        surah,
-        ayah,
-        word,
-        segment,
-        locationKey,
-        wordLocationKey,
-        ayahLocationKey,
-        form,
-        formArabic: buckwalterToArabic(form),
-        tag,
-        pos,
-        root,
-        rootArabic,
-        lemma,
-        lemmaArabic,
-        verbType,
-        verbForm,
-        nounType,
-        rawTag: tag,
-        rawFeatures,
-        normalizedCategory,
-        linguisticInterpretation,
-        interpretationContract: {
-          label: linguisticInterpretation,
-          sourceEvidence,
-          layer: 'interpretation',
-          derivation: 'derived'
-        }
-      };
-
-      // Index by Location
-      recordsByLocation.set(locationKey, record);
-
-      // Index by Word Location
-      if (!recordsByWordLocation.has(wordLocationKey)) {
-        recordsByWordLocation.set(wordLocationKey, []);
-      }
-      recordsByWordLocation.get(wordLocationKey)!.push(record);
-
-      // Index by Root
-      if (root) {
-        rootBearingRecordsCount++;
-        if (!recordsByRoot.has(root)) {
-          recordsByRoot.set(root, []);
-        }
-        recordsByRoot.get(root)!.push(record);
-      }
-
-      // Index by Lemma
-      if (lemma) {
-        if (!recordsByLemma.has(lemma)) {
-          recordsByLemma.set(lemma, []);
-        }
-        recordsByLemma.get(lemma)!.push(record);
+      if (record.lemma) {
+        if (!recordsByLemma.has(record.lemma)) recordsByLemma.set(record.lemma, []);
+        recordsByLemma.get(record.lemma)!.push(record);
       }
     }
 

@@ -1,4 +1,4 @@
-import { getQACAuthoritativeIndex } from './qac-parser';
+import { getQACAuthoritativeIndex, getQACRecordsByRoot, getQACRecordsByWordLocation } from './qac-parser';
 import { lookupQACByLocation, lookupQACByToken } from './qac-lookup';
 import { ROOT_DATABASE } from '../data/roots';
 import { getRootSemanticProfile } from '../data/root-semantics';
@@ -229,27 +229,33 @@ export function getCanonicalWordDetail(
 ): WordDetailModel {
   const cleanInput = tokenOrLocation.trim();
   const isCoordinate = cleanInput.includes(':') && /^\d+:\d+(:\d+)?(:\d+)?$/.test(cleanInput);
-  const qacIndex = getQACAuthoritativeIndex();
+  const hasContextLocation = Boolean(context?.surahNumber && context?.ayahNumber && context?.wordIndex);
+  let qacIndex = isCoordinate || hasContextLocation ? undefined : getQACAuthoritativeIndex();
 
   // 1. Resolve QAC Record:
   // First check direct location coordinate (e.g. "10:24:9" or "10:24:9:2")
-  let qacRecords = isCoordinate ? qacIndex.recordsByWordLocation.get(cleanInput) : undefined;
+  let qacRecords = isCoordinate ? getQACRecordsByWordLocation(cleanInput) : undefined;
+  if (qacRecords?.length === 0) qacRecords = undefined;
 
   if (isCoordinate && !qacRecords && cleanInput.split(':').length === 4) {
     const parts = cleanInput.split(':');
     const wordLoc = `${parts[0]}:${parts[1]}:${parts[2]}`;
-    qacRecords = qacIndex.recordsByWordLocation.get(wordLoc);
+    qacRecords = getQACRecordsByWordLocation(wordLoc);
+    if (qacRecords.length === 0) qacRecords = undefined;
   }
 
   // If not direct location, check if location provided in context
   if (!qacRecords && context?.surahNumber && context?.ayahNumber && context?.wordIndex) {
     const locKey = `${context.surahNumber}:${context.ayahNumber}:${context.wordIndex}`;
-    qacRecords = qacIndex.recordsByWordLocation.get(locKey);
+    qacRecords = getQACRecordsByWordLocation(locKey);
+    if (qacRecords.length === 0) qacRecords = undefined;
   }
+
+  if (!qacRecords && !qacIndex) qacIndex = getQACAuthoritativeIndex();
 
   // If still not resolved, lookup by surface form
   if (!qacRecords) {
-    qacRecords = qacIndex.recordsByToken.get(cleanInput) || qacIndex.recordsByToken.get(stripArabicHarakat(cleanInput));
+    qacRecords = qacIndex?.recordsByToken.get(cleanInput) || qacIndex?.recordsByToken.get(stripArabicHarakat(cleanInput));
   }
 
   // Determine true display Arabic word
@@ -415,7 +421,7 @@ export function getCanonicalWordDetail(
     : [];
 
   // Compute related lemmas from the same root
-  const rootRecords = (rootBw && !isParticle) ? (qacIndex.recordsByRoot.get(rootBw) || []) : [];
+  const rootRecords = (rootBw && !isParticle) ? getQACRecordsByRoot(rootBw) : [];
   const lemmaMap = new Map<string, { lemmaArabic: string; lemmaBw: string; pos: string; count: number }>();
   for (const rec of rootRecords) {
     if (rec.lemma) {
@@ -566,7 +572,6 @@ export function getCanonicalWordDetail(
 export function getCanonicalRootDetail(slug: string): RootDetailModel | null {
   if (!slug) return null;
   const cleanSlug = slug.trim();
-  const qacIndex = getQACAuthoritativeIndex();
 
   // Find root in ROOT_DATABASE (exact case-preserving match first, then case-insensitive fallback)
   const matchedRoot = 
@@ -581,7 +586,7 @@ export function getCanonicalRootDetail(slug: string): RootDetailModel | null {
 
   // Exact case-sensitive Buckwalter root key for QAC recordsByRoot
   const rootBw = matchedRoot.id.replace(/-/g, '');
-  const qacRecords = qacIndex.recordsByRoot.get(rootBw) || [];
+  const qacRecords = getQACRecordsByRoot(rootBw);
 
   // Occurrences
   const occurrences = matchedRoot.occurrences && matchedRoot.occurrences.length > 0
