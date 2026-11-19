@@ -63,17 +63,20 @@ export default function WordEtymologyModal({
     let isMounted = true;
 
     const locParam = (surahNumber && ayahNumber && wordIndex) ? `${surahNumber}:${ayahNumber}:${wordIndex}` : '';
-    const query = new URLSearchParams({
-      word: wordArabic,
-      location: locParam,
-      surah: surahNumber ? String(surahNumber) : '',
-      ayah: ayahNumber ? String(ayahNumber) : '',
-      wordIndex: wordIndex ? String(wordIndex) : '',
-      meaning: meaningIndo || '',
-      surahNameIndo: surahNameIndo || '',
-      ayahArabic: ayahArabic || '',
-      ayahIndo: ayahIndo || ''
-    });
+    // A verse coordinate fully identifies a Quran word. Keeping the cache key
+    // independent of interface language and verse text lets CDN responses be reused.
+    const query = locParam
+      ? new URLSearchParams({ location: locParam })
+      : new URLSearchParams({
+          word: wordArabic,
+          surah: surahNumber ? String(surahNumber) : '',
+          ayah: ayahNumber ? String(ayahNumber) : '',
+          wordIndex: wordIndex ? String(wordIndex) : '',
+          meaning: meaningIndo || '',
+          surahNameIndo: surahNameIndo || '',
+          ayahArabic: ayahArabic || '',
+          ayahIndo: ayahIndo || ''
+        });
 
     const controller = new AbortController();
     let timedOut = false;
@@ -83,7 +86,18 @@ export default function WordEtymologyModal({
       .then(json => {
         const payload = json?.data?.study || json?.study;
         if (isMounted && payload) {
-          setAsyncStudy(payload);
+          setAsyncStudy(locParam ? {
+            ...payload,
+            context: {
+              ...payload.context,
+              surahNumber,
+              ayahNumber,
+              wordIndex,
+              ayahArabic,
+              ayahIndo,
+              surahNameIndo,
+            },
+          } : payload);
         } else if (isMounted) { setLoadError(true); }
       })
       .catch((error) => { if (isMounted && (timedOut || error?.name !== 'AbortError')) setLoadError(true); })

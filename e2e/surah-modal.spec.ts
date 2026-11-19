@@ -138,10 +138,14 @@ test('word study modal leaves loading state and renders the source-backed entry'
   await expect(dialog.getByRole('status')).toContainText(/Memuat akar|Loading root/);
   const response = await detailResponse;
   expect(response.ok()).toBe(true);
+  const requestParams = new URL(response.url()).searchParams;
+  expect([...requestParams.keys()]).toEqual(['location']);
+  expect(requestParams.get('location')).toMatch(/^18:\d+:\d+$/);
   const payload = await response.json();
   expect(payload.data?.study?.primaryMeaning?.text).toBeTruthy();
   await expect(dialog.getByText(/Makna Kata|Word meaning/, { exact: true })).toBeVisible({ timeout: 15000 });
   await expect(dialog.getByRole('link', { name: /Qabas/ })).toHaveAttribute('href', 'https://sina.birzeit.edu/qabas');
+  await expect(dialog.getByTitle('Dengarkan rekaman kata ini')).toBeEnabled();
   await expect(dialog.getByRole('status')).toHaveCount(0);
   expect(extraExcerptRequests).toHaveLength(0);
 });
