@@ -140,6 +140,7 @@ test('focusing handsfree preloads the current verse translation before mode sele
   wav.writeUInt32LE(sampleCount, 40);
   await page.route('**/quran-terjemahan-indonesia-audio-by-ayah/**', async (route) => {
     translationRequests.push(route.request().url());
+    await new Promise((resolve) => setTimeout(resolve, 500));
     await route.fulfill({
       status: 200,
       headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'audio/wav' },
@@ -151,12 +152,14 @@ test('focusing handsfree preloads the current verse translation before mode sele
   await page.getByRole('heading', { name: /Surah Al-Kahf/ }).waitFor();
   await page.getByRole('button', { name: 'Putar Tilawah', exact: true }).click();
   const player = page.getByLabel('Pemutar audio Al-Qur’an');
+  await expect(player).toBeVisible();
+  const expandPlayer = player.getByRole('button', { name: 'Perbesar pemutar' });
+  if (await expandPlayer.isVisible()) await expandPlayer.click();
   const handsfree = player.getByRole('combobox', { name: 'Mode handsfree' });
   await handsfree.focus();
 
   await expect.poll(() => translationRequests.length, { timeout: 2000 }).toBeGreaterThan(0);
   expect(translationRequests[0]).toContain('/audio_m4a/018/018001.m4a');
-  await page.waitForFunction(() => Boolean((window as typeof window & { __qurabicAudioBlobs?: string[] }).__qurabicAudioBlobs?.length), null, { timeout: 2000 });
   await handsfree.selectOption('reverse');
   await expect(player.locator('[aria-live="polite"]')).toContainText(/Suara AI|AI voice/, { timeout: 3000 });
   expect(translationRequests).toHaveLength(1);

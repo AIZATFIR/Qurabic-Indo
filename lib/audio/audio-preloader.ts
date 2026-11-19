@@ -16,6 +16,7 @@ const AUDIO_CACHE_NAME = 'qurabic-audio-cache-v1';
 // In-memory cache mapping remote audio URLs to local memory Blob URLs
 const blobUrlCache = new Map<string, string>();
 const inFlightFetches = new Map<string, Promise<string>>();
+const inFlightControllers = new Map<string, AbortController>();
 const MAX_BLOB_CACHE = 80;
 
 /**
@@ -46,6 +47,25 @@ export function getCachedAudioUrl(url: string): string | undefined {
   return blobUrlCache.get(url);
 }
 
+export async function waitForPreloadedAudioUrl(url: string, timeoutMs: number): Promise<string | undefined> {
+  const cached = getCachedAudioUrl(url);
+  if (cached) return cached;
+  const pending = inFlightFetches.get(url);
+  if (!pending) return undefined;
+
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  const result = await Promise.race([
+    pending,
+    new Promise<undefined>((resolve) => { timeout = setTimeout(() => resolve(undefined), timeoutMs); }),
+  ]);
+  if (timeout) clearTimeout(timeout);
+  return result?.startsWith('blob:') ? result : undefined;
+}
+
+export function cancelAudioPreload(url: string): void {
+  inFlightControllers.get(url)?.abort();
+}
+
 /**
  * Preloads a single audio URL into an in-memory Blob URL with persistent CacheStorage backing
  * If fetch fails or times out, safely resolves to original URL as stream fallback
@@ -63,7 +83,11 @@ export async function preloadAudioBlob(url: string, timeoutMs = 5000): Promise<s
   const inFlight = inFlightFetches.get(url);
   if (inFlight) return inFlight;
 
-  const fetchPromise = (async () => {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  inFlightControllers.set(url, controller);
+  let fetchPromise!: Promise<string>;
+  fetchPromise = (async () => {
     try {
       // 3. Persistent CacheStorage check
       if ('caches' in window) {
@@ -72,7 +96,7 @@ export async function preloadAudioBlob(url: string, timeoutMs = 5000): Promise<s
           const cachedResponse = await cache.match(url);
           if (cachedResponse && cachedResponse.ok) {
             const blob = await cachedResponse.blob();
-            if (blob && blob.size > 0) {
+            if (blob && blob.size > 0 && !controller.signal.aborted) {
               const blobUrl = URL.createObjectURL(blob);
               blobUrlCache.set(url, blobUrl);
               pruneBlobCache();
@@ -85,15 +109,12 @@ export async function preloadAudioBlob(url: string, timeoutMs = 5000): Promise<s
       }
 
       // 4. Network fetch with timeout
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      if (controller.signal.aborted) return url;
 
       const res = await fetch(url, {
         signal: controller.signal,
         cache: 'force-cache',
       });
-      clearTimeout(timer);
-
       if (!res.ok) {
         throw new Error(`HTTP ${res.status}`);
       }
@@ -109,7 +130,7 @@ export async function preloadAudioBlob(url: string, timeoutMs = 5000): Promise<s
       }
 
       const blob = await res.blob();
-      if (!blob || blob.size === 0) {
+      if (!blob || blob.size === 0 || controller.signal.aborted) {
         throw new Error('Empty audio blob');
       }
 
@@ -121,7 +142,9 @@ export async function preloadAudioBlob(url: string, timeoutMs = 5000): Promise<s
       // Return original URL so audio element can stream directly without throwing
       return url;
     } finally {
-      inFlightFetches.delete(url);
+      clearTimeout(timer);
+      if (inFlightFetches.get(url) === fetchPromise) inFlightFetches.delete(url);
+      if (inFlightControllers.get(url) === controller) inFlightControllers.delete(url);
     }
   })();
 

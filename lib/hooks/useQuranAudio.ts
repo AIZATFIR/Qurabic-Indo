@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { DEFAULT_TRANSLATION_VOICE_MODE, getAudioCandidateUrls, getTranslationAudioCandidateUrls, getFirstAudioTrack, getNextAudioTrack, isHumanTranslationAvailable, isAiTranslationAudioUrl, AVAILABLE_QARIS, QariMeta, TranslationVoiceMode, TRANSLATION_VOICE_OPTIONS, TranslationVoiceOption, AudioTrack, TranslationAudioLanguage, AUDIO_STARTUP_TIMEOUT_MS } from '../api/audio';
-import { getCachedAudioUrl, preloadNextAudioTrack } from '../audio/audio-preloader';
+import { cancelAudioPreload, getCachedAudioUrl, preloadNextAudioTrack, waitForPreloadedAudioUrl } from '../audio/audio-preloader';
 import { shouldPublishAudioTime } from '../audio/smooth-progress';
 
 export type PlaybackState = 'idle' | 'loading' | 'playing' | 'paused' | 'ended' | 'error';
@@ -180,12 +180,19 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
       setPlaybackState('error');
       setError('Rekaman tilawah tidak dapat dimuat. Periksa koneksi lalu tekan Putar untuk mencoba lagi.');
     };
-    const loadCandidate = () => {
+    const loadCandidate = async () => {
       if (!isCurrent()) return;
       const candidateIndex = index;
+      const candidateUrl = candidates[candidateIndex];
       setIsAiGeneratedTranslation(false);
-      setIsAiTranslationCandidate(track.phase === 'translation' && isAiTranslationAudioUrl(candidates[index]));
-      audio.src = getCachedAudioUrl(candidates[index]) || candidates[index];
+      setIsAiTranslationCandidate(track.phase === 'translation' && isAiTranslationAudioUrl(candidateUrl));
+      let source = getCachedAudioUrl(candidateUrl);
+      if (!source) {
+        source = await waitForPreloadedAudioUrl(candidateUrl, 800);
+        if (!source) cancelAudioPreload(candidateUrl);
+      }
+      if (!isCurrent() || candidateIndex !== index || !wantsPlaybackRef.current) return;
+      audio.src = source || candidateUrl;
       audio.load();
       armTimer();
       audio.play()?.then(() => {
