@@ -158,6 +158,9 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
         ) : (
           <p className="max-w-4xl text-base leading-relaxed text-ink-secondary">No English root summary is available yet. Consult the indexed dictionary entry below when one is available.</p>
         ))}
+        {!root.coreMeaning && !root.coreMeaningEnglish && !laneDefinition && <a href="https://sina.birzeit.edu/qabas" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
+          <span>{t('Cari kata terkait di Qabas · Birzeit', 'Look up related lemmas in Qabas · Birzeit')}</span><ExternalLink className="h-4 w-4" aria-hidden="true" />
+        </a>}
         {root.classicalArabicExcerpt && <details className="border-l-2 border-primary/40 pl-4 sm:pl-5">
           <summary className="min-h-11 cursor-pointer py-2 text-base font-medium text-ink-secondary focus-visible:outline-primary">{t('Buka kutipan Arab · Al-Mufradat karya al-Raghib', 'Open Arabic excerpt · al-Raghib’s Al-Mufradat')}</summary>
           <p lang="ar" dir="rtl" className="max-h-48 overflow-y-auto whitespace-pre-line break-words py-2 text-lg leading-9 text-ink-primary">{root.classicalArabicExcerpt}</p>

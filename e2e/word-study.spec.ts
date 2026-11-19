@@ -15,6 +15,7 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     expect(supplementalRequests).toHaveLength(0);
     await expect(meaningSection).toContainText('Ringkasan akar belum tersedia dari sumber yang terindeks.');
     await expect(meaningSection).not.toContainText('memiliki peranan penting dalam kosakata Al-Qur’an');
+    await expect(meaningSection.getByRole('link', { name: 'Cari kata terkait di Qabas · Birzeit' })).toHaveAttribute('href', 'https://sina.birzeit.edu/qabas');
   });
 
   test('Indonesian root page shows a sourced English gloss when no Indonesian summary exists', async ({ page }) => {
