@@ -155,8 +155,9 @@ export const HUMAN_INDONESIAN_TRANSLATION_AVAILABLE_SURAHS = new Set<number>([
   105, 106, 107, 108, 109, 110, 111, 112, 113, 114,
 ]);
 
-/** Files 069038–069052 are absent from the source archive; failed files are skipped. */
+/** Files 041001 and 069038–069052 are absent from the source archive. */
 const HUMAN_INDONESIAN_TRANSLATION_MISSING_AYAHS: Record<number, ReadonlySet<number>> = {
+  41: new Set([1]),
   69: new Set(Array.from({ length: 15 }, (_, index) => index + 38)),
 };
 

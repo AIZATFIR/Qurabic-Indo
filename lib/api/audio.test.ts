@@ -21,6 +21,8 @@ test('human recordings stay first, with an explicitly selected AI fallback and l
   const humanThenAi = getTranslationAudioCandidateUrls(1, 1, undefined, 'ai-fallback', 'id');
   assert.ok(humanThenAi[0].startsWith('https://archive.org/'));
   assert.match(humanThenAi[1], /audio_m4a\/001\/001001\.m4a/);
+  assert.equal(isHumanTranslationAvailable(41, 'id', 1), false, 'known missing archive file should not delay handsfree playback');
+  assert.equal(getTranslationAudioCandidateUrls(41, 1, undefined, 'ai-fallback', 'id').length, 1);
   assert.equal(isTranslationAudioAvailable(18, 'id', 'ai-fallback'), true);
   assert.deepEqual(getTranslationAudioCandidateUrls(1, 1, undefined, 'off'), []);
   assert.equal(isTranslationAudioAvailable(1, 'id', 'off'), false);
