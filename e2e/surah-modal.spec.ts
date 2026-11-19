@@ -1,5 +1,24 @@
 import { expect, test } from '@playwright/test';
 
+function silentWav(durationSeconds: number): Buffer {
+  const sampleRate = 8000;
+  const sampleCount = sampleRate * durationSeconds;
+  const wav = Buffer.alloc(44 + sampleCount, 128);
+  wav.write('RIFF', 0);
+  wav.writeUInt32LE(36 + sampleCount, 4);
+  wav.write('WAVEfmt ', 8);
+  wav.writeUInt32LE(16, 16);
+  wav.writeUInt16LE(1, 20);
+  wav.writeUInt16LE(1, 22);
+  wav.writeUInt32LE(sampleRate, 24);
+  wav.writeUInt32LE(sampleRate, 28);
+  wav.writeUInt16LE(1, 32);
+  wav.writeUInt16LE(8, 34);
+  wav.write('data', 36);
+  wav.writeUInt32LE(sampleCount, 40);
+  return wav;
+}
+
 test('surah picker follows the selected paper theme and shared surface shape', async ({ page }) => {
   await page.goto('/baca', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => {
@@ -65,6 +84,27 @@ test('mobile reader keeps the Surah picker inside the viewport', async ({ page }
   await page.keyboard.press('Escape');
   const headerFits = await page.locator('#reader-headbar > div').evaluate((element) => element.scrollWidth <= element.clientWidth);
   expect(headerFits).toBe(true);
+});
+
+test('audio tracker moves its thumb with a compositor transform', async ({ page }) => {
+  const wav = silentWav(6);
+  await page.route('**/verses.quran.com/Alafasy/mp3/018001.mp3', route => route.fulfill({
+    status: 200,
+    headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'audio/wav' },
+    body: wav,
+  }));
+  await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Putar Tilawah Ayat 1', exact: true }).click();
+
+  const player = page.getByLabel('Pemutar audio Al-Qur’an');
+  const thumb = player.locator('[data-audio-progress] > span').nth(1);
+  const position = player.getByRole('slider', { name: 'Posisi audio' });
+  await expect.poll(async () => Number(await position.getAttribute('value')), { timeout: 8000 }).toBeGreaterThan(0);
+  await expect.poll(() => thumb.evaluate(element => (element as HTMLElement).style.transform), { timeout: 8000 })
+    .toMatch(/translateX\(/);
+  const currentTransform = () => thumb.evaluate(element => (element as HTMLElement).style.transform);
+  const firstTransform = await currentTransform();
+  await expect.poll(currentTransform, { timeout: 1500 }).not.toBe(firstTransform);
 });
 
 test('AI translation fallback is disclosed and retained by handsfree', async ({ page }) => {
@@ -167,21 +207,7 @@ test('focusing handsfree preloads the current verse translation before mode sele
     };
   });
   const translationRequests: string[] = [];
-  const sampleRate = 8000;
-  const sampleCount = sampleRate * 3;
-  const wav = Buffer.alloc(44 + sampleCount, 128);
-  wav.write('RIFF', 0);
-  wav.writeUInt32LE(36 + sampleCount, 4);
-  wav.write('WAVEfmt ', 8);
-  wav.writeUInt32LE(16, 16);
-  wav.writeUInt16LE(1, 20);
-  wav.writeUInt16LE(1, 22);
-  wav.writeUInt32LE(sampleRate, 24);
-  wav.writeUInt32LE(sampleRate, 28);
-  wav.writeUInt16LE(1, 32);
-  wav.writeUInt16LE(8, 34);
-  wav.write('data', 36);
-  wav.writeUInt32LE(sampleCount, 40);
+  const wav = silentWav(3);
   await page.route('**/quran-terjemahan-indonesia-audio-by-ayah/**', async (route) => {
     translationRequests.push(route.request().url());
     await new Promise((resolve) => setTimeout(resolve, 500));
