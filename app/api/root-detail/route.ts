@@ -68,6 +68,6 @@ export async function GET(request: NextRequest) {
   }
 
   const response = NextResponse.json({ root, lemmaSamples });
-  response.headers.set('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
+  response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=86400, stale-while-revalidate=43200');
   return response;
 }
