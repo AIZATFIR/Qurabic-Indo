@@ -174,6 +174,12 @@ function QuranWordInteractiveComponent({
     }, 120);
   };
 
+  const prefetchWordOnTouch = (event: React.PointerEvent<HTMLSpanElement>) => {
+    if (event.pointerType === 'mouse' || !surahNumber || !ayahNumber || !wordIndex) return;
+    clearWordPrefetch();
+    prefetchWordDetail({ word: wordArabic, location: `${surahNumber}:${ayahNumber}:${wordIndex}` });
+  };
+
   const clearWordPrefetch = () => {
     if (prefetchTimerRef.current) clearTimeout(prefetchTimerRef.current);
     prefetchTimerRef.current = null;
@@ -222,6 +228,7 @@ function QuranWordInteractiveComponent({
           tabIndex={0}
           onPointerEnter={scheduleWordPrefetch}
           onPointerLeave={clearWordPrefetch}
+          onPointerDown={prefetchWordOnTouch}
           onClick={handleClick}
           onKeyDown={handleKeyDown}
           aria-label={a11yLabel}
@@ -240,6 +247,7 @@ function QuranWordInteractiveComponent({
           tabIndex={0}
           onPointerEnter={scheduleWordPrefetch}
           onPointerLeave={clearWordPrefetch}
+          onPointerDown={prefetchWordOnTouch}
           onClick={handleClick}
           onKeyDown={handleKeyDown}
           aria-label={a11yLabel}
