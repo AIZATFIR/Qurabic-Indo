@@ -2,11 +2,21 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
   test('root without a lexical entry does not show a corpus placeholder as its definition', async ({ page }) => {
-    await page.goto('/akar/r-A-y', { waitUntil: 'networkidle' });
+    await page.goto('/akar/r-A-y', { waitUntil: 'domcontentloaded' });
 
     const meaningSection = page.locator('section[aria-labelledby="root-meaning-heading"]');
-    await expect(meaningSection).toContainText('Ringkasan akar belum tersedia.');
+    await expect(meaningSection).toContainText('Ringkasan akar belum tersedia dari sumber yang terindeks.');
     await expect(meaningSection).not.toContainText('memiliki peranan penting dalam kosakata Al-Qur’an');
+  });
+
+  test('Indonesian root page shows a sourced English gloss when no Indonesian summary exists', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('qurabic_language', 'id'));
+    await page.goto('/akar/d-y-n', { waitUntil: 'domcontentloaded' });
+
+    const meaningSection = page.locator('section[aria-labelledby="root-meaning-heading"]');
+    await expect(meaningSection).toContainText('English gloss · Quran bil-Quran');
+    await expect(meaningSection.locator('p[lang="en"]').first()).toContainText('The root "dyn" primarily means');
+    await expect(meaningSection.getByRole('link', { name: 'Quran bil-Quran' })).toHaveAttribute('href', /quran-bil-quran/);
   });
 
   test('root gloss stays in English only when English is selected', async ({ page }) => {

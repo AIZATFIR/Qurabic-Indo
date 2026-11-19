@@ -124,9 +124,23 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
               : laneDefinition ? 'Indexed classical dictionary entry · Lane, 1863' : root.coreMeaningEnglish ? 'English root gloss · Quran bil-Quran dataset' : 'No English root entry is indexed'}</p>
           </div>
         </div>
-        {language === 'id' ? (
-          <p className="max-w-4xl text-lg leading-relaxed text-ink-primary">{root.coreMeaning || t('Ringkasan akar belum tersedia.', 'A root summary is not available yet.')}</p>
+        {language === 'id' ? root.coreMeaning ? (
+          <p className="max-w-4xl text-lg leading-relaxed text-ink-primary">{root.coreMeaning}</p>
+        ) : root.coreMeaningEnglish ? (
+          <div className="max-w-4xl space-y-2">
+            <p className="text-sm font-medium text-ink-secondary">English gloss · <a className="underline underline-offset-4" href={SOURCES_REGISTRY.quranBilQuran.url} target="_blank" rel="noopener noreferrer">Quran bil-Quran</a> (Lane-based; page citation unavailable)</p>
+            <p lang="en" className="text-lg leading-relaxed text-ink-primary">{root.coreMeaningEnglish}</p>
+          </div>
         ) : laneDefinition ? (
+          <div className="max-w-4xl space-y-2">
+            <p className="text-sm font-medium text-ink-secondary">Kutipan bahasa Inggris · Edward William Lane (1863)</p>
+            <p lang="en" className="text-lg leading-relaxed text-ink-primary">{(laneDefinition.sense.englishText || laneDefinition.sense.text).slice(0, 760)}{(laneDefinition.sense.englishText || laneDefinition.sense.text).length > 760 ? '…' : ''}</p>
+            <p className="text-sm text-ink-secondary">Book I, Part {laneDefinition.sense.citation?.volume || laneDefinition.entry.volume}, p. {laneDefinition.sense.citation?.page || laneDefinition.entry.page}</p>
+          </div>
+        ) : (
+          <p className="max-w-4xl text-base leading-relaxed text-ink-secondary">{root.classicalArabicExcerpt ? t('Ringkasan Indonesia belum tersedia. Kutipan Arab al-Raghib tersedia di bawah.', 'An Indonesian summary is not available. See al-Raghib’s Arabic excerpt below.') : t('Ringkasan akar belum tersedia dari sumber yang terindeks.', 'A root summary is not available from the indexed sources.')}</p>
+        ) : (
+        laneDefinition ? (
           <div className="max-w-4xl space-y-2">
             <p className="text-sm font-medium text-ink-secondary">Classical dictionary evidence · Edward William Lane (1863)</p>
             <p lang="en" className="text-lg leading-relaxed text-ink-primary">{(laneDefinition.sense.englishText || laneDefinition.sense.text).slice(0, 760)}{(laneDefinition.sense.englishText || laneDefinition.sense.text).length > 760 ? '…' : ''}</p>
@@ -143,7 +157,7 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
           </div>
         ) : (
           <p className="max-w-4xl text-base leading-relaxed text-ink-secondary">No English root summary is available yet. Consult the indexed dictionary entry below when one is available.</p>
-        )}
+        ))}
         {root.classicalArabicExcerpt && <details className="border-l-2 border-primary/40 pl-4 sm:pl-5">
           <summary className="min-h-11 cursor-pointer py-2 text-base font-medium text-ink-secondary focus-visible:outline-primary">{t('Buka kutipan Arab · Al-Mufradat karya al-Raghib', 'Open Arabic excerpt · al-Raghib’s Al-Mufradat')}</summary>
           <p lang="ar" dir="rtl" className="max-h-48 overflow-y-auto whitespace-pre-line break-words py-2 text-lg leading-9 text-ink-primary">{root.classicalArabicExcerpt}</p>

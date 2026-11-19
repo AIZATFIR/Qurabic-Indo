@@ -123,6 +123,10 @@ test('word study modal leaves loading state and renders the source-backed entry'
   });
   await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
   await page.getByRole('heading', { name: /Surah Al-Kahf/ }).waitFor();
+  // Wait for client hydration through a real, reversible control interaction.
+  await page.getByRole('button', { name: 'Pengaturan Tampilan' }).click();
+  await expect(page.getByText('Pengaturan Bacaan', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Tutup pengaturan' }).click();
   const firstWord = page.locator('[role="button"][aria-label^="Bedah kata:"]').first();
   await firstWord.waitFor({ state: 'visible', timeout: 30000 });
   await page.waitForFunction(() => {
