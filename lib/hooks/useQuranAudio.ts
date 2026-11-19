@@ -188,7 +188,7 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
       setIsAiTranslationCandidate(track.phase === 'translation' && isAiTranslationAudioUrl(candidateUrl));
       let source = getCachedAudioUrl(candidateUrl);
       if (!source) {
-        source = await waitForPreloadedAudioUrl(candidateUrl, 800);
+        source = await waitForPreloadedAudioUrl(candidateUrl, 100);
         if (!source) cancelAudioPreload(candidateUrl);
       }
       if (!isCurrent() || candidateIndex !== index || !wantsPlaybackRef.current) return;

@@ -209,6 +209,47 @@ test('focusing handsfree preloads the current verse translation before mode sele
   expect(translationRequests).toHaveLength(1);
 });
 
+test('slow translation preload does not delay direct audio startup', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('qurabic_language', 'id');
+    localStorage.setItem('qurabic_audio_translation_voice', 'ai-fallback');
+    const audioWindow = window as typeof window & { __translationSources?: Array<{ time: number; url: string }>; __translationSelectedAt?: number };
+    audioWindow.__translationSources = [];
+    const source = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'src');
+    if (source?.set) Object.defineProperty(HTMLMediaElement.prototype, 'src', {
+      ...source,
+      set(value: string) {
+        if (this instanceof HTMLAudioElement && value.includes('quran-terjemahan-indonesia-audio-by-ayah')) {
+          audioWindow.__translationSources?.push({ time: performance.now(), url: value });
+        }
+        source.set!.call(this, value);
+      },
+    });
+  });
+
+  let preloadRequests = 0;
+  await page.route('**/quran-terjemahan-indonesia-audio-by-ayah/**', async (route) => {
+    preloadRequests++;
+    if (preloadRequests === 1) await new Promise(resolve => setTimeout(resolve, 2000));
+    await route.abort();
+  });
+
+  await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('heading', { name: /Surah Al-Kahf/ }).waitFor();
+  await page.getByRole('button', { name: 'Putar Tilawah Ayat 1', exact: true }).click();
+  const player = page.getByLabel('Pemutar audio Al-Qur’an');
+  await expect(player).toBeVisible();
+  const handsfree = player.getByRole('combobox', { name: 'Mode handsfree' });
+  await handsfree.focus();
+  await expect.poll(() => preloadRequests, { timeout: 2000 }).toBeGreaterThan(0);
+  await page.evaluate(() => { (window as typeof window & { __translationSelectedAt?: number }).__translationSelectedAt = performance.now(); });
+  await handsfree.selectOption('reverse');
+  await expect.poll(async () => page.evaluate(() => {
+    const target = window as typeof window & { __translationSelectedAt?: number; __translationSources?: Array<{ time: number; url: string }> };
+    return target.__translationSources?.find(source => source.url.includes('/018/018001.m4a'))?.time! - target.__translationSelectedAt!;
+  }), { timeout: 2000 }).toBeLessThan(500);
+});
+
 test('failed Indonesian translation audio is reported instead of silently skipping the verse', async ({ page }) => {
   let blockedTranslationRequests = 0;
   await page.route('**/quran-terjemahan-indonesia-audio-by-ayah/**', async (route) => {
