@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Play, Pause, SkipBack, SkipForward, X, Loader2, Settings2, ChevronDown, ChevronUp } from 'lucide-react';
 import { UseQuranAudioReturn, HandsfreeMode, RepeatMode } from '@/lib/hooks/useQuranAudio';
 import { useLanguage } from '@/lib/context/LanguageContext';
-import { estimateAudioProgress, stabilizeAudioProgress } from '@/lib/audio/smooth-progress';
 import { preloadTranslationAudio } from '@/lib/audio/audio-preloader';
 
 interface QuranAudioPlayerProps {
@@ -19,62 +18,13 @@ export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic
   const { language, t } = useLanguage();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [minimized, setMinimized] = useState(false);
-  const progressFillRef = useRef<HTMLSpanElement>(null);
-  const progressThumbRef = useRef<HTMLSpanElement>(null);
-  const displayedProgressRef = useRef(audio.progress);
-  const observedTimeRef = useRef(audio.currentTime);
-  const trackIdentityRef = useRef(`${audio.currentAyah}:${audio.isReadingTranslation}`);
-  const progressSampleRef = useRef({
-    currentTime: audio.currentTime,
-    duration: audio.duration,
-    isPlaying: audio.isPlaying,
-    progress: audio.progress,
-    observedAt: performance.now(),
-  });
   const { currentAyah, playbackState, isPlaying, isLoading, isReadingTranslation, isAiGeneratedTranslation, isAiTranslationCandidate, handsfreeMode, currentQariMeta } = audio;
-
-  useEffect(() => {
-    const trackIdentity = `${audio.currentAyah}:${audio.isReadingTranslation}`;
-    const newTrack = trackIdentityRef.current !== trackIdentity;
-    const soughtBack = audio.currentTime < observedTimeRef.current - 0.25;
-    if (newTrack || soughtBack) displayedProgressRef.current = audio.progress;
-    trackIdentityRef.current = trackIdentity;
-    observedTimeRef.current = audio.currentTime;
-    progressSampleRef.current = {
-      currentTime: audio.currentTime,
-      duration: audio.duration,
-      isPlaying: audio.isPlaying,
-      progress: audio.progress,
-      observedAt: performance.now(),
-    };
-  }, [audio.currentAyah, audio.currentTime, audio.duration, audio.isPlaying, audio.isReadingTranslation, audio.progress]);
-
-  useEffect(() => {
-    let frame = 0;
-    const renderProgress = (now: number) => {
-      const sample = progressSampleRef.current;
-      const estimated = estimateAudioProgress({
-        currentTime: sample.currentTime,
-        duration: sample.duration,
-        observedAt: sample.observedAt,
-        now,
-        isPlaying: sample.isPlaying,
-        progress: sample.progress,
-      });
-      const progress = stabilizeAudioProgress(estimated, displayedProgressRef.current);
-      displayedProgressRef.current = progress;
-      progressFillRef.current?.style.setProperty('transform', `scaleX(${progress})`);
-      progressThumbRef.current?.style.setProperty('transform', `translateX(${progress * 100}%)`);
-      if (sample.isPlaying) frame = requestAnimationFrame(renderProgress);
-    };
-    renderProgress(performance.now());
-    return () => cancelAnimationFrame(frame);
-  }, [audio.currentAyah, audio.isPlaying, audio.isReadingTranslation]);
 
   if (playbackState === 'idle' && currentAyah === null) return null;
   const formatTime = (seconds: number) => Number.isFinite(seconds) && seconds >= 0 ? `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}` : '0:00';
   const repeatLabel = audio.repeatMode === 'ayah' ? t('Ayat', 'Verse') : audio.repeatMode === 'surah' ? t('Surat', 'Surah') : t('Mati', 'Off');
   const toggleLabel = isPlaying || isLoading ? t('Jeda', 'Pause') : t('Putar', 'Play');
+  const progressTransition = isPlaying ? 'transform 500ms linear' : 'none';
   const controlClass = 'inline-flex min-h-11 min-w-11 items-center justify-center text-ink-secondary hover:bg-canvas-soft hover:text-ink-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-40';
   const selectClass = 'min-h-11 w-full border-b border-hairline bg-canvas-surface py-2 text-sm text-ink-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary';
   const warmCurrentTranslation = () => {
@@ -115,12 +65,12 @@ export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic
           <span className="sr-only">{t('Posisi audio', 'Audio position')}</span>
           <span className="relative flex h-11 w-full items-center" data-audio-progress>
             <span aria-hidden="true" className="absolute inset-x-0 h-1.5 overflow-hidden rounded-full bg-canvas-soft">
-              <span ref={progressFillRef} className="block h-full origin-left rounded-full bg-primary" style={{ transform: 'scaleX(0)' }} />
+              <span className="block h-full origin-left rounded-full bg-primary" style={{ transform: `scaleX(${audio.progress})`, transition: progressTransition }} />
             </span>
-            <span ref={progressThumbRef} aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 w-full" style={{ transform: 'translateX(0%)' }}>
+            <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 w-full" style={{ transform: `translateX(${audio.progress * 100}%)`, transition: progressTransition }}>
               <span className="absolute left-0 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-canvas-surface bg-primary shadow-subtle" />
             </span>
-            <input aria-label={t('Posisi audio', 'Audio position')} type="range" min={0} max={1000} value={Math.round(audio.progress * 1000)} onChange={event => { const progress = Number(event.target.value) / 1000; displayedProgressRef.current = progress; audio.seek(progress); }} disabled={!audio.duration} className="absolute inset-0 h-11 w-full cursor-pointer opacity-0 focus-visible:rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:cursor-default" />
+            <input aria-label={t('Posisi audio', 'Audio position')} type="range" min={0} max={1000} value={Math.round(audio.progress * 1000)} onChange={event => audio.seek(Number(event.target.value) / 1000)} disabled={!audio.duration} className="absolute inset-0 h-11 w-full cursor-pointer opacity-0 focus-visible:rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:cursor-default" />
           </span>
         </label>
         <div className="flex items-center gap-2 px-3 pb-2">

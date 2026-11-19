@@ -209,9 +209,13 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
         else if (err.name !== 'AbortError') failCandidate();
       });
     };
+    const syncAudioTime = () => {
+      if (Number.isFinite(audio.currentTime)) setCurrentTime(audio.currentTime);
+      if (Number.isFinite(audio.duration)) setDuration(audio.duration);
+    };
     const onPlaying = () => { if (isCurrent() && wantsPlaybackRef.current) { clearTimer(); const isAi = track.phase === 'translation' && isAiTranslationAudioUrl(candidates[index]); setIsAiGeneratedTranslation(isAi); setIsAiTranslationCandidate(isAi); setPlaybackState('playing'); } };
-    const onPause = () => { if (isCurrent() && !audio.ended) { clearTimer(); setPlaybackState('paused'); } };
-    const onWaiting = () => { if (isCurrent() && wantsPlaybackRef.current) { setPlaybackState('loading'); armTimer(); } };
+    const onPause = () => { if (isCurrent() && !audio.ended) { clearTimer(); syncAudioTime(); setPlaybackState('paused'); } };
+    const onWaiting = () => { if (isCurrent() && wantsPlaybackRef.current) { syncAudioTime(); setPlaybackState('loading'); armTimer(); } };
     const onTime = () => {
       if (!isCurrent()) return;
       const now = performance.now();
