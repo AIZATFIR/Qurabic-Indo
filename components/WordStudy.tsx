@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
   BookOpen,
@@ -65,21 +65,14 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
   const [otherForms, setOtherForms] = useState<ArramoozForm[]>([]);
   const [otherFormsTotal, setOtherFormsTotal] = useState(0);
   const [otherFormsTruncated, setOtherFormsTruncated] = useState(false);
+  const otherFormsController = useRef<AbortController | null>(null);
   const [isSourceDrawerOpen, setIsSourceDrawerOpen] = useState(false);
   const [selectedSourceId, setSelectedSourceId] = useState<string | undefined>();
   const { isBookmarked, toggleBookmark } = useBookmarks();
-  useEffect(() => {
-    setIsOtherFormsOpen(false);
-    setIsOtherFormsExpanded(false);
-    setOtherFormsState('idle');
-    setOtherForms([]);
-    setOtherFormsTotal(0);
-    setOtherFormsTruncated(false);
-  }, [study.lexical.rootSlug]);
-
-  useEffect(() => {
-    if (!isOtherFormsOpen || !study.lexical.rootSlug || otherFormsState !== 'idle') return;
+  const loadOtherForms = () => {
+    if (!study.lexical.rootSlug || otherFormsController.current) return;
     const controller = new AbortController();
+    otherFormsController.current = controller;
     setOtherFormsState('loading');
     fetch(`/api/arramooz?root=${encodeURIComponent(study.lexical.rootSlug)}`, { signal: controller.signal })
       .then((response) => response.ok ? response.json() : Promise.reject(new Error('Request failed')))
@@ -91,9 +84,24 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
       })
       .catch((error) => {
         if (error?.name !== 'AbortError') setOtherFormsState('error');
+      })
+      .finally(() => {
+        if (otherFormsController.current === controller) otherFormsController.current = null;
       });
-    return () => controller.abort();
-  }, [isOtherFormsOpen, study.lexical.rootSlug, otherFormsState]);
+  };
+
+  useEffect(() => {
+    otherFormsController.current?.abort();
+    otherFormsController.current = null;
+    setIsOtherFormsOpen(false);
+    setIsOtherFormsExpanded(false);
+    setOtherFormsState('idle');
+    setOtherForms([]);
+    setOtherFormsTotal(0);
+    setOtherFormsTruncated(false);
+  }, [study.lexical.rootSlug]);
+
+  useEffect(() => () => otherFormsController.current?.abort(), []);
 
   const activeBookmarkSlug = study.lexical.rootSlug;
   const isSavedBookmark = activeBookmarkSlug ? isBookmarked(activeBookmarkSlug) : false;
@@ -527,7 +535,17 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
           <button
             type="button"
             aria-expanded={isOtherFormsOpen}
-            onClick={() => setIsOtherFormsOpen((open) => !open)}
+            onClick={() => {
+              if (isOtherFormsOpen) {
+                setIsOtherFormsOpen(false);
+                otherFormsController.current?.abort();
+                otherFormsController.current = null;
+                setOtherFormsState((state) => state === 'loading' ? 'idle' : state);
+              } else {
+                setIsOtherFormsOpen(true);
+                if (otherFormsState === 'idle') loadOtherForms();
+              }
+            }}
             className="min-h-11 text-sm font-semibold text-primary hover:underline"
           >
             {isOtherFormsOpen ? t('Tutup bentuk tambahan', 'Hide additional forms') : t('Lihat bentuk tambahan', 'Show additional forms')}
@@ -536,7 +554,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
           {isOtherFormsOpen && otherFormsState === 'error' && (
             <div className="flex items-center gap-3 text-sm">
               <p role="status" className="text-ink-secondary">{t('Data kamus belum dapat dimuat.', 'Dictionary data could not be loaded.')}</p>
-              <button type="button" className="font-semibold text-primary underline" onClick={() => setOtherFormsState('idle')}>{t('Coba lagi', 'Retry')}</button>
+              <button type="button" className="font-semibold text-primary underline" onClick={loadOtherForms}>{t('Coba lagi', 'Retry')}</button>
             </div>
           )}
           {isOtherFormsOpen && otherFormsState === 'done' && (() => {
