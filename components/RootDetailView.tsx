@@ -9,6 +9,7 @@ import { useTheme } from '@/lib/context/ThemeContext';
 import { SOURCES_REGISTRY } from '@/lib/data/sources';
 import { transliterateRootArabic } from '@/lib/morphology/transliteration';
 import { fetchRootOccurrences } from '@/lib/api/root-occurrences';
+import { getRootEntryLoadState } from '@/lib/api/root-entry-load-state';
 
 export interface RootLemmaSample {
   coordinate: string;
@@ -32,8 +33,11 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
   const [selectedPos, setSelectedPos] = useState<'all' | 'V' | 'N'>('all');
   const [root, setRoot] = useState(initialRoot);
   const [lemmaSamples, setLemmaSamples] = useState(initialLemmaSamples);
-  const [rootDataLoading, setRootDataLoading] = useState(initialRoot.statistics.uniqueAyahs === 0 || initialRoot.lexicon === undefined || initialRoot.occurrences.length === 0);
+  const initialLoadState = getRootEntryLoadState(initialRoot.statistics.uniqueAyahs, initialRoot.lexicon !== undefined, initialRoot.occurrences.length);
+  const [rootDataLoading, setRootDataLoading] = useState(initialLoadState.rootData);
+  const [occurrencesLoading, setOccurrencesLoading] = useState(initialLoadState.occurrences);
   const [rootDataError, setRootDataError] = useState(false);
+  const [occurrencesError, setOccurrencesError] = useState(false);
   const { statistics } = root;
   const { lexicon } = root;
   const rootTransliteration = transliterateRootArabic(root.rootArabic);
@@ -58,25 +62,33 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
     .find(({ sense }) => Boolean(sense.englishText || sense.text));
 
   useEffect(() => {
-    const needsRootData = initialRoot.statistics.uniqueAyahs === 0 || initialRoot.lexicon === undefined;
-    const needsOccurrences = initialRoot.occurrences.length === 0;
+    const loadState = getRootEntryLoadState(initialRoot.statistics.uniqueAyahs, initialRoot.lexicon !== undefined, initialRoot.occurrences.length);
+    const needsRootData = loadState.rootData;
+    const needsOccurrences = loadState.occurrences;
     if (!needsRootData && !needsOccurrences) {
       setRoot(initialRoot);
       setLemmaSamples(initialLemmaSamples);
       setRootDataLoading(false);
+      setOccurrencesLoading(false);
       setRootDataError(false);
+      setOccurrencesError(false);
       return;
     }
 
     let active = true;
-    setRootDataLoading(true);
+    setRootDataLoading(needsRootData);
+    setOccurrencesLoading(needsOccurrences);
     setRootDataError(false);
+    setOccurrencesError(false);
     const rootData = needsRootData
       ? fetch(`/api/root-detail?root=${encodeURIComponent(initialRoot.id)}&v=2`)
         .then((response) => response.ok ? response.json() : Promise.reject(new Error('Root data unavailable')))
       : Promise.resolve({ root: initialRoot, lemmaSamples: initialLemmaSamples });
     const occurrenceData = needsOccurrences
-      ? fetchRootOccurrences(initialRoot.id).catch(() => initialRoot.occurrences)
+      ? fetchRootOccurrences(initialRoot.id).catch(() => {
+        if (active) setOccurrencesError(true);
+        return initialRoot.occurrences;
+      })
       : Promise.resolve(initialRoot.occurrences);
 
     Promise.all([rootData, occurrenceData])
@@ -89,7 +101,10 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
         if (active) setRootDataError(true);
       })
       .finally(() => {
-        if (active) setRootDataLoading(false);
+        if (active) {
+          setRootDataLoading(false);
+          setOccurrencesLoading(false);
+        }
       });
 
     return () => { active = false; };
@@ -286,6 +301,8 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
       <section id="concordance" aria-labelledby="verses-heading" className={`scroll-mt-24 space-y-5 ${classic ? 'border-t border-hairline pt-8' : ''}`}>
         <h2 id="verses-heading" className="text-2xl font-semibold text-ink-primary">{t('Ayat penggunaan', 'Verse occurrences')}</h2>
         <p className="text-base leading-relaxed text-ink-secondary">{t('Ayat Arab dan terjemahan Kemenag RI ditampilkan bersama. Bentuk akar ditandai di tiap rujukan.', 'Full Arabic verses are shown here. Open a verse for its Saheeh International translation.')}</p>
+        {occurrencesLoading && <p role="status" className="text-base text-ink-secondary">{t('Memuat ayat penggunaan…', 'Loading verse occurrences…')}</p>}
+        {occurrencesError && <p role="alert" className="text-base text-ink-secondary">{t('Ayat lengkap belum termuat. Coba muat ulang halaman.', 'Full verses could not be loaded. Please reload the page.')}</p>}
         <ol className="divide-y divide-hairline border-y border-hairline">
           {verses.slice(0, visibleVerses).map((verse) => <li key={`${verse.surahNumber}:${verse.ayahNumber}`}>
             <Link href={`/baca?surah=${verse.surahNumber}&ayah=${verse.ayahNumber}`} className="block space-y-2 py-4 text-primary hover:bg-canvas-soft focus-visible:outline-primary">
