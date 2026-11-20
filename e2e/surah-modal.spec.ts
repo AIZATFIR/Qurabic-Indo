@@ -130,7 +130,7 @@ test('AI translation fallback is disclosed and retained by handsfree', async ({ 
   await expect(player.getByRole('status')).toContainText(/suara AI/i);
 });
 
-test('slow Indonesian human audio falls back to TTS within 2.5 seconds', async ({ page }) => {
+test('slow Indonesian human audio falls back to TTS within 1.2 seconds', async ({ page }) => {
   test.setTimeout(30000);
   await page.addInitScript(() => {
     const audioWindow = window as typeof window & { __audioSources?: string[] };
@@ -170,7 +170,7 @@ test('slow Indonesian human audio falls back to TTS within 2.5 seconds', async (
   await player.getByRole('combobox', { name: 'Mode handsfree' }).selectOption('reverse');
   await expect.poll(() => page.evaluate(() => (window as typeof window & { __audioSources?: string[] }).__audioSources || []), { timeout: 5000 })
     .toContainEqual(expect.stringContaining('archive.org/download/AlQuran-terjemahan-indonesia-tanpa-bahasa-arab/002001.mp3'));
-  await expect.poll(() => page.evaluate(() => (window as typeof window & { __audioSources?: string[] }).__audioSources || []), { timeout: 4500 })
+  await expect.poll(() => page.evaluate(() => (window as typeof window & { __audioSources?: string[] }).__audioSources || []), { timeout: 2000 })
     .toContainEqual(expect.stringContaining('quran-terjemahan-indonesia-audio-by-ayah'));
   expect(humanAudioRequests).toBeGreaterThan(0);
 });
