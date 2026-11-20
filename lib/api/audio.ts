@@ -117,7 +117,7 @@ export const AVAILABLE_QARIS: QariMeta[] = [
 export type TranslationVoiceMode = 'human' | 'ai-fallback' | 'off';
 export type TranslationAudioLanguage = 'id' | 'en';
 export const DEFAULT_TRANSLATION_VOICE_MODE: TranslationVoiceMode = 'ai-fallback';
-export const AUDIO_STARTUP_TIMEOUT_MS = { arabic: 12000, translation: 4000, translationFallback: 1200 } as const;
+export const AUDIO_STARTUP_TIMEOUT_MS = { arabic: 12000, translation: 4000, translationFallback: 2400 } as const;
 
 export interface TranslationVoiceOption {
   id: TranslationVoiceMode;

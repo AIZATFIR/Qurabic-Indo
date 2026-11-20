@@ -20,7 +20,7 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     expect(new URL(warmedResponse.url()).searchParams.get('location')).toMatch(/^18:\d+:\d+$/);
 
     await firstWord.click();
-    await expect(page.getByRole('dialog').getByText(/Makna Kata|Word meaning/, { exact: true })).toBeVisible();
+    await expect(page.getByRole('dialog').getByText(/Terjemahan ayat|Verse translation/, { exact: true })).toBeVisible();
     expect(requests).toHaveLength(1);
   });
 
@@ -44,7 +44,7 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     await firstWord.click();
     const dialog = page.getByRole('dialog');
     await expect(dialog).toBeVisible();
-    await expect(dialog.getByText(/Makna Kata|Word meaning/, { exact: true })).toBeVisible({ timeout: 10000 });
+    await expect(dialog.getByText(/Terjemahan ayat|Verse translation/, { exact: true })).toBeVisible({ timeout: 10000 });
     expect(requests).toHaveLength(1);
   });
 
