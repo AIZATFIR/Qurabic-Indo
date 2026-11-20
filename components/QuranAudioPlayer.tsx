@@ -85,9 +85,9 @@ export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic
           <span className="sr-only">{t('Posisi audio', 'Audio position')}</span>
           <span className="relative flex h-11 w-full items-center" data-audio-progress>
             <span aria-hidden="true" className="absolute inset-x-0 h-1.5 overflow-hidden rounded-full bg-canvas-soft">
-              <span ref={progressFillRef} className="block h-full origin-left rounded-full bg-primary" style={{ transform: 'scaleX(0)', transition: isPlaying && !minimized ? 'transform 120ms linear' : 'none' }} />
+              <span ref={progressFillRef} className="block h-full origin-left rounded-full bg-primary" style={{ transform: 'scaleX(0)' }} />
             </span>
-            <span ref={progressThumbRef} aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 w-full" style={{ transform: 'translateX(0%)', transition: isPlaying && !minimized ? 'transform 120ms linear' : 'none' }}>
+            <span ref={progressThumbRef} aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 w-full" style={{ transform: 'translateX(0%)' }}>
               <span className="absolute left-0 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-canvas-surface bg-primary shadow-subtle" />
             </span>
             <input aria-label={t('Posisi audio', 'Audio position')} type="range" min={0} max={1000} value={Math.round(audio.progress * 1000)} onChange={event => audio.seek(Number(event.target.value) / 1000)} disabled={!audio.duration} className="absolute inset-0 h-11 w-full cursor-pointer opacity-0 focus-visible:rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:cursor-default" />

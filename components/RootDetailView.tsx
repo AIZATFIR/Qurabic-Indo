@@ -301,7 +301,7 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
           </li>)}
         </ol>
         {visibleVerses < verses.length && <button type="button" onClick={() => setVisibleVerses((count) => count + 20)} className="min-h-11 rounded-sm border border-hairline px-5 py-3 text-base text-primary hover:bg-canvas-soft focus-visible:outline-primary">{t('Tampilkan ayat lainnya', 'Show more verses')} ({number(verses.length - visibleVerses)})</button>}
-        {!verses.length && <p className="text-base text-ink-secondary">{t('Daftar ayat belum tersedia pada indeks lokal ini.', 'Verse occurrences are not available in this local index.')}</p>}
+        {!occurrencesLoading && !occurrencesError && !verses.length && <p className="text-base text-ink-secondary">{t('Daftar ayat belum tersedia pada indeks lokal ini.', 'Verse occurrences are not available in this local index.')}</p>}
       </section>
     </div>
   );
