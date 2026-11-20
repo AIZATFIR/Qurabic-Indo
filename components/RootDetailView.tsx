@@ -9,6 +9,7 @@ import { useTheme } from '@/lib/context/ThemeContext';
 import { SOURCES_REGISTRY } from '@/lib/data/sources';
 import { transliterateRootArabic } from '@/lib/morphology/transliteration';
 import { fetchRootOccurrences } from '@/lib/api/root-occurrences';
+import { fetchRootDetail } from '@/lib/api/root-detail-client';
 import { getRootEntryLoadState } from '@/lib/api/root-entry-load-state';
 
 export interface RootLemmaSample {
@@ -73,8 +74,7 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
     setRootDataError(false);
     setOccurrencesError(false);
     if (needsRootData) {
-      fetch(`/api/root-detail?root=${encodeURIComponent(initialRoot.id)}&v=2`)
-        .then((response) => response.ok ? response.json() : Promise.reject(new Error('Root data unavailable')))
+      fetchRootDetail<{ root: RootDetailModel; lemmaSamples: Record<string, RootLemmaSample> }>(initialRoot.id)
         .then((data) => {
           if (!active) return;
           setRoot((current) => ({ ...data.root, occurrences: current.occurrences }));
