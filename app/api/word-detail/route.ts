@@ -99,11 +99,7 @@ export async function GET(request: NextRequest) {
 
     const response = NextResponse.json({
       success: true,
-      data: {
-        ...detail,
-        translation: { primaryMeaning: study.primaryMeaning.text, meanings: [study.primaryMeaning.text], sourceCitation: study.primaryMeaning.source },
-        study
-      }
+      data: { study }
     });
 
     // Cache immutable Quranic linguistic data at the Edge / Browser level

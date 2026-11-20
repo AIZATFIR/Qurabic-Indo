@@ -79,6 +79,9 @@ async function runHardeningTests() {
   assert(resValid.headers.get('Cache-Control')?.includes('s-maxage=86400') === true, 'API returns public edge Cache-Control header');
   const bodyValid = await resValid.json();
   assert(bodyValid.success === true && bodyValid.data !== null, 'API body returns success=true and structured data');
+  assert(Boolean(bodyValid.data.study?.identity?.arabic), 'API returns the word study used by the popup');
+  assert(bodyValid.data.lexical === undefined, 'API omits duplicated lexical fields outside study');
+  assert(bodyValid.data.translation === undefined, 'API omits duplicated translation fields outside study');
 
   const excerptRequest = new Request('http://localhost:3000/api/word-detail?location=2%3A153%3A3&excerpt=lane-root-v1');
   const excerptResponse = await wordDetailGet(excerptRequest as any);
