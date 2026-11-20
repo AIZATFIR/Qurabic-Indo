@@ -15,6 +15,8 @@ import {
   Bookmark
 } from 'lucide-react';
 import { WordStudyViewModel } from '@/lib/lexicon/types';
+import type { ArramoozForm } from '@/lib/lexicon/arramooz-shared';
+import { filterOtherArabicForms } from '@/lib/lexicon/arramooz-shared';
 import { parseLexiconSenseTokens } from '@/lib/lexicon/lexicon-formatter';
 import { isRawBuckwalterRoot, transliterateArabic } from '@/lib/morphology/transliteration';
 import { stripArabicHarakat } from '@/lib/search/root-search';
@@ -57,9 +59,42 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
   const [isOccurrencesOpen, setIsOccurrencesOpen] = useState(false);
   const [isLexiconOpen, setIsLexiconOpen] = useState(false);
   const [isWordFamilyExpanded, setIsWordFamilyExpanded] = useState(false);
+  const [isOtherFormsOpen, setIsOtherFormsOpen] = useState(false);
+  const [isOtherFormsExpanded, setIsOtherFormsExpanded] = useState(false);
+  const [otherFormsState, setOtherFormsState] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
+  const [otherForms, setOtherForms] = useState<ArramoozForm[]>([]);
+  const [otherFormsTotal, setOtherFormsTotal] = useState(0);
+  const [otherFormsTruncated, setOtherFormsTruncated] = useState(false);
   const [isSourceDrawerOpen, setIsSourceDrawerOpen] = useState(false);
   const [selectedSourceId, setSelectedSourceId] = useState<string | undefined>();
   const { isBookmarked, toggleBookmark } = useBookmarks();
+  useEffect(() => {
+    setIsOtherFormsOpen(false);
+    setIsOtherFormsExpanded(false);
+    setOtherFormsState('idle');
+    setOtherForms([]);
+    setOtherFormsTotal(0);
+    setOtherFormsTruncated(false);
+  }, [study.lexical.rootSlug]);
+
+  useEffect(() => {
+    if (!isOtherFormsOpen || !study.lexical.rootSlug || otherFormsState !== 'idle') return;
+    const controller = new AbortController();
+    setOtherFormsState('loading');
+    fetch(`/api/arramooz?root=${encodeURIComponent(study.lexical.rootSlug)}`, { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error('Request failed')))
+      .then((payload) => {
+        setOtherForms(Array.isArray(payload.forms) ? payload.forms : []);
+        setOtherFormsTotal(Number(payload.total) || 0);
+        setOtherFormsTruncated(Boolean(payload.truncated));
+        setOtherFormsState('done');
+      })
+      .catch((error) => {
+        if (error?.name !== 'AbortError') setOtherFormsState('error');
+      });
+    return () => controller.abort();
+  }, [isOtherFormsOpen, study.lexical.rootSlug, otherFormsState]);
+
   const activeBookmarkSlug = study.lexical.rootSlug;
   const isSavedBookmark = activeBookmarkSlug ? isBookmarked(activeBookmarkSlug) : false;
 
@@ -473,6 +508,65 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
               {isWordFamilyExpanded ? t('Tampilkan lebih sedikit', 'Show fewer') : t(`Lihat ${wordFamily.length - 6} turunan lainnya`, `Show ${wordFamily.length - 6} more forms`)}
             </button>
           )}
+        </section>
+      )}
+
+      {lexical.rootSlug && (
+        <section className={`${classic ? 'p-6 sm:p-8 rounded-3xl bg-canvas-surface border border-hairline shadow-subtle' : 'py-6 border-t border-hairline'} space-y-4`}>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h3 className="text-base sm:text-lg font-semibold text-ink-primary">
+                {t('Bentuk Arab lain dari akar ini', 'Other Arabic forms from this root')}
+              </h3>
+              <p className="mt-1 text-xs sm:text-sm text-ink-secondary">
+                {t('Bentuk di luar daftar Al-Qur’an, dari kamus morfologi Arramooz. Definisi sumber dipertahankan dalam bahasa Arab.', 'Forms beyond the Quran list, from the Arramooz morphology dictionary. Source definitions remain in Arabic.')}
+              </p>
+            </div>
+            <span className="shrink-0 text-xs text-ink-mute">Arramooz · GPL-2</span>
+          </div>
+          <button
+            type="button"
+            aria-expanded={isOtherFormsOpen}
+            onClick={() => setIsOtherFormsOpen((open) => !open)}
+            className="min-h-11 text-sm font-semibold text-primary hover:underline"
+          >
+            {isOtherFormsOpen ? t('Tutup bentuk tambahan', 'Hide additional forms') : t('Lihat bentuk tambahan', 'Show additional forms')}
+          </button>
+          {isOtherFormsOpen && otherFormsState === 'loading' && <p role="status" className="text-sm text-ink-secondary">{t('Memuat lema kamus…', 'Loading dictionary entries…')}</p>}
+          {isOtherFormsOpen && otherFormsState === 'error' && (
+            <div className="flex items-center gap-3 text-sm">
+              <p role="status" className="text-ink-secondary">{t('Data kamus belum dapat dimuat.', 'Dictionary data could not be loaded.')}</p>
+              <button type="button" className="font-semibold text-primary underline" onClick={() => setOtherFormsState('idle')}>{t('Coba lagi', 'Retry')}</button>
+            </div>
+          )}
+          {isOtherFormsOpen && otherFormsState === 'done' && (() => {
+            const distinctForms = filterOtherArabicForms(otherForms, wordFamily.map((item) => item.arabic));
+            const visibleForms = isOtherFormsExpanded ? distinctForms : distinctForms.slice(0, 12);
+            return distinctForms.length === 0 ? (
+              <p className="text-sm text-ink-secondary">{t('Belum ada bentuk tambahan yang tercatat untuk akar ini.', 'No additional forms are indexed for this root.')}</p>
+            ) : (
+              <>
+                <p className="text-xs text-ink-mute">{t(`${distinctForms.length} bentuk ditemukan dalam data yang tersedia`, `${distinctForms.length} forms found in the available data`)}</p>
+                <ul className="divide-y divide-hairline border-y border-hairline">
+                  {visibleForms.map((form, index) => (
+                    <li key={`${form.pos}-${form.arabic}-${index}`} className="py-3 flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-5">
+                      <span className="font-arabic text-2xl text-ink-primary min-w-32" dir="rtl">{form.arabic}</span>
+                      <div className="min-w-0 flex-1 text-sm">
+                        <p className="text-ink-secondary">
+                          {form.pos === 'verb' ? t('Kata kerja', 'Verb') : t('Kata benda', 'Noun')}
+                          {form.wordType ? ` · ${form.wordType}` : ''}
+                          {form.wazn ? ` · ${t('wazan', 'pattern')} ${form.wazn}` : ''}
+                        </p>
+                        {form.definition && <p className="mt-1 font-arabic leading-relaxed text-ink-primary" dir="rtl" lang="ar">{form.definition}</p>}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                {distinctForms.length > 12 && <button type="button" onClick={() => setIsOtherFormsExpanded((expanded) => !expanded)} className="text-sm font-semibold text-primary hover:underline">{isOtherFormsExpanded ? t('Tampilkan lebih sedikit', 'Show fewer') : t('Tampilkan bentuk lainnya', 'Show more forms')}</button>}
+                {otherFormsTruncated && <p className="text-xs text-ink-mute">{t(`Sumber memuat ${otherFormsTotal} lema untuk akar ini; aplikasi menampilkan maksimal 120.`, `The source has ${otherFormsTotal} entries for this root; the app shows up to 120.`)}</p>}
+              </>
+            );
+          })()}
         </section>
       )}
 

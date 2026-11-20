@@ -48,6 +48,20 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     expect(requests).toHaveLength(1);
   });
 
+  test('Arramooz forms load only when the supplemental section is opened', async ({ page }) => {
+    const requests: string[] = [];
+    page.on('request', request => {
+      if (request.url().includes('/api/arramooz?')) requests.push(request.url());
+    });
+    await page.goto('/kata/%D8%B5%D9%8E%D8%A8%D9%8E%D8%B1%D9%8E', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByRole('heading', { name: 'Bentuk Arab lain dari akar ini' })).toBeVisible();
+    expect(requests).toHaveLength(0);
+    await page.getByRole('button', { name: 'Lihat bentuk tambahan' }).click();
+    await expect.poll(() => requests.length, { timeout: 5000 }).toBe(1);
+    await expect(page.getByText('Arramooz · GPL-2')).toBeVisible();
+    await expect(page.getByText('صَبَرَ', { exact: true }).first()).toBeVisible();
+  });
+
   test('root page shows its sourced gloss and links a Quranic lemma directly to Qabas', async ({ page }) => {
     const supplementalRequests: string[] = [];
     page.on('request', request => {
