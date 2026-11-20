@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { DEFAULT_TRANSLATION_VOICE_MODE, getAudioCandidateUrls, getTranslationAudioCandidateUrls, getFirstAudioTrack, getNextAudioTrack, isHumanTranslationAvailable, isAiTranslationAudioUrl, AVAILABLE_QARIS, QariMeta, TranslationVoiceMode, TRANSLATION_VOICE_OPTIONS, TranslationVoiceOption, AudioTrack, TranslationAudioLanguage, AUDIO_STARTUP_TIMEOUT_MS } from '../api/audio';
 import { cancelAudioPreload, getCachedAudioUrl, preloadNextAudioTrack, waitForPreloadedAudioUrl } from '../audio/audio-preloader';
-import { getAudioProgress, getInterpolatedAudioProgress, shouldPublishAudioTime } from '../audio/smooth-progress';
+import { getAudioProgress, getInterpolatedAudioProgress, getMonotonicAudioProgress, shouldPublishAudioTime } from '../audio/smooth-progress';
 
 export type PlaybackState = 'idle' | 'loading' | 'playing' | 'paused' | 'ended' | 'error';
 export type RepeatMode = 'off' | 'ayah' | 'surah';
@@ -80,11 +80,12 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
   const [isAiTranslationCandidate, setIsAiTranslationCandidate] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const liveTimeSampleRef = useRef({ time: 0, sampledAt: 0 });
+  const lastLiveProgressRef = useRef(0);
   const isAudioWaitingRef = useRef(false);
   const readLiveProgress = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return 0;
-    return getInterpolatedAudioProgress(
+    const progress = getInterpolatedAudioProgress(
       liveTimeSampleRef.current.time,
       audio.duration,
       liveTimeSampleRef.current.sampledAt,
@@ -92,6 +93,8 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
       !audio.paused && !audio.seeking && !isAudioWaitingRef.current && !audio.ended && !audio.error,
       audio.playbackRate,
     );
+    lastLiveProgressRef.current = getMonotonicAudioProgress(progress, lastLiveProgressRef.current);
+    return lastLiveProgressRef.current;
   }, []);
   const trackRef = useRef<AudioTrack | null>(null);
   const requestRef = useRef(0);
@@ -137,6 +140,7 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
     const request = ++requestRef.current;
     cleanupTrackRef.current();
     audio.pause();
+    lastLiveProgressRef.current = 0;
     wantsPlaybackRef.current = true;
     restartOnResumeRef.current = false;
     trackRef.current = track;
@@ -389,7 +393,7 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
   }, []);
   const nextAyah = useCallback(() => { const ayah = trackRef.current?.ayahNumber || 0; if (ayah < prefsRef.current.totalAyahs) playAyahRef.current(ayah + 1); }, []);
   const prevAyah = useCallback(() => { const ayah = trackRef.current?.ayahNumber; if (!ayah) return; if ((audioRef.current?.currentTime || 0) > 3) playAyahRef.current(ayah); else playAyahRef.current(Math.max(1, ayah - 1)); }, []);
-  const seek = useCallback((ratio: number) => { const audio = audioRef.current; if (audio && Number.isFinite(audio.duration)) { audio.currentTime = Math.max(0, Math.min(1, ratio)) * audio.duration; liveTimeSampleRef.current = { time: audio.currentTime, sampledAt: performance.now() }; setCurrentTime(audio.currentTime); } }, []);
+  const seek = useCallback((ratio: number) => { const audio = audioRef.current; if (audio && Number.isFinite(audio.duration)) { audio.currentTime = Math.max(0, Math.min(1, ratio)) * audio.duration; liveTimeSampleRef.current = { time: audio.currentTime, sampledAt: performance.now() }; lastLiveProgressRef.current = getAudioProgress(audio.currentTime, audio.duration); setCurrentTime(audio.currentTime); } }, []);
   const cycleRepeatMode = useCallback(() => setRepeatMode(prefsRef.current.repeatMode === 'off' ? 'ayah' : prefsRef.current.repeatMode === 'ayah' ? 'surah' : 'off'), [setRepeatMode]);
   const toggleAutoNext = useCallback(() => setAutoNext(!prefsRef.current.autoNext), [setAutoNext]);
   const toggleTranslationReading = useCallback(() => setHandsfreeMode(prefsRef.current.handsfreeMode === 'off' ? 'normal' : 'off'), [setHandsfreeMode]);
@@ -418,5 +422,5 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
     } catch { /* MediaSession is optional. */ }
   }, [currentAyah, surahNumber, selectedQari, isReadingTranslation, translationLanguage, resume, pause, nextAyah, prevAyah]);
 
-  return { currentAyah, playbackState, isPlaying: playbackState === 'playing', isLoading: playbackState === 'loading', currentTime, duration, progress: getAudioProgress(currentTime, duration), readLiveProgress, repeatMode, autoNext, error, selectedQari, setSelectedQari, currentQariMeta: AVAILABLE_QARIS.find(q => q.id === selectedQari) || AVAILABLE_QARIS[0], availableQaris: AVAILABLE_QARIS, translationVoiceMode, setTranslationVoiceMode, translationVoiceOptions: TRANSLATION_VOICE_OPTIONS, isHumanTranslationAvailableForCurrentSurah: isHumanTranslationAvailable(surahNumber, translationLanguage), isAiGeneratedTranslation, isAiTranslationCandidate, handsfreeMode, isTranslationReadingEnabled: handsfreeMode !== 'off', isReadingTranslation, translationSpeechSupported: true, setHandsfreeMode, toggleTranslationReading, setTranslationReadingEnabled, playAyah, togglePlayPause, pause, resume, nextAyah, prevAyah, setRepeatMode, cycleRepeatMode, setAutoNext, toggleAutoNext, seek, stop };
+  return { currentAyah, playbackState, isPlaying: playbackState === 'playing', isLoading: playbackState === 'loading', currentTime, duration, progress: readLiveProgress(), readLiveProgress, repeatMode, autoNext, error, selectedQari, setSelectedQari, currentQariMeta: AVAILABLE_QARIS.find(q => q.id === selectedQari) || AVAILABLE_QARIS[0], availableQaris: AVAILABLE_QARIS, translationVoiceMode, setTranslationVoiceMode, translationVoiceOptions: TRANSLATION_VOICE_OPTIONS, isHumanTranslationAvailableForCurrentSurah: isHumanTranslationAvailable(surahNumber, translationLanguage), isAiGeneratedTranslation, isAiTranslationCandidate, handsfreeMode, isTranslationReadingEnabled: handsfreeMode !== 'off', isReadingTranslation, translationSpeechSupported: true, setHandsfreeMode, toggleTranslationReading, setTranslationReadingEnabled, playAyah, togglePlayPause, pause, resume, nextAyah, prevAyah, setRepeatMode, cycleRepeatMode, setAutoNext, toggleAutoNext, seek, stop };
 }

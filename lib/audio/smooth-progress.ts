@@ -7,6 +7,10 @@ export function getAudioProgress(currentTime: number, duration: number): number 
   return Math.max(0, Math.min(1, currentTime / duration));
 }
 
+export function getMonotonicAudioProgress(next: number, previous: number): number {
+  return Math.max(previous, next);
+}
+
 export function getInterpolatedAudioProgress(
   sampledTime: number,
   duration: number,
