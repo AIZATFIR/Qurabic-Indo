@@ -48,6 +48,16 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     expect(requests).toHaveLength(1);
   });
 
+  test('English word study does not leave its analysis heading in Indonesian', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('qurabic_language', 'en'));
+    await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
+    await page.getByRole('button', { name: /Explore word: ٱلْحَمْدُ/ }).click();
+
+    const dialog = page.getByRole('dialog');
+    await expect(dialog.getByText('Morphology & word meaning', { exact: true })).toBeVisible();
+    await expect(dialog.getByText('Kajian Morfologi & Semantik Kata', { exact: true })).toHaveCount(0);
+  });
+
   test('Arramooz forms load only when the supplemental section is opened', async ({ page }) => {
     const requests: string[] = [];
     page.on('request', request => {

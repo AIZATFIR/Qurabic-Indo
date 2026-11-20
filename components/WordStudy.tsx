@@ -269,7 +269,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
               </span>
             ) : (
               <span className="text-xs text-ink-mute font-medium">
-                Kajian Morfologi &amp; Semantik Kata
+                {t('Kajian Morfologi & Semantik Kata', 'Morphology & word meaning')}
               </span>
             )}
           </div>
@@ -796,7 +796,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
               </div>
             ) : (
               <div className={`p-6 ${classic ? 'rounded-2xl' : 'rounded-none'} bg-canvas-soft border border-hairline text-center space-y-1.5 text-sm text-ink-secondary`}>
-                <p className="font-bold text-ink-primary">Kajian Leksikografi &amp; Morfologi</p>
+                <p className="font-bold text-ink-primary">{t('Kajian Leksikografi & Morfologi', 'Lexicography & morphology')}</p>
                 <p>{t('Definisi kamus belum terindeks untuk kata ini.', 'No dictionary definition is indexed for this word yet.')}</p>
               </div>
             )
