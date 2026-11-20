@@ -925,7 +925,7 @@ export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
   }
 };
 
-/** Returns curated or source-backed lexical data; QAC morphology alone is not a definition. */
+/** Returns source-backed lexical data; QAC morphology alone is not a definition. */
 export function getRootSemanticProfile(rootBw: string, rootArabic?: string): RootSemanticProfile | null {
   if (!rootBw) return null;
 
@@ -933,17 +933,7 @@ export function getRootSemanticProfile(rootBw: string, rootArabic?: string): Roo
   const normalizedId = cleanBw.replace(/-/g, '');
   const dashedId = cleanBw.includes('-') ? cleanBw : cleanBw.split('').join('-');
 
-  if (CURATED_ROOT_SEMANTICS[cleanBw]) return CURATED_ROOT_SEMANTICS[cleanBw];
-  if (CURATED_ROOT_SEMANTICS[dashedId]) return CURATED_ROOT_SEMANTICS[dashedId];
-
-  // Search case-insensitively across curated keys
-  for (const [k, v] of Object.entries(CURATED_ROOT_SEMANTICS)) {
-    if (k.replace(/-/g, '').toLowerCase() === normalizedId.toLowerCase()) {
-      return v;
-    }
-  }
-
-  // 1. Check curated roots database if it has authentic human-curated meaning
+  // Resolve the local morphology record only to find source indexes and examples.
   const dbRoot = ROOT_DATABASE.find(r => 
     r.id === cleanBw || 
     r.id === dashedId || 
@@ -953,7 +943,7 @@ export function getRootSemanticProfile(rootBw: string, rootArabic?: string): Roo
   );
 
   // QAC-derived summary prose has no lexical citation, so only use the sourced indexes below.
-  // Query Quran-bil-Quran (QBQ) & Al-Mufradat fi Gharib al-Quran (Al-Raghib al-Isfahani)
+  // Prefer Quran-bil-Quran (QBQ) and its al-Mufradat excerpt when available.
   const cleanArKey = rootArabic || dbRoot?.rootArabic || '';
   const qbqEntry = getQbqRootEntry(cleanArKey);
   const rootArDisplay = rootArabic || dbRoot?.rootArabic || cleanBw;

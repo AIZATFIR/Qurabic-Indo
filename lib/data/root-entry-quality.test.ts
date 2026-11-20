@@ -23,6 +23,10 @@ assert.ok(malikRoot?.coreMeaningEnglish, 'The root page should receive the Engli
 assert.equal(malikRoot.coreMeaning, '', 'An uncited generated Indonesian summary must not appear as a sourced definition');
 assert.notEqual(malikRoot.coreMeaning, malikRoot.coreMeaningEnglish, 'The root page must keep Indonesian and English summaries separate');
 
+const samwRoot = getCanonicalRootDetail('s-m-w');
+assert.ok(samwRoot?.coreMeaningEnglish, 'The source gloss should take precedence over an uncited curated summary');
+assert.equal(samwRoot.coreMeaning, '', 'An uncited curated summary must not appear as a sourced definition');
+
 assert.equal(getQbqRootEntry('ا ل ه')?.meaningEn.startsWith('Allah ('), true, 'Alif in the corpus root should match the hamza-on-alif spelling in the sourced QBQ gloss');
 
 let checkedEnglishGlosses = 0;
