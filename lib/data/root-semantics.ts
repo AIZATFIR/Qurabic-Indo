@@ -925,11 +925,7 @@ export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
   }
 };
 
-/**
- * Returns a rich, context-aware semantic profile for key Quranic roots,
- * or intelligently synthesizes a dignified profile from real Quranic derivatives.
- * Strictly ZERO robotic frequency counts, zero filler importance phrases, and zero fake corpus tags.
- */
+/** Returns curated or source-backed lexical data; QAC morphology alone is not a definition. */
 export function getRootSemanticProfile(rootBw: string, rootArabic?: string): RootSemanticProfile | null {
   if (!rootBw) return null;
 
@@ -956,19 +952,8 @@ export function getRootSemanticProfile(rootBw: string, rootArabic?: string): Roo
     (rootArabic && r.rootArabic.replace(/\s+/g, '') === rootArabic.replace(/\s+/g, ''))
   );
 
-  if (dbRoot) {
-    const rawMeaning = dbRoot.coreMeaning || '';
-    if (rawMeaning && !rawMeaning.includes('memiliki peranan penting') && !rawMeaning.startsWith('Akar kata ')) {
-      return {
-        titleIndo: dbRoot.titleIndo && !dbRoot.titleIndo.startsWith('Konsep') ? dbRoot.titleIndo : `Akar ${dbRoot.rootArabic}`,
-        coreMeaning: rawMeaning,
-        usagePatterns: dbRoot.usagePatterns || [],
-        meaningsIndonesian: dbRoot.meaningsIndonesian || []
-      };
-    }
-  }
-
-  // 2. Query Quran-bil-Quran (QBQ) & Al-Mufradat fi Gharib al-Quran (Al-Raghib al-Isfahani)
+  // QAC-derived summary prose has no lexical citation, so only use the sourced indexes below.
+  // Query Quran-bil-Quran (QBQ) & Al-Mufradat fi Gharib al-Quran (Al-Raghib al-Isfahani)
   const cleanArKey = rootArabic || dbRoot?.rootArabic || '';
   const qbqEntry = getQbqRootEntry(cleanArKey);
   const rootArDisplay = rootArabic || dbRoot?.rootArabic || cleanBw;
@@ -1017,7 +1002,7 @@ export function getRootSemanticProfile(rootBw: string, rootArabic?: string): Roo
     };
   }
 
-  // 3. Fallback Query Lane's Arabic-English Lexicon
+  // Fallback Query Lane's Arabic-English Lexicon
   const laneRoot = getLaneRootRecord(normalizedId, true) || getLaneRootRecord(cleanBw, true);
 
   if (laneRoot && laneRoot.entries && laneRoot.entries.length > 0) {

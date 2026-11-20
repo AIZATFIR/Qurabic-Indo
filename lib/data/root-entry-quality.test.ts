@@ -20,7 +20,7 @@ assert.equal(malikProfile.coreMeaning, '', 'An English source gloss must not be 
 assert.ok(malikProfile.classicalArabicExcerpt, 'The classical Arabic excerpt should remain available separately');
 const malikRoot = getCanonicalRootDetail('m-l-k');
 assert.ok(malikRoot?.coreMeaningEnglish, 'The root page should receive the English gloss');
-assert.ok(malikRoot.coreMeaning, 'The root page should retain an available Indonesian summary');
+assert.equal(malikRoot.coreMeaning, '', 'An uncited generated Indonesian summary must not appear as a sourced definition');
 assert.notEqual(malikRoot.coreMeaning, malikRoot.coreMeaningEnglish, 'The root page must keep Indonesian and English summaries separate');
 
 assert.equal(getQbqRootEntry('ا ل ه')?.meaningEn.startsWith('Allah ('), true, 'Alif in the corpus root should match the hamza-on-alif spelling in the sourced QBQ gloss');

@@ -386,10 +386,6 @@ export function getCanonicalWordDetail(
   if (!primaryMeaning) {
     if (semanticProfile?.coreMeaning && !semanticProfile.coreMeaning.startsWith('Akar kata ') && !semanticProfile.coreMeaning.includes('memiliki peranan penting')) {
       primaryMeaning = semanticProfile.coreMeaning;
-    } else if (matchedRoot?.titleIndo && !matchedRoot.titleIndo.startsWith('Konsep & Turunan') && !matchedRoot.titleIndo.startsWith('Akar Kata')) {
-      primaryMeaning = matchedRoot.titleIndo;
-    } else if (matchedRoot?.meaningsIndonesian && matchedRoot.meaningsIndonesian.length > 0 && !matchedRoot.meaningsIndonesian[0].startsWith('Gagasan pokok') && !matchedRoot.meaningsIndonesian[0].startsWith('Ragam makna')) {
-      primaryMeaning = matchedRoot.meaningsIndonesian[0];
     } else if (isParticle) {
       primaryMeaning = tag === 'NEG' ? 'Tidak / Tiada / Bukan (Penyangkal / Negasi)' : 'Partikel / Kata Tugas (Harf)';
     }
@@ -406,7 +402,7 @@ export function getCanonicalWordDetail(
           ? detailedExplanation.meanings
           : (semanticProfile?.meaningsIndonesian && semanticProfile.meaningsIndonesian.length > 0
               ? semanticProfile.meaningsIndonesian
-              : (matchedRoot?.meaningsIndonesian || []))));
+              : [])));
 
   // Fallback meanings array ensure non-empty
   if (!meanings || meanings.length === 0) {
@@ -681,23 +677,17 @@ export function getCanonicalRootDetail(slug: string, options: { includeOccurrenc
     ? matchedRoot.titleIndo
     : (rootProfile?.titleIndo || `Akar ${matchedRoot.rootArabic}`);
 
-  const cleanCoreMeaning = (matchedRoot.coreMeaning && !matchedRoot.coreMeaning.includes('memiliki peranan penting dalam kosakata Al-Qur\'an'))
-    ? matchedRoot.coreMeaning
-    : (rootProfile?.coreMeaning || '');
-
   return {
     id: matchedRoot.id,
     rootArabic: matchedRoot.rootArabic,
     rootArabicJoined: matchedRoot.rootArabicJoined,
     rootLatin: matchedRoot.rootLatin,
     titleIndo: semanticProfile?.titleIndo || cleanTitle,
-    coreMeaning: semanticProfile?.coreMeaning || cleanCoreMeaning,
+    coreMeaning: semanticProfile?.coreMeaning || '',
     coreMeaningEnglish: semanticProfile?.coreMeaningEnglish,
     classicalArabicExcerpt: semanticProfile?.classicalArabicExcerpt,
     contextualNote: semanticProfile?.contextualNote || matchedRoot.contextualNote,
-    meaningsIndonesian: semanticProfile?.meaningsIndonesian.length
-      ? semanticProfile.meaningsIndonesian
-      : (matchedRoot.coreMeaning && !matchedRoot.coreMeaning.includes('memiliki peranan penting dalam kosakata Al-Qur\'an') ? matchedRoot.meaningsIndonesian || [] : []),
+    meaningsIndonesian: semanticProfile?.meaningsIndonesian || [],
     statistics: {
       totalOccurrences: qacRecords.length || matchedRoot.totalOccurrences || occurrences.length,
       uniqueAyahs: uniqueAyahsSet.size || allOccurrences.length,
