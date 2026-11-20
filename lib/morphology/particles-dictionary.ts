@@ -18,6 +18,7 @@ export interface QuranicParticleInfo {
   grammaticalRole: string;
   primaryMeaning: string;
   meanings: string[];
+  meaningNote?: { id: string; en: string };
   syntaxExplanation: string;
   quranicNuances: string[];
 }
@@ -50,6 +51,10 @@ export const QURANIC_PARTICLES_DICTIONARY: Record<string, QuranicParticleInfo> =
     particleCategory: 'Harf Jarr',
     grammaticalRole: "Harf Jarr azh-Zharfiyyah Mabni 'alas-Sukun",
     primaryMeaning: 'Di dalam / Pada / Mengenai (Wadah Waktu & Tempat)',
+    meaningNote: {
+      id: 'فِي biasanya menunjukkan sesuatu berada di dalam suatu tempat atau berlangsung pada suatu waktu; padanannya mengikuti konteks ayat.',
+      en: 'Fī usually places something within a location or during a time; its translation depends on the verse context.',
+    },
     meanings: [
       'Azh-Zharfiyyah al-Makāniyyah: Menunjukkan wadah tempat kejadian (di dalam ruang/lingkungan)',
       'Azh-Zharfiyyah az-Zamāniyyah: Menunjukkan waktu terjadinya peristiwa (pada kurun waktu tertentu)',
@@ -211,6 +216,10 @@ export const QURANIC_PARTICLES_DICTIONARY: Record<string, QuranicParticleInfo> =
     particleCategory: 'Harf Athaf',
     grammaticalRole: "Harf 'Athaf al-Muthlaq al-Jam' Mabni 'alal-Fath",
     primaryMeaning: 'Dan / Demi (Penggabungan & Sumpah)',
+    meaningNote: {
+      id: 'وَ lazimnya menghubungkan kata atau pernyataan (“dan”); dalam susunan tertentu, ia menandai sumpah atau keadaan. Fungsinya mengikuti konteks.',
+      en: 'Wa commonly links words or clauses (“and”); in some constructions it marks an oath or a circumstance. Its role depends on context.',
+    },
     meanings: [
       'Al-Muthlaq al-Jam\': Menggabungkan dua kata atau kalimat tanpa membatasi urutan waktu (dan)',
       'Wawu al-Qasam: Berfungsi sebagai huruf sumpah agung yang memajrurkan kata berikutnya (demi)',
@@ -647,6 +656,10 @@ export const QURANIC_PARTICLES_DICTIONARY: Record<string, QuranicParticleInfo> =
     particleCategory: 'Harf Rad\'in',
     grammaticalRole: "Harf Rad'in wa Zajr Mabni 'alas-Sukun",
     primaryMeaning: 'Sekali-kali Tidak! / Jangan Sekali-kali Begitu! (Pencegahan Keras)',
+    meaningNote: {
+      id: 'كَلَّا merupakan bantahan atau penolakan tegas. Pada QS 78:4, Quranic Arabic Corpus menerjemahkannya “Nay!”; nuansanya dapat berbeda menurut konteks.',
+      en: 'Kallā is a particle of rejection or emphatic denial. In 78:4, the Quranic Arabic Corpus translates it as “Nay!”; its nuance depends on context.',
+    },
     meanings: [
       'Ar-Rad\'u waz-Zajr: Membentak keras, menolak anggapan salah, dan membungkam alasan batil',
       'Haqqan: Bermakna kepastian mutlak (sungguh benar-benar)'

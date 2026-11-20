@@ -366,6 +366,7 @@ export function getWordStudy(
         page: laneRootSense.sense.citation?.page || laneRootSense.entry.page,
       } : undefined,
       meanings: [primaryText],
+      particleMeaning: particleInfo?.meaningNote,
     },
     wordFamily,
     occurrences: {

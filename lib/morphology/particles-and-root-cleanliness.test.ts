@@ -57,6 +57,19 @@ test('Particles Dictionary & Zero-Fallback Placeholder Tests', async (t) => {
     assert.equal(waw.primaryMeaning.textEnglish, 'and');
   });
 
+  await t.test('7. Common particles include concise bilingual function notes in the word entry', () => {
+    const fi = getWordStudy('فِي');
+    const waw = getWordStudy('وَ');
+    const kalla = getWordStudy('كَلَّا');
+
+    assert.match(fi.lexical.particleMeaning?.id || '', /berada di dalam.*berlangsung.*waktu/i);
+    assert.match(fi.lexical.particleMeaning?.en || '', /within a location.*during a time/i);
+    assert.match(waw.lexical.particleMeaning?.id || '', /menghubungkan/i);
+    assert.match(waw.lexical.particleMeaning?.en || '', /links/i);
+    assert.match(kalla.lexical.particleMeaning?.id || '', /penolakan tegas/i);
+    assert.match(kalla.lexical.particleMeaning?.en || '', /emphatic denial/i);
+  });
+
   await t.test('3. Root ك و ن (k-w-n) displays a sourced contextual gloss, without invented philosophy', () => {
     const study = getWordStudy('كَانَ');
     assert.equal(study.lexical.rootArabic, 'ك و ن');

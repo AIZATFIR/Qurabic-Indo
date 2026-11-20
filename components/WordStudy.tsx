@@ -351,6 +351,12 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
           <p className="text-2xl sm:text-3xl font-extrabold text-ink-primary tracking-tight leading-snug select-text">
             {displayPrimary}
           </p>
+          {morphology.isParticle && lexical.particleMeaning && (
+            <div className="mx-auto max-w-2xl space-y-1 pt-1 text-sm leading-relaxed text-ink-secondary">
+              <p>{language === 'en' ? lexical.particleMeaning.en : lexical.particleMeaning.id}</p>
+              <p className="text-xs text-ink-mute">{t('Catatan editorial berbantuan AI · merujuk anotasi QAC', 'AI-assisted editorial note · informed by QAC annotations')}</p>
+            </div>
+          )}
           <a href={identity.qabasLemmaId ? `https://sina.birzeit.edu/qabas/lemma/${identity.qabasLemmaId}` : 'https://sina.birzeit.edu/qabas'} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center justify-center gap-1 text-sm font-medium text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
             {t('Arti kamus & bentuk kata di Qabas · Birzeit', 'Dictionary senses & word forms in Qabas · Birzeit')} <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" />
           </a>

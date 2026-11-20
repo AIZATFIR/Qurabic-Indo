@@ -226,6 +226,10 @@ export interface WordStudyViewModel {
     rootPhilosophy?: string;
     rootTranslation?: string;
     meanings?: string[];
+    particleMeaning?: {
+      id: string;
+      en: string;
+    };
     classicalCitation?: {
       book: string;
       bookArabic?: string;
