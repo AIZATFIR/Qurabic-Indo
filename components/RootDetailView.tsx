@@ -134,7 +134,7 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
           <div>
             <h2 id="root-meaning-heading" className="text-xl font-semibold text-ink-primary">{t('Makna inti akar', 'Root meaning')}</h2>
             <p className="mt-1 text-sm text-ink-secondary">{root.coreMeaningEnglish
-              ? t('Glos akar bahasa Inggris · Quran bil-Quran · tanpa rujukan halaman', 'English root gloss · Quran bil-Quran · no page citation')
+              ? t('Ringkasan Inggris · Quran bil-Quran · mengacu Lane; halaman dan metode penyuntingan tidak dicantumkan', 'English summary · Quran bil-Quran · attributes Lane; page and editorial method not stated')
               : laneDefinition ? language === 'id' ? 'Kutipan asli Lane · bahasa Inggris · belum diterjemahkan' : 'Original English dictionary entry · Lane, 1863'
                 : t('Definisi dari sumber leksikal belum tersedia', 'No sourced dictionary definition is indexed')}</p>
           </div>
@@ -142,7 +142,7 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
         {root.coreMeaningEnglish ? (
           <div className="max-w-4xl space-y-3">
             <p lang="en" className="text-lg leading-relaxed text-ink-primary">{root.coreMeaningEnglish}</p>
-            <p className="text-sm text-ink-secondary">{t('Indeks ini merujuk pada data Lane, tetapi tidak mencantumkan halaman atau keterangan apakah glos dibantu AI. Kutipan Lane tersedia di bawah jika terindeks.', 'This index credits Lane data but gives no page citation or AI-use statement. The Lane excerpt is available below when indexed.')}</p>
+            <p className="text-sm text-ink-secondary">{t('Proyek sumber tidak menjelaskan metode penyuntingan glos ini. Gunakan sebagai ringkasan awal; cocokkan dengan kutipan Lane di bawah jika tersedia.', 'The source project does not describe how this gloss was edited. Use it as a starting summary; compare it with the Lane excerpt below when available.')}</p>
             <a href={SOURCES_REGISTRY.quranBilQuran.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
               <span>{t('Buka proyek sumber · Quran bil-Quran', 'Open source project · Quran bil-Quran')}</span><ExternalLink className="h-4 w-4" aria-hidden="true" />
             </a>
