@@ -28,6 +28,7 @@ import QuranWordInteractive, { QuranWordClickData } from '@/components/QuranWord
 import WordEtymologyModal from '@/components/WordEtymologyModal';
 import SurahSearchModal from '@/components/SurahSearchModal';
 import QuranAudioPlayer from '@/components/QuranAudioPlayer';
+import { preloadTranslationAudio } from '@/lib/audio/audio-preloader';
 import { fetchSurahWithWBW, FullAyahWBW } from '@/lib/api/quran-corpus-api';
 import { SURAH_LIST, getSurahByNumber } from '@/lib/data/surah-list';
 import LanguageSelector from '@/components/LanguageSelector';
@@ -552,7 +553,13 @@ function BacaQuranPageContent() {
 
               <div className="relative" ref={headerHandsfreeRef}>
                 <button
-                  onClick={() => setIsHeaderHandsfreeOpen((prev) => !prev)}
+                  onClick={() => {
+                    const opening = !isHeaderHandsfreeOpen;
+                    setIsHeaderHandsfreeOpen(opening);
+                    if (opening) {
+                      void preloadTranslationAudio(selectedSurah, audio.currentAyah || 1, undefined, audio.translationVoiceMode, language).catch(() => {});
+                    }
+                  }}
                   className={`inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl border text-xs font-semibold transition-all font-sans shadow-subtle ${
                     audio.handsfreeMode !== 'off'
                       ? 'bg-primary-subdued text-primary border-primary/30 font-bold'

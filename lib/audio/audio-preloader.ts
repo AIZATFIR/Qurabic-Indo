@@ -179,24 +179,12 @@ export async function preloadTranslationAudio(
     if (cached) return cached;
   }
 
-  // 2. Try primary candidate with 4000ms timeout
-  const primaryUrl = candidates[0];
-  try {
-    const primaryBlob = await preloadAudioBlob(primaryUrl, 4000);
-    if (primaryBlob && primaryBlob.startsWith('blob:')) {
-      return primaryBlob;
-    }
-  } catch {
-    // Continue to fallback
-  }
-
-  // 3. Fallback to secondary candidate if available
-  if (candidates.length > 1) {
-    const fallbackUrl = candidates[1];
-    return await preloadAudioBlob(fallbackUrl, 5000);
-  }
-
-  return primaryUrl;
+  // Warm the fallback in parallel so a stalled human recording does not add
+  // its full timeout before the TTS candidate can start.
+  const preloadedCandidates = await Promise.all(candidates.map((url, index) =>
+    preloadAudioBlob(url, index === 0 ? 4000 : 5000).catch(() => url)
+  ));
+  return preloadedCandidates.find((url) => url.startsWith('blob:')) || preloadedCandidates[0] || '';
 }
 
 /**
@@ -252,6 +240,10 @@ export interface NextAudioPreloadOptions {
 }
 
 export function getNextAudioPreloadUrl(options: NextAudioPreloadOptions): string | undefined {
+  return getNextAudioPreloadUrls(options)[0];
+}
+
+export function getNextAudioPreloadUrls(options: NextAudioPreloadOptions): string[] {
   const nextTrack = getNextAudioTrack({
     surahNumber: options.surahNumber,
     ayahNumber: options.currentAyah,
@@ -263,16 +255,16 @@ export function getNextAudioPreloadUrl(options: NextAudioPreloadOptions): string
     translationLanguage: options.translationLanguage,
     translationVoiceMode: options.translationVoiceMode,
   });
-  if (!nextTrack) return undefined;
-  const candidates = nextTrack.phase === 'translation'
+  if (!nextTrack) return [];
+  return nextTrack.phase === 'translation'
     ? getTranslationAudioCandidateUrls(options.surahNumber, nextTrack.ayahNumber, undefined, options.translationVoiceMode ?? 'human', options.translationLanguage)
     : getAudioCandidateUrls(options.surahNumber, nextTrack.ayahNumber, options.qariId);
-  return candidates[0];
 }
 
 /** Warm only the immediate next track so background requests do not compete with playback. */
 export function preloadNextAudioTrack(options: NextAudioPreloadOptions): void {
   if (typeof window === 'undefined') return;
-  const url = getNextAudioPreloadUrl(options);
-  if (url) void preloadAudioBlob(url, 4000).catch(() => {});
+  for (const url of getNextAudioPreloadUrls(options)) {
+    void preloadAudioBlob(url, 4000).catch(() => {});
+  }
 }
