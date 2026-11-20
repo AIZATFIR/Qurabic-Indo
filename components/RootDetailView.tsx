@@ -133,28 +133,35 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
           <BookOpen className="h-5 w-5 text-primary" aria-hidden="true" />
           <div>
             <h2 id="root-meaning-heading" className="text-xl font-semibold text-ink-primary">{t('Makna inti akar', 'Root meaning')}</h2>
-            <p className="mt-1 text-sm text-ink-secondary">{laneDefinition
-              ? language === 'id' ? 'Kutipan asli Lane · bahasa Inggris · belum diterjemahkan' : 'Original English dictionary entry · Lane, 1863'
-              : root.coreMeaningEnglish ? t('Glos akar bahasa Inggris · Quran bil-Quran · tanpa rujukan halaman', 'English root gloss · Quran bil-Quran · no page citation') : t('Definisi dari sumber leksikal belum tersedia', 'No sourced dictionary definition is indexed')}</p>
+            <p className="mt-1 text-sm text-ink-secondary">{root.coreMeaningEnglish
+              ? t('Glos akar bahasa Inggris · Quran bil-Quran · tanpa rujukan halaman', 'English root gloss · Quran bil-Quran · no page citation')
+              : laneDefinition ? language === 'id' ? 'Kutipan asli Lane · bahasa Inggris · belum diterjemahkan' : 'Original English dictionary entry · Lane, 1863'
+                : t('Definisi dari sumber leksikal belum tersedia', 'No sourced dictionary definition is indexed')}</p>
           </div>
         </div>
-        {laneDefinition ? (
+        {root.coreMeaningEnglish ? (
+          <div className="max-w-4xl space-y-3">
+            <p lang="en" className="text-lg leading-relaxed text-ink-primary">{root.coreMeaningEnglish}</p>
+            <p className="text-sm text-ink-secondary">{t('Indeks ini merujuk pada data Lane, tetapi tidak mencantumkan halaman atau keterangan apakah glos dibantu AI. Kutipan Lane tersedia di bawah jika terindeks.', 'This index credits Lane data but gives no page citation or AI-use statement. The Lane excerpt is available below when indexed.')}</p>
+            <a href={SOURCES_REGISTRY.quranBilQuran.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
+              <span>{t('Buka proyek sumber · Quran bil-Quran', 'Open source project · Quran bil-Quran')}</span><ExternalLink className="h-4 w-4" aria-hidden="true" />
+            </a>
+          </div>
+        ) : laneDefinition ? (
           <div className="max-w-4xl space-y-2">
             <p className="text-sm font-medium text-ink-secondary">Edward William Lane, <i>An Arabic-English Lexicon</i></p>
             <p lang="en" className="text-lg leading-relaxed text-ink-primary">{(laneDefinition.sense.englishText || laneDefinition.sense.text).slice(0, 760)}{(laneDefinition.sense.englishText || laneDefinition.sense.text).length > 760 ? '…' : ''}</p>
             <p className="text-sm text-ink-secondary">Book I, Part {laneDefinition.sense.citation?.volume || laneDefinition.entry.volume}, p. {laneDefinition.sense.citation?.page || laneDefinition.entry.page}</p>
           </div>
-        ) : root.coreMeaningEnglish ? (
-          <div className="max-w-4xl space-y-3">
-            <p lang="en" className="text-lg leading-relaxed text-ink-primary">{root.coreMeaningEnglish}</p>
-            <p className="text-sm text-ink-secondary">{t('Glos sumber dalam bahasa Inggris; ekspor ini tidak menyertakan rujukan jilid atau halaman.', 'English source gloss; this export does not include a volume or page citation.')}</p>
-            <a href={SOURCES_REGISTRY.quranBilQuran.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
-              <span>{t('Buka proyek sumber · Quran bil-Quran', 'Open source project · Quran bil-Quran')}</span><ExternalLink className="h-4 w-4" aria-hidden="true" />
-            </a>
-          </div>
         ) : (
           <p className="max-w-4xl text-base leading-relaxed text-ink-secondary">{t('Definisi akar dari sumber kamus belum tersedia pada indeks lokal.', 'A sourced root definition is not available in the local index.')}</p>
         )}
+        {root.coreMeaningEnglish && laneDefinition && <details className="max-w-4xl border-l-2 border-primary/40 pl-4 sm:pl-5">
+          <summary className="min-h-11 cursor-pointer py-2 text-base font-medium text-ink-secondary focus-visible:outline-primary">{t('Kutipan asli Lane · bahasa Inggris', 'Original Lane entry · English')}</summary>
+          <p className="text-sm font-medium text-ink-secondary">Edward William Lane, <i>An Arabic-English Lexicon</i></p>
+          <p lang="en" className="py-2 text-base leading-relaxed text-ink-primary">{(laneDefinition.sense.englishText || laneDefinition.sense.text).slice(0, 1200)}{(laneDefinition.sense.englishText || laneDefinition.sense.text).length > 1200 ? '…' : ''}</p>
+          <p className="text-sm text-ink-secondary">Book I, Part {laneDefinition.sense.citation?.volume || laneDefinition.entry.volume}, p. {laneDefinition.sense.citation?.page || laneDefinition.entry.page}</p>
+        </details>}
         {firstQabasLemmaId && <a href={`https://sina.birzeit.edu/qabas/lemma/${firstQabasLemmaId}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
           <span>{t('Lihat lema terkait di Qabas · Birzeit', 'Open a related Qur’anic lemma in Qabas · Birzeit')}</span><ExternalLink className="h-4 w-4" aria-hidden="true" />
         </a>}
