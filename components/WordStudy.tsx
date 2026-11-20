@@ -51,8 +51,6 @@ function senseReferencesVerse(text: string, surahNumber?: number, ayahNumber?: n
 
 export default function WordStudy({ study, onClose, isModalMode = false }: WordStudyProps) {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const [rootExcerpt, setRootExcerpt] = useState(study.lexical.rootExcerpt);
-  const [isLoadingRootExcerpt, setIsLoadingRootExcerpt] = useState(!study.lexical.rootExcerpt && !isModalMode);
   const { language, t } = useLanguage();
   const { layoutMode } = useTheme();
   const classic = layoutMode === 'classic';
@@ -117,33 +115,6 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
     provenance,
     context
   } = study;
-
-  useEffect(() => {
-    setRootExcerpt(lexical.rootExcerpt);
-    if (lexical.rootExcerpt || isModalMode || !lexical.root) {
-      setIsLoadingRootExcerpt(false);
-      return;
-    }
-
-    const controller = new AbortController();
-    setIsLoadingRootExcerpt(true);
-    const coordinate = identity.coordinate;
-    const query = coordinate && /^\d+:\d+:\d+$/.test(coordinate)
-      ? new URLSearchParams({ location: coordinate, excerpt: 'lane-root-v1' })
-      : new URLSearchParams({ word: identity.arabic, excerpt: 'lane-root-v1' });
-
-    fetch(`/api/word-detail?${query.toString()}`, { signal: controller.signal })
-      .then((response) => response.ok ? response.json() : null)
-      .then((payload) => setRootExcerpt(payload?.data?.study?.lexical?.rootExcerpt))
-      .catch((error) => {
-        if (error?.name !== 'AbortError') setRootExcerpt(undefined);
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setIsLoadingRootExcerpt(false);
-      });
-
-    return () => controller.abort();
-  }, [identity.arabic, identity.coordinate, isModalMode, lexical.root, lexical.rootExcerpt]);
 
   const displayPrimary = language === 'en' ? (primaryMeaning.textEnglish || 'Word translation unavailable') : primaryMeaning.text;
   const displaySourceBadge = language === 'en' ? (primaryMeaning.sourceBadgeEnglish || 'Quran.com · English') : primaryMeaning.sourceBadge;
@@ -410,15 +381,6 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
               )}
             </div>
           </div>
-
-          {rootExcerpt && (
-            <blockquote className="max-w-3xl border-l-2 border-primary/40 pl-4 text-sm leading-relaxed text-ink-secondary sm:pl-5">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-primary">{t('Kutipan akar · Lane, sumber asli Inggris', 'Root lexicon · Lane, original English')}</p>
-              <p lang="en">{rootExcerpt.text}</p>
-              <cite className="mt-2 block not-italic text-xs">Edward William Lane, <i>An Arabic-English Lexicon</i>, Book I, Part {rootExcerpt.volume}, p. {rootExcerpt.page}</cite>
-            </blockquote>
-          )}
-          {!rootExcerpt && <p className="max-w-prose text-sm leading-relaxed text-ink-secondary" role={isLoadingRootExcerpt ? 'status' : undefined}>{isLoadingRootExcerpt ? t('Memuat kutipan Lane…', 'Loading Lane excerpt…') : t('Kutipan Lane untuk akar ini belum tersedia di indeks. Keluarga kata dan frekuensinya tetap merujuk pada Quranic Arabic Corpus.', 'A Lane quotation for this root is not available in the index. The word family and frequency still come from the Quranic Arabic Corpus.')}</p>}
         </section>
       )}
 
