@@ -104,7 +104,7 @@ export function getRootOccurrencesFromChunk(slug: string): VerseOccurrence[] {
 
     // Candidate base directories (supporting diverse bundling/runtime CWDs)
     const baseDirs = [
-      path.join(process.cwd(), 'lib/data/occurrences'),
+      path.join(process.cwd(), 'public/data/occurrences'),
       path.join(__dirname, '..', 'data', 'occurrences')
     ];
 

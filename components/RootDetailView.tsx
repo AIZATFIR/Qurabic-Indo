@@ -8,6 +8,7 @@ import { useLanguage } from '@/lib/context/LanguageContext';
 import { useTheme } from '@/lib/context/ThemeContext';
 import { SOURCES_REGISTRY } from '@/lib/data/sources';
 import { transliterateRootArabic } from '@/lib/morphology/transliteration';
+import { fetchRootOccurrences } from '@/lib/api/root-occurrences';
 
 export interface RootLemmaSample {
   coordinate: string;
@@ -31,7 +32,7 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
   const [selectedPos, setSelectedPos] = useState<'all' | 'V' | 'N'>('all');
   const [root, setRoot] = useState(initialRoot);
   const [lemmaSamples, setLemmaSamples] = useState(initialLemmaSamples);
-  const [rootDataLoading, setRootDataLoading] = useState(initialRoot.statistics.uniqueAyahs === 0 || initialRoot.lexicon === undefined);
+  const [rootDataLoading, setRootDataLoading] = useState(initialRoot.statistics.uniqueAyahs === 0 || initialRoot.lexicon === undefined || initialRoot.occurrences.length === 0);
   const [rootDataError, setRootDataError] = useState(false);
   const { statistics } = root;
   const { lexicon } = root;
@@ -57,7 +58,9 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
     .find(({ sense }) => Boolean(sense.englishText || sense.text));
 
   useEffect(() => {
-    if (initialRoot.statistics.uniqueAyahs > 0 && initialRoot.lexicon !== undefined) {
+    const needsRootData = initialRoot.statistics.uniqueAyahs === 0 || initialRoot.lexicon === undefined;
+    const needsOccurrences = initialRoot.occurrences.length === 0;
+    if (!needsRootData && !needsOccurrences) {
       setRoot(initialRoot);
       setLemmaSamples(initialLemmaSamples);
       setRootDataLoading(false);
@@ -68,11 +71,18 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
     let active = true;
     setRootDataLoading(true);
     setRootDataError(false);
-    fetch(`/api/root-detail?root=${encodeURIComponent(initialRoot.id)}&v=2`)
-      .then((response) => response.ok ? response.json() : Promise.reject(new Error('Root data unavailable')))
-      .then((data) => {
+    const rootData = needsRootData
+      ? fetch(`/api/root-detail?root=${encodeURIComponent(initialRoot.id)}&v=2`)
+        .then((response) => response.ok ? response.json() : Promise.reject(new Error('Root data unavailable')))
+      : Promise.resolve({ root: initialRoot, lemmaSamples: initialLemmaSamples });
+    const occurrenceData = needsOccurrences
+      ? fetchRootOccurrences(initialRoot.id).catch(() => initialRoot.occurrences)
+      : Promise.resolve(initialRoot.occurrences);
+
+    Promise.all([rootData, occurrenceData])
+      .then(([data, occurrences]) => {
         if (!active) return;
-        setRoot(data.root);
+        setRoot({ ...data.root, occurrences: occurrences.length ? occurrences : data.root.occurrences });
         setLemmaSamples(data.lemmaSamples || {});
       })
       .catch(() => {
@@ -275,9 +285,18 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
 
       <section id="concordance" aria-labelledby="verses-heading" className={`scroll-mt-24 space-y-5 ${classic ? 'border-t border-hairline pt-8' : ''}`}>
         <h2 id="verses-heading" className="text-2xl font-semibold text-ink-primary">{t('Ayat penggunaan', 'Verse occurrences')}</h2>
-        <p className="text-base leading-relaxed text-ink-secondary">{t('Buka mushaf untuk membaca ayat lengkap dan terjemahannya.', 'Open the reader for the full verse and its translation.')}</p>
+        <p className="text-base leading-relaxed text-ink-secondary">{t('Ayat Arab dan terjemahan Kemenag RI ditampilkan bersama. Bentuk akar ditandai di tiap rujukan.', 'Full Arabic verses are shown here. Open a verse for its Saheeh International translation.')}</p>
         <ol className="divide-y divide-hairline border-y border-hairline">
-          {verses.slice(0, visibleVerses).map((verse) => <li key={`${verse.surahNumber}:${verse.ayahNumber}`}><Link href={`/baca?surah=${verse.surahNumber}&ayah=${verse.ayahNumber}`} className="flex flex-wrap items-center justify-between gap-4 py-4 text-base text-primary hover:bg-canvas-soft focus-visible:outline-primary"><span>QS. {verse.surahNumber}:{verse.ayahNumber}</span><span lang="ar" dir="rtl" className="font-arabic text-2xl leading-loose text-ink-primary">{verse.matchedWordArabic}</span><span className="inline-flex items-center gap-2">{t('Baca ayat', 'Read verse')}<ArrowRight className="h-4 w-4" aria-hidden="true" /></span></Link></li>)}
+          {verses.slice(0, visibleVerses).map((verse) => <li key={`${verse.surahNumber}:${verse.ayahNumber}`}>
+            <Link href={`/baca?surah=${verse.surahNumber}&ayah=${verse.ayahNumber}`} className="block space-y-2 py-4 text-primary hover:bg-canvas-soft focus-visible:outline-primary">
+              <span className="flex flex-wrap items-center justify-between gap-3 text-base">
+                <span>QS. {verse.surahNumber}:{verse.ayahNumber} · <span lang="ar" dir="rtl" className="font-arabic">{verse.matchedWordArabic}</span></span>
+                <span className="inline-flex items-center gap-2">{t('Baca ayat', 'Read verse')}<ArrowRight className="h-4 w-4" aria-hidden="true" /></span>
+              </span>
+              <p lang="ar" dir="rtl" className="font-arabic text-2xl leading-loose text-ink-primary">{verse.verseArabic || verse.matchedWordArabic}</p>
+              {language === 'id' && verse.verseIndo && <p className="text-base leading-relaxed text-ink-secondary">{verse.verseIndo}</p>}
+            </Link>
+          </li>)}
         </ol>
         {visibleVerses < verses.length && <button type="button" onClick={() => setVisibleVerses((count) => count + 20)} className="min-h-11 rounded-sm border border-hairline px-5 py-3 text-base text-primary hover:bg-canvas-soft focus-visible:outline-primary">{t('Tampilkan ayat lainnya', 'Show more verses')} ({number(verses.length - visibleVerses)})</button>}
         {!verses.length && <p className="text-base text-ink-secondary">{t('Daftar ayat belum tersedia pada indeks lokal ini.', 'Verse occurrences are not available in this local index.')}</p>}
