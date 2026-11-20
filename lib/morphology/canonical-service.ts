@@ -569,7 +569,7 @@ export function getCanonicalWordDetail(
 /**
  * Computes complete canonical RootDetailModel with deterministic distribution statistics
  */
-export function getCanonicalRootDetail(slug: string): RootDetailModel | null {
+export function getCanonicalRootDetail(slug: string, options: { includeOccurrences?: boolean } = {}): RootDetailModel | null {
   if (!slug) return null;
   const cleanSlug = slug.trim();
 
@@ -589,9 +589,11 @@ export function getCanonicalRootDetail(slug: string): RootDetailModel | null {
   const qacRecords = getQACRecordsByRoot(rootBw);
 
   // Occurrences
-  const occurrences = matchedRoot.occurrences && matchedRoot.occurrences.length > 0
+  const needsOccurrenceFallback = options.includeOccurrences !== false || qacRecords.length === 0;
+  const allOccurrences = matchedRoot.occurrences?.length
     ? matchedRoot.occurrences
-    : getRootOccurrencesFromChunk(matchedRoot.id) || [];
+    : needsOccurrenceFallback ? getRootOccurrencesFromChunk(matchedRoot.id) || [] : [];
+  const occurrences = options.includeOccurrences === false ? [] : allOccurrences;
 
   // Calculate deterministic statistics
   const uniqueAyahsSet = new Set<string>();
@@ -698,7 +700,7 @@ export function getCanonicalRootDetail(slug: string): RootDetailModel | null {
       : (matchedRoot.coreMeaning && !matchedRoot.coreMeaning.includes('memiliki peranan penting dalam kosakata Al-Qur\'an') ? matchedRoot.meaningsIndonesian || [] : []),
     statistics: {
       totalOccurrences: qacRecords.length || matchedRoot.totalOccurrences || occurrences.length,
-      uniqueAyahs: uniqueAyahsSet.size || occurrences.length,
+      uniqueAyahs: uniqueAyahsSet.size || allOccurrences.length,
       uniqueSurahs: uniqueSurahsSet.size,
       uniqueLemmas: lemmaDistribution.length,
       uniqueForms: formCountMap.size,

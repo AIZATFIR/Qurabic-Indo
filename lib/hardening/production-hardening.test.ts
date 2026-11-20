@@ -46,6 +46,7 @@ async function runHardeningTests() {
   const sbrRoot = getCanonicalRootDetail('sbr');
   assert(sbrRoot !== null, 'Root "sbr" (صبر) resolves canonically');
   assert(sbrRoot?.rootArabic === 'ص ب ر' || sbrRoot?.rootArabicJoined === 'صبر', 'Root "sbr" Arabic rendering is "ص ب ر"');
+  assert((sbrRoot?.occurrences.length || 0) > 0, 'Full root pages retain their occurrence data by default');
   assert(sbrRoot?.lexicon?.sourceCitation?.includes("Lane") === true, 'Root "sbr" includes Lane\'s Lexicon source attribution');
 
   const khwfRoot = getCanonicalRootDetail('x-w-f') || getCanonicalRootDetail('xwf');

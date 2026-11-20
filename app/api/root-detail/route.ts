@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
   const matchedRoot = ROOT_DATABASE.find((item) => item.id.toLowerCase() === rootId.toLowerCase());
   if (!matchedRoot) return NextResponse.json({ error: 'Root not found.' }, { status: 404 });
 
-  const root = getCanonicalRootDetail(matchedRoot.id);
+  const root = getCanonicalRootDetail(matchedRoot.id, { includeOccurrences: false });
   if (!root) return NextResponse.json({ error: 'Root data is not available.' }, { status: 404 });
 
   const meaningsIndo = wbwIndonesian.meanings as Record<string, string>;
@@ -46,25 +46,6 @@ export async function GET(request: NextRequest) {
       ...(meaningsEnglish[record.wordLocationKey] ? { meaningEnglish: meaningsEnglish[record.wordLocationKey] } : {}),
       ...(qabasLemmaId ? { qabasLemmaId } : {}),
     };
-  }
-
-  if (!root.occurrences.length) {
-    const verses = new Map<string, typeof root.occurrences[number]>();
-    for (const record of records) {
-      if (verses.has(record.ayahLocationKey)) continue;
-      verses.set(record.ayahLocationKey, {
-        surahNumber: record.surah,
-        ayahNumber: record.ayah,
-        surahNameIndo: '',
-        surahNameArabic: '',
-        verseArabic: '',
-        verseIndo: '',
-        matchedWordArabic: record.formArabic,
-        matchedWordIndo: meaningsIndo[record.wordLocationKey] || '',
-        wordLocation: record.wordLocationKey,
-      });
-    }
-    root.occurrences = [...verses.values()];
   }
 
   const response = NextResponse.json({ root, lemmaSamples });

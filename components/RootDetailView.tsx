@@ -65,47 +65,32 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
     const loadState = getRootEntryLoadState(initialRoot.statistics.uniqueAyahs, initialRoot.lexicon !== undefined, initialRoot.occurrences.length);
     const needsRootData = loadState.rootData;
     const needsOccurrences = loadState.occurrences;
-    if (!needsRootData && !needsOccurrences) {
-      setRoot(initialRoot);
-      setLemmaSamples(initialLemmaSamples);
-      setRootDataLoading(false);
-      setOccurrencesLoading(false);
-      setRootDataError(false);
-      setOccurrencesError(false);
-      return;
-    }
-
     let active = true;
+    setRoot(initialRoot);
+    setLemmaSamples(initialLemmaSamples);
     setRootDataLoading(needsRootData);
     setOccurrencesLoading(needsOccurrences);
     setRootDataError(false);
     setOccurrencesError(false);
-    const rootData = needsRootData
-      ? fetch(`/api/root-detail?root=${encodeURIComponent(initialRoot.id)}&v=2`)
+    if (needsRootData) {
+      fetch(`/api/root-detail?root=${encodeURIComponent(initialRoot.id)}&v=2`)
         .then((response) => response.ok ? response.json() : Promise.reject(new Error('Root data unavailable')))
-      : Promise.resolve({ root: initialRoot, lemmaSamples: initialLemmaSamples });
-    const occurrenceData = needsOccurrences
-      ? fetchRootOccurrences(initialRoot.id).catch(() => {
-        if (active) setOccurrencesError(true);
-        return initialRoot.occurrences;
-      })
-      : Promise.resolve(initialRoot.occurrences);
-
-    Promise.all([rootData, occurrenceData])
-      .then(([data, occurrences]) => {
-        if (!active) return;
-        setRoot({ ...data.root, occurrences: occurrences.length ? occurrences : data.root.occurrences });
-        setLemmaSamples(data.lemmaSamples || {});
-      })
-      .catch(() => {
-        if (active) setRootDataError(true);
-      })
-      .finally(() => {
-        if (active) {
-          setRootDataLoading(false);
-          setOccurrencesLoading(false);
-        }
-      });
+        .then((data) => {
+          if (!active) return;
+          setRoot((current) => ({ ...data.root, occurrences: current.occurrences }));
+          setLemmaSamples(data.lemmaSamples || {});
+        })
+        .catch(() => { if (active) setRootDataError(true); })
+        .finally(() => { if (active) setRootDataLoading(false); });
+    }
+    if (needsOccurrences) {
+      fetchRootOccurrences(initialRoot.id)
+        .then((occurrences) => {
+          if (active) setRoot((current) => ({ ...current, occurrences }));
+        })
+        .catch(() => { if (active) setOccurrencesError(true); })
+        .finally(() => { if (active) setOccurrencesLoading(false); });
+    }
 
     return () => { active = false; };
   }, [initialRoot, initialLemmaSamples]);
