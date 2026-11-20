@@ -20,25 +20,24 @@ export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic
   const [minimized, setMinimized] = useState(false);
   const progressFillRef = useRef<HTMLSpanElement>(null);
   const progressThumbRef = useRef<HTMLSpanElement>(null);
-  const { currentAyah, playbackState, isPlaying, isLoading, isReadingTranslation, isAiGeneratedTranslation, isAiTranslationCandidate, handsfreeMode, currentQariMeta } = audio;
-
-  if (playbackState === 'idle' && currentAyah === null) return null;
-  const formatTime = (seconds: number) => Number.isFinite(seconds) && seconds >= 0 ? `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}` : '0:00';
-  const repeatLabel = audio.repeatMode === 'ayah' ? t('Ayat', 'Verse') : audio.repeatMode === 'surah' ? t('Surat', 'Surah') : t('Mati', 'Off');
-  const toggleLabel = isPlaying || isLoading ? t('Jeda', 'Pause') : t('Putar', 'Play');
-
+  const { currentAyah, playbackState, isPlaying, isLoading, isReadingTranslation, isAiGeneratedTranslation, isAiTranslationCandidate, handsfreeMode, currentQariMeta, readLiveProgress } = audio;
   useEffect(() => {
     if (!isPlaying || minimized) return;
     let frame = 0;
     const updateProgress = () => {
-      const progress = audio.readLiveProgress();
+      const progress = readLiveProgress();
       if (progressFillRef.current) progressFillRef.current.style.transform = `scaleX(${progress})`;
       if (progressThumbRef.current) progressThumbRef.current.style.transform = `translateX(${progress * 100}%)`;
       frame = window.requestAnimationFrame(updateProgress);
     };
     frame = window.requestAnimationFrame(updateProgress);
     return () => window.cancelAnimationFrame(frame);
-  }, [audio.readLiveProgress, isPlaying, minimized]);
+  }, [readLiveProgress, isPlaying, minimized]);
+
+  if (playbackState === 'idle' && currentAyah === null) return null;
+  const formatTime = (seconds: number) => Number.isFinite(seconds) && seconds >= 0 ? `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}` : '0:00';
+  const repeatLabel = audio.repeatMode === 'ayah' ? t('Ayat', 'Verse') : audio.repeatMode === 'surah' ? t('Surat', 'Surah') : t('Mati', 'Off');
+  const toggleLabel = isPlaying || isLoading ? t('Jeda', 'Pause') : t('Putar', 'Play');
   const controlClass = 'inline-flex min-h-11 min-w-11 items-center justify-center text-ink-secondary hover:bg-canvas-soft hover:text-ink-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-40';
   const selectClass = 'min-h-11 w-full border-b border-hairline bg-canvas-surface py-2 text-sm text-ink-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary';
   const warmCurrentTranslation = () => {
