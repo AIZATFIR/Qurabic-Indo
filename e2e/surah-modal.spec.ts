@@ -373,7 +373,7 @@ test('word study modal reports a stalled detail request and offers retry', async
 
     const dialog = page.getByRole('dialog');
     await expect(dialog.getByLabel(/Akar Kata|Root/)).toContainText(/ح م د|حمد/);
-    await expect(dialog.getByRole('alert')).toContainText(/full analysis did not load|Analisis lengkap belum termuat/, { timeout: 13500 });
+    await expect(dialog.getByRole('alert')).toContainText(/full analysis did not load|Analisis lengkap belum termuat/, { timeout: 9500 });
     await expect(dialog.getByRole('button', { name: /Try again|Coba lagi/ })).toBeVisible();
   } finally {
     releaseRequest();
