@@ -179,12 +179,9 @@ export async function preloadTranslationAudio(
     if (cached) return cached;
   }
 
-  // Warm the fallback in parallel so a stalled human recording does not add
-  // its full timeout before the TTS candidate can start.
-  const preloadedCandidates = await Promise.all(candidates.map((url, index) =>
-    preloadAudioBlob(url, index === 0 ? 4000 : 5000).catch(() => url)
-  ));
-  return preloadedCandidates.find((url) => url.startsWith('blob:')) || preloadedCandidates[0] || '';
+  // Warm the preferred source only. Fetching a full TTS file in parallel with
+  // the human recording wastes bandwidth and memory when the human file works.
+  return preloadAudioBlob(candidates[0], 4000).catch(() => candidates[0]);
 }
 
 /**
@@ -257,7 +254,7 @@ export function getNextAudioPreloadUrls(options: NextAudioPreloadOptions): strin
   });
   if (!nextTrack) return [];
   return nextTrack.phase === 'translation'
-    ? getTranslationAudioCandidateUrls(options.surahNumber, nextTrack.ayahNumber, undefined, options.translationVoiceMode ?? 'human', options.translationLanguage)
+    ? getTranslationAudioCandidateUrls(options.surahNumber, nextTrack.ayahNumber, undefined, options.translationVoiceMode ?? 'human', options.translationLanguage).slice(0, 1)
     : getAudioCandidateUrls(options.surahNumber, nextTrack.ayahNumber, options.qariId);
 }
 

@@ -20,14 +20,13 @@ test('preloader fetches only the immediate next track in handsfree sequence', ()
   assert.match(getNextAudioPreloadUrl({ ...base, phase: 'arabic', surahNumber: 18, currentAyah: 1, totalAyahs: 110, translationVoiceMode: 'ai-fallback' }) || '', /audio_m4a\/018\/018001\.m4a/);
 });
 
-test('preloads both human and TTS candidates for the next Indonesian translation', () => {
+test('preloads only the preferred human source for the next Indonesian translation', () => {
   const candidates = getNextAudioPreloadUrls({ ...base, phase: 'arabic', translationVoiceMode: 'ai-fallback' });
-  assert.equal(candidates.length, 2);
+  assert.equal(candidates.length, 1);
   assert.match(candidates[0], /AlQuran-terjemahan-indonesia.*001001\.mp3$/);
-  assert.match(candidates[1], /audio_m4a\/001\/001001\.m4a/);
 });
 
-test('starts human and TTS warmups concurrently', async () => {
+test('warms only the preferred human source', async () => {
   const originalFetch = globalThis.fetch;
   const originalWindow = globalThis.window;
   const requests: string[] = [];
@@ -44,9 +43,8 @@ test('starts human and TTS warmups concurrently', async () => {
   try {
     const warmup = preloadTranslationAudio(1, 1, undefined, 'ai-fallback', 'id');
     await new Promise((resolve) => setImmediate(resolve));
-    assert.equal(requests.length, 2);
-    assert.ok(requests.some((url) => url.includes('AlQuran-terjemahan-indonesia')));
-    assert.ok(requests.some((url) => url.includes('quran-terjemahan-indonesia-audio-by-ayah')));
+    assert.equal(requests.length, 1);
+    assert.ok(requests[0].includes('AlQuran-terjemahan-indonesia'));
     for (const resolve of pendingResponses) resolve(new Response(new Blob(['audio']), { status: 200 }));
     await warmup;
   } finally {
