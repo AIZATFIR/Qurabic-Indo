@@ -117,7 +117,7 @@ export const SOURCES_REGISTRY: Record<
     version: 'Root index and Mufradat excerpt export',
     license: 'MIT (upstream project)',
     language: 'en',
-    description: 'The upstream project credits its root meanings to a Lane’s Lexicon dataset and separately identifies Mufradat al-Quran excerpts by al-Raghib al-Isfahani. The local English glosses do not include Lane volume/page citations; semantic families are upstream editorial classifications.',
+    description: 'The upstream README credits root meanings to Lane’s Lexicon and says semantic families are curated from Lane and Maqāyīs al-Lugha. The local export has no page-level citation for each root. Mufradat al-Quran excerpts are separately attributed to al-Raghib al-Isfahani.',
   },
   recitation: {
     id: 'alafasy-recitation',

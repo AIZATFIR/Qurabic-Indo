@@ -172,7 +172,7 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
             <p className="mt-1 text-sm text-ink-secondary">{root.coreMeaningEnglish
               ? meaningSource
                 ? `${language === 'id' ? 'Glos bentuk korpus · ' : 'Corpus word-form gloss · '}${meaningSource.name}`
-                : t('Ringkasan Inggris · Quran bil-Quran · mengacu Lane; halaman dan metode penyuntingan tidak dicantumkan', 'English summary · Quran bil-Quran · attributes Lane; page and editorial method not stated')
+                : t('Ringkasan Inggris · Quran bil-Quran · makna akar dikreditkan ke Lane; tanpa rujukan halaman per akar', 'English summary · Quran bil-Quran · root meanings credited to Lane; no page citation per root')
               : laneDefinition ? language === 'id' ? 'Kutipan asli Lane · bahasa Inggris · belum diterjemahkan' : 'Original English dictionary entry · Lane, 1863'
                 : t('Definisi dari sumber leksikal belum tersedia', 'No sourced dictionary definition is indexed')}</p>
           </div>
@@ -183,7 +183,7 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
             {language === 'id' && root.coreMeaning && <p lang="id" className="text-base leading-relaxed text-ink-primary">{root.coreMeaning}</p>}
             <p className="text-sm text-ink-secondary">{meaningSource
               ? language === 'id' ? meaningSource.noteIndonesian : meaningSource.noteEnglish
-              : t('Proyek sumber tidak menjelaskan metode penyuntingan glos ini. Gunakan sebagai ringkasan awal; cocokkan dengan kutipan Lane di bawah jika tersedia.', 'The source project does not describe how this gloss was edited. Use it as a starting summary; compare it with the Lane excerpt below when available.')}</p>
+              : t('README sumber mengaitkan makna akar dengan Lane dan keluarga semantik dengan Lane serta Maqāyīs al-Lugha. Ekspor ini tidak mencantumkan halaman Lane untuk akar ini; cocokkan dengan kutipan Lane di bawah jika tersedia.', 'The source README credits root meanings to Lane and semantic families to Lane and Maqāyīs al-Lugha. This export gives no Lane page for this root; compare with the Lane excerpt below when available.')}</p>
             <div className="flex flex-wrap gap-x-5 gap-y-1">
               <a href={meaningSource?.url || SOURCES_REGISTRY.quranBilQuran.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
                 <span>{meaningSource

@@ -109,7 +109,7 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     const meaningSection = page.locator('section[aria-labelledby="root-meaning-heading"]');
     expect(renderedHtml).not.toContain('Memuat data akar dan kamus');
     expect(supplementalRequests).toHaveLength(0);
-    await expect(meaningSection).toContainText('Ringkasan Inggris · Quran bil-Quran · mengacu Lane; halaman dan metode penyuntingan tidak dicantumkan');
+    await expect(meaningSection).toContainText('Ringkasan Inggris · Quran bil-Quran · makna akar dikreditkan ke Lane; tanpa rujukan halaman per akar');
     await expect(meaningSection).toContainText('The root رَأَى primarily means');
     await expect(meaningSection.getByRole('link', { name: 'Lihat lema terkait di Qabas · Birzeit' })).toHaveAttribute('href', 'https://sina.birzeit.edu/qabas/lemma/202001196');
   });
@@ -170,7 +170,7 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     await page.goto('/akar/d-y-n', { waitUntil: 'domcontentloaded' });
 
     const meaningSection = page.locator('section[aria-labelledby="root-meaning-heading"]');
-    await expect(meaningSection).toContainText('Ringkasan Inggris · Quran bil-Quran · mengacu Lane; halaman dan metode penyuntingan tidak dicantumkan');
+    await expect(meaningSection).toContainText('Ringkasan Inggris · Quran bil-Quran · makna akar dikreditkan ke Lane; tanpa rujukan halaman per akar');
     await expect(meaningSection.locator('p[lang="en"]').first()).toContainText('The root "dyn" primarily means to be obedient');
     await expect(meaningSection.getByText('Kutipan asli Lane · bahasa Inggris', { exact: true })).toBeVisible();
     await expect(meaningSection.locator('details').filter({ hasText: 'Kutipan asli Lane · bahasa Inggris' })).toContainText('Part 3, p. 943');
@@ -181,7 +181,7 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     await page.goto('/akar/S-b-r', { waitUntil: 'domcontentloaded' });
 
     const meaningSection = page.locator('section[aria-labelledby="root-meaning-heading"]');
-    await expect(meaningSection).toContainText('English summary · Quran bil-Quran · attributes Lane; page and editorial method not stated');
+    await expect(meaningSection).toContainText('English summary · Quran bil-Quran · root meanings credited to Lane; no page citation per root');
     await expect(meaningSection.locator('p[lang="en"]').first()).toContainText('The root "Sbr" primarily means to confine or restrain');
     await expect(meaningSection.getByText(/Original Lane entry/)).toBeVisible();
   });
@@ -190,13 +190,13 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     await page.addInitScript(() => localStorage.setItem('qurabic_language', 'id'));
     await page.goto('/akar/m-l-k', { waitUntil: 'domcontentloaded' });
     const indonesianMeaning = page.locator('section[aria-labelledby="root-meaning-heading"]');
-    await expect(indonesianMeaning).toContainText('Ringkasan Inggris · Quran bil-Quran · mengacu Lane; halaman dan metode penyuntingan tidak dicantumkan');
+    await expect(indonesianMeaning).toContainText('Ringkasan Inggris · Quran bil-Quran · makna akar dikreditkan ke Lane; tanpa rujukan halaman per akar');
     await expect(indonesianMeaning.locator('p[lang="en"]').first()).toContainText('The root ملك (mlk) primarily means to possess or own');
 
     await page.addInitScript(() => localStorage.setItem('qurabic_language', 'en'));
     await page.reload({ waitUntil: 'domcontentloaded' });
     const englishMeaning = page.locator('section[aria-labelledby="root-meaning-heading"]');
-    await expect(englishMeaning).toContainText('English summary · Quran bil-Quran · attributes Lane; page and editorial method not stated');
+    await expect(englishMeaning).toContainText('English summary · Quran bil-Quran · root meanings credited to Lane; no page citation per root');
     await expect(englishMeaning.locator('p[lang="en"]').first()).toContainText('The root ملك (mlk) primarily means to possess or own');
     await expect(englishMeaning.getByText('Original Lane entry · English', { exact: true })).toBeVisible();
   });
@@ -205,7 +205,7 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     await page.addInitScript(() => localStorage.setItem('qurabic_language', 'en'));
     await page.goto('/akar/r-H-m', { waitUntil: 'domcontentloaded' });
 
-    await expect(page.getByText('English summary · Quran bil-Quran · attributes Lane; page and editorial method not stated')).toBeVisible();
+    await expect(page.getByText('English summary · Quran bil-Quran · root meanings credited to Lane; no page citation per root')).toBeVisible();
     await expect(page.getByText('Original English source excerpt · Lane, 1863')).toHaveCount(0);
     const laneExcerpt = page.locator('section[aria-labelledby="root-meaning-heading"] details').filter({ hasText: 'Original Lane entry · English' });
     await expect(laneExcerpt.getByText('Original Lane entry · English')).toBeVisible();

@@ -1093,8 +1093,8 @@ export function getRootSemanticProfile(rootBw: string, rootArabic?: string): Roo
     const coreMeaningEnglish = qbqEntry.meaningEn || undefined;
 
     const contextualNote = qbqEntry.mufradatArabic
-      ? 'Kutipan Arab: al-Mufradat fi Gharib al-Qur’an karya al-Raghib al-Isfahani. Ringkasan Inggris berasal dari Quran bil-Quran; proyek itu menyebut Lane’s Lexicon sebagai sumber makna akar, tanpa nomor halaman pada ekspor ini.'
-      : 'Ringkasan Inggris berasal dari Quran bil-Quran; proyek itu menyebut Lane’s Lexicon sebagai sumber makna akar, tanpa nomor halaman pada ekspor ini.';
+      ? 'Ringkasan Inggris berasal dari Quran bil-Quran. README proyek mengaitkan makna akar dengan Lane dan keluarga semantik dengan Lane serta Maqāyīs al-Lugha; ekspor ini tidak mencantumkan rujukan halaman per akar. Kutipan al-Mufradat al-Raghib adalah sumber terpisah.'
+      : 'Ringkasan Inggris berasal dari Quran bil-Quran. README proyek mengaitkan makna akar dengan Lane dan keluarga semantik dengan Lane serta Maqāyīs al-Lugha; ekspor ini tidak mencantumkan rujukan halaman per akar.';
 
     return {
       titleIndo: cleanTitle,

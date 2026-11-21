@@ -30,7 +30,9 @@ console.log('✅ Test passed: Morphology is correctly attributed to Quranic Arab
 // Root glosses from Quran bil-Quran have source-level attribution but no
 // Lane page citation; keep that limitation attached to the registered source.
 const rootGlossSource = getSourceInfo('quranBilQuran');
-if (!rootGlossSource.url.includes('github.com/R3GENESI5/quran-bil-quran') || !rootGlossSource.description.includes('volume/page')) {
+if (!rootGlossSource.url.includes('github.com/R3GENESI5/quran-bil-quran') ||
+    !rootGlossSource.description.includes('Maqāyīs al-Lugha') ||
+    !rootGlossSource.description.includes('page-level citation')) {
   throw new Error('Quran bil-Quran root glosses must retain their upstream link and missing page-citation note');
 }
 console.log('✅ Test passed: root gloss source and citation limitation are registered.');
