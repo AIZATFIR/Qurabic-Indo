@@ -48,6 +48,31 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     expect(requests).toHaveLength(1);
   });
 
+  test('pressing a Quran word with a mouse starts its entry request before the click', async ({ page }) => {
+    const requests: string[] = [];
+    page.on('request', request => {
+      if (request.url().includes('/api/word-detail?') && !request.url().includes('excerpt=')) requests.push(request.url());
+    });
+    await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
+    await page.getByRole('heading', { name: /Surah Al-Kahf/ }).waitFor();
+    const firstWord = page.locator('[role="button"][aria-label^="Bedah kata:"]').first();
+    await firstWord.waitFor({ state: 'visible' });
+    await page.waitForFunction(() => {
+      const button = document.querySelector('[role="button"][aria-label^="Bedah kata:"]');
+      return button && Object.keys(button).some((key) => key.startsWith('__reactProps$'));
+    });
+
+    await firstWord.dispatchEvent('pointerdown', { pointerType: 'mouse', pointerId: 1, isPrimary: true, button: 0, buttons: 1 });
+    await expect.poll(() => requests.length, { timeout: 2000 }).toBe(1);
+    expect(new URL(requests[0]).searchParams.get('location')).toMatch(/^18:\d+:\d+$/);
+
+    await firstWord.click();
+    const dialog = page.getByRole('dialog');
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByText(/Makna Kata|Word meaning/, { exact: true })).toBeVisible({ timeout: 10000 });
+    expect(requests).toHaveLength(1);
+  });
+
   test('English word study does not leave its analysis heading in Indonesian', async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem('qurabic_language', 'en'));
     await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
