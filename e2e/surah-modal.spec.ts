@@ -133,13 +133,17 @@ test('AI translation fallback is disclosed and retained by handsfree', async ({ 
 test('slow Indonesian human audio falls back to TTS within 1.2 seconds', async ({ page }) => {
   test.setTimeout(30000);
   await page.addInitScript(() => {
-    const audioWindow = window as typeof window & { __audioSources?: string[] };
+    const audioWindow = window as typeof window & { __audioSources?: string[]; __audioSourceTimes?: Array<{ source: string; time: number }> };
     audioWindow.__audioSources = [];
+    audioWindow.__audioSourceTimes = [];
     const source = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'src');
     if (source?.set) Object.defineProperty(HTMLMediaElement.prototype, 'src', {
       ...source,
       set(value: string) {
-        if (this instanceof HTMLAudioElement) audioWindow.__audioSources?.push(value);
+        if (this instanceof HTMLAudioElement) {
+          audioWindow.__audioSources?.push(value);
+          audioWindow.__audioSourceTimes?.push({ source: value, time: performance.now() });
+        }
         source.set!.call(this, value);
       },
     });
@@ -167,11 +171,14 @@ test('slow Indonesian human audio falls back to TTS within 1.2 seconds', async (
   await expect(player).toBeVisible();
   await player.getByRole('button', { name: 'Pengaturan audio' }).click();
   await player.getByRole('combobox', { name: 'Audio terjemahan' }).selectOption('ai-fallback');
+  const handsfreeSelectedAt = await page.evaluate(() => performance.now());
   await player.getByRole('combobox', { name: 'Mode handsfree' }).selectOption('reverse');
   await expect.poll(() => page.evaluate(() => (window as typeof window & { __audioSources?: string[] }).__audioSources || []), { timeout: 5000 })
     .toContainEqual(expect.stringContaining('archive.org/download/AlQuran-terjemahan-indonesia-tanpa-bahasa-arab/002001.mp3'));
   await expect.poll(() => page.evaluate(() => (window as typeof window & { __audioSources?: string[] }).__audioSources || []), { timeout: 2000 })
     .toContainEqual(expect.stringContaining('quran-terjemahan-indonesia-audio-by-ayah'));
+  const ttsAssignedAt = await page.evaluate(() => (window as typeof window & { __audioSourceTimes?: Array<{ source: string; time: number }> }).__audioSourceTimes?.find(item => item.source.includes('quran-terjemahan-indonesia-audio-by-ayah'))?.time ?? Infinity);
+  expect(ttsAssignedAt - handsfreeSelectedAt).toBeLessThan(1200);
   expect(humanAudioRequests).toBeGreaterThan(0);
 });
 

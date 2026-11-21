@@ -125,13 +125,13 @@ export default function QuranAudioPlayer({ audio, surahNameIndo, surahNameArabic
               {audio.translationVoiceOptions.map(option => <option key={option.id} value={option.id}>{option.id === 'human'
                 ? t('Rekaman manusia saja', 'Human recordings only')
                 : option.id === 'ai-fallback'
-                  ? t('Manusia, lalu suara AI (Indonesia)', 'Human, then AI voice (Indonesian)')
+                  ? t('Manusia dulu; AI jika lambat (Indonesia)', 'Human first; AI if slow (Indonesian)')
                   : t('Audio terjemahan nonaktif', 'Translation audio off')}</option>)}
             </select>
           </label>
           {audio.translationVoiceMode === 'ai-fallback' && <p className="text-sm leading-relaxed text-ink-secondary">
             {language === 'id'
-              ? t('Rekaman manusia dipakai lebih dulu; TTS hanya mengisi ayat Indonesia yang tidak memiliki rekaman. Ini suara AI Gemini, bukan pembaca manusia, dan pelafalan atau jedanya bisa kurang tepat.', 'Human recordings play first; TTS fills only Indonesian verses without a human recording. This is Gemini AI voice, not a human reader; pronunciation or pacing may be imperfect.')
+              ? t('Pemutar mencoba rekaman manusia sebentar; jika lambat atau tidak tersedia, pemutar beralih ke Gemini TTS. Ini suara AI, dan pelafalan atau jedanya bisa kurang tepat.', 'The player tries human recordings briefly; if one is slow or unavailable, it switches to Gemini TTS. This is AI speech; pronunciation or pauses may be imperfect.')
               : t('Fallback suara AI ini hanya tersedia untuk audio Indonesia. Audio Inggris tetap memakai rekaman manusia yang tersedia.', 'AI voice fallback is only available for Indonesian audio. English audio continues to use available human recordings.')}{' '}
             {language === 'id' && <a href="https://huggingface.co/datasets/insanalamin/quran-terjemahan-indonesia-audio-by-ayah" target="_blank" rel="noopener noreferrer" className="font-medium text-primary underline underline-offset-2">{t('Sumber & batas penggunaan', 'Source & usage terms')}</a>}
             {language === 'id' && <span> {t('Lisensi sumber membatasi penggunaan audio AI untuk edukasi, pendengaran keagamaan, aksesibilitas, dan referensi non-komersial.', 'The source license limits AI audio use to non-commercial education, religious listening, accessibility, and reference.')}</span>}
