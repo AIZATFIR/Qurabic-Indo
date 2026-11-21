@@ -42,13 +42,17 @@ assert.match(luLuProfile?.contextualNote || '', /Lane.*لأ|Lane.*lA/i, 'The Lan
 assert.equal(getQbqRootEntry('ا ل ه')?.meaningEn.startsWith('Allah ('), true, 'Alif in the corpus root should match the hamza-on-alif spelling in the sourced QBQ gloss');
 
 let checkedEnglishGlosses = 0;
+let rootsWithSourcedEntry = 0;
 for (const root of ROOT_DATABASE) {
   const profile = getRootSemanticProfile(root.id, root.rootArabic);
+  if (profile?.coreMeaningEnglish || profile?.coreMeaning || profile?.classicalArabicExcerpt) rootsWithSourcedEntry++;
+  else assert.fail(`Root ${root.id} has no lexical source entry`);
   if (!profile?.coreMeaningEnglish) continue;
   checkedEnglishGlosses++;
   assert.notEqual(profile.coreMeaning, profile.coreMeaningEnglish, `Root ${root.id} must not place its English gloss in the Indonesian field`);
   assert.ok(!profile.meaningsIndonesian.includes(profile.coreMeaningEnglish), `Root ${root.id} must not label its English gloss as Indonesian`);
 }
 assert.ok(checkedEnglishGlosses > 1000, `Expected broad source coverage; checked ${checkedEnglishGlosses} English glosses`);
+assert.equal(rootsWithSourcedEntry, ROOT_DATABASE.length, 'Every indexed Quranic root must have at least one source-backed lexical entry');
 
-console.log(`Passed: ${rootsWithoutIndexedDefinition.length} unindexed roots have no filler; ${checkedEnglishGlosses} English glosses stay out of Indonesian fields.`);
+console.log(`Passed: ${rootsWithoutIndexedDefinition.length} roots have no filler; all ${rootsWithSourcedEntry} roots have a lexical source entry; ${checkedEnglishGlosses} English glosses stay out of Indonesian fields.`);
