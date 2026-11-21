@@ -189,8 +189,11 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     await page.goto('/kata/%D8%A7%D9%84%D8%B1%D9%91%D9%8E%D8%AD%D9%90%D9%8A%D9%85%D9%90?location=1%3A1%3A4', { waitUntil: 'networkidle' });
 
     await expect(page.getByText('Each form is translated in its sample verse. Words sharing a root can have different meanings.')).toHaveCount(0);
-    await expect(page.getByText('Edward William Lane, An Arabic-English Lexicon', { exact: false }).first()).toBeVisible();
-    await expect(page.getByText(/He had mercy, or pity, or compassion/).first()).toBeVisible();
+    await page.getByRole('button', { name: 'Baca definisi asli Lane · English' }).click();
+    const laneSection = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Definisi klasik · Lane’s Lexicon (English)' }) });
+    const secondSense = laneSection.locator('details').filter({ hasText: 'Sense #2' });
+    await secondSense.locator('summary').click();
+    await expect(secondSense).toContainText('Sometimes it is syn. with');
     await expect(page.getByRole('link', { name: /Qabas · Birzeit/ })).toHaveAttribute('href', 'https://sina.birzeit.edu/qabas/lemma/202003981');
   });
 
