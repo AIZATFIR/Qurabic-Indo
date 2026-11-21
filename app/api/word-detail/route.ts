@@ -4,6 +4,7 @@ import { getWordStudy } from '@/lib/morphology/word-study-service';
 import { getLaneRootRecord } from '@/lib/lexicon/lane-loader';
 
 export const revalidate = 86_400;
+export const preferredRegion = 'sin1';
 
 function getReadableLaneExcerpt(rootBw?: string) {
   if (!rootBw) return undefined;
