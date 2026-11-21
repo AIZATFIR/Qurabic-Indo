@@ -21,3 +21,15 @@ test('live audio progress ignores tiny backward media-time corrections', () => {
   assert.equal(keepForward(0.2995, 0.3), 0.3);
   assert.equal(keepForward(0.31, 0.3), 0.31);
 });
+
+test('live audio progress interpolates between quantized media-time samples', () => {
+  const interpolate = (progressFunctions as unknown as Record<string, unknown>).interpolateAudioProgress;
+  assert.equal(typeof interpolate, 'function');
+  const getInterpolated = interpolate as (progress: number, duration: number, rate: number, now: number, playing: boolean, observation: { value: number; at: number }) => number;
+  const observation = { value: 0, at: 0 };
+  assert.equal(getInterpolated(0, 8, 1, 0, true, observation), 0);
+  assert.equal(getInterpolated(0, 8, 1, 125, true, observation), 0.015625);
+  assert.equal(getInterpolated(0.03125, 8, 1, 250, true, observation), 0.03125);
+  assert.equal(getInterpolated(0.03125, 8, 1, 375, true, observation), 0.046875);
+  assert.equal(getInterpolated(0.03125, 8, 1, 400, false, observation), 0.03125);
+});

@@ -32,7 +32,7 @@ test('audio progress stays continuous between media updates and freezes when pau
     Object.defineProperties(media, {
       currentTime: {
         configurable: true,
-        get(this: MockAudio) { return this.__mockPlaying ? this.__mockBase! + (performance.now() - this.__mockStartedAt!) / 1000 : this.__mockTime || 0; },
+        get(this: MockAudio) { return this.__mockPlaying ? this.__mockBase! + Math.floor((performance.now() - this.__mockStartedAt!) / 250) * 0.25 : this.__mockTime || 0; },
         set(this: MockAudio, value: number) { this.__mockTime = value; this.__mockBase = value; this.__mockStartedAt = performance.now(); },
       },
       duration: { configurable: true, get() { return 8; } },
@@ -59,8 +59,7 @@ test('audio progress stays continuous between media updates and freezes when pau
   });
   await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
   await page.getByRole('heading', { name: /Surah Al-Kahf/ }).waitFor();
-  const playButton = page.getByRole('button', { name: /Putar Tilawah/ }).first();
-  await page.getByRole('button', { name: /Bedah kata:/ }).first().waitFor();
+  const playButton = page.getByRole('button', { name: 'Putar Tilawah Ayat 1', exact: true });
   await playButton.click();
 
   const player = page.locator('[data-audio-progress]');

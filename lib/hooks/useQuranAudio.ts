@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { DEFAULT_TRANSLATION_VOICE_MODE, getAudioCandidateUrls, getTranslationAudioCandidateUrls, getFirstAudioTrack, getNextAudioTrack, isHumanTranslationAvailable, isAiTranslationAudioUrl, AVAILABLE_QARIS, QariMeta, TranslationVoiceMode, TRANSLATION_VOICE_OPTIONS, TranslationVoiceOption, AudioTrack, TranslationAudioLanguage, AUDIO_STARTUP_TIMEOUT_MS } from '../api/audio';
 import { cancelAudioPreload, getCachedAudioUrl, preloadNextAudioTrack, waitForPreloadedAudioUrl } from '../audio/audio-preloader';
-import { getAudioProgress, getMonotonicAudioProgress, shouldPublishAudioTime } from '../audio/smooth-progress';
+import { getAudioProgress, getMonotonicAudioProgress, interpolateAudioProgress, shouldPublishAudioTime } from '../audio/smooth-progress';
 
 export type PlaybackState = 'idle' | 'loading' | 'playing' | 'paused' | 'ended' | 'error';
 export type RepeatMode = 'off' | 'ayah' | 'surah';
@@ -80,10 +80,20 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
   const [isAiTranslationCandidate, setIsAiTranslationCandidate] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const lastLiveProgressRef = useRef(0);
+  const progressObservationRef = useRef({ value: 0, at: 0 });
   const readLiveProgress = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return 0;
-    const progress = getAudioProgress(audio.currentTime, audio.duration);
+    const now = performance.now();
+    const current = getAudioProgress(audio.currentTime, audio.duration);
+    const progress = interpolateAudioProgress(
+      current,
+      audio.duration,
+      audio.playbackRate,
+      now,
+      !audio.paused && !audio.ended,
+      progressObservationRef.current,
+    );
     lastLiveProgressRef.current = getMonotonicAudioProgress(progress, lastLiveProgressRef.current);
     return lastLiveProgressRef.current;
   }, []);
@@ -132,6 +142,7 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
     cleanupTrackRef.current();
     audio.pause();
     lastLiveProgressRef.current = 0;
+    progressObservationRef.current = { value: 0, at: performance.now() };
     wantsPlaybackRef.current = true;
     restartOnResumeRef.current = false;
     trackRef.current = track;
@@ -382,7 +393,7 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
   }, []);
   const nextAyah = useCallback(() => { const ayah = trackRef.current?.ayahNumber || 0; if (ayah < prefsRef.current.totalAyahs) playAyahRef.current(ayah + 1); }, []);
   const prevAyah = useCallback(() => { const ayah = trackRef.current?.ayahNumber; if (!ayah) return; if ((audioRef.current?.currentTime || 0) > 3) playAyahRef.current(ayah); else playAyahRef.current(Math.max(1, ayah - 1)); }, []);
-  const seek = useCallback((ratio: number) => { const audio = audioRef.current; if (audio && Number.isFinite(audio.duration)) { audio.currentTime = Math.max(0, Math.min(1, ratio)) * audio.duration; lastLiveProgressRef.current = getAudioProgress(audio.currentTime, audio.duration); setCurrentTime(audio.currentTime); } }, []);
+  const seek = useCallback((ratio: number) => { const audio = audioRef.current; if (audio && Number.isFinite(audio.duration)) { audio.currentTime = Math.max(0, Math.min(1, ratio)) * audio.duration; lastLiveProgressRef.current = getAudioProgress(audio.currentTime, audio.duration); progressObservationRef.current = { value: lastLiveProgressRef.current, at: performance.now() }; setCurrentTime(audio.currentTime); } }, []);
   const cycleRepeatMode = useCallback(() => setRepeatMode(prefsRef.current.repeatMode === 'off' ? 'ayah' : prefsRef.current.repeatMode === 'ayah' ? 'surah' : 'off'), [setRepeatMode]);
   const toggleAutoNext = useCallback(() => setAutoNext(!prefsRef.current.autoNext), [setAutoNext]);
   const toggleTranslationReading = useCallback(() => setHandsfreeMode(prefsRef.current.handsfreeMode === 'off' ? 'normal' : 'off'), [setHandsfreeMode]);
