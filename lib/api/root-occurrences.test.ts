@@ -46,8 +46,9 @@ test('aborts a stalled root occurrence download', async () => {
   const originalFetch = globalThis.fetch;
   const originalSetTimeout = globalThis.setTimeout;
   let signal: AbortSignal | undefined;
+  let timeoutDuration: number | undefined;
   globalThis.setTimeout = ((callback: TimerHandler, timeout?: number, ...args: unknown[]) =>
-    originalSetTimeout(callback, timeout === 5_000 ? 0 : timeout, ...args)) as typeof setTimeout;
+    { if (timeout === 12_000) timeoutDuration = timeout; return originalSetTimeout(callback, timeout === 12_000 ? 0 : timeout, ...args); }) as typeof setTimeout;
   globalThis.fetch = async (_input, init) => new Promise((_, reject) => {
     signal = init?.signal as AbortSignal | undefined;
     signal?.addEventListener('abort', () => reject(new DOMException('Request aborted', 'AbortError')), { once: true });
@@ -56,6 +57,7 @@ test('aborts a stalled root occurrence download', async () => {
   try {
     await assert.rejects(fetchRootOccurrences('S-b-r'), { name: 'AbortError' });
     assert.equal(signal?.aborted, true, 'the occurrence request is cancelled when it stalls');
+    assert.equal(timeoutDuration, 12_000, 'root occurrence requests allow cold asset reads up to twelve seconds');
   } finally {
     globalThis.fetch = originalFetch;
     globalThis.setTimeout = originalSetTimeout;

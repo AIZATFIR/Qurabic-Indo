@@ -24,8 +24,8 @@ async function main() {
     let timeoutDuration: number | undefined;
     let aborted = false;
     globalThis.setTimeout = ((callback: TimerHandler, timeout?: number, ...args: unknown[]) => {
-      if (timeout === 5_000) timeoutDuration = timeout;
-      return originalSetTimeout(callback, timeout === 5_000 ? 0 : timeout, ...args);
+      if (timeout === 12_000) timeoutDuration = timeout;
+      return originalSetTimeout(callback, timeout === 12_000 ? 0 : timeout, ...args);
     }) as typeof setTimeout;
     globalThis.fetch = async (_input, init) => new Promise((_, reject) => {
       init?.signal?.addEventListener('abort', () => {
@@ -35,7 +35,7 @@ async function main() {
     });
     try {
       await assert.rejects(loadWordDetail('/api/word-detail?location=1%3A1%3A1'), { name: 'AbortError' });
-      assert.equal(timeoutDuration, 5_000, 'stalled entry requests time out after five seconds');
+      assert.equal(timeoutDuration, 12_000, 'stalled entry requests allow cold-start responses up to twelve seconds');
       assert.equal(aborted, true, 'timeout aborts the pending fetch');
     } finally {
       globalThis.setTimeout = originalSetTimeout;

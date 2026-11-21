@@ -342,7 +342,7 @@ test('word study modal leaves loading state and renders the source-backed entry'
 });
 
 test('word study modal reports a stalled detail request and offers retry', async ({ page }) => {
-  test.setTimeout(20000);
+  test.setTimeout(25000);
   let releaseRequest!: () => void;
   const stalledRequest = new Promise<void>((resolve) => { releaseRequest = resolve; });
   await page.route('**/api/word-detail?*', async (route) => {
@@ -366,7 +366,7 @@ test('word study modal reports a stalled detail request and offers retry', async
 
     const dialog = page.getByRole('dialog');
     await expect(dialog.getByLabel(/Akar Kata|Root/)).toContainText(/ح م د|حمد/);
-    await expect(dialog.getByRole('alert')).toContainText(/full analysis did not load|Analisis lengkap belum termuat/, { timeout: 6500 });
+    await expect(dialog.getByRole('alert')).toContainText(/full analysis did not load|Analisis lengkap belum termuat/, { timeout: 13500 });
     await expect(dialog.getByRole('button', { name: /Try again|Coba lagi/ })).toBeVisible();
   } finally {
     releaseRequest();

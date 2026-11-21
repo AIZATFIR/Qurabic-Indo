@@ -1,4 +1,4 @@
-const ROOT_DETAIL_TIMEOUT_MS = 5_000;
+const ROOT_DETAIL_TIMEOUT_MS = 12_000;
 
 export async function fetchRootDetail<T>(rootId: string): Promise<T> {
   const controller = new AbortController();

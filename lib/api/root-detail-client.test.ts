@@ -8,8 +8,8 @@ test('root detail requests cancel when the server does not respond', async () =>
   let signal: AbortSignal | undefined;
   let timeoutDuration: number | undefined;
   globalThis.setTimeout = ((callback: TimerHandler, timeout?: number, ...args: unknown[]) => {
-    if (timeout === 5_000) timeoutDuration = timeout;
-    return originalSetTimeout(callback, timeout === 5_000 ? 0 : timeout, ...args);
+    if (timeout === 12_000) timeoutDuration = timeout;
+    return originalSetTimeout(callback, timeout === 12_000 ? 0 : timeout, ...args);
   }) as typeof setTimeout;
   globalThis.fetch = async (_input, init) => new Promise((_, reject) => {
     signal = init?.signal as AbortSignal | undefined;
@@ -18,7 +18,7 @@ test('root detail requests cancel when the server does not respond', async () =>
 
   try {
     await assert.rejects(fetchRootDetail('S-b-r'), { name: 'AbortError' });
-    assert.equal(timeoutDuration, 5_000);
+    assert.equal(timeoutDuration, 12_000, 'root detail requests must allow cold-start responses up to twelve seconds');
     assert.equal(signal?.aborted, true);
   } finally {
     globalThis.fetch = originalFetch;
