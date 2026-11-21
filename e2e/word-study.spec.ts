@@ -121,7 +121,7 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     await page.goto('/akar/S-b-r', { waitUntil: 'domcontentloaded' });
 
     const meaningSection = page.locator('section[aria-labelledby="root-meaning-heading"]');
-    await expect(meaningSection).toContainText('English root gloss · Quran bil-Quran · no page citation');
+    await expect(meaningSection).toContainText('English summary · Quran bil-Quran · attributes Lane; page and editorial method not stated');
     await expect(meaningSection.locator('p[lang="en"]').first()).toContainText('The root "Sbr" primarily means to confine or restrain');
     await expect(meaningSection.getByText(/Original Lane entry/)).toBeVisible();
   });
