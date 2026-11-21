@@ -254,14 +254,22 @@ export function getNextAudioPreloadUrls(options: NextAudioPreloadOptions): strin
   });
   if (!nextTrack) return [];
   return nextTrack.phase === 'translation'
-    ? getTranslationAudioCandidateUrls(options.surahNumber, nextTrack.ayahNumber, undefined, options.translationVoiceMode ?? 'human', options.translationLanguage).slice(0, 1)
+    ? getTranslationAudioCandidateUrls(options.surahNumber, nextTrack.ayahNumber, undefined, options.translationVoiceMode ?? 'human', options.translationLanguage)
     : getAudioCandidateUrls(options.surahNumber, nextTrack.ayahNumber, options.qariId);
 }
 
-/** Warm only the immediate next track so background requests do not compete with playback. */
+/** Warm the next track and stage TTS only if the preferred human recording is still slow. */
 export function preloadNextAudioTrack(options: NextAudioPreloadOptions): void {
   if (typeof window === 'undefined') return;
-  for (const url of getNextAudioPreloadUrls(options)) {
+  const urls = getNextAudioPreloadUrls(options);
+  if (options.translationVoiceMode === 'ai-fallback' && urls.length > 1) {
+    void preloadAudioBlob(urls[0], 4000).catch(() => {});
+    setTimeout(() => {
+      if (!getCachedAudioUrl(urls[0])) void preloadAudioBlob(urls[1], 4000).catch(() => {});
+    }, 400);
+    return;
+  }
+  for (const url of urls) {
     void preloadAudioBlob(url, 4000).catch(() => {});
   }
 }
