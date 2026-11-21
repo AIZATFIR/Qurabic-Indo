@@ -7,6 +7,7 @@ const noun = getWordStudy('9:1:1');
 assert.equal(noun.primaryMeaning.text.toLowerCase(), 'pemutusan perhubungan');
 assert.equal(noun.primaryMeaning.sourceId, 'quran-com-wbw');
 assert.equal(noun.primaryMeaning.sourceBadge, 'Quran.com · Indonesia');
+assert.equal(Object.hasOwn(noun.lexical, 'rootExcerpt'), false, 'Root excerpts are fetched by the dedicated source endpoint, not duplicated in every word-study payload');
 const unknown = getWordStudy('xzx');
 assert.equal(unknown.primaryMeaning.sourceId, undefined, 'Unknown tokens must not be attributed to Quran.com');
 assert.equal(unknown.primaryMeaning.sourceBadge, 'Sumber belum tersedia');

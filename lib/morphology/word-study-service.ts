@@ -19,7 +19,6 @@ import { buckwalterToArabic } from './buckwalter';
 import { stripArabicHarakat } from '../search/root-search';
 import { transliterateArabic, isRawBuckwalterRoot } from './transliteration';
 import { getRootOccurrencesFromChunk } from './morphology-service';
-import { getLaneRootRecord } from '../lexicon/lane-loader';
 import { getQuranicParticleEnglishMeaning, getQuranicParticleInfo } from './particles-dictionary';
 import wbwIndonesianGlosses from '../data/wbw-indonesian-glosses.json';
 import wbwEnglishGlosses from '../data/wbw-english-glosses.json';
@@ -193,14 +192,6 @@ export function getWordStudy(
     ? getQuranicParticleInfo(detail.identity.cleanArabic || standalone, detail.morphology.rawTag)
     : null;
   const rootBw = detail.lexical.root;
-  const laneRoot = rootBw && !detail.morphology.isParticle ? getLaneRootRecord(rootBw, true) : null;
-  const laneRootSense = laneRoot?.entries
-    .flatMap((entry) => entry.senses.map((sense) => ({ entry, sense })))
-    .find(({ sense }) => Boolean(sense.englishText || sense.text));
-  const laneRootRawText = laneRootSense?.sense.englishText || laneRootSense?.sense.text || '';
-  // Lane often places a concise English gloss in square brackets inside the
-  // fuller transliterated entry. Prefer that authentic excerpt for readability.
-  const laneRootReadableExcerpt = laneRootRawText.match(/\[\s*([^\]]{30,})\]/)?.[1]?.trim() || laneRootRawText;
 
   // 2. Build Word Family (Keluarga Kata) from actual QAC corpus records
   const wordFamily: WordFamilyItem[] = [];
@@ -360,11 +351,6 @@ export function getWordStudy(
       sourceCitation: lex?.sourceCitation || "Lane's Arabic-English Lexicon",
       volume: lex?.volume,
       page: lex?.page,
-      rootExcerpt: laneRootSense ? {
-        text: laneRootReadableExcerpt,
-        volume: laneRootSense.sense.citation?.volume || laneRootSense.entry.volume,
-        page: laneRootSense.sense.citation?.page || laneRootSense.entry.page,
-      } : undefined,
       meanings: [primaryText],
       particleMeaning: particleInfo?.meaningNote,
     },

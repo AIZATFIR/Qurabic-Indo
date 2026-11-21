@@ -27,11 +27,11 @@ interface PageProps {
 
 export async function generateMetadata({ params: paramsPromise }: PageProps): Promise<Metadata> {
   const params = await paramsPromise;
-  let rootModel = getCanonicalRootDetail(params.slug);
+  let rootModel = getCanonicalRootDetail(params.slug, { includeOccurrences: false });
   if (!rootModel) {
     const liveRoot = await fetchLiveRoot(params.slug);
     if (liveRoot) {
-      rootModel = getCanonicalRootDetail(liveRoot.id);
+      rootModel = getCanonicalRootDetail(liveRoot.id, { includeOccurrences: false });
     }
   }
 
@@ -62,13 +62,13 @@ export async function generateMetadata({ params: paramsPromise }: PageProps): Pr
 
 export default async function RootDetailPage({ params: paramsPromise }: PageProps) {
   const params = await paramsPromise;
-  let rootModel = getCanonicalRootDetail(params.slug);
+  let rootModel = getCanonicalRootDetail(params.slug, { includeOccurrences: false });
 
   // Real-time Live API Fallback if root is not in static bundle
   if (!rootModel) {
     const liveRoot = await fetchLiveRoot(params.slug);
     if (liveRoot) {
-      rootModel = getCanonicalRootDetail(liveRoot.id);
+      rootModel = getCanonicalRootDetail(liveRoot.id, { includeOccurrences: false });
     }
   }
 

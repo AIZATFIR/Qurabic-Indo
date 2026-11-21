@@ -218,11 +218,6 @@ export interface WordStudyViewModel {
     sourceCitation: string;
     volume?: number;
     page?: number;
-    rootExcerpt?: {
-      text: string;
-      volume: number;
-      page: number;
-    };
     rootPhilosophy?: string;
     rootTranslation?: string;
     meanings?: string[];
