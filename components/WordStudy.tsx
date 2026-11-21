@@ -309,7 +309,7 @@ export default function WordStudy({ study, onClose, isModalMode = false }: WordS
         <div className={`p-5 sm:p-6 ${classic ? 'rounded-2xl' : 'rounded-none'} bg-primary/10 border border-primary/25 space-y-2 text-center shadow-xs`}>
           <div className="flex items-center justify-center space-x-2">
               <span className="text-xs font-bold uppercase tracking-wider text-primary">
-              {t('Terjemahan ayat', 'Verse translation')}
+              {t('Makna Kata', 'Word meaning')}
             </span>
             <button
               onClick={() => openSourceDrawer(displaySourceId)}
