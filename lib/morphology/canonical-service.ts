@@ -1,7 +1,7 @@
 import { getQACAuthoritativeIndex, getQACRecordsByRoot, getQACRecordsByWordLocation } from './qac-parser';
 import { lookupQACByLocation, lookupQACByToken } from './qac-lookup';
 import { ROOT_DATABASE } from '../data/roots';
-import { getRootSemanticProfile } from '../data/root-semantics';
+import { getRootSemanticProfile, type RootSemanticProfile } from '../data/root-semantics';
 import { stripArabicHarakat, isQuranicParticle, findBestMatchingRoot, inferGrammarRole } from '../search/root-search';
 import { buckwalterToArabic } from './buckwalter';
 import { getRootOccurrencesFromChunk } from './morphology-service';
@@ -86,6 +86,7 @@ export interface RootDetailModel {
   titleIndo: string;
   coreMeaning: string;
   coreMeaningEnglish?: string;
+  meaningSource?: RootSemanticProfile['meaningSource'];
   classicalArabicExcerpt?: string;
   contextualNote?: string;
   meaningsIndonesian: string[];
@@ -685,6 +686,7 @@ export function getCanonicalRootDetail(slug: string, options: { includeOccurrenc
     titleIndo: semanticProfile?.titleIndo || cleanTitle,
     coreMeaning: semanticProfile?.coreMeaning || '',
     coreMeaningEnglish: semanticProfile?.coreMeaningEnglish,
+    meaningSource: semanticProfile?.meaningSource,
     classicalArabicExcerpt: semanticProfile?.classicalArabicExcerpt,
     contextualNote: semanticProfile?.contextualNote || matchedRoot.contextualNote,
     meaningsIndonesian: semanticProfile?.meaningsIndonesian || [],

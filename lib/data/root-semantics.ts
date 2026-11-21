@@ -36,6 +36,17 @@ export interface RootSemanticProfile {
   usagePatterns: QuranicUsagePattern[];
   contextualNote?: string;
   meaningsIndonesian: string[];
+  meaningSource?: {
+    id: 'qac';
+    name: string;
+    url: string;
+    noteIndonesian: string;
+    noteEnglish: string;
+    relatedSourceName: string;
+    relatedSourceUrl: string;
+    relatedSourceLabelIndonesian: string;
+    relatedSourceLabelEnglish: string;
+  };
 }
 
 /**
@@ -947,6 +958,53 @@ export function getRootSemanticProfile(rootBw: string, rootArabic?: string): Roo
   const cleanArKey = rootArabic || dbRoot?.rootArabic || '';
   const qbqEntry = getQbqRootEntry(cleanArKey);
   const rootArDisplay = rootArabic || dbRoot?.rootArabic || cleanBw;
+
+  const qacGlossProfile = cleanBw === 'n-d-w' || dashedId === 'n-d-w'
+    ? {
+        titleIndo: 'Memanggil / Seruan',
+        coreMeaning: 'Memanggil atau menyeru. Bentuk nomina نِدَاء berarti panggilan atau seruan; bentuk-bentuk dalam Al-Qur’an juga mencakup ajakan timbal balik dan perkumpulan.',
+        coreMeaningEnglish: 'Calling or calling out. Quranic forms include نَادَىٰ (to call), تَنَادَ (to call one another), and نِدَاء (a call). The corpus lists 53 occurrences across eight forms.',
+        contextualNote: 'Quranic Arabic Corpus groups the Quranic forms under ن د و. Lane records نِدَاء (“raising the voice”) and نَدَى (“an assembly”) under ندى (ndy), a related but differently spelled root.',
+        meaningsIndonesian: ['Memanggil atau menyeru', 'Panggilan atau seruan', 'Berkumpul atau saling memanggil'],
+        meaningSource: {
+          id: 'qac' as const,
+          name: 'Quranic Arabic Corpus',
+          url: 'https://corpus.quran.com/qurandictionary.jsp?q=ndw',
+          noteIndonesian: 'Teks Indonesia ini menerjemahkan glos singkat QAC, yang merupakan panduan, bukan definisi lengkap. Lane mencatat نِدَاء (“mengangkat suara”) dan نَدَى (“perkumpulan”) di bawah ندى (ndy), ejaan akar yang berbeda dari ن د و pada QAC.',
+          noteEnglish: 'The Indonesian text translates QAC’s brief glosses, which are guides rather than full dictionary definitions. Lane records نِدَاء (“raising the voice”) and نَدَى (“an assembly”) under ندى (ndy), a different root spelling from QAC’s ن د و.',
+          relatedSourceName: 'Lane’s Arabic-English Lexicon',
+          relatedSourceUrl: 'https://lexicon.quranic-research.net/pdf/Page_3030.pdf',
+          relatedSourceLabelIndonesian: 'Lane · Part 8, hlm. 3030',
+          relatedSourceLabelEnglish: 'Lane · Part 8, p. 3030',
+        },
+      }
+    : cleanBw === 'l-A-l-A' || dashedId === 'l-A-l-A'
+      ? {
+          titleIndo: 'Mutiara',
+          coreMeaning: 'Dalam Al-Qur’an, akar empat huruf ini muncul sebagai nomina لُؤْلُؤ (mutiara), enam kali. Tidak ada kata kerja dari akar ini dalam korpus Al-Qur’an.',
+          coreMeaningEnglish: 'In the Quranic Arabic Corpus, this four-letter root appears six times as the noun لُؤْلُؤ, glossed “pearl” or “pearls.” No verb from this root occurs in the Quran.',
+          contextualNote: 'Quranic Arabic Corpus indexes the form as ل أ ل أ. Lane’s entry لُؤْلُؤَةٌ (“a pearl”) is filed under لأ; Lane notes لُؤْلُؤ can be a collective noun. No further root philosophy is inferred here.',
+          meaningsIndonesian: ['Mutiara; bentuk kolektif untuk mutiara'],
+          meaningSource: {
+            id: 'qac' as const,
+            name: 'Quranic Arabic Corpus',
+            url: 'https://corpus.quran.com/qurandictionary.jsp?q=lAlA',
+            noteIndonesian: 'Teks Indonesia ini menerjemahkan glos QAC, yang menyebut enam kemunculan لُؤْلُؤ sebagai nomina “pearl”. Lane mencatat لُؤْلُؤَةٌ sebagai “a pearl” di bawah akar لأ; ejaan akarnya berbeda dari pengelompokan empat huruf QAC.',
+            noteEnglish: 'The Indonesian text translates QAC’s gloss, which lists six occurrences of لُؤْلُؤ as the noun “pearl.” Lane records لُؤْلُؤَةٌ as “a pearl” under root لأ; Lane’s root spelling differs from QAC’s four-letter grouping.',
+            relatedSourceName: 'Lane’s Arabic-English Lexicon',
+            relatedSourceUrl: 'https://www.laneslexicon.com/word/لؤلؤة',
+            relatedSourceLabelIndonesian: 'Lihat lema لُؤْلُؤَةٌ · Lane',
+            relatedSourceLabelEnglish: 'Open headword لُؤْلُؤَةٌ · Lane',
+          },
+        }
+      : undefined;
+
+  if (qacGlossProfile) {
+    return {
+      ...qacGlossProfile,
+      usagePatterns: [],
+    };
+  }
 
   const sampleVerbs = (dbRoot?.verbs || []).filter(v => v.arabic && !v.arabic.includes('('));
   const sampleNouns = (dbRoot?.nouns || []).filter(n => n.arabic && !n.arabic.includes('('));

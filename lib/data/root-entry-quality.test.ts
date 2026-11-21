@@ -5,7 +5,7 @@ import { ROOT_DATABASE } from './roots';
 
 // These roots had only a generated occurrence-count sentence in the root data.
 // They must not present that sentence as a lexical definition.
-const rootsWithoutIndexedDefinition = ['r-A-y', 'm-r-A', 'n-d-w', 'm-l-A', 'f-A-y', 'm-A-y', 'l-A-l-A'];
+const rootsWithoutIndexedDefinition = ['r-A-y', 'm-r-A', 'm-l-A', 'f-A-y', 'm-A-y'];
 
 for (const rootId of rootsWithoutIndexedDefinition) {
   const root = getCanonicalRootDetail(rootId);
@@ -26,6 +26,18 @@ assert.notEqual(malikRoot.coreMeaning, malikRoot.coreMeaningEnglish, 'The root p
 const samwRoot = getCanonicalRootDetail('s-m-w');
 assert.ok(samwRoot?.coreMeaningEnglish, 'The source gloss should take precedence over an uncited curated summary');
 assert.equal(samwRoot.coreMeaning, '', 'An uncited curated summary must not appear as a sourced definition');
+
+const nadwProfile = getRootSemanticProfile('n-d-w', 'ن د و');
+assert.ok(nadwProfile?.coreMeaningEnglish?.includes('call'), 'Root ن د و should use Quranic Arabic Corpus form glosses');
+assert.ok(nadwProfile?.coreMeaning.includes('Memanggil'), 'Root ن د و should have a clear Indonesian translation of the corpus gloss');
+assert.equal(nadwProfile?.meaningSource?.url, 'https://corpus.quran.com/qurandictionary.jsp?q=ndw');
+assert.match(nadwProfile?.contextualNote || '', /Lane.*ندى|Lane.*ndy/i, 'The different root spelling in Lane should be disclosed');
+
+const luLuProfile = getRootSemanticProfile('l-A-l-A', 'ل ا ل ا');
+assert.ok(luLuProfile?.coreMeaningEnglish?.includes('pearls'), 'Root ل أ ل أ should use the corpus noun gloss');
+assert.ok(luLuProfile?.coreMeaning.includes('mutiara'), 'Root ل أ ل أ should have a clear Indonesian translation of the corpus gloss');
+assert.equal(luLuProfile?.meaningSource?.url, 'https://corpus.quran.com/qurandictionary.jsp?q=lAlA');
+assert.match(luLuProfile?.contextualNote || '', /Lane.*لأ|Lane.*lA/i, 'The Lane headword indexing should be disclosed');
 
 assert.equal(getQbqRootEntry('ا ل ه')?.meaningEn.startsWith('Allah ('), true, 'Alif in the corpus root should match the hamza-on-alif spelling in the sourced QBQ gloss');
 

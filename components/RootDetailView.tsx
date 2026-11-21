@@ -41,6 +41,7 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
   const [occurrencesError, setOccurrencesError] = useState(false);
   const { statistics } = root;
   const { lexicon } = root;
+  const meaningSource = root.meaningSource;
   const rootTransliteration = transliterateRootArabic(root.rootArabic);
   const number = (value: number) => value.toLocaleString(language === 'en' ? 'en-US' : 'id-ID');
   const lemmas = statistics.lemmaDistribution.filter((lemma) => selectedPos === 'all' || (selectedPos === 'V' ? lemma.pos === 'V' : lemma.pos !== 'V'));
@@ -134,7 +135,9 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
           <div>
             <h2 id="root-meaning-heading" className="text-xl font-semibold text-ink-primary">{t('Makna inti akar', 'Root meaning')}</h2>
             <p className="mt-1 text-sm text-ink-secondary">{root.coreMeaningEnglish
-              ? t('Ringkasan Inggris · Quran bil-Quran · mengacu Lane; halaman dan metode penyuntingan tidak dicantumkan', 'English summary · Quran bil-Quran · attributes Lane; page and editorial method not stated')
+              ? meaningSource
+                ? `${language === 'id' ? 'Glos bentuk korpus · ' : 'Corpus word-form gloss · '}${meaningSource.name}`
+                : t('Ringkasan Inggris · Quran bil-Quran · mengacu Lane; halaman dan metode penyuntingan tidak dicantumkan', 'English summary · Quran bil-Quran · attributes Lane; page and editorial method not stated')
               : laneDefinition ? language === 'id' ? 'Kutipan asli Lane · bahasa Inggris · belum diterjemahkan' : 'Original English dictionary entry · Lane, 1863'
                 : t('Definisi dari sumber leksikal belum tersedia', 'No sourced dictionary definition is indexed')}</p>
           </div>
@@ -142,10 +145,20 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
         {root.coreMeaningEnglish ? (
           <div className="max-w-4xl space-y-3">
             <p lang="en" className="text-lg leading-relaxed text-ink-primary">{root.coreMeaningEnglish}</p>
-            <p className="text-sm text-ink-secondary">{t('Proyek sumber tidak menjelaskan metode penyuntingan glos ini. Gunakan sebagai ringkasan awal; cocokkan dengan kutipan Lane di bawah jika tersedia.', 'The source project does not describe how this gloss was edited. Use it as a starting summary; compare it with the Lane excerpt below when available.')}</p>
-            <a href={SOURCES_REGISTRY.quranBilQuran.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
-              <span>{t('Buka proyek sumber · Quran bil-Quran', 'Open source project · Quran bil-Quran')}</span><ExternalLink className="h-4 w-4" aria-hidden="true" />
-            </a>
+            {language === 'id' && root.coreMeaning && <p lang="id" className="text-base leading-relaxed text-ink-primary">{root.coreMeaning}</p>}
+            <p className="text-sm text-ink-secondary">{meaningSource
+              ? language === 'id' ? meaningSource.noteIndonesian : meaningSource.noteEnglish
+              : t('Proyek sumber tidak menjelaskan metode penyuntingan glos ini. Gunakan sebagai ringkasan awal; cocokkan dengan kutipan Lane di bawah jika tersedia.', 'The source project does not describe how this gloss was edited. Use it as a starting summary; compare it with the Lane excerpt below when available.')}</p>
+            <div className="flex flex-wrap gap-x-5 gap-y-1">
+              <a href={meaningSource?.url || SOURCES_REGISTRY.quranBilQuran.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
+                <span>{meaningSource
+                  ? `${language === 'id' ? 'Buka sumber · ' : 'Open source · '}${meaningSource.name}`
+                  : t('Buka proyek sumber · Quran bil-Quran', 'Open source project · Quran bil-Quran')}</span><ExternalLink className="h-4 w-4" aria-hidden="true" />
+              </a>
+              {meaningSource?.relatedSourceUrl && <a href={meaningSource.relatedSourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
+                <span>{language === 'id' ? meaningSource.relatedSourceLabelIndonesian : meaningSource.relatedSourceLabelEnglish}</span><ExternalLink className="h-4 w-4" aria-hidden="true" />
+              </a>}
+            </div>
           </div>
         ) : laneDefinition ? (
           <div className="max-w-4xl space-y-2">

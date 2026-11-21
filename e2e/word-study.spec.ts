@@ -89,6 +89,22 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     await expect(meaningSection.getByRole('link', { name: 'Lihat lema terkait di Qabas · Birzeit' })).toHaveAttribute('href', 'https://sina.birzeit.edu/qabas/lemma/202001196');
   });
 
+  test('roots without a Lane root record show QAC glosses with explicit source links', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('qurabic_language', 'id'));
+    await page.goto('/akar/n-d-w', { waitUntil: 'domcontentloaded' });
+    let meaningSection = page.locator('section[aria-labelledby="root-meaning-heading"]');
+    await expect(meaningSection).toContainText('Memanggil atau menyeru');
+    await expect(meaningSection.getByRole('link', { name: /Quranic Arabic Corpus/ })).toHaveAttribute('href', 'https://corpus.quran.com/qurandictionary.jsp?q=ndw');
+    await expect(meaningSection.getByRole('link', { name: 'Lane · Part 8, hlm. 3030' })).toHaveAttribute('href', 'https://lexicon.quranic-research.net/pdf/Page_3030.pdf');
+    await expect(meaningSection).toContainText('ندى (ndy)');
+
+    await page.goto('/akar/l-A-l-A', { waitUntil: 'domcontentloaded' });
+    meaningSection = page.locator('section[aria-labelledby="root-meaning-heading"]');
+    await expect(meaningSection).toContainText('mutiara');
+    await expect(meaningSection.getByRole('link', { name: /Quranic Arabic Corpus/ })).toHaveAttribute('href', 'https://corpus.quran.com/qurandictionary.jsp?q=lAlA');
+    await expect(meaningSection.getByRole('link', { name: /Lihat lema لُؤْلُؤَةٌ/ })).toHaveAttribute('href', 'https://www.laneslexicon.com/word/لؤلؤة');
+  });
+
   test('root page leads with its readable source gloss and preserves the cited Lane entry', async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem('qurabic_language', 'id'));
     await page.goto('/akar/d-y-n', { waitUntil: 'domcontentloaded' });
