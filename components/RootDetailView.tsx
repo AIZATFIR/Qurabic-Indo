@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, BookOpen, ExternalLink } from 'lucide-react';
 import type { RootDetailModel } from '@/lib/morphology/canonical-service';
@@ -11,6 +11,7 @@ import { transliterateRootArabic } from '@/lib/morphology/transliteration';
 import { fetchRootOccurrences } from '@/lib/api/root-occurrences';
 import { fetchRootDetail } from '@/lib/api/root-detail-client';
 import { getRootEntryLoadState } from '@/lib/api/root-entry-load-state';
+import { filterOtherArabicForms, type ArramoozForm } from '@/lib/lexicon/arramooz-shared';
 
 export interface RootLemmaSample {
   coordinate: string;
@@ -39,6 +40,11 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
   const [occurrencesLoading, setOccurrencesLoading] = useState(initialLoadState.occurrences);
   const [rootDataError, setRootDataError] = useState(false);
   const [occurrencesError, setOccurrencesError] = useState(false);
+  const [otherForms, setOtherForms] = useState<ArramoozForm[]>([]);
+  const [otherFormsState, setOtherFormsState] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
+  const [otherFormsOpen, setOtherFormsOpen] = useState(false);
+  const [showAllOtherForms, setShowAllOtherForms] = useState(false);
+  const otherFormsController = useRef<AbortController | null>(null);
   const { statistics } = root;
   const { lexicon } = root;
   const meaningSource = root.meaningSource;
@@ -95,6 +101,35 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
 
     return () => { active = false; };
   }, [initialRoot, initialLemmaSamples]);
+
+  useEffect(() => {
+    otherFormsController.current?.abort();
+    otherFormsController.current = null;
+    setOtherForms([]);
+    setOtherFormsState('idle');
+    setOtherFormsOpen(false);
+    setShowAllOtherForms(false);
+    return () => otherFormsController.current?.abort();
+  }, [initialRoot.id]);
+
+  const loadOtherForms = () => {
+    if (otherFormsController.current) return;
+    const controller = new AbortController();
+    otherFormsController.current = controller;
+    setOtherFormsState('loading');
+    fetch(`/api/arramooz?root=${encodeURIComponent(root.id)}`, { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error('Request failed')))
+      .then((payload) => {
+        setOtherForms(Array.isArray(payload.forms) ? payload.forms : []);
+        setOtherFormsState('done');
+      })
+      .catch((error) => {
+        if (error?.name !== 'AbortError') setOtherFormsState('error');
+      })
+      .finally(() => {
+        if (otherFormsController.current === controller) otherFormsController.current = null;
+      });
+  };
 
   return (
     <div className={`mx-auto max-w-6xl px-5 py-8 font-sans sm:px-8 sm:py-12 ${classic ? 'space-y-14 pb-28' : 'space-y-12 pb-24'}`}>
@@ -216,6 +251,40 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
           </div>
         </div>
       </section>}
+
+      <section aria-labelledby="other-root-forms-heading" className={`scroll-mt-24 space-y-4 ${classic ? 'border-b border-hairline pb-10' : 'border-b border-hairline pb-8'}`}>
+        <div>
+          <h2 id="other-root-forms-heading" className="text-2xl font-semibold text-ink-primary">{t('Bentuk lain yang tercatat', 'Other recorded forms')}</h2>
+          <p className="mt-2 max-w-3xl text-base leading-relaxed text-ink-secondary">{t('Data Arramooz mencakup sebagian kata Arab pada akar yang juga muncul di Al-Qur’an; daftar ini bukan kamus lengkap. Definisi ditampilkan dalam bahasa Arab asli.', 'Arramooz covers a subset of Arabic words for roots also found in the Quran; this is not a complete dictionary. Definitions remain in the original Arabic.')}</p>
+        </div>
+        <a href="https://github.com/linuxscout/arramooz" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-sm text-primary underline underline-offset-4 focus-visible:outline-primary">Arramooz · GPL-2 <ExternalLink className="h-4 w-4" aria-hidden="true" /></a>
+        <button type="button" aria-expanded={otherFormsOpen} onClick={() => {
+          const open = !otherFormsOpen;
+          setOtherFormsOpen(open);
+          if (open && otherFormsState === 'idle') loadOtherForms();
+          if (!open && otherFormsState === 'loading') {
+            otherFormsController.current?.abort();
+            otherFormsController.current = null;
+            setOtherFormsState('idle');
+          }
+        }} className="min-h-11 text-base font-medium text-primary hover:underline focus-visible:outline-primary">{otherFormsOpen ? t('Sembunyikan bentuk', 'Hide forms') : t('Tampilkan bentuk tambahan', 'Show additional forms')}</button>
+        {otherFormsOpen && otherFormsState === 'loading' && <p role="status" className="text-base text-ink-secondary">{t('Memuat data Arramooz…', 'Loading Arramooz data…')}</p>}
+        {otherFormsOpen && otherFormsState === 'error' && <div className="flex flex-wrap items-center gap-3 text-base"><p role="alert" className="text-ink-secondary">{t('Data bentuk belum termuat.', 'The forms could not be loaded.')}</p><button type="button" className="text-primary underline" onClick={loadOtherForms}>{t('Coba lagi', 'Retry')}</button></div>}
+        {otherFormsOpen && otherFormsState === 'done' && (() => {
+          const forms = filterOtherArabicForms(otherForms, statistics.lemmaDistribution.map((lemma) => lemma.lemmaArabic));
+          const visible = showAllOtherForms ? forms : forms.slice(0, 12);
+          return forms.length ? <>
+            <ul className="divide-y divide-hairline border-y border-hairline">
+              {visible.map((form, index) => <li key={`${form.pos}:${form.arabic}:${index}`} className="flex flex-wrap items-start justify-between gap-x-6 gap-y-1 py-3">
+                <div><p lang="ar" dir="rtl" className="font-arabic text-2xl leading-relaxed text-ink-primary">{form.arabic}</p><p className="text-sm text-ink-secondary">{form.pos === 'verb' ? t("Fi'il", 'Verb') : t('Isim', 'Noun')}{form.wordType ? ` · ${form.wordType}` : ''}{form.wazn ? ` · ${form.wazn}` : ''}</p></div>
+                {form.definition && <p lang="ar" dir="rtl" className="max-w-prose text-base leading-relaxed text-ink-secondary">{form.definition}</p>}
+              </li>)}
+            </ul>
+            {forms.length > 12 && <button type="button" onClick={() => setShowAllOtherForms((value) => !value)} className="min-h-11 text-base text-primary underline underline-offset-4">{showAllOtherForms ? t('Tampilkan lebih sedikit', 'Show fewer') : t(`Tampilkan ${forms.length - 12} bentuk lagi`, `Show ${forms.length - 12} more forms`)}</button>}
+            <p className="text-sm text-ink-secondary">{t('Bentuk dan definisi berasal dari Arramooz; cakupan subset dan lisensi dijelaskan di Tentang.', 'Forms and definitions come from Arramooz; subset coverage and license are described on About.')}</p>
+          </> : <p className="text-base text-ink-secondary">{t('Belum ada bentuk tambahan yang tercatat untuk akar ini.', 'No additional forms are indexed for this root.')}</p>;
+        })()}
+      </section>
 
       <section aria-labelledby="root-distribution-heading" id="distribusi" className={`scroll-mt-24 space-y-5 ${classic ? 'border-y border-hairline py-8' : ''}`}>
         <div>

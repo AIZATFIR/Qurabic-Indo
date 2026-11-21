@@ -89,6 +89,41 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     await expect(meaningSection.getByRole('link', { name: 'Lihat lema terkait di Qabas · Birzeit' })).toHaveAttribute('href', 'https://sina.birzeit.edu/qabas/lemma/202001196');
   });
 
+  test('root page loads sourced Arabic forms outside the Quran only when requested', async ({ page }) => {
+    const requests: string[] = [];
+    page.on('request', (request) => {
+      if (request.url().includes('/api/arramooz?')) requests.push(request.url());
+    });
+    await page.goto('/akar/S-b-r', { waitUntil: 'domcontentloaded' });
+    const section = page.locator('section[aria-labelledby="other-root-forms-heading"]');
+    await expect(section).toBeVisible();
+    await expect(section.getByRole('heading')).toHaveText('Bentuk lain yang tercatat');
+    expect(requests).toHaveLength(0);
+
+    await page.waitForFunction(() => {
+      const button = document.querySelector('section[aria-labelledby="other-root-forms-heading"] button');
+      return button && Object.keys(button).some((key) => key.startsWith('__reactProps$'));
+    });
+    await section.getByRole('button', { name: 'Tampilkan bentuk tambahan' }).click();
+    await expect(section.getByRole('button', { name: 'Sembunyikan bentuk' })).toHaveAttribute('aria-expanded', 'true');
+    await expect.poll(() => requests.length, { timeout: 5000 }).toBe(1);
+    await expect(section.locator('ul')).toContainText('صَبَرَ');
+    await expect(section).toContainText('Arramooz');
+    await expect(section).toContainText('GPL-2');
+
+    await page.evaluate(() => localStorage.setItem('qurabic_language', 'en'));
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    const englishSection = page.locator('section[aria-labelledby="other-root-forms-heading"]');
+    await expect(englishSection.getByRole('heading')).toHaveText('Other recorded forms');
+    await page.waitForFunction(() => {
+      const button = document.querySelector('section[aria-labelledby="other-root-forms-heading"] button');
+      return button && Object.keys(button).some((key) => key.startsWith('__reactProps$'));
+    });
+    await englishSection.getByRole('button', { name: 'Show additional forms' }).click();
+    await expect(englishSection.locator('ul')).toContainText('صَبَرَ');
+    await expect(englishSection.getByText('Tampilkan bentuk tambahan')).toHaveCount(0);
+  });
+
   test('roots without a Lane root record show QAC glosses with explicit source links', async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem('qurabic_language', 'id'));
     await page.goto('/akar/n-d-w', { waitUntil: 'domcontentloaded' });
