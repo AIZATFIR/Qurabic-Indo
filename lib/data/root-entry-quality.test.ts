@@ -39,6 +39,21 @@ assert.ok(luLuProfile?.coreMeaning.includes('mutiara'), 'Root ل أ ل أ should
 assert.equal(luLuProfile?.meaningSource?.url, 'https://corpus.quran.com/qurandictionary.jsp?q=lAlA');
 assert.match(luLuProfile?.contextualNote || '', /Lane.*لأ|Lane.*lA/i, 'The Lane headword indexing should be disclosed');
 
+const nasProfile = getRootSemanticProfile('n-w-s', 'ن و س');
+assert.ok(nasProfile?.coreMeaningEnglish?.includes('people'), 'Root ن و س should have a sourced English gloss');
+assert.ok(nasProfile?.coreMeaning.includes('manusia'), 'Root ن و س should have a readable Indonesian gloss');
+assert.equal(nasProfile?.meaningSource?.url, 'https://corpus.quran.com/qurandictionary.jsp?q=nws');
+
+const tamaProfile = getRootSemanticProfile('T-m-n', 'ط م ن');
+assert.ok(tamaProfile?.coreMeaningEnglish?.includes('secure'), 'Root ط م ن should distinguish the corpus gloss from generic filler');
+assert.ok(tamaProfile?.coreMeaning.includes('tenteram'), 'Root ط م ن should have a readable Indonesian gloss');
+assert.equal(tamaProfile?.meaningSource?.url, 'https://corpus.quran.com/qurandictionary.jsp?q=Tmn');
+
+const maunProfile = getRootSemanticProfile('m-E-n', 'م ع ن');
+assert.ok(maunProfile?.coreMeaningEnglish?.includes('small kindnesses'), 'Root م ع ن should use the cited gloss for مَاعُون');
+assert.ok(maunProfile?.coreMeaning.includes('kebaikan kecil'), 'Root م ع ن should have a readable Indonesian gloss');
+assert.equal(maunProfile?.meaningSource?.url, 'https://corpus.quran.com/qurandictionary.jsp?q=mEn');
+
 assert.equal(getQbqRootEntry('ا ل ه')?.meaningEn.startsWith('Allah ('), true, 'Alif in the corpus root should match the hamza-on-alif spelling in the sourced QBQ gloss');
 
 let checkedEnglishGlosses = 0;
@@ -52,7 +67,7 @@ for (const root of ROOT_DATABASE) {
   assert.notEqual(profile.coreMeaning, profile.coreMeaningEnglish, `Root ${root.id} must not place its English gloss in the Indonesian field`);
   assert.ok(!profile.meaningsIndonesian.includes(profile.coreMeaningEnglish), `Root ${root.id} must not label its English gloss as Indonesian`);
 }
-assert.ok(checkedEnglishGlosses > 1000, `Expected broad source coverage; checked ${checkedEnglishGlosses} English glosses`);
+assert.equal(checkedEnglishGlosses, ROOT_DATABASE.length, 'Every indexed Quranic root should have a sourced English gloss');
 assert.equal(rootsWithSourcedEntry, ROOT_DATABASE.length, 'Every indexed Quranic root must have at least one source-backed lexical entry');
 
 console.log(`Passed: ${rootsWithoutIndexedDefinition.length} roots have no filler; all ${rootsWithSourcedEntry} roots have a lexical source entry; ${checkedEnglishGlosses} English glosses stay out of Indonesian fields.`);

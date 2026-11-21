@@ -959,7 +959,64 @@ export function getRootSemanticProfile(rootBw: string, rootArabic?: string): Roo
   const qbqEntry = getQbqRootEntry(cleanArKey);
   const rootArDisplay = rootArabic || dbRoot?.rootArabic || cleanBw;
 
-  const qacGlossProfile = cleanBw === 'n-d-w' || dashedId === 'n-d-w'
+  const qacGlossProfile = cleanBw === 'n-w-s' || dashedId === 'n-w-s'
+    ? {
+        titleIndo: 'Orang-orang / Manusia',
+        coreMeaning: 'Dalam Quranic Arabic Corpus, nās (النَّاس) berarti “orang-orang” atau “manusia” dan muncul 241 kali.',
+        coreMeaningEnglish: 'In the Quranic Arabic Corpus, nās (النَّاس) means “the people” or “mankind” and occurs 241 times.',
+        contextualNote: 'Lane notes that نَاسٌ can refer to humans and jinn, with its predominant use referring to humans.',
+        meaningsIndonesian: ['Orang-orang', 'Manusia'],
+        meaningSource: {
+          id: 'qac' as const,
+          name: 'Quranic Arabic Corpus',
+          url: 'https://corpus.quran.com/qurandictionary.jsp?q=nws',
+          noteIndonesian: 'Glos QAC merupakan panduan singkat, bukan definisi lengkap. Lane mencatat نَاسٌ dapat merujuk pada manusia dan jin, tetapi lebih umum digunakan untuk manusia.',
+          noteEnglish: 'QAC’s gloss is a brief guide, not a full definition. Lane notes that نَاسٌ can refer to humans and jinn, but is predominantly used for humans.',
+          relatedSourceName: 'Lane’s Arabic-English Lexicon',
+          relatedSourceUrl: 'https://lexicon.quranic-research.net/pdf/Page_2867.pdf',
+          relatedSourceLabelIndonesian: 'Lane · hlm. 2867',
+          relatedSourceLabelEnglish: 'Lane · p. 2867',
+        },
+      }
+    : cleanBw === 'T-m-n' || dashedId === 'T-m-n'
+      ? {
+          titleIndo: 'Tenang / Tenteram',
+          coreMeaning: 'Bentuk-bentuk ط م ن dalam Quranic Arabic Corpus berkaitan dengan merasa aman, puas, atau tenteram; beberapa bentuk juga berarti menenteramkan.',
+          coreMeaningEnglish: 'Quranic Arabic Corpus glosses forms of ط م ن as being secure, satisfied, or content; some forms mean to reassure or satisfy.',
+          contextualNote: 'The corpus lists 13 occurrences in three derived forms. Lane’s entry طُمَأْنِينَةٌ describes stillness, rest, quietness, calmness, and tranquillity.',
+          meaningsIndonesian: ['Tenang', 'Tenteram', 'Merasa aman atau puas', 'Menenteramkan'],
+          meaningSource: {
+            id: 'qac' as const,
+            name: 'Quranic Arabic Corpus',
+            url: 'https://corpus.quran.com/qurandictionary.jsp?q=Tmn',
+            noteIndonesian: 'Glos QAC adalah panduan singkat. Makna bentuk berubah menurut konteks ayat: antara lain “merasa aman”, “puas”, “tenteram”, dan “menenteramkan”.',
+            noteEnglish: 'QAC’s glosses are brief guides. The form’s meaning varies by verse context, including “secure,” “content,” “at rest,” and “reassure.”',
+            relatedSourceName: 'Lane’s Arabic-English Lexicon',
+            relatedSourceUrl: 'https://lexicon.quranic-research.net/pdf/Page_1882.pdf',
+            relatedSourceLabelIndonesian: 'Lane · hlm. 1882',
+            relatedSourceLabelEnglish: 'Lane · p. 1882',
+          },
+        }
+      : cleanBw === 'm-E-n' || dashedId === 'm-E-n'
+        ? {
+            titleIndo: 'Kebaikan kecil / Bantuan',
+            coreMeaning: 'Dalam Quranic Arabic Corpus, al-māʿūn (الْمَاعُون) diberi glos “kebaikan-kebaikan kecil”; kata ini muncul sekali, pada 107:7.',
+            coreMeaningEnglish: 'In the Quranic Arabic Corpus, al-māʿūn (الْمَاعُون) is glossed as “small kindnesses”; it occurs once, in 107:7.',
+            contextualNote: 'The Quranic Arabic Corpus groups the word مَاعُون under م ع ن. Lane discusses the related noun مَعُونَةٌ (“aid”) under ع و ن and notes a proposed relation to المَاعُون; the root grouping differs.',
+            meaningsIndonesian: ['Kebaikan kecil', 'Bantuan sederhana'],
+            meaningSource: {
+              id: 'qac' as const,
+              name: 'Quranic Arabic Corpus',
+              url: 'https://corpus.quran.com/qurandictionary.jsp?q=mEn',
+              noteIndonesian: 'QAC memberi glos singkat “small kindnesses” untuk satu pemakaian māʿūn pada 107:7. Lane membahas مَعُونَةٌ (“bantuan”) di bawah ع و ن dan mencatat dugaan kaitannya dengan المَاعُون; pengelompokan akarnya berbeda.',
+              noteEnglish: 'QAC gives the brief gloss “small kindnesses” for the single occurrence of māʿūn in 107:7. Lane discusses مَعُونَةٌ (“aid”) under ع و ن and notes a proposed relation to المَاعُون; the root grouping differs.',
+              relatedSourceName: 'Lane’s Arabic-English Lexicon',
+              relatedSourceUrl: 'https://lexicon.quranic-research.net/data/18_E/248_Ewn.html',
+              relatedSourceLabelIndonesian: 'Lane · akar terkait ع و ن',
+              relatedSourceLabelEnglish: 'Lane · related root ع و ن',
+            },
+          }
+        : cleanBw === 'n-d-w' || dashedId === 'n-d-w'
     ? {
         titleIndo: 'Memanggil / Seruan',
         coreMeaning: 'Memanggil atau menyeru. Bentuk nomina نِدَاء berarti panggilan atau seruan; bentuk-bentuk dalam Al-Qur’an juga mencakup ajakan timbal balik dan perkumpulan.',

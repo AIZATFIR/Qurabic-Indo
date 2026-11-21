@@ -153,6 +153,38 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     await expect(laneExcerpt).toContainText('Edward William Lane, An Arabic-English Lexicon');
   });
 
+  test('rare roots show concise Quranic Arabic Corpus glosses with source links', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('qurabic_language', 'en'));
+    const entries = [
+      {
+        root: 'n-w-s',
+        gloss: 'nās (النَّاس) means “the people” or “mankind”',
+        source: 'https://corpus.quran.com/qurandictionary.jsp?q=nws',
+        related: 'https://lexicon.quranic-research.net/pdf/Page_2867.pdf',
+      },
+      {
+        root: 'T-m-n',
+        gloss: 'glosses forms of ط م ن as being secure, satisfied, or content',
+        source: 'https://corpus.quran.com/qurandictionary.jsp?q=Tmn',
+        related: 'https://lexicon.quranic-research.net/pdf/Page_1882.pdf',
+      },
+      {
+        root: 'm-E-n',
+        gloss: 'al-māʿūn (الْمَاعُون) is glossed as “small kindnesses”',
+        source: 'https://corpus.quran.com/qurandictionary.jsp?q=mEn',
+        related: 'https://lexicon.quranic-research.net/data/18_E/248_Ewn.html',
+      },
+    ];
+
+    for (const entry of entries) {
+      await page.goto(`/akar/${entry.root}`, { waitUntil: 'domcontentloaded' });
+      const meaning = page.locator('section[aria-labelledby="root-meaning-heading"]');
+      await expect(meaning.locator('p[lang="en"]').first()).toContainText(entry.gloss);
+      await expect(meaning.getByRole('link', { name: /Open source · Quranic Arabic Corpus/ })).toHaveAttribute('href', entry.source);
+      await expect(meaning.getByRole('link', { name: /Lane/ }).last()).toHaveAttribute('href', entry.related);
+    }
+  });
+
   test('root explanation uses a cited Lane source instead of generic placeholder copy', async ({ page }) => {
     await page.goto('/kata/%D8%A7%D9%84%D8%B1%D9%91%D9%8E%D8%AD%D9%90%D9%8A%D9%85%D9%90?location=1%3A1%3A4', { waitUntil: 'networkidle' });
 
