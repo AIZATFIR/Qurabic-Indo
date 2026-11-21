@@ -1,4 +1,9 @@
-import { searchRoots, getRootBySlug } from './root-search';
+import assert from 'node:assert/strict';
+import { searchRoots, getRootBySlug, getRootByQACRoot } from './root-search';
+
+assert.equal(getRootByQACRoot('Sbr', 'ص ب ر')?.id, 'S-b-r', 'A QAC Buckwalter root should resolve directly to its indexed root');
+assert.equal(getRootByQACRoot('rHm', 'ر ح م')?.id, getRootBySlug('r-H-m')?.id, 'Arabic root lookup should keep the exact QAC mapping');
+assert.equal(getRootByQACRoot('missing'), undefined, 'Unknown QAC roots should not be guessed');
 
 function runTests() {
   console.log('🧪 Running Qurabic-Indo Search Engine Unit Tests (Full Corpus & Phonetics)...\n');

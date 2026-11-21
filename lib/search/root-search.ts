@@ -13,6 +13,34 @@ export function stripArabicHarakat(text: string): string {
   return norm.trim();
 }
 
+const rootsByArabic = new Map<string, RootWord>();
+const rootsByBuckwalter = new Map<string, RootWord>();
+const rootsByDerivative = new Map<string, RootWord>();
+const rootOrder = new Map<RootWord, number>();
+
+for (const [index, root] of ROOT_DATABASE.entries()) {
+  rootOrder.set(root, index);
+  const joinedRoot = stripArabicHarakat(root.rootArabicJoined);
+  if (joinedRoot && !rootsByArabic.has(joinedRoot)) rootsByArabic.set(joinedRoot, root);
+
+  const buckwalter = root.id.replace(/-/g, '').toLowerCase();
+  if (!rootsByBuckwalter.has(buckwalter)) rootsByBuckwalter.set(buckwalter, root);
+
+  for (const form of [...root.verbs, ...root.nouns]) {
+    const derivative = stripArabicHarakat(form.arabic);
+    if (derivative && !rootsByDerivative.has(derivative)) rootsByDerivative.set(derivative, root);
+  }
+}
+
+export function getRootByQACRoot(rootBw: string, rootArabic?: string): RootWord | undefined {
+  const arabicKey = rootArabic ? stripArabicHarakat(rootArabic.replace(/\s+/g, '')) : '';
+  const arabicMatch = arabicKey ? rootsByArabic.get(arabicKey) : undefined;
+  const buckwalterMatch = rootBw ? rootsByBuckwalter.get(rootBw.replace(/-/g, '').toLowerCase()) : undefined;
+  if (!arabicMatch) return buckwalterMatch;
+  if (!buckwalterMatch) return arabicMatch;
+  return rootOrder.get(arabicMatch)! <= rootOrder.get(buckwalterMatch)! ? arabicMatch : buckwalterMatch;
+}
+
 // Normalized set of Quranic particles, conjunctions, and prepositions (Non-root words)
 export const QURANIC_PARTICLES = new Set([
   'فلما', 'لما', 'فما', 'وما', 'ما', 'فلا', 'ولا', 'لا', 'ان', 'فان', 'وان', 'الا', 'فالا',
@@ -209,38 +237,16 @@ export function findBestMatchingRoot(wordArabic: string, meaningIndo?: string): 
   // 1. Authoritative QAC token resolution
   const qac = lookupQACByToken(clean);
   if (qac?.rootBw) {
-    const matched = ROOT_DATABASE.find(r => 
-      (qac.rootArabic && (r.rootArabic === qac.rootArabic || r.rootArabicJoined === qac.rootArabic.replace(/\s+/g, ''))) ||
-      r.id.replace(/-/g, '').toLowerCase() === qac.rootBw!.toLowerCase() ||
-      r.id.toLowerCase() === qac.rootBw!.toLowerCase()
-    );
+    const matched = getRootByQACRoot(qac.rootBw, qac.rootArabic);
     if (matched) return matched;
   }
 
   // 2. Direct exact match on joined root
-  for (const root of ROOT_DATABASE) {
-    const rootClean = stripArabicHarakat(root.rootArabicJoined);
-    if (clean === rootClean) {
-      return root;
-    }
-  }
+  const directRoot = rootsByArabic.get(clean);
+  if (directRoot) return directRoot;
 
   // 3. Exact match through derivative verbs or nouns
-  for (const root of ROOT_DATABASE) {
-    const matchedVerb = root.verbs.some(v => {
-      const vClean = stripArabicHarakat(v.arabic);
-      return clean === vClean;
-    });
-    if (matchedVerb) return root;
-
-    const matchedNoun = root.nouns.some(n => {
-      const nClean = stripArabicHarakat(n.arabic);
-      return clean === nClean;
-    });
-    if (matchedNoun) return root;
-  }
-
-  return undefined;
+  return rootsByDerivative.get(clean);
 }
 
 const DEMONSTRATIVES_AND_RELATIVES = new Set([
