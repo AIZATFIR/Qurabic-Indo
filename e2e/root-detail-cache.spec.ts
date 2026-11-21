@@ -5,3 +5,14 @@ test('root detail response advertises its one-day shared cache', async ({ reques
   expect(response.ok()).toBe(true);
   expect(response.headers()['cache-control']).toContain('max-age=300');
 });
+
+test('on-demand root pages are cached after their first render on Vercel', async ({ request }) => {
+  test.skip(!process.env.PLAYWRIGHT_BASE_URL?.includes('qurabic-indo-corpus.vercel.app'), 'Vercel cache headers require the production smoke target');
+  const first = await request.get('/akar/h-w-d');
+  expect(first.ok()).toBe(true);
+  expect(first.headers()['cache-control']).toMatch(/s-maxage=/);
+
+  const second = await request.get('/akar/h-w-d');
+  expect(second.ok()).toBe(true);
+  expect(second.headers()['x-vercel-cache']).toBe('HIT');
+});
