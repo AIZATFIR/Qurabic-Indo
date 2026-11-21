@@ -10,18 +10,3 @@ export function getAudioProgress(currentTime: number, duration: number): number 
 export function getMonotonicAudioProgress(next: number, previous: number): number {
   return Math.max(previous, next);
 }
-
-export function getInterpolatedAudioProgress(
-  sampledTime: number,
-  duration: number,
-  sampledAt: number,
-  now: number,
-  isPlaying: boolean,
-  playbackRate = 1,
-): number {
-  const elapsed = isPlaying && Number.isFinite(sampledAt) && Number.isFinite(now)
-    ? Math.max(0, Math.min(500, now - sampledAt)) / 1000
-    : 0;
-  const rate = Number.isFinite(playbackRate) && playbackRate > 0 ? playbackRate : 1;
-  return getAudioProgress(sampledTime + elapsed * rate, duration);
-}

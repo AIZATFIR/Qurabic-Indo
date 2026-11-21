@@ -1,7 +1,10 @@
 import { expect, test } from '@playwright/test';
 
 test('audio progress stays continuous between media updates and freezes when paused', async ({ page }) => {
-  await page.route(/^https:\/\/api\.quran\.com\/api\/v4\/verses\/by_chapter\/18\?/, (route) => route.fulfill({
+  await page.route((url) => {
+    const requestUrl = new URL(url);
+    return requestUrl.hostname === 'api.quran.com' && requestUrl.pathname === '/api/v4/verses/by_chapter/18';
+  }, (route) => route.fulfill({
     json: {
       pagination: { total_pages: 1 },
       verses: [{
@@ -41,7 +44,7 @@ test('audio progress stays continuous between media updates and freezes when pau
       this.__mockPlaying = true;
       this.__mockBase = this.__mockTime || 0;
       this.__mockStartedAt = performance.now();
-      if (!this.__mockTimer) this.__mockTimer = window.setInterval(() => this.dispatchEvent(new Event('timeupdate')), 100);
+      if (!this.__mockTimer) this.__mockTimer = window.setInterval(() => this.dispatchEvent(new Event('timeupdate')), 1_000);
       queueMicrotask(() => this.dispatchEvent(new Event('playing')));
       return Promise.resolve();
     };
@@ -66,23 +69,33 @@ test('audio progress stays continuous between media updates and freezes when pau
   const playingFrames = await page.evaluate(async () => {
     const fill = document.querySelector('[data-audio-progress] > span:first-child > span');
     if (!fill) throw new Error('Audio progress fill is missing');
-    const samples: number[] = [];
+    const samples: Array<{ time: number; value: number }> = [];
     const startedAt = performance.now();
-    return await new Promise<{ frames: number; first: number; last: number; backwards: number; largestStep: number }>((resolve) => {
+    return await new Promise<{ frames: number; first: number; last: number; backwards: number; largestStep: number; longestStallMs: number }>((resolve) => {
       const sample = () => {
         const transform = new DOMMatrixReadOnly(getComputedStyle(fill).transform);
-        samples.push(transform.a);
+        samples.push({ time: performance.now(), value: transform.a });
         if (performance.now() - startedAt < 1_200) {
           requestAnimationFrame(sample);
           return;
         }
-        const steps = samples.slice(1).map((value, index) => value - samples[index]);
+        const steps = samples.slice(1).map((sample, index) => sample.value - samples[index].value);
+        let longestStallMs = 0;
+        let stallStartedAt = samples[0]?.time;
+        for (let index = 1; index < samples.length; index++) {
+          if (Math.abs(steps[index - 1]) < 0.000001) {
+            longestStallMs = Math.max(longestStallMs, samples[index].time - (stallStartedAt ?? samples[index].time));
+          } else {
+            stallStartedAt = samples[index].time;
+          }
+        }
         resolve({
           frames: samples.length,
-          first: samples[0] ?? 0,
-          last: samples.at(-1) ?? 0,
+          first: samples[0]?.value ?? 0,
+          last: samples.at(-1)?.value ?? 0,
           backwards: steps.filter((step) => step < -0.00001).length,
           largestStep: Math.max(0, ...steps),
+          longestStallMs,
         });
       };
       requestAnimationFrame(sample);
@@ -92,6 +105,7 @@ test('audio progress stays continuous between media updates and freezes when pau
   expect(playingFrames.last).toBeGreaterThan(playingFrames.first);
   expect(playingFrames.backwards).toBe(0);
   expect(playingFrames.largestStep).toBeLessThan(0.01);
+  expect(playingFrames.longestStallMs).toBeLessThan(250);
 
   await page.getByRole('button', { name: /Jeda Tilawah/ }).click();
   const pausedFrames = await page.evaluate(async () => {
