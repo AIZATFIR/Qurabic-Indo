@@ -3,6 +3,12 @@ import wbwEnglish from '../data/wbw-english-glosses.json';
 import wbwIndonesian from '../data/wbw-indonesian-glosses.json';
 import { getWordStudy } from './word-study-service';
 
+const qacTokenIndexPath = require.resolve('./data/qac-tokens.json');
+assert.equal(require.cache[qacTokenIndexPath], undefined, 'word-study imports do not eagerly parse the QAC token index');
+const coordinateStudy = getWordStudy('2:153:3');
+assert.equal(coordinateStudy.primaryMeaning.text, 'beriman');
+assert.equal(require.cache[qacTokenIndexPath], undefined, 'coordinate word studies use the parsed QAC record and bundled verse gloss');
+
 const noun = getWordStudy('9:1:1');
 assert.equal(noun.primaryMeaning.text.toLowerCase(), 'pemutusan perhubungan');
 assert.equal(noun.primaryMeaning.sourceId, 'quran-com-wbw');

@@ -1,5 +1,5 @@
 import { getQACAuthoritativeIndex, getQACRecordsByRoot, getQACRecordsByWordLocation } from './qac-parser';
-import { lookupQACByLocation, lookupQACByToken } from './qac-lookup';
+import { lookupQACByLocation, lookupQACByToken, lookupQACRecord } from './qac-lookup';
 import { ROOT_DATABASE } from '../data/roots';
 import { getRootSemanticProfile, type RootSemanticProfile } from '../data/root-semantics';
 import { stripArabicHarakat, isQuranicParticle, findBestMatchingRoot, inferGrammarRole } from '../search/root-search';
@@ -269,7 +269,13 @@ export function getCanonicalWordDetail(
     : stripArabicHarakat(cleanInput);
 
   // 2. Identify Stem Segment & Extracted Features
-  const inferredRole = inferGrammarRole(cleanArabic);
+  const inferredRole = qacRecords?.length
+    ? {
+        posCategory: qacRecords.some(record => record.pos === 'V') ? "Fi'il" as const : 'Isim' as const,
+        posDetail: '',
+        wazanOrPattern: '',
+      }
+    : inferGrammarRole(cleanArabic);
   const stemRecord = qacRecords
     ? (qacRecords.find(r => r.formArabic === cleanInput) ||
        (inferredRole.posCategory === "Fi'il" ? qacRecords.find(r => r.pos === 'V' || r.tag === 'V') : undefined) ||
@@ -280,7 +286,9 @@ export function getCanonicalWordDetail(
     : undefined;
 
   // Authoritative static precompiled lookup
-  const qacLookup = isCoordinate
+  const qacLookup = stemRecord
+    ? lookupQACRecord(stemRecord)
+    : isCoordinate
     ? lookupQACByLocation(cleanInput)
     : (context?.surahNumber && context?.ayahNumber && context?.wordIndex)
     ? lookupQACByLocation(`${context.surahNumber}:${context.ayahNumber}:${context.wordIndex}`)
@@ -373,7 +381,9 @@ export function getCanonicalWordDetail(
   // 5. Semantic & Lexical Resolution
   const normCleanArabic = cleanArabic.replace(/^[وفلبك]/, '');
   const curatedDict = CURATED_WORD_DICTIONARY[cleanArabic] || CURATED_WORD_DICTIONARY[normCleanArabic] || CURATED_WORD_DICTIONARY[displayArabic];
-  const detailedExplanation = getWordDetailedExplanation(displayArabic);
+  const detailedExplanation = (isCoordinate || hasContextLocation)
+    ? undefined
+    : getWordDetailedExplanation(displayArabic);
   const particleInfo = isParticle ? (getQuranicParticleInfo(cleanArabic, tag) || getQuranicParticleInfo(displayArabic, tag)) : null;
   const semanticProfile = matchedRoot ? getRootSemanticProfile(matchedRoot.id) : null;
 
@@ -381,7 +391,7 @@ export function getCanonicalWordDetail(
   if (!primaryMeaning && particleInfo) {
     primaryMeaning = particleInfo.primaryMeaning;
   }
-  if (!primaryMeaning && detailedExplanation.primaryMeaning && detailedExplanation.primaryMeaning !== 'Kata dalam Al-Qur\'an' && detailedExplanation.primaryMeaning !== 'Kata Al-Qur\'an') {
+  if (!primaryMeaning && detailedExplanation?.primaryMeaning && detailedExplanation.primaryMeaning !== 'Kata dalam Al-Qur\'an' && detailedExplanation.primaryMeaning !== 'Kata Al-Qur\'an') {
     primaryMeaning = detailedExplanation.primaryMeaning;
   }
   if (!primaryMeaning) {
@@ -393,13 +403,18 @@ export function getCanonicalWordDetail(
   }
 
   if (!primaryMeaning || primaryMeaning.startsWith('Bentuk Kata') || primaryMeaning.startsWith('Konsep & Turunan') || primaryMeaning === "Kata dalam Al-Qur'an") {
-    primaryMeaning = getAuthenticWordMeaning(displayArabic, matchedRoot?.id || rootBw, primaryMeaning);
+    // A coordinate-based word study supplies its exact, sourced word gloss in
+    // getWordStudy. Avoid a second surface-token lookup here; it would load the
+    // large QAC token index just to generate a fallback root gloss.
+    primaryMeaning = (isCoordinate || hasContextLocation) && !isParticle
+      ? ''
+      : getAuthenticWordMeaning(displayArabic, matchedRoot?.id || rootBw, primaryMeaning);
   }
 
   let meanings = curatedDict?.meanings ||
     (particleInfo
       ? particleInfo.meanings
-      : (detailedExplanation.meanings.length > 0
+      : (detailedExplanation?.meanings && detailedExplanation.meanings.length > 0
           ? detailedExplanation.meanings
           : (semanticProfile?.meaningsIndonesian && semanticProfile.meaningsIndonesian.length > 0
               ? semanticProfile.meaningsIndonesian

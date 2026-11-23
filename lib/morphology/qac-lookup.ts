@@ -1,6 +1,5 @@
-import qacLocationsData from './data/qac-locations.json';
-import qacTokensData from './data/qac-tokens.json';
 import { buckwalterToArabic } from './buckwalter';
+import type { NormalizedMorphologyRecord } from './types';
 
 export interface QACLookupResult {
   rootBw?: string;
@@ -16,8 +15,21 @@ export interface QACLookupResult {
   grammaticalRole: string;
 }
 
-const locationsMap = qacLocationsData as unknown as Record<string, [string, string, string, string, string]>;
-const tokensMap = qacTokensData as unknown as Record<string, [string, string, string, string, string]>;
+type LookupTuple = [string, string, string, string, string];
+type LookupMap = Record<string, LookupTuple>;
+
+let locationsMap: LookupMap | undefined;
+let tokensMap: LookupMap | undefined;
+
+function getLocationsMap(): LookupMap {
+  if (!locationsMap) locationsMap = require('./data/qac-locations.json') as LookupMap;
+  return locationsMap;
+}
+
+function getTokensMap(): LookupMap {
+  if (!tokensMap) tokensMap = require('./data/qac-tokens.json') as LookupMap;
+  return tokensMap;
+}
 
 function parseLookupTuple(tuple: [string, string, string, string, string]): QACLookupResult {
   const [rootBw, lemmaBw, posRaw, typeRaw, formRaw] = tuple;
@@ -96,13 +108,26 @@ function parseLookupTuple(tuple: [string, string, string, string, string]): QACL
   };
 }
 
+/** Converts a morphology record already found by coordinate into the same lookup shape. */
+export function lookupQACRecord(record: NormalizedMorphologyRecord): QACLookupResult {
+  const posRaw = record.rawFeatures.match(/(?:^|\|)POS:([^|]+)/)?.[1] || record.pos;
+  const typeRaw = record.verbType || record.nounType || '';
+  return parseLookupTuple([
+    record.root || '',
+    record.lemma || '',
+    posRaw,
+    typeRaw,
+    record.verbForm || '',
+  ]);
+}
+
 /**
  * High-performance, zero-IO lookup by Quranic word coordinate (e.g. "2:208:4")
  */
 export function lookupQACByLocation(location: string): QACLookupResult | null {
   const parts = location.split(':');
   const locKey = parts.length >= 3 ? `${parts[0]}:${parts[1]}:${parts[2]}` : location;
-  const tuple = locationsMap[locKey];
+  const tuple = getLocationsMap()[locKey];
   if (!tuple) return null;
   return parseLookupTuple(tuple);
 }
@@ -112,7 +137,7 @@ export function lookupQACByLocation(location: string): QACLookupResult | null {
  */
 export function lookupQACByToken(cleanArabicToken: string): QACLookupResult | null {
   if (!cleanArabicToken) return null;
-  const tuple = tokensMap[cleanArabicToken];
+  const tuple = getTokensMap()[cleanArabicToken];
   if (!tuple) return null;
   return parseLookupTuple(tuple);
 }
