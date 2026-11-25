@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { DEFAULT_TRANSLATION_VOICE_MODE, getAudioCandidateUrls, getTranslationAudioCandidateUrls, getFirstAudioTrack, getNextAudioTrack, isHumanTranslationAvailable, isAiTranslationAudioUrl, AVAILABLE_QARIS, QariMeta, TranslationVoiceMode, TRANSLATION_VOICE_OPTIONS, TranslationVoiceOption, AudioTrack, TranslationAudioLanguage, AUDIO_STARTUP_TIMEOUT_MS } from '../api/audio';
-import { cancelAudioPreload, getCachedAudioUrl, preloadNextAudioTrack, waitForPreloadedAudioUrl } from '../audio/audio-preloader';
+import { getCachedAudioUrl, getStoredAudioUrl, preloadNextAudioTrack, waitForPreloadedAudioUrl } from '../audio/audio-preloader';
 import { getAudioProgress, getMonotonicAudioProgress, interpolateAudioProgress, shouldPublishAudioTime } from '../audio/smooth-progress';
 
 export type PlaybackState = 'idle' | 'loading' | 'playing' | 'paused' | 'ended' | 'error';
@@ -111,7 +111,11 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
 
   const scrollToAyah = useCallback((ayah: number) => {
     if (!prefsRef.current.autoScroll) return;
-    document.getElementById(`ayah-${ayah}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const element = document.getElementById(`ayah-${ayah}`);
+    if (!element) return;
+    const header = document.getElementById('reader-headbar');
+    const top = element.getBoundingClientRect().top + window.scrollY - (header?.getBoundingClientRect().bottom ?? 0);
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
   }, []);
 
   const completeTrack = useCallback(() => {
@@ -208,10 +212,8 @@ export function useQuranAudio({ surahNumber, totalAyahs, autoScroll = true, getA
       setIsAiGeneratedTranslation(false);
       setIsAiTranslationCandidate(track.phase === 'translation' && isAiTranslationAudioUrl(candidateUrl));
       let source = getCachedAudioUrl(candidateUrl);
-      if (!source) {
-        source = await waitForPreloadedAudioUrl(candidateUrl, 100);
-        if (!source) cancelAudioPreload(candidateUrl);
-      }
+      if (!source) source = await waitForPreloadedAudioUrl(candidateUrl, 1200);
+      if (!source) source = await getStoredAudioUrl(candidateUrl);
       if (!isCurrent() || candidateIndex !== index || !wantsPlaybackRef.current) return;
       audio.src = source || candidateUrl;
       audio.load();

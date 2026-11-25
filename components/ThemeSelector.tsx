@@ -11,9 +11,26 @@ export default function ThemeSelector() {
   const { t } = useLanguage();
   const optionsId = useId();
   const themeLabels: Record<ThemeType, string> = {
-    blend: t('Gabungan', 'Blend'),
+    bookpaper: t('Bookpaper klasik', 'Classic Bookpaper'),
+    linen: 'Linen',
+    mist: t('Kabut', 'Mist'),
+    sage: t('Sage muda', 'Soft sage'),
+    blend: t('Krem hangat', 'Warm cream'),
+    sand: t('Pasir', 'Sand'),
+    paperwhite: t('Putih', 'White'),
     simple: t('Sederhana', 'Simple'),
     modern: t('Modern', 'Modern'),
+  };
+  const themeDescriptions: Record<ThemeType, string> = {
+    bookpaper: t('Warna kertas lama dengan aksen hijau teduh', 'The original paper tone with quiet green accents'),
+    linen: t('Krem sangat terang dan lembut', 'Soft, very light cream'),
+    mist: t('Putih sejuk dengan sentuhan hijau', 'Cool white with a hint of green'),
+    sage: t('Hijau pucat yang nyaman untuk membaca', 'Pale green made for comfortable reading'),
+    blend: t('Bookpaper dengan aksen cokelat hangat', 'Warm cream with gentle brown accents'),
+    sand: t('Kertas pasir hangat', 'Warm sand paper'),
+    paperwhite: t('Putih bersih dengan kontras lembut', 'Clean white with soft contrast'),
+    simple: t('Ringan dan minimal', 'Light and minimal'),
+    modern: t('Warna lebih berani, bentuk lebih lembut', 'Stronger color and softer shapes'),
   };
   const themeLabel = (id: ThemeType) => themeLabels[id];
   const [isOpen, setIsOpen] = useState(false);
@@ -86,7 +103,7 @@ export default function ThemeSelector() {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block text-sm font-semibold">{themeLabels[opt.id]}</span>
-                    <span className="mt-0.5 block text-xs leading-relaxed text-ink-mute">{t(opt.description, opt.id === 'blend' ? 'A quiet base with modern green accents' : opt.id === 'simple' ? 'Light and minimal' : 'Stronger color and softer shapes')}</span>
+                    <span className="mt-0.5 block text-xs leading-relaxed text-ink-mute">{themeDescriptions[opt.id]}</span>
                   </span>
                   {isSelected && <Check className="w-4 h-4 text-primary shrink-0" />}
                 </button>

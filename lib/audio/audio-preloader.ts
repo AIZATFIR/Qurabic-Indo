@@ -19,6 +19,24 @@ const inFlightFetches = new Map<string, Promise<string>>();
 const inFlightControllers = new Map<string, AbortController>();
 const MAX_BLOB_CACHE = 80;
 
+/** Persist an audio response for offline playback without retaining its bytes in the JS heap. */
+export async function cacheAudioForOffline(url: string, timeoutMs = 30000): Promise<void> {
+  if (typeof window === 'undefined' || !('caches' in window)) throw new Error('Offline audio storage is unavailable');
+  const cache = await window.caches.open(AUDIO_CACHE_NAME);
+  const existing = await cache.match(url);
+  if (existing?.ok) return;
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { signal: controller.signal, cache: 'no-store' });
+    if (!response.ok) throw new Error(`Audio download failed (${response.status})`);
+    await cache.put(url, response.clone());
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 /**
  * Prunes oldest entries from in-memory blob cache to prevent RAM bloat
  */
@@ -45,6 +63,25 @@ function pruneBlobCache() {
  */
 export function getCachedAudioUrl(url: string): string | undefined {
   return blobUrlCache.get(url);
+}
+
+/** Materialize a disk-cached response only when playback requests it. */
+export async function getStoredAudioUrl(url: string): Promise<string | undefined> {
+  const cached = getCachedAudioUrl(url);
+  if (cached || typeof window === 'undefined' || !('caches' in window)) return cached;
+  try {
+    const cache = await window.caches.open(AUDIO_CACHE_NAME);
+    const response = await cache.match(url);
+    if (!response?.ok) return undefined;
+    const blob = await response.blob();
+    if (!blob.size) return undefined;
+    const blobUrl = URL.createObjectURL(blob);
+    blobUrlCache.set(url, blobUrl);
+    pruneBlobCache();
+    return blobUrl;
+  } catch {
+    return undefined;
+  }
 }
 
 export async function waitForPreloadedAudioUrl(url: string, timeoutMs: number): Promise<string | undefined> {

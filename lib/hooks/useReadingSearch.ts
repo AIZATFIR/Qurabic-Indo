@@ -156,10 +156,10 @@ export function useReadingSearch(
       const el = document.getElementById(`ayah-${targetAyah}`);
       if (el) {
         const header = document.getElementById('reader-headbar');
-        const headerHeight = header ? header.getBoundingClientRect().height : 56;
+        const headerOffset = header ? header.getBoundingClientRect().bottom : 68;
         const elementTop = el.getBoundingClientRect().top + window.pageYOffset;
         window.scrollTo({
-          top: Math.max(0, elementTop - headerHeight),
+          top: Math.max(0, elementTop - headerOffset),
           behavior: 'smooth',
         });
         el.classList.add('ring-2', 'ring-primary', 'bg-primary-subdued/30');

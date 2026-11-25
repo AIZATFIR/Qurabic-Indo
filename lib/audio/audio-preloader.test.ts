@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { getCachedAudioUrl, getNextAudioPreloadUrl, getNextAudioPreloadUrls, preloadNextAudioTrack, preloadTranslationAudio } from './audio-preloader';
+import { cacheAudioForOffline, getCachedAudioUrl, getNextAudioPreloadUrl, getNextAudioPreloadUrls, getStoredAudioUrl, preloadNextAudioTrack, preloadTranslationAudio } from './audio-preloader';
 
 const base = {
   surahNumber: 1,
@@ -82,6 +82,46 @@ test('warms only the preferred human source', async () => {
     await warmup;
   } finally {
     globalThis.fetch = originalFetch;
+    if (originalWindow) Object.defineProperty(globalThis, 'window', { configurable: true, value: originalWindow });
+    else delete (globalThis as unknown as { window?: Window }).window;
+  }
+});
+
+test('stores a downloaded recitation in persistent Cache Storage without a memory Blob copy', async () => {
+  const originalFetch = globalThis.fetch;
+  const originalWindow = globalThis.window;
+  const saved: string[] = [];
+  Object.defineProperty(globalThis, 'window', {
+    configurable: true,
+    value: { caches: { open: async () => ({ match: async () => undefined, put: async (url: string) => { saved.push(url); } }) } },
+  });
+  globalThis.fetch = async () => new Response(new Blob(['audio']), { status: 200 });
+
+  try {
+    await cacheAudioForOffline('https://audio.example/018001.mp3');
+    assert.deepEqual(saved, ['https://audio.example/018001.mp3']);
+    assert.equal(getCachedAudioUrl('https://audio.example/018001.mp3'), undefined);
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (originalWindow) Object.defineProperty(globalThis, 'window', { configurable: true, value: originalWindow });
+    else delete (globalThis as unknown as { window?: Window }).window;
+  }
+});
+
+test('reads a saved recitation from persistent storage when playback needs it', async () => {
+  const originalWindow = globalThis.window;
+  const url = 'https://audio.example/018001.mp3';
+  Object.defineProperty(globalThis, 'window', {
+    configurable: true,
+    value: { caches: { open: async () => ({ match: async () => new Response(new Blob(['audio']), { status: 200 }) }) } },
+  });
+
+  try {
+    const storedUrl = await getStoredAudioUrl(url);
+    assert.match(storedUrl || '', /^blob:/);
+    assert.equal(getCachedAudioUrl(url), storedUrl);
+  } finally {
+    globalThis.URL.revokeObjectURL(getCachedAudioUrl(url) || '');
     if (originalWindow) Object.defineProperty(globalThis, 'window', { configurable: true, value: originalWindow });
     else delete (globalThis as unknown as { window?: Window }).window;
   }

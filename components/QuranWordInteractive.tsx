@@ -264,6 +264,7 @@ function QuranWordInteractiveComponent({
           )}
           {showInlineMeaning && meaningIndo && (
             <span
+              data-inline-meaning
               className={`${stackedMeaningSize} font-sans text-ink-secondary group-hover:text-primary transition-colors mt-1 max-w-[200px] leading-snug block text-center line-clamp-2`}
               title={meaningIndo}
             >

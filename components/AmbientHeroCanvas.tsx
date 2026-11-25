@@ -50,7 +50,7 @@ export default function AmbientHeroCanvas() {
           className={`object-cover object-[50%_22%] sm:object-[50%_20%] filter ${
             theme === 'modern'
               ? 'brightness-[0.88] contrast-[1.08] saturate-[1.04]'
-              : theme === 'blend'
+              : theme === 'bookpaper' || theme === 'blend' || theme === 'sand' || theme === 'linen'
               ? 'brightness-[0.92] contrast-[1.06] sepia-[0.08]'
               : 'brightness-[0.96] contrast-[1.02]'
           }`}
@@ -61,12 +61,7 @@ export default function AmbientHeroCanvas() {
       <div
         className="absolute inset-0 transition-all duration-300"
         style={{
-          background:
-            theme === 'modern'
-              ? 'radial-gradient(ellipse 95% 75% at 50% 35%, rgba(238, 246, 241, 0.72) 0%, rgba(238, 246, 241, 0.84) 55%, rgba(238, 246, 241, 0.98) 100%)'
-              : theme === 'blend'
-              ? 'radial-gradient(ellipse 95% 75% at 50% 35%, rgba(245, 244, 239, 0.70) 0%, rgba(245, 244, 239, 0.82) 55%, rgba(245, 244, 239, 0.98) 100%)'
-              : 'radial-gradient(ellipse 95% 75% at 50% 35%, rgba(250, 252, 250, 0.74) 0%, rgba(250, 252, 250, 0.86) 55%, rgba(250, 252, 250, 0.98) 100%)',
+          background: 'radial-gradient(ellipse 95% 75% at 50% 35%, color-mix(in srgb, var(--bg-page) 72%, transparent) 0%, color-mix(in srgb, var(--bg-page) 86%, transparent) 55%, var(--bg-page) 100%)',
         }}
       />
 
@@ -74,12 +69,7 @@ export default function AmbientHeroCanvas() {
       <div
         className="absolute inset-x-0 bottom-0 h-48 sm:h-64 pointer-events-none transition-all duration-300"
         style={{
-          background:
-            theme === 'modern'
-              ? 'linear-gradient(to bottom, rgba(238, 246, 241, 0) 0%, rgba(238, 246, 241, 0.6) 40%, #EEF6F1 100%)'
-              : theme === 'blend'
-              ? 'linear-gradient(to bottom, rgba(245, 244, 239, 0) 0%, rgba(245, 244, 239, 0.6) 40%, #F5F4EF 100%)'
-              : 'linear-gradient(to bottom, rgba(247, 248, 246, 0) 0%, rgba(247, 248, 246, 0.6) 40%, #F7F8F6 100%)',
+          background: 'linear-gradient(to bottom, transparent 0%, color-mix(in srgb, var(--bg-page) 60%, transparent) 40%, var(--bg-page) 100%)',
         }}
       />
 

@@ -54,8 +54,9 @@ function BacaQuranPageContent() {
   const [fontSize, setFontSize] = useState<'sm' | 'md' | 'lg' | 'xl'>('lg');
   const [readingMode, setReadingMode] = useState<'baca' | 'tadabbur'>('tadabbur');
   const [showTranslation, setShowTranslation] = useState(true);
-  const [showInlineMeaning, setShowInlineMeaning] = useState(false);
+  const [showInlineMeaning, setShowInlineMeaning] = useState(true);
   const [isMobileControlsOpen, setIsMobileControlsOpen] = useState(false);
+  const [focusMode, setFocusMode] = useState(false);
   const [ayahs, setAyahs] = useState<FullAyahWBW[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
@@ -322,14 +323,14 @@ function BacaQuranPageContent() {
       : 'text-2xl sm:text-3xl lg:text-4xl leading-relaxed font-normal';
 
   return (
-    <div className="min-h-screen transition-colors duration-200 bg-canvas text-ink-primary">
+    <div data-reader-focus={focusMode} className="min-h-screen transition-colors duration-200 bg-canvas text-ink-primary">
       
       {/* Reader controls use the same warm paper surface as the site navigation. */}
       <header
         id="reader-headbar"
         className="sticky top-3 z-30 px-3 sm:px-6 transition-all duration-150"
       >
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 min-h-14 flex items-center justify-between gap-2 font-sans rounded-[var(--radius-surface)] border border-hairline/80 bg-canvas-surface/95 shadow-subtle backdrop-blur-md">
+        <div className={`max-w-7xl mx-auto px-3 sm:px-4 min-h-14 flex items-center justify-between gap-1 sm:gap-2 font-sans rounded-[var(--radius-surface)] border border-hairline/80 bg-canvas-surface/95 shadow-subtle backdrop-blur-md ${focusMode ? 'py-1' : ''}`}>
           
           {/* LEFT: Back to Home & Surah Picker */}
           <div className="flex items-center space-x-1.5 shrink-0">
@@ -357,8 +358,19 @@ function BacaQuranPageContent() {
             </button>
           </div>
 
+          <button
+            type="button"
+            onClick={() => { setFocusMode(value => !value); setIsMobileControlsOpen(false); }}
+            className="inline-flex min-h-11 min-w-11 items-center gap-2 rounded-[var(--radius-control)] px-2 sm:px-3 text-sm font-medium text-ink-secondary hover:bg-canvas-soft hover:text-ink-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+            aria-label={focusMode ? t('Keluar dari mode fokus', 'Exit focus mode') : t('Masuk mode fokus', 'Enter focus mode')}
+            aria-pressed={focusMode}
+          >
+            <BookOpen className="h-4 w-4" aria-hidden="true" />
+            <span className="hidden sm:inline">{focusMode ? t('Keluar Fokus', 'Exit focus') : t('Fokus', 'Focus')}</span>
+          </button>
+
           {/* CENTER: Compact Mode Switcher (Pill) */}
-          <div className="flex items-center bg-canvas-soft border border-hairline rounded-[var(--radius-control)] p-0.5 text-xs">
+          {!focusMode && <div className="flex items-center bg-canvas-soft border border-hairline rounded-[var(--radius-control)] p-0.5 text-xs">
             <button
               onClick={() => setReadingMode('baca')}
               className={`px-2 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1.5 ${
@@ -383,10 +395,10 @@ function BacaQuranPageContent() {
               <Search className="w-3.5 h-3.5 shrink-0" />
               <span className="hidden xs:inline">{t('Mode Tadabbur', 'Explore')}</span>
             </button>
-          </div>
+          </div>}
 
           {/* RIGHT: Quick Ke Atas & Display Settings Popover */}
-          <div className="flex items-center space-x-1 sm:space-x-1.5 text-xs relative">
+          {!focusMode && <div className="flex items-center space-x-1 sm:space-x-1.5 text-xs relative">
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               className="p-1.5 sm:p-2 rounded-xl text-ink-mute hover:text-primary hover:bg-canvas-soft transition-all hidden xs:flex items-center justify-center"
@@ -437,25 +449,27 @@ function BacaQuranPageContent() {
                     <div className="flex items-center gap-2">
                       {readingMode === 'tadabbur' && (
                         <button
-                          onClick={() => setShowInlineMeaning(!showInlineMeaning)}
+                          onClick={() => setShowInlineMeaning(value => !value)}
+                          aria-pressed={showInlineMeaning}
                           className={`flex-1 py-1.5 px-3 rounded-xl border text-xs transition-all ${
                             showInlineMeaning
                               ? 'bg-primary text-white border-primary font-semibold'
                               : 'bg-canvas-soft border-hairline text-ink-secondary hover:text-ink-primary'
                           }`}
                         >
-                          Arti Per Kata
+                          {t('Arti Per Kata', 'Word meanings')}
                         </button>
                       )}
                       <button
-                        onClick={() => setShowTranslation(!showTranslation)}
+                        onClick={() => setShowTranslation(value => !value)}
+                        aria-pressed={showTranslation}
                         className={`flex-1 py-1.5 px-3 rounded-xl border text-xs transition-all ${
                           showTranslation
                             ? 'bg-primary text-white border-primary font-semibold'
                             : 'bg-canvas-soft border-hairline text-ink-secondary hover:text-ink-primary'
                         }`}
                       >
-                        Terjemahan
+                        {t('Terjemahan', 'Translation')}
                       </button>
                     </div>
                   </div>
@@ -488,17 +502,19 @@ function BacaQuranPageContent() {
                       {t('Warna Kertas', 'Paper colour')}
                     </span>
                     <div className="flex items-center justify-between gap-1.5 p-1 bg-canvas-soft border border-hairline rounded-xl">
-                      {options.map((t) => (
+                      {options.map((paper) => (
                         <button
-                          key={t.id}
-                          onClick={() => setTheme(t.id)}
+                          key={paper.id}
+                          onClick={() => setTheme(paper.id)}
                           className={`flex-1 h-7 rounded-lg transition-all border flex items-center justify-center ${
-                            theme === t.id
+                            theme === paper.id
                               ? 'border-primary ring-2 ring-primary/30 scale-105 shadow-subtle'
                               : 'border-transparent opacity-80 hover:opacity-100'
                           }`}
-                          style={{ backgroundColor: t.bgHex }}
-                          title={t.label}
+                          style={{ backgroundColor: paper.bgHex }}
+                          title={paper.label}
+                          aria-label={`${t('Warna kertas', 'Paper colour')}: ${language === 'en' ? paper.shortLabel : paper.label}`}
+                          aria-pressed={theme === paper.id}
                         />
                       ))}
                     </div>
@@ -506,17 +522,18 @@ function BacaQuranPageContent() {
                 </div>
               </>
             )}
-          </div>
+          </div>}
 
         </div>
       </header>
 
       {/* Main Quran Reader Container (Scaled to 125% Comfortable Look) */}
-      <div className="max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
+      <div className={`mx-auto px-4 sm:px-6 lg:px-8 ${focusMode ? 'max-w-5xl py-3 sm:py-5 space-y-4' : 'max-w-6xl xl:max-w-7xl py-6 sm:py-10 space-y-8'}`}>
         
         {/* Continuous Scholarly Reading Surface */}
         <div className={`bg-canvas-surface overflow-hidden ${classicLayout ? 'rounded-3xl border border-hairline shadow-subtle' : ''}`}>
           
+          {!focusMode && <>
           {/* Surah Header */}
           <div className="p-6 sm:p-10 text-center space-y-4 border-b border-hairline bg-canvas-soft/40">
             <span className="text-xs text-ink-mute font-medium font-sans uppercase tracking-wider">
@@ -685,6 +702,8 @@ function BacaQuranPageContent() {
             </div>
           </div>
 
+          </>}
+          {!focusMode && <>
           {/* DUAL SEARCH & AYAH NAVIGATION TOOLBAR */}
           <div className="p-4 sm:p-5 border-b border-hairline bg-canvas-surface flex flex-col md:flex-row items-center justify-between gap-3 font-sans">
             {/* Mode Switcher */}
@@ -783,6 +802,7 @@ function BacaQuranPageContent() {
               )}
             </div>
           </div>
+          </>}
 
           {/* Status Notices */}
           {isFilteringKata && (
@@ -995,7 +1015,7 @@ function BacaQuranPageContent() {
                             ayahNumber={ayah.ayahNumber}
                             wordIndex={word.position || (wIdx + 1)}
                             surahNameIndo={currentSurahMeta.nameIndo}
-                            showInlineMeaning={readingMode === 'tadabbur' ? true : showInlineMeaning}
+                            showInlineMeaning={showInlineMeaning}
                             mode={readingMode === 'baca' ? 'inline' : 'stacked'}
                             fontSize={fontSize}
                             onWordClick={handleWordClick}
@@ -1130,6 +1150,7 @@ function BacaQuranPageContent() {
         surahNameArabic={currentSurahMeta.nameArabic}
         surahNumber={currentSurahMeta.number}
         totalAyahs={currentSurahMeta.ayahsCount}
+        focusMode={focusMode}
       />
 
       {/* Surah & Ayah Search Modal */}
