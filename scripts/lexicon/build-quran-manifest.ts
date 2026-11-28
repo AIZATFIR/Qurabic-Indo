@@ -20,7 +20,12 @@ function normalizeArabicKey(text: string): string {
 function addRootKeys(root: string): void {
   const variants = [root];
   if (root.endsWith('y')) variants.push(`${root.slice(0, -1)}Y`, `${root.slice(0, -1)}w`);
-  if (root.length === 3 && root[1] === root[2]) variants.push(root.slice(0, 2));
+  if (root.length === 3 && root[1] === root[2]) {
+    variants.push(root.slice(0, 2));
+    if (root[2] === 'y') variants.push(`${root[0]}Y`);
+  }
+  if (root === 'ydy') variants.push('yd');
+  if (root.length === 4 && root[0] === root[2] && root[1] === root[3]) variants.push(root.slice(0, 2));
   if (root.includes('A')) variants.push(root.replace(/A/g, 'A^'));
 
   for (const variant of variants) {

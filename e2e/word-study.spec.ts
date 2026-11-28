@@ -347,6 +347,25 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     await expect(meaningSection.getByText('Read the full Lane excerpt · English', { exact: true })).toBeVisible();
   });
 
+  test('root pages display Lane entries filed under alternate classical roots', async ({ page }) => {
+    await page.goto('/');
+    await page.evaluate(() => localStorage.setItem('qurabic_language', 'en'));
+    const examples = [
+      { slug: 'z-H-z-H', headword: 'زَحْزَحَ', citation: 'Book I, Part 3, p. 1218', laneRoot: 'Lane root: زح' },
+      { slug: 'w-s-w-s', headword: 'وَسْوَسَ', citation: 'Book I, Part 8, p. 2939', laneRoot: 'Lane root: وس' },
+      { slug: 'y-d-y', headword: 'يَدٌ', citation: 'Book I, Part 8, p. 3063', laneRoot: 'Lane root: يد' },
+    ];
+
+    for (const example of examples) {
+      await page.goto(`/akar/${example.slug}`, { waitUntil: 'domcontentloaded' });
+      await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+      const laneSection = page.locator('section[aria-labelledby="lane-heading"]');
+      await expect(laneSection).toContainText(example.headword);
+      await expect(laneSection).toContainText(example.citation);
+      await expect(laneSection).toContainText(example.laneRoot);
+    }
+  });
+
   test('QBQ root summary stays readable in both language modes with Lane available on demand', async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem('qurabic_language', 'id'));
     await page.goto('/akar/m-l-k', { waitUntil: 'domcontentloaded' });

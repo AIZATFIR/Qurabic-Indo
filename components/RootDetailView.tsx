@@ -13,6 +13,7 @@ import { fetchRootDetail } from '@/lib/api/root-detail-client';
 import { getRootEntryLoadState } from '@/lib/api/root-entry-load-state';
 import { filterOtherArabicForms, type ArramoozForm } from '@/lib/lexicon/arramooz-shared';
 import { parseLexiconSenseTokens } from '@/lib/lexicon/lexicon-formatter';
+import { stripArabicHarakat } from '@/lib/search/arabic-normalization';
 import TajRootFormsPanel from '@/components/TajRootFormsPanel';
 
 export interface RootLemmaSample {
@@ -81,6 +82,10 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
   const otherFormsController = useRef<AbortController | null>(null);
   const { statistics } = root;
   const { lexicon } = root;
+  const laneRootArabic = lexicon?.rootArabic?.replace(/\s+/g, '');
+  const qacRootKey = stripArabicHarakat(root.rootArabic.replace(/\s+/g, ''));
+  const laneRootKey = laneRootArabic ? stripArabicHarakat(laneRootArabic) : '';
+  const laneRootDiffers = Boolean(laneRootKey && qacRootKey !== laneRootKey);
   const meaningSource = root.meaningSource;
   const rootTransliteration = transliterateRootArabic(root.rootArabic);
   const number = (value: number) => value.toLocaleString(language === 'en' ? 'en-US' : 'id-ID');
@@ -545,6 +550,7 @@ export default function RootDetailView({ root: initialRoot, lemmaSamples: initia
       <section id="leksikon" aria-labelledby="lane-heading" className={`scroll-mt-24 space-y-5 ${classic ? 'rounded-[var(--radius-surface)] bg-canvas-soft px-5 py-6 sm:px-8 sm:py-8' : ''}`}>
         <h2 id="lane-heading" className="text-2xl font-semibold text-ink-primary">Lane&apos;s Arabic-English Lexicon</h2>
         <p className="max-w-2xl text-base leading-relaxed text-ink-secondary">{t('Teks kamus asli berbahasa Inggris. Setiap entri memuat satu atau beberapa arti leksikal; tidak semuanya berlaku pada setiap ayat.', 'Original English dictionary text. Each entry contains one or more lexical senses; not every sense applies to every verse.')}</p>
+        {laneRootDiffers && <p className="text-sm text-ink-secondary">{language === 'en' ? 'Lane root:' : 'Akar Lane:'} <span lang="ar" dir="rtl" className="font-arabic text-lg text-ink-primary">{laneRootArabic}</span></p>}
         {lexicon?.entries?.length ? (
           <div className="divide-y divide-hairline border-y border-hairline">
             {lexicon.entries.map((entry, entryIndex) => (

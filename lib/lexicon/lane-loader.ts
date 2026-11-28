@@ -110,6 +110,16 @@ function getRootKeyVariants(rootBw: string): string[] {
   // 2. Geminate ungeminated (QAC 'Dmm' -> Lane 'Dm', 'gll' -> 'gl')
   if (clean.length === 3 && clean[1] === clean[2]) {
     variants.push(clean.slice(0, 2));
+    // Lane indexes QAC Ayy as AY (e.g. āyah under اى).
+    if (clean[2] === 'y') variants.push(`${clean[0]}Y`);
+  }
+
+  // Lane indexes the QAC hand root ydy under يد.
+  if (clean === 'ydy') variants.push('yd');
+
+  // Lane indexes many repeated-syllable quadriliterals under their two-letter base (e.g. zHzH → zH).
+  if (clean.length === 4 && clean[0] === clean[2] && clean[1] === clean[3]) {
+    variants.push(clean.slice(0, 2));
   }
 
   // 3. Hamza variants (QAC 'A' -> Lane 'A^')
@@ -238,10 +248,11 @@ export function getLaneRootRecord(rootBw: string, quranOnly = false): LaneRootLe
   const normalizedRequestedRootArabic = normalizeArabicKey(requestedRootArabic);
 
   for (const cand of candidates) {
+    const candidateArabic = buckwalterToArabic(cand);
     const chunkFilename =
       getManifestChunk(`root_bw:${cand}`, quranOnly) ||
-      getManifestChunk(`root_ar:${cand}`, quranOnly) ||
-      getManifestChunk(`root_norm:${normalizeArabicKey(cand)}`, quranOnly);
+      getManifestChunk(`root_ar:${candidateArabic}`, quranOnly) ||
+      getManifestChunk(`root_norm:${normalizeArabicKey(candidateArabic)}`, quranOnly);
 
     if (chunkFilename) {
       const chunk = loadChunk(chunkFilename);

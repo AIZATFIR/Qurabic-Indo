@@ -3,6 +3,37 @@ import assert from 'node:assert/strict';
 import { getLaneRootRecord } from './lane-loader';
 
 describe('Lane root lookup through the Arabic index', () => {
+  it('resolves repeated-syllable Quran roots through Lane’s two-letter root entries', () => {
+    const cases = [
+      { root: 'zHzH', entryId: 'lane_30929' },
+      { root: 'wsws', entryId: 'lane_45230' },
+      { root: 'EsEs', entryId: 'lane_3158' },
+    ];
+
+    for (const expected of cases) {
+      const result = getLaneRootRecord(expected.root, true);
+      assert.ok(result, `Quran root ${expected.root} should resolve through Lane’s documented root classification`);
+      assert.ok(
+        result.entries.some((entry) => entry.entryId === expected.entryId),
+        `Expected Lane source entry ${expected.entryId} for Quran root ${expected.root}`,
+      );
+    }
+  });
+
+  it('checks Arabic spellings of alternate Lane root keys', () => {
+    const cases = [
+      { root: 'Ayy', entryId: 'lane_7558' },
+      { root: 'Eyy', entryId: 'lane_5411' },
+      { root: 'ydy', entryId: 'lane_12165' },
+    ];
+
+    for (const expected of cases) {
+      const result = getLaneRootRecord(expected.root, true);
+      assert.ok(result, `Quran root ${expected.root} should resolve to its sourced Lane root`);
+      assert.ok(result.entries.some((entry) => entry.entryId === expected.entryId));
+    }
+  });
+
   it('returns the matching cited Lane root when the Buckwalter root key is absent', () => {
     const cases = [
       { root: 'rAy', entryId: 'lane_22014', volume: 3, page: 999 },
