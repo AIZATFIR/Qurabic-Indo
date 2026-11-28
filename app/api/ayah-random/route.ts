@@ -3,6 +3,8 @@ import { getQurabicDb } from '@/lib/db/client';
 import { getSurahByNumber, SURAH_LIST } from '@/lib/data/surah-list';
 import { getQuranVerseWordTokens } from '@/lib/api/quran-word-glosses';
 import { buckwalterToArabic } from '@/lib/morphology/buckwalter';
+import { extractArabicRootLetters, findBestMatchingRoot, inferGrammarRole } from '@/lib/search/root-search';
+import { cleanGlossToIndonesian } from '@/lib/search/word-dictionary';
 
 export const dynamic = 'force-dynamic';
 
@@ -123,11 +125,20 @@ export async function GET(request: NextRequest) {
         transliteration: transliterations[word.location] || word.transliteration,
       }));
     }
-    const words = rawWords.map((word) => ({
-      ...word,
-      meaningIndo: meaningsIndo[word.location] || '',
-      meaningEnglish: meaningsEnglish[word.location] || '',
-    }));
+    const words = rawWords.map((word) => {
+      const meaningIndo = cleanGlossToIndonesian(meaningsIndo[word.location] || '');
+      const matchedRoot = findBestMatchingRoot(word.arabic);
+      const grammar = inferGrammarRole(word.arabic);
+      return {
+        ...word,
+        meaningIndo,
+        meaningEnglish: meaningsEnglish[word.location] || '',
+        rootLetters: matchedRoot?.rootArabic || extractArabicRootLetters(word.arabic),
+        rootSlug: matchedRoot?.id,
+        posTag: grammar.posCategory,
+        posDetail: grammar.posDetail,
+      };
+    });
 
     return NextResponse.json({
       surahNumber: surahNum,

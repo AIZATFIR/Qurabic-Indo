@@ -27,6 +27,7 @@ Status ini mencatat bukti dari repository pada 28 November 2026. Ia bukan pernya
 
 - Kebijakan privasi Indonesia dan English kini menjelaskan permintaan data saat membuka surah, serta fallback terjemahan ke eQuran.id, Quran API milik Gading, dan AlQuran Cloud. Draf Data safety diperbarui untuk mencatat alur itu. `tsc --noEmit`, pemeriksaan `lib/data/legal-routes.test.ts`, dan pemeriksaan browser Playwright pada `/privacy` untuk kedua bahasa lulus. Ini belum menggantikan pemeriksaan traffic APK dan server.
 - Production build lokal Next.js 15.5.29 lulus dan membuat 22 halaman; `/baca` melaporkan First Load JS 191 kB, `/ayat-random` 1.87 MB. Peringatan lint React Hook dan elemen gambar lama masih ada. Tidak ada tes Playwright baru untuk perubahan ini selain pemeriksaan browser dua bahasa.
+- Sesudah itu, pencarian akar, klasifikasi nahwu, dan pembersihan glos pada `/ayat-random` dipindahkan ke server. Build terbaru mencatat First Load JS rute tersebut 162 kB (turun dari 1,87 MB); teks/akar/tag kata tetap ada pada respons API. Dua tes Playwright untuk kontrak API `1:2` dan tampilan makna lulus setelah tes API pertama kali menunjukkan metadata akar/nahwu memang hilang dari respons. Warning dependency `fetchRandomAyah` pada hook halaman masih muncul.
 
 ## Sudah disiapkan di repository
 

@@ -5,9 +5,7 @@ import { useLanguage } from '@/lib/context/LanguageContext';
 import { RefreshCw, BookOpen, Volume2, Pause, Loader2, Copy, Check, ArrowLeft, ArrowRight, Layers, Type } from 'lucide-react';
 import Link from 'next/link';
 import QuranWordInteractive from '@/components/QuranWordInteractive';
-import { findBestMatchingRoot, extractArabicRootLetters, inferGrammarRole } from '@/lib/search/root-search';
 import { getSurahByNumber } from '@/lib/data/surah-list';
-import { cleanGlossToIndonesian } from '@/lib/search/word-dictionary';
 import { getAyahAudioUrl, getAudioCandidateUrls } from '@/lib/api/audio';
 import { registerQuranAudio } from '@/lib/audio/active-audio-registry';
 
@@ -130,34 +128,22 @@ export default function RandomAyahPage() {
         const surahNum = data.surahNumber;
         const ayahNum = data.ayahNumber;
 
-        const parsedWords: RandomAyahWord[] = (data.words || []).map((w: any) => {
-          const arabic = w.arabic || '';
-          const transliteration = w.transliteration || '';
-          const rawMeaning = w.meaningIndo || '';
-          const matchedRoot = findBestMatchingRoot(arabic);
-          const grammar = inferGrammarRole(arabic);
-          const meaningIndo = rawMeaning
-            ? cleanGlossToIndonesian(rawMeaning)
-            : t('Makna kata belum tersedia dari sumber kata-per-kata.', 'Word gloss unavailable from the word-by-word source.');
-          const meaningEnglish = typeof w.meaningEnglish === 'string' && w.meaningEnglish.trim()
+        const parsedWords: RandomAyahWord[] = (data.words || []).map((w: any) => ({
+          id: w.id || w.position,
+          position: w.position || 1,
+          arabic: w.arabic || '',
+          transliteration: w.transliteration || '',
+          meaningIndo: w.meaningIndo || t('Makna kata belum tersedia dari sumber kata-per-kata.', 'Word gloss unavailable from the word-by-word source.'),
+          meaningEnglish: typeof w.meaningEnglish === 'string' && w.meaningEnglish.trim()
             ? w.meaningEnglish
-            : t('Makna kata belum tersedia dari sumber kata-per-kata.', 'Word gloss unavailable from the word-by-word source.');
-
-          return {
-            id: w.id || w.position,
-            position: w.position || 1,
-            arabic,
-            transliteration,
-            meaningIndo,
-            meaningEnglish,
-            audioUrl: w.audioUrl,
-            charType: (w.charType === 'end' ? 'end' : 'word') as 'word' | 'end',
-            rootLetters: matchedRoot ? matchedRoot.rootArabic : extractArabicRootLetters(arabic),
-            rootSlug: matchedRoot?.id,
-            posTag: grammar.posCategory,
-            posDetail: grammar.posDetail
-          };
-        });
+            : t('Makna kata belum tersedia dari sumber kata-per-kata.', 'Word gloss unavailable from the word-by-word source.'),
+          audioUrl: w.audioUrl,
+          charType: (w.charType === 'end' ? 'end' : 'word') as 'word' | 'end',
+          rootLetters: w.rootLetters,
+          rootSlug: w.rootSlug,
+          posTag: w.posTag,
+          posDetail: w.posDetail,
+        }));
 
         setAyah({
           surahNumber: surahNum,
