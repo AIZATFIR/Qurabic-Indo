@@ -21,8 +21,8 @@ export default function Navbar() {
         <Link href="/" className="text-xl font-semibold text-ink-primary tracking-tight">Qurabic</Link>
         <nav data-ui="primary-navigation-links" aria-label={t('Navigasi utama', 'Main navigation')} className="hidden lg:flex items-center gap-6 text-sm text-ink-primary">
           <Link href="/baca" className="min-h-11 flex items-center hover:text-primary">{t('Baca Al-Qur’an', 'Read Quran')}</Link>
-          <Link href="/morfologi" className="min-h-11 flex items-center hover:text-primary">{t('Indeks akar', 'Root index')}</Link>
-          <Link href="/favorit" className="min-h-11 flex items-center hover:text-primary">{t('Tersimpan', 'Saved')}</Link>
+          <Link href="/morfologi" prefetch={false} className="min-h-11 flex items-center hover:text-primary">{t('Indeks akar', 'Root index')}</Link>
+          <Link href="/favorit" prefetch={false} className="min-h-11 flex items-center hover:text-primary">{t('Tersimpan', 'Saved')}</Link>
           <Link href="/tentang" className="min-h-11 flex items-center hover:text-primary">{t('Sumber', 'Sources')}</Link>
         </nav>
         <div className="flex items-center gap-1 rounded-[var(--radius-control)] border border-hairline/70 bg-canvas-soft/55 p-1">

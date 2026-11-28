@@ -2,12 +2,14 @@
 
 import Link from 'next/link';
 import { Bookmark, ArrowRight } from 'lucide-react';
-import { RootWord } from '@/lib/types/morphology';
+import type { RootWord } from '@/lib/types/morphology';
 import { useBookmarks } from '@/lib/hooks/useBookmarks';
 import { useLanguage } from '@/lib/context/LanguageContext';
 import { transliterateRootArabic } from '@/lib/morphology/transliteration';
 
-interface RootCardProps { root: RootWord; }
+export type RootCardData = Pick<RootWord, 'id' | 'rootArabic' | 'rootLatin' | 'totalOccurrences' | 'verbsCount' | 'nounsCount'>;
+
+interface RootCardProps { root: RootCardData; }
 
 export default function RootCard({ root }: RootCardProps) {
   const { isBookmarked, toggleBookmark } = useBookmarks();

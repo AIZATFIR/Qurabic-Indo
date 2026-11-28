@@ -38,6 +38,7 @@ export default function MobileBottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={item.href !== '/morfologi' && item.href !== '/favorit'}
                 className={`flex flex-col items-center justify-center space-y-0.5 min-h-11 py-1 px-2 transition-all relative ${
                   isActive
                     ? 'text-primary font-bold'

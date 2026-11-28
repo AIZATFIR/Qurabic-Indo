@@ -85,3 +85,9 @@ Status ini mencatat bukti dari repository pada 28 November 2026. Ia bukan pernya
 ## Batas arsitektur yang masih perlu diputuskan
 
 Capacitor saat ini membuka situs Vercel pada origin HTTPS. Service worker menyimpan shell pembaca setelah aplikasi pertama kali terbuka dengan koneksi; instalasi baru tanpa jaringan hanya dapat menampilkan halaman fallback lokal, bukan membaca konten. Uji offline harus memakai instalasi yang pernah berhasil membuka shell dan menyimpan paket. Nilai apakah pengalaman ini cukup untuk listing Android sebelum menyatakan aplikasi offline sepenuhnya.
+
+## Optimasi muatan awal homepage (29 November 2026)
+
+- Beranda kini menerima enam ringkasan akar yang diperlukan dari server; tabel studi akar besar tidak lagi ikut masuk ke JavaScript awal beranda. Link ke indeks akar dan simpanan juga tidak melakukan prefetch otomatis.
+- Build lokal dengan satu worker dan heap 1,5 GiB lulus. First Load JS beranda turun dari 472 kB menjadi 180 kB. Empat tes Playwright beranda lulus, termasuk muatan awal, kartu akar, tata letak seluler, dan pengaturan bahasa Inggris. Ini adalah ukuran build lokal, bukan hasil ukur produksi.
+- Ekspor WBW lama tetap disimpan. Skrip `scripts/populate_roots_lexicon.js` masih membaca 114 file itu; izin redistribusinya tetap belum terselesaikan.

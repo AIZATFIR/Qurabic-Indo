@@ -3,7 +3,7 @@
 import { useState, useEffect, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Bookmark, ExternalLink, Volume2 } from 'lucide-react';
-import { ROOT_DATABASE } from '@/lib/data/roots';
+import type { RootCardData } from '@/components/RootCard';
 import { useBookmarks } from '@/lib/hooks/useBookmarks';
 import { useLanguage } from '@/lib/context/LanguageContext';
 import { useTheme } from '@/lib/context/ThemeContext';
@@ -12,19 +12,13 @@ import IlluminatedQuranHero from '@/components/IlluminatedQuranHero';
 import RootCard from '@/components/RootCard';
 import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 
-const STARTING_ROOT_IDS = ['S-l-w', 'S-b-r', 'E-l-m', 'r-H-m', 'k-t-b', 'q-w-l'];
-const STARTING_ROOTS = STARTING_ROOT_IDS.flatMap((id) => {
-  const root = ROOT_DATABASE.find((entry) => entry.id === id);
-  return root ? [root] : [];
-});
-
 const EXPLORE_LINKS = [
   { href: '/ayat-random', title: ['Ayat acak', 'Random verse'], description: ['Baca satu ayat dan pelajari kata-katanya.', 'Read a verse and explore its words.'] },
   { href: '/morfologi', title: ['Indeks akar kata', 'Root index'], description: ['Telusuri akar, bentuk kata, dan ayat tempatnya digunakan.', 'Browse roots, word forms, and the verses where they occur.'] },
   { href: '/rekomendasi', title: ['Bahan belajar', 'Learning resources'], description: ['Temukan video dan aplikasi untuk melanjutkan belajar.', 'Find videos and apps for further study.'] },
 ];
 
-export default function HomePage() {
+export default function HomePage({ startingRoots }: { startingRoots: RootCardData[] }) {
   const { language, t } = useLanguage();
   const { theme, layoutMode } = useTheme();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -89,18 +83,18 @@ export default function HomePage() {
               <h2 id="roots-heading" className="text-2xl font-semibold tracking-tight text-ink-primary sm:text-3xl">{t('Akar kata populer', 'Popular roots')}</h2>
               <p className="mt-2 max-w-2xl text-base leading-relaxed text-ink-secondary">{t('Buka satu akar untuk melihat bentuk kata, rujukan kamus, dan ayat pemakaiannya.', 'Open a root to explore word forms, dictionary sources, and verse occurrences.')}</p>
             </div>
-            <Link href="/morfologi" className="inline-flex min-h-11 items-center gap-2 text-base font-medium text-primary hover:underline underline-offset-4 focus-visible:outline-primary">
+            <Link href="/morfologi" prefetch={false} className="inline-flex min-h-11 items-center gap-2 text-base font-medium text-primary hover:underline underline-offset-4 focus-visible:outline-primary">
               {t('Lihat semua akar', 'Browse all roots')} <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {STARTING_ROOTS.slice(0, 6).map((root) => <RootCard key={root.id} root={root} />)}
+            {startingRoots.slice(0, 6).map((root) => <RootCard key={root.id} root={root} />)}
           </div>
         </section>
 
         <nav aria-label={t('Jelajahi Qurabic', 'Explore Qurabic')} className="mx-auto mt-14 max-w-7xl divide-y divide-hairline border-y border-hairline px-5 sm:px-8">
           {EXPLORE_LINKS.map((item) => (
-            <Link key={item.href} href={item.href} className="group grid grid-cols-[1fr_auto] items-center gap-x-6 gap-y-1 py-4 transition-colors hover:bg-canvas-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset sm:grid-cols-[13rem_1fr_auto] sm:py-5">
+            <Link key={item.href} href={item.href} prefetch={item.href !== '/morfologi'} className="group grid grid-cols-[1fr_auto] items-center gap-x-6 gap-y-1 py-4 transition-colors hover:bg-canvas-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset sm:grid-cols-[13rem_1fr_auto] sm:py-5">
               <span className="text-lg font-medium text-ink-primary group-hover:text-primary">{t(item.title[0], item.title[1])}</span>
               <span className="row-start-2 text-base leading-relaxed text-ink-secondary sm:row-start-auto">{t(item.description[0], item.description[1])}</span>
               <ArrowRight className="col-start-2 row-start-1 h-5 w-5 text-primary sm:col-start-3" aria-hidden="true" />
@@ -132,6 +126,7 @@ export default function HomePage() {
           <Link
             key={item.href}
             href={item.href}
+            prefetch={item.href !== '/morfologi'}
             className="group grid grid-cols-[1fr_auto] sm:grid-cols-[13rem_1fr_auto] gap-x-6 gap-y-1 items-center py-3 sm:py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset hover:bg-canvas-soft transition-colors"
           >
             <span className="text-lg font-medium text-ink-primary group-hover:text-primary">{t(item.title[0], item.title[1])}</span>
@@ -144,7 +139,7 @@ export default function HomePage() {
       <section aria-labelledby="roots-heading" className="pt-12 sm:pt-16">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
           <h2 id="roots-heading" className="text-2xl font-semibold tracking-tight text-ink-primary">{t('Mulai dari akar kata', 'Start with a root')}</h2>
-          <Link href="/morfologi" className="inline-flex min-h-11 items-center gap-2 text-base font-medium text-primary hover:underline underline-offset-4 focus-visible:outline-primary">
+          <Link href="/morfologi" prefetch={false} className="inline-flex min-h-11 items-center gap-2 text-base font-medium text-primary hover:underline underline-offset-4 focus-visible:outline-primary">
             {t('Lihat semua akar', 'Browse all roots')} <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
         </div>
@@ -152,8 +147,8 @@ export default function HomePage() {
           {t("Lihat berbagai bentuk dari satu akar beserta kemunculannya dalam Al-Qur'an.", 'Explore the forms of a root and where they occur in the Quran.')}
         </p>
         <div className="mt-6">
-          {STARTING_ROOTS[0] && (() => {
-            const root = STARTING_ROOTS[0];
+          {startingRoots[0] && (() => {
+            const root = startingRoots[0];
             const bookmarked = isBookmarked(root.id);
             const featuredStyle: CSSProperties = {
               borderRadius: 'var(--radius-surface)',
@@ -189,7 +184,7 @@ export default function HomePage() {
             );
           })()}
           <ul className="mt-4 grid grid-cols-1 gap-x-8 border-t border-hairline sm:grid-cols-2">
-          {STARTING_ROOTS.slice(1).map((root) => {
+          {startingRoots.slice(1).map((root) => {
             const bookmarked = isBookmarked(root.id);
             return (
               <li key={root.id} className="flex items-center gap-2 border-b border-hairline sm:gap-3">
