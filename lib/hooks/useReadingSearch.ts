@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { FullAyahWBW } from '../api/quran-corpus-api';
+import type { FullAyahWBW } from '../api/quran-corpus-api';
 
 export type ReadingSearchMode = 'none' | 'word' | 'ayah';
 

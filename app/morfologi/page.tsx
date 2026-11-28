@@ -4,7 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Search, X, ArrowUpDown, ShieldCheck } from 'lucide-react';
 import { ROOT_DATABASE } from '@/lib/data/roots';
-import { searchRoots, stripArabicHarakat } from '@/lib/search/root-search';
+import { searchRoots } from '@/lib/search/root-index-search';
+import { stripArabicHarakat } from '@/lib/search/arabic-normalization';
 import RootCard from '@/components/RootCard';
 import { useLanguage } from '@/lib/context/LanguageContext';
 

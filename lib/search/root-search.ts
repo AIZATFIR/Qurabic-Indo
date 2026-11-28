@@ -1,17 +1,11 @@
 import { RootWord } from '../types/morphology';
 import { ROOT_DATABASE } from '../data/roots';
 import { isAuthoritativePilotRoot, getAuthoritativePilotRootWord, getRootOccurrencesFromChunk } from '../morphology/morphology-service';
-
-// Removes all Arabic diacritics, harakat, maddah, tatweel, and normalizes Alif & Ya variants
-export function stripArabicHarakat(text: string): string {
-  if (!text) return '';
-  let norm = text.replace(/[\u0610-\u061A\u0640\u064B-\u065F\u0670\u06D6-\u06ED\uFD3E\uFD3F]/g, '');
-  // Normalize all Alif variants (Wasla \u0671, Hamza Above \u0623, Hamza Below \u0625, Madda Above \u0622) to bare Alif \u0627
-  norm = norm.replace(/[\u0622\u0623\u0625\u0671\u0672\u0673\u0675]/g, '\u0627');
-  // Normalize Alif Maksura \u0649 to Ya \u064A
-  norm = norm.replace(/\u0649/g, '\u064A');
-  return norm.trim();
-}
+import { stripArabicHarakat } from './arabic-normalization';
+export { stripArabicHarakat } from './arabic-normalization';
+import { normalizePhoneticQuery } from './query-normalization';
+export { normalizePhoneticQuery } from './query-normalization';
+export { searchRoots } from './root-index-search';
 
 const rootsByArabic = new Map<string, RootWord>();
 const rootsByBuckwalter = new Map<string, RootWord>();
@@ -70,87 +64,6 @@ export function isQuranicParticle(text: string): boolean {
     return true;
   }
   return false;
-}
-
-// Maps Indonesian phonetic spellings to canonical root search tags
-export function normalizePhoneticQuery(query: string): string {
-  if (!query) return '';
-  let q = query.trim().toLowerCase();
-
-  const phoneticMap: Record<string, string> = {
-    sholat: 'salat',
-    solat: 'salat',
-    shalat: 'salat',
-    sholaat: 'salat',
-    shalah: 'salat',
-    selawat: 'salat',
-    salawat: 'salat',
-    's-l-w': 'salat',
-    'ص-ل-و': 'salat',
-    jakat: 'zakat',
-    zakah: 'zakat',
-    'z-k-w': 'zakat',
-    takwa: 'taqwa',
-    taqwaa: 'taqwa',
-    'w-q-y': 'taqwa',
-    sirk: 'syirik',
-    shirk: 'syirik',
-    's-r-k': 'syirik',
-    dzikir: 'zikir',
-    dhikr: 'zikir',
-    'z-k-r': 'zikir',
-    tobat: 'taubat',
-    taubah: 'taubat',
-    't-w-b': 'taubat',
-    koran: 'quran',
-    'qur\'an': 'quran',
-    'q-r-a': 'quran',
-    sholeh: 'saleh',
-    shaleh: 'saleh',
-    salih: 'saleh',
-    's-l-h': 'saleh'
-  };
-
-  Object.keys(phoneticMap).forEach((key) => {
-    if (q === key || q.includes(key)) {
-      q = q.replace(key, phoneticMap[key]);
-    }
-  });
-
-  q = q.replace(/[-_.\s]+/g, '');
-  q = stripArabicHarakat(q);
-  return q;
-}
-
-export function searchRoots(query: string): RootWord[] {
-  const rawCleaned = query.trim().toLowerCase();
-  const normalized = normalizePhoneticQuery(query);
-  
-  if (!rawCleaned) return ROOT_DATABASE;
-
-  return ROOT_DATABASE.filter((root) => {
-    const idClean = root.id.toLowerCase().replace(/-/g, '');
-    if (idClean === normalized || idClean === rawCleaned) return true;
-
-    const arabicJoinedClean = stripArabicHarakat(root.rootArabicJoined);
-    const arabicSpacedClean = stripArabicHarakat(root.rootArabic.replace(/\s+/g, ''));
-    if (arabicJoinedClean === normalized || arabicSpacedClean === normalized || arabicJoinedClean === rawCleaned) return true;
-
-    if (root.rootLatin.toLowerCase() === normalized || root.rootLatin.toLowerCase() === rawCleaned) return true;
-
-    if (root.titleIndo.toLowerCase().includes(normalized) || root.titleIndo.toLowerCase().includes(rawCleaned)) return true;
-
-    const tagMatch = root.tags.some(tag => {
-      const cleanTag = tag.toLowerCase().replace(/[-_.\s]+/g, '');
-      return cleanTag === normalized || cleanTag === rawCleaned || tag.toLowerCase() === rawCleaned;
-    });
-    if (tagMatch) return true;
-
-    const meaningMatch = root.meaningsIndonesian.some(m => m.toLowerCase().includes(normalized) || m.toLowerCase().includes(rawCleaned));
-    if (meaningMatch) return true;
-
-    return false;
-  });
 }
 
 export function getRootBySlug(slug: string): RootWord | undefined {

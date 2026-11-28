@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search, X, BookOpen, ArrowRight, CornerDownLeft, History, Trash2 } from 'lucide-react';
-import { searchRoots } from '@/lib/search/root-search';
 import { RootWord } from '@/lib/types/morphology';
 import { useLanguage } from '@/lib/context/LanguageContext';
 
@@ -18,9 +17,26 @@ export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
   const { t } = useLanguage();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<RootWord[]>([]);
+  const [loadingRootIndex, setLoadingRootIndex] = useState(false);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const rootSearchRequest = useRef(0);
   const router = useRouter();
+
+  const loadRootResults = (value: string) => {
+    const requestId = ++rootSearchRequest.current;
+    setLoadingRootIndex(true);
+    import('@/lib/search/root-index-search')
+      .then(({ searchRoots }) => {
+        if (rootSearchRequest.current === requestId) setResults(searchRoots(value));
+      })
+      .catch(() => {
+        if (rootSearchRequest.current === requestId) setResults([]);
+      })
+      .finally(() => {
+        if (rootSearchRequest.current === requestId) setLoadingRootIndex(false);
+      });
+  };
 
   // Load search history from localStorage on open
   useEffect(() => {
@@ -36,16 +52,19 @@ export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
       } catch (e) {}
 
       setTimeout(() => inputRef.current?.focus(), 100);
-      setResults(searchRoots(''));
+      loadRootResults('');
 
       const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
 
       return () => {
+        rootSearchRequest.current += 1;
         document.body.style.overflow = originalOverflow;
       };
     } else {
       setQuery('');
+      setResults([]);
+      setLoadingRootIndex(false);
     }
   }, [isOpen]);
 
@@ -90,7 +109,7 @@ export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
 
   const handleSearchChange = (val: string) => {
     setQuery(val);
-    setResults(searchRoots(val));
+    loadRootResults(val);
   };
 
   const handleSelectRoot = (root: RootWord) => {
@@ -101,7 +120,7 @@ export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
 
   const handleSelectHistoryItem = (item: string) => {
     setQuery(item);
-    setResults(searchRoots(item));
+    loadRootResults(item);
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -195,7 +214,9 @@ export default function OmniSearch({ isOpen, onClose }: OmniSearchProps) {
 
         {/* Results List */}
         <div className="flex-1 space-y-2 overflow-y-auto p-4 sm:p-5">
-          {results.length === 0 ? (
+          {loadingRootIndex ? (
+            <p role="status" className="py-12 text-center text-sm text-ink-mute">{t('Memuat indeks akar…', 'Loading root index…')}</p>
+          ) : results.length === 0 ? (
             <div className="py-12 text-center text-ink-mute space-y-3 font-sans">
               <BookOpen className="w-10 h-10 mx-auto text-ink-mute opacity-50" />
               <p className="font-medium text-sm">{t('Akar kata tidak ditemukan dalam indeks', 'No roots found in the index')}</p>

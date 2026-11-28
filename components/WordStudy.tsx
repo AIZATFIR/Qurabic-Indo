@@ -20,7 +20,7 @@ import type { ArramoozForm } from '@/lib/lexicon/arramooz-shared';
 import { filterOtherArabicForms } from '@/lib/lexicon/arramooz-shared';
 import { parseLexiconSenseTokens } from '@/lib/lexicon/lexicon-formatter';
 import { isRawBuckwalterRoot, transliterateArabic } from '@/lib/morphology/transliteration';
-import { stripArabicHarakat } from '@/lib/search/root-search';
+import { stripArabicHarakat } from '@/lib/search/arabic-normalization';
 import { useBookmarks } from '@/lib/hooks/useBookmarks';
 import SourceDrawer from './SourceDrawer';
 import { useLanguage } from '@/lib/context/LanguageContext';
