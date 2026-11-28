@@ -17,6 +17,12 @@ Status ini mencatat bukti dari repository pada 28 November 2026. Ia bukan pernya
 - Saat pencarian ayat online gagal, pencarian dapat memakai paket terjemahan lengkap di IndexedDB: Saheeh International untuk English atau Kemenag RI untuk Indonesian. Hasil diberi label offline. Bila snapshot tidak lengkap/tidak konsisten, fallback tidak menampilkan hasil parsial. Ini memanfaatkan paket Quran Foundation Content Sync yang sudah diunduh pengguna; tidak menambah salinan teks baru ke bundle aplikasi.
 - Verifikasi lokal pada production build: tes unit pencarian offline lulus; skenario Playwright pencarian ayat + audio yang sudah ada dan skenario fallback English baru lulus 7/7. Build Next.js lulus; peringatan lint lama tetap ada pada hook/ref komponen lain. Uji ini tidak membuka gate API production dan tidak menggantikan uji perangkat native.
 
+## Revalidasi reader dan deployment (29 November 2026, setelah `777c7cb`)
+
+- Commit `777c7cb` sudah dipush ke `origin/main`; status Vercel untuk commit ini berakhir `success`. Setelah deployment, `/api/quran-reader/surah?surah=18&language=en` merespons HTTP 200 dengan 110 ayat dan teks Saheeh International; `/api/quran-reader/words?verse=18:1` merespons HTTP 200 dengan 11 token, termasuk akar `ح م د` dan glos `segala puji`. HTTP 404 yang sempat terlihat terjadi saat deployment masih pending dan berasal dari cache deployment sebelumnya.
+- API pembaca dan API rincian kata kini berjalan di server sehingga tabel QAC besar tidak masuk ke bundle JavaScript halaman baca. Manifest production build lokal mencatat 653.611 byte JavaScript untuk `/baca/page`; bundle halaman morfologi masih 3.698.581 byte. 10/10 tes Playwright `reader-focus.spec.ts` dan `tsc --noEmit` lulus pada revisi tersebut. Ini membuktikan jalur web baca, bukan instalasi native atau semua jalur aplikasi.
+- AAB di `android/app/build/outputs/bundle/release/app-release.aab` bertanggal 28 November 2026, sebelum commit ini; pemeriksaan `jarsigner` menyatakan AAB tidak ditandatangani. Variabel signing dan version code tidak tersedia, dan tidak ada perangkat Android yang tersambung. Jangan unggah artefak tersebut ke Play Console.
+
 ## Sudah disiapkan di repository
 
 - Android `targetSdkVersion` memakai API 36. Per 28 November 2026, Google Play meminta API 36 atau lebih tinggi untuk app baru dan pembaruan reguler sejak 31 Agustus 2026. Lihat [persyaratan target API Google Play](https://developer.android.com/google/play/requirements/target-sdk).
