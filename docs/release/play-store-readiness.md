@@ -91,3 +91,9 @@ Capacitor saat ini membuka situs Vercel pada origin HTTPS. Service worker menyim
 - Beranda kini menerima enam ringkasan akar yang diperlukan dari server; tabel studi akar besar tidak lagi ikut masuk ke JavaScript awal beranda. Link ke indeks akar dan simpanan juga tidak melakukan prefetch otomatis.
 - Build lokal dengan satu worker dan heap 1,5 GiB lulus. First Load JS beranda turun dari 472 kB menjadi 180 kB. Empat tes Playwright beranda lulus, termasuk muatan awal, kartu akar, tata letak seluler, dan pengaturan bahasa Inggris. Ini adalah ukuran build lokal, bukan hasil ukur produksi.
 - Ekspor WBW lama tetap disimpan. Skrip `scripts/populate_roots_lexicon.js` masih membaca 114 file itu; izin redistribusinya tetap belum terselesaikan.
+
+## Pemeriksaan endpoint production (29 November 2026)
+
+- Pemeriksaan ulang langsung ke `qurabic-indo-corpus.vercel.app`: `GET /api/qf/recitations?language=en` dan `POST /api/content-sync` masing-masing tetap mengembalikan HTTP 503 `EDGE_RATE_LIMIT_REQUIRED`. Katalog tilawah dan sinkronisasi paket offline belum dapat dipakai pada production.
+- `GET /api/search/ayah?q=mercy` tanpa parameter bahasa memakai bahasa Indonesia secara default, sehingga menjawab HTTP 200 dengan daftar kosong; ini bukan bukti bahwa pencarian English berfungsi. Dengan `language=en`, endpoint menjawab HTTP 503 `EDGE_RATE_LIMIT_REQUIRED`. Pengaturan edge rate limit tetap menjadi prasyarat sebelum pencarian English dan kedua layanan di atas dapat diverifikasi di production.
+- Tidak ada file ekspor WBW yang dihapus atau diubah. Tetap simpan file sampai sumber pengganti berizin dan skrip `scripts/populate_roots_lexicon.js` tidak lagi bergantung padanya.
