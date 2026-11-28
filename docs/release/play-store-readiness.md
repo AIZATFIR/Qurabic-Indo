@@ -2,6 +2,16 @@
 
 Status ini mencatat bukti dari repository pada 28 November 2026. Ia bukan pernyataan bahwa aplikasi sudah siap dipublikasikan.
 
+## Revalidasi deployment dan data (28 November 2026, setelah `d4922cf`)
+
+- Commit `d4922cf` (`Add sourced offline word gloss fallback`) sudah berada di `origin/main`; pemeriksaan GitHub untuk Vercel berstatus sukses. Vercel production menyajikan `/api/word-glosses`, service worker cache v2, dan `/data/maqam-glosses.json`. File glos publik memuat 77.429 koordinat unik tanpa glos kosong. Contoh koordinat `2:2:3` memberi stem gloss English `no;not;non-`, sedangkan `18:3:2` memberi `in`.
+- Quran.com tetap sumber glos utama bila tersedia; MAQAM menjadi fallback English untuk koordinat tanpa glos Quran.com. MAQAM berbasis artikel peer-reviewed dan anotasi leksikal; atribusi/lisensi serta batas bahwa prefiks/pronomina terlampir dapat tidak ikut diterjemahkan dicatat di aplikasi dan notices. Ini glos bentuk dasar, bukan terjemahan konteks atau definisi akar. Indonesian Kemenag, definisi akar, dan tafsir tidak dihasilkan dari MAQAM.
+- Production build lokal Next.js lulus dengan heap 1,5 GiB dan satu worker; typecheck lulus. Suite unit proyek lulus ketika menjalankan runner yang sudah terpasang secara serial. `pnpm test` sendiri berhenti pada pemeriksaan minimum release-age dependency dan tidak menjalankan suite.
+- Playwright pada build lokal: 61 kasus, 60 lulus, 1 dilewati (header cache khusus Vercel), 0 gagal. Suite studi kata: 21/21 lulus. Ini membuktikan alur browser lokal, bukan perilaku native pada perangkat.
+- Android `assembleDebug assembleRelease` lulus dengan satu worker. APK debug 33.170.760 byte; release unsigned 18.847.678 byte. Package `com.qurabic.indo`, version code 1, version name 1.0.0, min SDK 24, target/compile SDK 36. Belum ada AAB bertanda tangan atau uji perangkat karena kredensial signing dan perangkat tidak tersedia.
+- Cek endpoint production pada commit tersebut: `/api/qf/recitations?language=en` dan `POST /api/content-sync` mengembalikan HTTP 503 `EDGE_RATE_LIMIT_REQUIRED`; perlu konfigurasi rate limit edge yang disebut pada gerbang di bawah. `/api/search/ayah?q=mercy` mengembalikan HTTP 200 dengan daftar hasil kosong; kredensial/akses Search production masih harus dipastikan.
+- Ekspor WBW Quran.com yang sudah ada di repository tidak dihapus. Belum dipakai sebagai sumber offline baru karena batas Developer Terms mengenai distribusi ulang raw API data; pertahankan salinan Git dan jangan masukkan ke paket publik sampai hak dan cara distribusi diselesaikan.
+
 ## Sudah disiapkan di repository
 
 - Android `targetSdkVersion` memakai API 36. Per 28 November 2026, Google Play meminta API 36 atau lebih tinggi untuk app baru dan pembaruan reguler sejak 31 Agustus 2026. Lihat [persyaratan target API Google Play](https://developer.android.com/google/play/requirements/target-sdk).
