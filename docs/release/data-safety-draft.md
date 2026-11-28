@@ -11,7 +11,7 @@ Pada 28 November 2026, APK release unsigned dibangun tanpa ID AdMob. DEX-nya tid
 | Alur | Data yang meninggalkan perangkat | Penerima / tujuan | Bukti dan batas |
 |---|---|---|---|
 | Pencarian ayat, kata, akar, dan partikel | Teks pencarian; pencarian English juga diteruskan ke Quran Foundation Search API | Qurabic/Vercel untuk pencarian lokal server; Quran Foundation untuk pencarian English | Kebijakan privasi menjelaskan isi permintaan. Log retensi Vercel belum diaudit. |
-| Buka studi kata, akar, ayat acak, atau English reader | Koordinat surah/ayat/kata; permintaan glos dan terjemahan | Qurabic/Vercel lalu Quran.com API | Tidak ada email atau profil pada permintaan yang diperiksa. |
+| Baca surah, buka studi kata, akar, ayat acak, atau English reader | Surah/bahasa yang dipilih; koordinat ayat/kata; permintaan glos dan terjemahan | Qurabic/Vercel lalu Quran.com; jika fallback terjemahan Indonesia aktif, eQuran.id, Gading Quran API, atau AlQuran Cloud | Hanya saat pengguna membuka/memuat data; belum diuji melalui traffic perangkat. |
 | Buka tafsir Indonesia | Nomor surah dan ayat | Server Qurabic/Vercel lalu mirror GitHub yang dipatok | Hak teks sumber masih perlu klarifikasi; ini bukan alur akun. |
 | Sinkronkan paket offline | Resource dan token sinkronisasi | Qurabic/Vercel lalu Quran Foundation Content Sync | Kredensial production belum diverifikasi; isi paket tidak memuat data akun. |
 | Putar tilawah pada build production | Permintaan file audio dari perangkat | Host audio resmi Quran Foundation | Katalog resmi per qari; jalur offline Al-Afasy disimpan di storage privat aplikasi. Handsfree terjemahan lisan dinonaktifkan di production sampai haknya diverifikasi. |
