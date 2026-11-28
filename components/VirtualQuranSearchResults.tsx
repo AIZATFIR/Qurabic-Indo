@@ -11,6 +11,7 @@ import QuranAudioPlayer from './QuranAudioPlayer';
 import Link from 'next/link';
 import { Search, ArrowRight, BookOpen, Play, Pause, Headphones, Loader2 } from 'lucide-react';
 import QuranWordInteractive from './QuranWordInteractive';
+import { searchOfflineQuranVerses } from '@/lib/offline/quran-content-reader';
 
 interface VirtualQuranSearchResultsProps {
   query: string;
@@ -162,6 +163,7 @@ export default function VirtualQuranSearchResults({
   const [ayahSearchLoading, setAyahSearchLoading] = useState(false);
   const [ayahSearchError, setAyahSearchError] = useState(false);
   const [englishSearchNotConfigured, setEnglishSearchNotConfigured] = useState(false);
+  const [ayahSearchSource, setAyahSearchSource] = useState<'online' | 'offline'>('online');
   const [ayahSearchHasMore, setAyahSearchHasMore] = useState(false);
   const [ayahSearchPage, setAyahSearchPage] = useState(1);
   const [ayahSearchMoreLoading, setAyahSearchMoreLoading] = useState(false);
@@ -224,9 +226,22 @@ export default function VirtualQuranSearchResults({
   };
 
   useEffect(() => {
+    let englishNotConfigured = false;
+    const tryLoadOfflineResults = async () => {
+      const payload = await searchOfflineQuranVerses(query, language, 1).catch(() => null);
+      if (!payload || controller.signal.aborted) return false;
+      setAyahResults(payload.results);
+      setAyahSearchHasMore(payload.hasMore);
+      setAyahSearchPage(payload.page);
+      setAyahSearchSource('offline');
+      setEnglishSearchNotConfigured(false);
+      setAyahSearchError(false);
+      return true;
+    };
     setAyahResults([]);
     setAyahSearchError(false);
     setEnglishSearchNotConfigured(false);
+    setAyahSearchSource('online');
     setAyahSearchHasMore(false);
     setAyahSearchPage(1);
     setAyahSearchMoreError(false);
@@ -240,20 +255,27 @@ export default function VirtualQuranSearchResults({
     const controller = new AbortController();
     const timer = window.setTimeout(async () => {
       try {
-        const response = await fetch(`/api/search/ayah?q=${encodeURIComponent(query)}&language=${language}&page=1`, { signal: controller.signal });
+        const networkSignal = AbortSignal.any([controller.signal, AbortSignal.timeout(8_000)]);
+        const response = await fetch(`/api/search/ayah?q=${encodeURIComponent(query)}&language=${language}&page=1`, { signal: networkSignal });
         if (!response.ok) {
           const payload = await response.json().catch(() => null) as { code?: string } | null;
-          if (payload?.code === 'ENGLISH_SEARCH_NOT_CONFIGURED') setEnglishSearchNotConfigured(true);
+          englishNotConfigured = payload?.code === 'ENGLISH_SEARCH_NOT_CONFIGURED';
+          if (englishNotConfigured) setEnglishSearchNotConfigured(true);
           throw new Error('Ayah search unavailable');
         }
         const payload = await response.json();
         setAyahResults(Array.isArray(payload.results) ? payload.results : []);
         setAyahSearchHasMore(payload.hasMore === true);
         setAyahSearchPage(Number.isInteger(payload.page) ? payload.page : 1);
+        setAyahSearchSource('online');
       } catch {
         if (!controller.signal.aborted) {
-          setAyahResults([]);
-          setAyahSearchError(true);
+          const offlineAvailable = await tryLoadOfflineResults();
+          if (!offlineAvailable && !controller.signal.aborted) {
+            setAyahResults([]);
+            setEnglishSearchNotConfigured(englishNotConfigured);
+            setAyahSearchError(true);
+          }
         }
       } finally {
         if (!controller.signal.aborted) setAyahSearchLoading(false);
@@ -274,16 +296,24 @@ export default function VirtualQuranSearchResults({
     setAyahSearchMoreLoading(true);
     setAyahSearchMoreError(false);
     try {
-      const params = new URLSearchParams({ q: query, language, page: String(requestedPage) });
-      const response = await fetch(`/api/search/ayah?${params}`, { signal: controller.signal });
-      if (!response.ok) throw new Error('Ayah search page unavailable');
-      const payload = await response.json();
+      let payload: { results?: unknown; hasMore?: boolean; page?: number };
+      if (ayahSearchSource === 'offline') {
+        const offline = await searchOfflineQuranVerses(query, language, requestedPage);
+        if (!offline) throw new Error('Offline Quran search is unavailable.');
+        payload = offline;
+      } else {
+        const params = new URLSearchParams({ q: query, language, page: String(requestedPage) });
+        const response = await fetch(`/api/search/ayah?${params}`, { signal: controller.signal });
+        if (!response.ok) throw new Error('Ayah search page unavailable');
+        payload = await response.json();
+      }
+      if (controller.signal.aborted) return;
       const nextResults = Array.isArray(payload.results) ? payload.results as AyahSearchResult[] : [];
       setAyahResults((current) => {
         const keys = new Set(current.map((ayah) => `${ayah.surah}:${ayah.ayah}`));
         return [...current, ...nextResults.filter((ayah) => !keys.has(`${ayah.surah}:${ayah.ayah}`))];
       });
-      setAyahSearchPage(Number.isInteger(payload.page) ? payload.page : requestedPage);
+      setAyahSearchPage(typeof payload.page === 'number' && Number.isInteger(payload.page) ? payload.page : requestedPage);
       setAyahSearchHasMore(payload.hasMore === true);
     } catch {
       if (!controller.signal.aborted) setAyahSearchMoreError(true);
@@ -293,7 +323,7 @@ export default function VirtualQuranSearchResults({
         if (ayahMoreController.current === controller) ayahMoreController.current = null;
       }
     }
-  }, [ayahSearchHasMore, ayahSearchMoreLoading, ayahSearchPage, query, language]);
+  }, [ayahSearchHasMore, ayahSearchMoreLoading, ayahSearchPage, ayahSearchSource, query, language]);
 
   const matchingSurahs = useMemo(() => {
     if (!query) return [];
@@ -363,8 +393,12 @@ export default function VirtualQuranSearchResults({
         </span>
       </div>
       {query && <p className="text-base leading-relaxed text-ink-secondary">{language === 'en'
-        ? 'Verse search matches Arabic and Saheeh International (Quran Foundation Search API).'
-        : 'Pencarian ayat mencakup teks Arab dan terjemahan Kemenag RI.'}</p>}
+        ? ayahSearchSource === 'offline'
+          ? 'Offline results · Saheeh International translation saved on this device.'
+          : 'Verse search matches Arabic and Saheeh International (Quran Foundation Search API).'
+        : ayahSearchSource === 'offline'
+          ? 'Hasil offline · terjemahan Kemenag RI yang tersimpan di perangkat.'
+          : 'Pencarian ayat mencakup teks Arab dan terjemahan Kemenag RI.'}</p>}
       {ayahSearchError && combinedItems.length > 0 && <p role="status" className="text-base leading-relaxed text-ink-secondary">{englishSearchNotConfigured
         ? t('Pencarian terjemahan English belum dikonfigurasi di server. Hasil lain tetap bisa dibuka.', 'English verse search is not configured on the server yet. Other results are still available.')
         : t('Pencarian ayat sedang tidak tersedia. Hasil lain tetap bisa dibuka.', 'Verse search is temporarily unavailable. Other results are still available.')}</p>}

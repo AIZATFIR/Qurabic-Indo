@@ -1,6 +1,7 @@
 import type { FullAyahWBW, WBWWord } from '@/lib/api/quran-corpus-api';
-import { getConsistentOfflineChapterRows, getOfflineQuranPackage } from './quran-content-store';
+import { getConsistentOfflineChapterRows, getContentRowsForChapter, getContentRowsForResource, getOfflineQuranPackage } from './quran-content-store';
 import { SURAH_LIST } from '@/lib/data/surah-list';
+import { searchOfflineTranslationRows } from './quran-translation-search';
 
 function stringField(data: Record<string, unknown>, field: string): string {
   return typeof data[field] === 'string' ? data[field] as string : '';
@@ -106,4 +107,79 @@ export async function getOfflineQuranSurah(
       words: verseWords,
     };
   });
+}
+
+/** Search the saved Kemenag or Saheeh snapshot; return null unless the full pack is intact. */
+export async function searchOfflineQuranVerses(
+  query: string,
+  language: 'id' | 'en',
+  page = 1,
+  pageSize = 30,
+): Promise<{
+  results: Array<{
+    surah: number;
+    ayah: number;
+    arabic: string;
+    translationId?: string;
+    translationEnglish?: string;
+    surahName: string;
+    surahNameEnglish: string;
+  }>;
+  page: number;
+  hasMore: boolean;
+  nextPage: number | null;
+} | null> {
+  if (typeof indexedDB === 'undefined') return null;
+  const packageState = await getOfflineQuranPackage();
+  const translationResourceId = language === 'en' ? 20 : 33;
+  const requiredResources = packageState?.resourcesFilter.split(';') || [];
+  const savedTranslationIds = new Set(
+    (requiredResources.find((resource) => resource.startsWith('translations:'))?.split(':')[1] || '')
+      .split(',')
+      .filter(Boolean),
+  );
+  if (!packageState || packageState.isConsistent === false
+    || !savedTranslationIds.has(String(translationResourceId))
+    || !requiredResources.includes('quran_core:1')) return null;
+
+  const translationRows = await getContentRowsForResource('translations', translationResourceId);
+  const pageData = searchOfflineTranslationRows(translationRows, query, page, pageSize);
+  if (!pageData) return null;
+
+  const chapters = [...new Set(pageData.matches.map((match) => match.surah))];
+  const arabicByKey = new Map<string, string>();
+  for (let index = 0; index < chapters.length; index += 4) {
+    const batch = chapters.slice(index, index + 4);
+    const chapterRows = await Promise.all(batch.map(async (surahNumber) => {
+      const meta = SURAH_LIST[surahNumber - 1];
+      const rows = await getContentRowsForChapter('quran_core', 1, surahNumber);
+      const verses = rows.filter((row) => row.recordType === 'verse');
+      if (!meta || verses.length !== meta.ayahsCount) return null;
+      return verses;
+    }));
+    if (chapterRows.some((rows) => rows === null)) return null;
+    for (const verses of chapterRows) {
+      for (const row of verses || []) {
+        const key = typeof row.data.verse_key === 'string' ? row.data.verse_key : '';
+        const arabic = stringField(row.data, 'text_uthmani');
+        if (key && arabic) arabicByKey.set(key, arabic);
+      }
+    }
+  }
+
+  const results = pageData.matches.flatMap((match) => {
+    const arabic = arabicByKey.get(match.key);
+    const meta = SURAH_LIST[match.surah - 1];
+    if (!arabic || !meta) return [];
+    return [{
+      surah: match.surah,
+      ayah: match.ayah,
+      arabic,
+      ...(language === 'en' ? { translationEnglish: match.translation } : { translationId: match.translation }),
+      surahName: meta.nameIndo,
+      surahNameEnglish: meta.transliteration,
+    }];
+  });
+  if (results.length !== pageData.matches.length) return null;
+  return { results, page: pageData.page, hasMore: pageData.hasMore, nextPage: pageData.nextPage };
 }

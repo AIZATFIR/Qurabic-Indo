@@ -12,6 +12,11 @@ Status ini mencatat bukti dari repository pada 28 November 2026. Ia bukan pernya
 - Cek endpoint production pada commit tersebut: `/api/qf/recitations?language=en` dan `POST /api/content-sync` mengembalikan HTTP 503 `EDGE_RATE_LIMIT_REQUIRED`; perlu konfigurasi rate limit edge yang disebut pada gerbang di bawah. `/api/search/ayah?q=mercy` mengembalikan HTTP 200 dengan daftar hasil kosong; kredensial/akses Search production masih harus dipastikan.
 - Ekspor WBW Quran.com yang sudah ada di repository tidak dihapus. Belum dipakai sebagai sumber offline baru karena batas Developer Terms mengenai distribusi ulang raw API data; pertahankan salinan Git dan jangan masukkan ke paket publik sampai hak dan cara distribusi diselesaikan.
 
+## Perubahan offline search (29 November 2026)
+
+- Saat pencarian ayat online gagal, pencarian dapat memakai paket terjemahan lengkap di IndexedDB: Saheeh International untuk English atau Kemenag RI untuk Indonesian. Hasil diberi label offline. Bila snapshot tidak lengkap/tidak konsisten, fallback tidak menampilkan hasil parsial. Ini memanfaatkan paket Quran Foundation Content Sync yang sudah diunduh pengguna; tidak menambah salinan teks baru ke bundle aplikasi.
+- Verifikasi lokal pada production build: tes unit pencarian offline lulus; skenario Playwright pencarian ayat + audio yang sudah ada dan skenario fallback English baru lulus 7/7. Build Next.js lulus; peringatan lint lama tetap ada pada hook/ref komponen lain. Uji ini tidak membuka gate API production dan tidak menggantikan uji perangkat native.
+
 ## Sudah disiapkan di repository
 
 - Android `targetSdkVersion` memakai API 36. Per 28 November 2026, Google Play meminta API 36 atau lebih tinggi untuk app baru dan pembaruan reguler sejak 31 Agustus 2026. Lihat [persyaratan target API Google Play](https://developer.android.com/google/play/requirements/target-sdk).
