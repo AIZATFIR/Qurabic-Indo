@@ -3,8 +3,10 @@
 import React, { useState } from 'react';
 import { ExternalLink, Smartphone, Tablet, Monitor, CheckCircle, Lock, Compass } from 'lucide-react';
 import { RECOMMENDED_APPS } from '@/lib/data/recommended-apps';
+import { useLanguage } from '@/lib/context/LanguageContext';
 
 export default function KalaamShowcaseFrame() {
+  const { t } = useLanguage();
   const [deviceMode, setDeviceMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const app = RECOMMENDED_APPS[0];
 
@@ -27,13 +29,13 @@ export default function KalaamShowcaseFrame() {
       <div className="text-center space-y-3 max-w-2xl mx-auto">
         <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-primary-subdued text-primary text-xs font-medium">
           <Compass className="w-3.5 h-3.5" />
-          <span>Rekomendasi Rujukan Eksternal</span>
+          <span>{t('Rujukan eksternal', 'External resource')}</span>
         </div>
         <h2 className="text-2xl sm:text-3xl font-light text-ink-primary tracking-tight font-sans">
           Kalaam App &bull; <span className="font-semibold text-primary">Quranic Arabic</span>
         </h2>
         <p className="text-sm text-ink-secondary leading-relaxed font-sans">
-          {app.tagline}. Aplikasi pendukung untuk melatih pemahaman kosakata harian yang melengkapi riset morfologi di Qurabic.
+          {app.tagline}. {t('Aplikasi pendukung untuk latihan kosakata harian, sebagai pelengkap studi morfologi di Qurabic.', 'A companion app for daily vocabulary practice alongside morphology study in Qurabic.')}
         </p>
       </div>
 
@@ -118,11 +120,11 @@ export default function KalaamShowcaseFrame() {
                 <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-canvas-soft border border-hairline text-ink-secondary text-xs font-medium">
                   <span>{app.badgeText}</span>
                   <span>&bull;</span>
-                  <span>Rating {app.rating}</span>
+                  <span>{t('Rating', 'Rating')} {app.rating}</span>
                 </div>
 
                 <h3 className="text-xl sm:text-2xl font-semibold text-ink-primary font-sans leading-snug">
-                  Latihan Kosakata Al-Qur&apos;an Harian
+                  {t('Latihan kosakata Al-Qur’an harian', 'Daily Quranic vocabulary practice')}
                 </h3>
 
                 <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed font-sans">
@@ -147,7 +149,7 @@ export default function KalaamShowcaseFrame() {
                     rel="noreferrer"
                     className="inline-flex items-center space-x-2 bg-primary hover:bg-primary-deep text-white text-xs sm:text-sm font-semibold px-5 py-2.5 rounded-full shadow-subtle transition-all font-sans"
                   >
-                    <span>Buka Kalaam App</span>
+                    <span>{t('Buka Kalaam', 'Visit Kalaam')}</span>
                     <ExternalLink className="w-4 h-4" />
                   </a>
 
@@ -178,18 +180,18 @@ export default function KalaamShowcaseFrame() {
               {/* Visual Mini Guidance Card */}
               <div className="w-full md:w-64 p-5 rounded-2xl bg-canvas-soft border border-hairline shadow-subtle space-y-3 shrink-0">
                 <div className="flex items-center justify-between border-b border-hairline pb-2">
-                  <span className="text-xs font-bold text-ink-primary uppercase tracking-wider font-sans">Alur Pembelajaran</span>
+                  <span className="text-xs font-bold text-ink-primary font-sans">{t('Alur belajar', 'Study flow')}</span>
                   <span className="text-[10px] text-primary font-semibold bg-primary-subdued px-2 py-0.5 rounded-md">Qurabic + Kalaam</span>
                 </div>
                 
                 <div className="space-y-2 text-xs text-ink-secondary font-sans leading-relaxed">
                   <div className="p-2.5 rounded-xl bg-canvas-surface border border-hairline">
-                    <strong className="text-ink-primary block text-[11px]">1. Latihan di Kalaam</strong>
-                    <span>Latihan repetisi 5-10 kata baru harian.</span>
+                    <strong className="text-ink-primary block text-[11px]">{t('1. Berlatih di Kalaam', '1. Practice in Kalaam')}</strong>
+                    <span>{t('Ulangi kosakata yang dipelajari.', 'Review the vocabulary you learn.')}</span>
                   </div>
                   <div className="p-2.5 rounded-xl bg-canvas-surface border border-hairline">
-                    <strong className="text-ink-primary block text-[11px]">2. Bedah di Qurabic</strong>
-                    <span>Eksplorasi akar kata &amp; gramatika Sharaf dalam konteks ayat.</span>
+                    <strong className="text-ink-primary block text-[11px]">{t('2. Pelajari di Qurabic', '2. Study in Qurabic')}</strong>
+                    <span>{t('Telusuri akar dan bentuk kata dalam konteks ayat.', 'Explore roots and word forms in verse context.')}</span>
                   </div>
                 </div>
               </div>
@@ -207,10 +209,10 @@ export default function KalaamShowcaseFrame() {
         {/* Column 1: WHAT IT IS */}
         <div className="p-6 sm:p-7 rounded-3xl bg-canvas-surface border border-hairline space-y-2.5 shadow-subtle">
           <span className="text-[11px] font-semibold text-primary uppercase tracking-wider block font-sans">
-            01 &bull; Apa Itu Kalaam App
+            01 &bull; {t('Tentang Kalaam', 'About Kalaam')}
           </span>
           <h4 className="text-base font-semibold text-ink-primary font-sans">
-            Latihan Kosakata Al-Qur&apos;an
+            {t('Latihan kosakata Al-Qur’an', 'Quranic vocabulary practice')}
           </h4>
           <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed font-sans">
             {app.whatItIs}
@@ -220,7 +222,7 @@ export default function KalaamShowcaseFrame() {
         {/* Column 2: WHY IT WORKS */}
         <div className="p-6 sm:p-7 rounded-3xl bg-canvas-surface border border-hairline space-y-2.5 shadow-subtle">
           <span className="text-[11px] font-semibold text-primary uppercase tracking-wider block font-sans">
-            02 &bull; Metode Pembelajaran
+            02 &bull; {t('Metode belajar', 'Study method')}
           </span>
           <h4 className="text-base font-semibold text-ink-primary font-sans">
             Spaced Repetition &amp; Gamifikasi
@@ -233,10 +235,10 @@ export default function KalaamShowcaseFrame() {
         {/* Column 3: HOW TO COMBINE */}
         <div className="p-6 sm:p-7 rounded-3xl bg-canvas-surface border border-hairline space-y-2.5 shadow-subtle">
           <span className="text-[11px] font-semibold text-primary uppercase tracking-wider block font-sans">
-            03 &bull; Kombinasi dengan Qurabic
+            03 &bull; {t('Bersama Qurabic', 'With Qurabic')}
           </span>
           <h4 className="text-base font-semibold text-ink-primary font-sans">
-            Alur Belajar Menyeluruh
+            {t('Alur belajar', 'Study flow')}
           </h4>
           <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed font-sans">
             {app.howToUse}

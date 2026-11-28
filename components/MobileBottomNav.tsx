@@ -28,7 +28,7 @@ export default function MobileBottomNav() {
 
   return (
     <>
-      <nav data-ui="mobile-navigation" aria-label={t('Navigasi mobile', 'Mobile navigation')} className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-canvas-page/90 backdrop-blur-md border-t border-hairline px-2 py-1.5 shadow-subtle">
+      <nav data-ui="mobile-navigation" aria-label={t('Navigasi mobile', 'Mobile navigation')} className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-canvas-page/90 backdrop-blur-md border-t border-hairline px-2 pt-1.5 pb-[calc(var(--qurabic-safe-area-bottom)_+_0.375rem)] shadow-subtle">
         <div className="flex items-center justify-around max-w-md mx-auto">
           {navItems.map((item) => {
             const isActive = pathname === item.href;

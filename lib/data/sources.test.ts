@@ -27,13 +27,29 @@ if (!morphSource.authority.includes('Leeds') && !morphSource.name.includes('Qura
 }
 console.log('✅ Test passed: Morphology is correctly attributed to Quranic Arabic Corpus (University of Leeds)');
 
+const maqamSource = getSourceInfo('maqamGloss');
+if (!maqamSource.url.includes('aclanthology.org/2026.arabicnlp-main.11') ||
+    !maqamSource.description.includes('Glos Inggris') ||
+    !maqamSource.descriptionEnglish.includes('English stem glosses')) {
+  throw new Error('MAQAM must be attributed and explicitly labeled as an English-only lexical gloss fallback');
+}
+console.log('✅ Test passed: MAQAM is registered as a sourced English lexical-gloss fallback.');
+const maqamTextBasis = getSourceInfo('maqamTextBasis');
+if (!maqamTextBasis.url.includes('tanzil.net/docs/Text_License') ||
+    !maqamTextBasis.license?.includes('CC BY 3.0')) {
+  throw new Error('The source-text basis cited by MAQAM must retain its Tanzil attribution and license link.');
+}
+
 // Root glosses from Quran bil-Quran have source-level attribution but no
 // Lane page citation; keep that limitation attached to the registered source.
 const rootGlossSource = getSourceInfo('quranBilQuran');
 if (!rootGlossSource.url.includes('github.com/R3GENESI5/quran-bil-quran') ||
     !rootGlossSource.description.includes('Maqāyīs al-Lugha') ||
-    !rootGlossSource.description.includes('page-level citation')) {
-  throw new Error('Quran bil-Quran root glosses must retain their upstream link and missing page-citation note');
+    !rootGlossSource.description.includes('tidak memberi rujukan halaman per akar') ||
+    !rootGlossSource.description.includes('ditelaah manusia maupun AI') ||
+    !rootGlossSource.descriptionEnglish.includes('no page citation per root') ||
+    !rootGlossSource.descriptionEnglish.includes('does not document whether summaries were written or reviewed by people or AI')) {
+  throw new Error('Quran bil-Quran root glosses must retain their upstream link and disclose missing entry citations and review history');
 }
 console.log('✅ Test passed: root gloss source and citation limitation are registered.');
 

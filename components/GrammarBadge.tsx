@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import GrammarLegendModal from './GrammarLegendModal';
+import { useLanguage } from '@/lib/context/LanguageContext';
 
 interface GrammarBadgeProps {
   posTagCode?: string;
@@ -11,6 +12,7 @@ interface GrammarBadgeProps {
 
 export default function GrammarBadge({ posTagCode = 'N', posTag, className = '' }: GrammarBadgeProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { language, t } = useLanguage();
   const codeUpper = posTagCode.toUpperCase();
 
   const getStyle = (code: string) => {
@@ -33,7 +35,10 @@ export default function GrammarBadge({ posTagCode = 'N', posTag, className = '' 
     }
   };
 
-  const label = posTag || (codeUpper === 'V' ? "Fi'il" : codeUpper === 'N' ? 'Isim' : codeUpper === 'P' ? 'Haraf' : 'Dhamir');
+  const localizedLabels: Record<string, string> = language === 'en'
+    ? { V: 'Verb', N: 'Noun', P: 'Particle', PRON: 'Pronoun', "FI'IL": 'Verb', ISIM: 'Noun', HARAF: 'Particle', HARF: 'Particle', DHAMIR: 'Pronoun' }
+    : { V: "Fi'il", N: 'Isim', P: 'Harf', PRON: 'Dhamir', "FI'IL": "Fi'il", ISIM: 'Isim', HARAF: 'Harf', HARF: 'Harf', DHAMIR: 'Dhamir' };
+  const label = localizedLabels[codeUpper] || posTag || codeUpper;
 
   return (
     <>
@@ -42,7 +47,7 @@ export default function GrammarBadge({ posTagCode = 'N', posTag, className = '' 
           e.stopPropagation();
           setIsModalOpen(true);
         }}
-        title="Klik untuk melihat panduan tata bahasa Sharaf & Nahwu"
+        title={t('Buka panduan Nahwu dan Sharaf', 'Open the Nahw and Sarf guide')}
         className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10px] font-sans font-semibold border transition-all cursor-pointer ${getStyle(codeUpper)} ${className}`}
       >
         <span className="font-bold">{codeUpper}</span>

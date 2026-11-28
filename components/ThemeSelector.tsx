@@ -7,7 +7,7 @@ import { useLanguage } from '@/lib/context/LanguageContext';
 import { ThemeType } from '@/lib/context/theme-config';
 
 export default function ThemeSelector() {
-  const { theme, setTheme, options } = useTheme();
+  const { theme, setTheme, layoutMode, setLayoutMode, options } = useTheme();
   const { t } = useLanguage();
   const optionsId = useId();
   const themeLabels: Record<ThemeType, string> = {
@@ -74,7 +74,7 @@ export default function ThemeSelector() {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div id={optionsId} role="group" aria-label={t('Pilihan tampilan', 'Appearance')} className="absolute right-0 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-2xl border border-hairline bg-canvas-surface p-2 shadow-hover z-50 animate-in fade-in zoom-in-95 duration-100">
+        <div id={optionsId} role="group" aria-label={t('Pilihan tampilan', 'Appearance')} className="absolute right-0 mt-2 max-h-[80dvh] w-[min(22rem,calc(100vw-2rem))] overflow-y-auto rounded-2xl border border-hairline bg-canvas-surface p-2 shadow-hover z-50 animate-in fade-in zoom-in-95 duration-100">
           <div className="px-3 pb-2 pt-1 text-sm font-semibold text-ink-primary font-sans">
             {t('Warna', 'Colors')}
           </div>
@@ -109,6 +109,26 @@ export default function ThemeSelector() {
                 </button>
               );
             })}
+          </div>
+
+          <div className="mt-2 border-t border-hairline px-3 pb-1 pt-3">
+            <p className="mb-2 text-sm font-semibold text-ink-primary">{t('Tata letak', 'Layout')}</p>
+            <div className="grid grid-cols-2 gap-1 rounded-[var(--radius-control)] bg-canvas-soft p-1">
+              {([
+                ['classic', t('Bookpaper', 'Bookpaper')],
+                ['minimal', t('Modern', 'Modern')],
+              ] as const).map(([mode, label]) => (
+                <button
+                  key={mode}
+                  type="button"
+                  aria-pressed={layoutMode === mode}
+                  onClick={() => setLayoutMode(mode)}
+                  className={`min-h-11 rounded-[var(--radius-control)] px-3 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary ${layoutMode === mode ? 'bg-canvas-surface text-primary shadow-subtle' : 'text-ink-secondary hover:text-ink-primary'}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )}

@@ -1,17 +1,30 @@
 {
-  "name": "Qurabic (Indo) — Al-Qur'an & Morfologi",
+  "name": "Qurabic — Quran Word Study",
   "short_name": "Qurabic",
-  "description": "Quranic Arabic Corpus & Root Word Explorer berbahasa Indonesia",
+  "description": "Read the Quran and explore Arabic words, roots, and sources.",
   "start_url": "/baca",
   "display": "standalone",
-  "background_color": "#fbf8f1",
-  "theme_color": "#1b4332",
+  "background_color": "#faf6ef",
+  "theme_color": "#faf6ef",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "/icons/qurabic-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/qurabic-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/qurabic-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

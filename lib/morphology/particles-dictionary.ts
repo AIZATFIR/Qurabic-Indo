@@ -1,11 +1,6 @@
 /**
- * Comprehensive Quranic Particles (Harf / Kata Tugas) Dictionary
- * 
- * Provides authentic, rich classical Nahwu (Arabic syntax) definitions,
- * syntactic rules (mabni), and contextual meanings in Indonesian for all
- * major particles and prepositions in the Al-Qur'an.
- * 
- * Invariant: Particles are indeclinable (mabni) without tri-consonantal roots.
+ * AI-assisted Qurabic notes for common Quranic particles. The explanatory text
+ * is not scholar-reviewed; QAC tags provide morphology, not these definitions.
  */
 
 import { stripArabicHarakat } from '../search/root-search';

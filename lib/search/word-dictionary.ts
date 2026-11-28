@@ -929,8 +929,8 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
         posTag: val.posTag,
         wazanOrForm: val.wazanOrForm,
         quranicNuances: val.quranicNuances,
-        isVerified: true,
-        sourceCitation: 'The Quranic Arabic Corpus v0.4 & Mushaf Standar Kemenag RI'
+        isVerified: false,
+        sourceCitation: 'Qurabic editorial draft · AI/authorship and review history not recorded'
       };
     }
   }
@@ -949,8 +949,8 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
       posTag: 'Harf',
       wazanOrForm: 'Mabni (Bentuk Tetap)',
       quranicNuances: particleInfo.quranicNuances,
-      isVerified: true,
-      sourceCitation: "Kajian Nahwu & I'rab Al-Qur'an (Kemenag RI & QAC)"
+      isVerified: false,
+      sourceCitation: 'Qurabic editorial note · AI-assisted; not scholar-reviewed'
     };
   }
 
@@ -989,16 +989,9 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
     ];
 
     const semProfile = getRootSemanticProfile(matchedRoot.id, matchedRoot.rootArabic);
-    let safeExplanation = semProfile?.coreMeaning || matchedRoot.coreMeaning || '';
-    if (!safeExplanation || safeExplanation.includes('memiliki peranan penting dalam kosakata Al-Qur\'an')) {
-      const sampleVerbs = (matchedRoot.verbs || []).filter(v => v.arabic && !v.arabic.includes('(')).slice(0, 2).map(v => v.arabic);
-      const sampleNouns = (matchedRoot.nouns || []).filter(n => n.arabic && !n.arabic.includes('(')).slice(0, 2).map(n => n.arabic);
-      if (sampleVerbs.length > 0 && sampleNouns.length > 0) {
-        safeExplanation = `Akar kata ${matchedRoot.rootArabic} melandasi pembentukan kata kerja seperti ${sampleVerbs.join(', ')} dan kata benda ${sampleNouns.join(', ')} dalam Al-Qur'an, yang secara kontekstual menyampaikan pesan ketuhanan, penguatan keimanan, serta bimbingan amal kebajikan.`;
-      } else {
-        safeExplanation = `Akar kata ${matchedRoot.rootArabic} merupakan salah satu unsur morfologis yang memperkaya keindahan bahasa dan kedalaman pesan wahyu dalam Al-Qur'an.`;
-      }
-    }
+    // QAC root membership and example forms do not establish lexical meaning.
+    // Keep the explanation empty until a sourced lexical profile is available.
+    const safeExplanation = semProfile?.coreMeaning || '';
 
     return {
       wordArabic,
@@ -1012,8 +1005,8 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
       posTag: grammar.posCategory,
       wazanOrForm: grammar.wazanOrPattern,
       totalOccurrences: matchedRoot.totalOccurrences,
-      isVerified: true,
-      sourceCitation: 'The Quranic Arabic Corpus v0.4 (Univ. of Leeds) & Kemenag RI'
+      isVerified: false,
+      sourceCitation: 'Qurabic legacy gloss · per-entry source and review history not recorded'
     };
   }
 
@@ -1040,6 +1033,6 @@ export function getWordDetailedExplanation(wordArabic: string, defaultMeaningInd
     posTag: grammar.posCategory,
     wazanOrForm: grammar.wazanOrPattern,
     isVerified: false,
-    sourceCitation: 'The Quranic Arabic Corpus v0.4 (Univ. of Leeds) & Mushaf Kemenag RI'
+    sourceCitation: 'Qurabic fallback · source for this meaning is not recorded; QAC supplies morphology, not this definition'
   };
 }

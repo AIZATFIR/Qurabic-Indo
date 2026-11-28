@@ -49,8 +49,8 @@ test('Particles Dictionary & Zero-Fallback Placeholder Tests', async (t) => {
     assert.equal(lam.morphology.pos, 'Harf');
     assert.match(lam.primaryMeaning.text, /Untuk|Milik|Bagi/);
     assert.match(lam.primaryMeaning.textEnglish || '', /for|to|belong/i);
-    assert.equal(lam.primaryMeaning.sourceBadge, 'Qurabic · gloss editorial');
-    assert.equal(lam.primaryMeaning.sourceBadgeEnglish, 'Qurabic · editorial gloss');
+    assert.equal(lam.primaryMeaning.sourceBadge, 'Catatan berbantuan AI · belum ditelaah');
+    assert.equal(lam.primaryMeaning.sourceBadgeEnglish, 'AI-assisted · unreviewed');
 
     const waw = getWordStudy('وَ');
     assert.match(waw.primaryMeaning.text, /Dan/);
@@ -59,6 +59,7 @@ test('Particles Dictionary & Zero-Fallback Placeholder Tests', async (t) => {
 
   await t.test('7. Common particles include concise bilingual function notes in the word entry', () => {
     const fi = getWordStudy('فِي');
+    const min = getWordStudy('مِنْ');
     const waw = getWordStudy('وَ');
     const kalla = getWordStudy('كَلَّا');
 
@@ -66,16 +67,19 @@ test('Particles Dictionary & Zero-Fallback Placeholder Tests', async (t) => {
     assert.match(fi.lexical.particleMeaning?.en || '', /within a location.*during a time/i);
     assert.match(waw.lexical.particleMeaning?.id || '', /menghubungkan/i);
     assert.match(waw.lexical.particleMeaning?.en || '', /links/i);
+    assert.match(min.lexical.particleMeaning?.id || '', /hubungan tepatnya mengikuti konteks/i);
+    assert.match(min.lexical.particleMeaning?.en || '', /exact relation depends on context/i);
     assert.match(kalla.lexical.particleMeaning?.id || '', /penolakan tegas/i);
     assert.match(kalla.lexical.particleMeaning?.en || '', /emphatic denial/i);
   });
 
-  await t.test('3. Root ك و ن (k-w-n) displays a sourced contextual gloss, without invented philosophy', () => {
+  await t.test('3. Root ك و ن (k-w-n) labels its legacy gloss honestly, without invented philosophy', () => {
     const study = getWordStudy('كَانَ');
     assert.equal(study.lexical.rootArabic, 'ك و ن');
     assert.ok(study.primaryMeaning.text.toLowerCase().includes('adalah'));
     assert.equal(study.lexical.rootPhilosophy, undefined);
-    assert.equal(study.primaryMeaning.sourceId, 'quran-com-wbw');
+    assert.equal(study.primaryMeaning.sourceId, 'qurabic-editorial-word-gloss');
+    assert.equal(study.primaryMeaning.sourceBadge, 'Qurabic · sumber/telaah tidak tercatat');
 
     for (const m of study.lexical.meanings || []) {
       assert.notEqual(m, 'Konsep & Turunan Akar كون');

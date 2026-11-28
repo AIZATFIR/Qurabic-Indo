@@ -8,12 +8,14 @@ import { ThemeProvider } from '@/lib/context/ThemeContext';
 import { Toaster } from 'sonner';
 import AdsController from '@/components/AdsController';
 import { LanguageProvider } from '@/lib/context/LanguageContext';
+import OfflineShellRegistration from '@/components/OfflineShellRegistration';
 
 export const viewport: Viewport = {
-  themeColor: '#f4f6f2',
+  themeColor: '#faf6ef',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
+  viewportFit: 'cover',
 };
 
 export const metadata: Metadata = {
@@ -42,6 +44,10 @@ export const metadata: Metadata = {
     follow: true,
   },
   manifest: '/manifest.json',
+  icons: {
+    icon: [{ url: '/icons/qurabic-192.png', sizes: '192x192', type: 'image/png' }],
+    apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -56,7 +62,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" className="scroll-smooth" data-theme="blend" data-layout="classic">
-      <body className="min-h-screen flex flex-col bg-canvas text-ink-primary selection:bg-primary-subdued selection:text-primary-deep font-sans pb-16 md:pb-0">
+      <body className="min-h-screen flex flex-col bg-canvas text-ink-primary selection:bg-primary-subdued selection:text-primary-deep font-sans pt-[var(--qurabic-safe-area-top)] pb-[calc(var(--qurabic-safe-area-bottom)_+_4rem)] md:pb-0">
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary font-sans text-sm font-semibold"
@@ -65,6 +71,7 @@ export default function RootLayout({
         </a>
         <LanguageProvider>
         <ThemeProvider>
+          <OfflineShellRegistration />
           <SmoothScroll>
             <Navbar />
             <main className="flex-1 w-full" id="main-content">

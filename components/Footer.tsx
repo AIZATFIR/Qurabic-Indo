@@ -50,6 +50,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/kamus" className="hover:text-primary transition-colors">
+                  {t('Kamus akar bahasa Arab', 'Arabic root dictionary')}
+                </Link>
+              </li>
+              <li>
                 <Link href="/ayat-random" className="hover:text-primary transition-colors">
                   {t('Ayat Acak & Murottal', 'Random verse and recitation')}
                 </Link>

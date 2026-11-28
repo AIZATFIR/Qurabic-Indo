@@ -27,6 +27,7 @@ interface WordEtymologyModalProps {
   surahNameIndo?: string;
   ayahArabic?: string;
   ayahIndo?: string;
+  entryMode?: 'quran' | 'dictionary';
 }
 
 export default function WordEtymologyModal({
@@ -45,6 +46,7 @@ export default function WordEtymologyModal({
   ayahArabic,
   ayahIndo,
   surahNameIndo,
+  entryMode = 'quran',
 }: WordEtymologyModalProps) {
   const { t } = useLanguage();
   const { layoutMode } = useTheme();
@@ -149,12 +151,12 @@ export default function WordEtymologyModal({
         {/* Modal Top Control Bar (Sticky with Glassmorphism) */}
         <div className={`sticky top-0 z-20 -mx-5 -mt-5 sm:-mx-8 sm:-mt-8 px-5 py-4 sm:px-8 sm:py-4.5 bg-[var(--bg-surface)]/90 backdrop-blur-md border-b border-hairline/80 flex items-center justify-between ${classic ? 'rounded-t-3xl' : 'rounded-none'} shadow-xs`}>
           <div className="flex items-center space-x-2.5">
-            <span id="word-study-modal-title" className="text-xs font-bold uppercase tracking-wider text-primary flex items-center space-x-1.5">
-              <span>{t('Bedah kata Al-Qur’an', 'Quran word study')}</span>
+              <span id="word-study-modal-title" className="text-xs font-bold uppercase tracking-wider text-primary flex items-center space-x-1.5">
+              <span>{entryMode === 'dictionary' ? t('Bedah kata Arab', 'Arabic word study') : t('Bedah kata Al-Qur’an', 'Quran word study')}</span>
             </span>
             {surahNumber && ayahNumber && wordIndex ? (
               <span className="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                QS. {surahNumber}:{ayahNumber} (#{wordIndex})
+                {t('QS.', 'Qur’an')} {surahNumber}:{ayahNumber} (#{wordIndex})
               </span>
             ) : null}
           </div>
@@ -196,7 +198,13 @@ export default function WordEtymologyModal({
           </section>}
 
           <div className="py-5 text-center" role={loadError ? 'alert' : 'status'} aria-live="polite">
-            <p className="text-sm text-ink-secondary">{loadError ? t('Analisis lengkap belum termuat. Padanan ayat di atas tetap tersedia.', 'The full analysis did not load. The verse gloss above is still available.') : t('Memuat akar, keluarga kata, dan rujukan leksikon…', 'Loading root, word family, and lexicon references…')}</p>
+            <p className="text-sm text-ink-secondary">{loadError
+              ? entryMode === 'dictionary'
+                ? t('Bedah kamus belum termuat. Coba lagi saat koneksi tersedia.', 'The dictionary entry did not load. Try again when you are online.')
+                : t('Analisis lengkap belum termuat. Padanan ayat di atas tetap tersedia.', 'The full analysis did not load. The verse gloss above is still available.')
+              : entryMode === 'dictionary'
+                ? t('Memuat makna, nahwu, dan rujukan kamus…', 'Loading meaning, grammar, and dictionary sources…')
+                : t('Memuat akar, keluarga kata, dan rujukan leksikon…', 'Loading root, word family, and lexicon references…')}</p>
             {loadError && <button type="button" onClick={() => { setLoadError(false); setRetryCount((count) => count + 1); }} className="mt-4 min-h-11 rounded-full border border-hairline px-4 text-sm font-semibold text-ink-primary hover:bg-canvas-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">{t('Coba lagi', 'Try again')}</button>}
           </div>
         </div>}

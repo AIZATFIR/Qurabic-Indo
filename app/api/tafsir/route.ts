@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAyahTafsir } from '@/lib/tafsir/tafsir-service';
+import { SURAH_LIST } from '@/lib/data/surah-list';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,10 +17,18 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const surahNumber = parseInt(surahStr, 10);
-    const ayahNumber = parseInt(ayahStr, 10);
+    if (!/^\d+$/.test(surahStr) || !/^\d+$/.test(ayahStr)) {
+      return NextResponse.json(
+        { error: 'Nomor surah atau ayah harus berupa bilangan bulat' },
+        { status: 400 }
+      );
+    }
 
-    if (isNaN(surahNumber) || surahNumber < 1 || surahNumber > 114 || isNaN(ayahNumber) || ayahNumber < 1) {
+    const surahNumber = Number(surahStr);
+    const ayahNumber = Number(ayahStr);
+    const surah = SURAH_LIST[surahNumber - 1];
+
+    if (!Number.isSafeInteger(surahNumber) || !Number.isSafeInteger(ayahNumber) || !surah || surah.number !== surahNumber || ayahNumber < 1 || ayahNumber > surah.ayahsCount) {
       return NextResponse.json(
         { error: 'Nomor surah (1-114) atau nomor ayah tidak valid' },
         { status: 400 }

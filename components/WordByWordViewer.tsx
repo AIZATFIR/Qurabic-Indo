@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { WordSegment } from '@/lib/types/morphology';
 import GrammarBadge from './GrammarBadge';
 import { Volume2 } from 'lucide-react';
 import WordEtymologyModal from './WordEtymologyModal';
+import { registerQuranAudio } from '@/lib/audio/active-audio-registry';
 
 interface WordByWordViewerProps {
   segments: WordSegment[];
@@ -25,6 +26,15 @@ export default function WordByWordViewer({
 }: WordByWordViewerProps) {
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const [selectedWord, setSelectedWord] = useState<WordSegment | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const unregisterAudioRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => () => {
+    audioRef.current?.pause();
+    audioRef.current = null;
+    unregisterAudioRef.current?.();
+    unregisterAudioRef.current = null;
+  }, []);
 
   if (!segments || segments.length === 0) return null;
 
@@ -44,12 +54,24 @@ export default function WordByWordViewer({
         }
       }
 
+      audioRef.current?.pause();
+      unregisterAudioRef.current?.();
       const audio = new Audio(audioUrl);
-      audio.play().catch(() => {
-        console.warn('Audio playback not supported for location:', location);
+      audioRef.current = audio;
+      unregisterAudioRef.current = registerQuranAudio(audio);
+      const releaseAudio = () => {
+        if (audioRef.current !== audio) return;
+        audioRef.current = null;
+        unregisterAudioRef.current?.();
+        unregisterAudioRef.current = null;
+        setPlayingIndex(null);
+      };
+      audio.onended = releaseAudio;
+      audio.onerror = releaseAudio;
+      audio.play().catch((error) => {
+        console.warn('Audio playback not supported for location:', location, error);
+        releaseAudio();
       });
-
-      audio.onended = () => setPlayingIndex(null);
     } catch (e) {
       console.error(e);
       setPlayingIndex(null);

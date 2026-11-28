@@ -1,0 +1,1 @@
+export const MAX_QURAN_WORD_GLOSS_LOCATIONS = 48;

@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
+import { mockQuranFoundationAudio } from './helpers/mock-qf-audio';
 
 test('audio progress stays continuous between media updates and freezes when paused', async ({ page }) => {
+  await mockQuranFoundationAudio(page);
   await page.route((url) => {
     const requestUrl = new URL(url);
     return requestUrl.hostname === 'api.quran.com' && requestUrl.pathname === '/api/v4/verses/by_chapter/18';

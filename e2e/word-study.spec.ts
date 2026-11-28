@@ -81,6 +81,75 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     const dialog = page.getByRole('dialog');
     await expect(dialog.getByText('Morphology & word meaning', { exact: true })).toBeVisible();
     await expect(dialog.getByText('Kajian Morfologi & Semantik Kata', { exact: true })).toHaveCount(0);
+    await expect(dialog.getByText(/Verse context \(Qur’an 18:\d+\)/)).toBeVisible();
+    await expect(dialog.getByText(/QS\./)).toHaveCount(0);
+  });
+
+  test('Indonesian word study labels MAQAM fallback as an English stem gloss', async ({ page }) => {
+    await page.route('**/api/word-glosses**', async (route) => {
+      const url = new URL(route.request().url());
+      const locations = (url.searchParams.get('locations') || '').split(',').filter(Boolean);
+      await route.fulfill({
+        status: 200,
+        json: {
+          meanings: Object.fromEntries(locations.map((location) => [location, 'establish'])),
+          sources: Object.fromEntries(locations.map((location) => [location, 'maqam-english-gloss'])),
+          language: 'id',
+        },
+      });
+    });
+
+    await page.goto('/kata/%D9%88%D9%8E%D8%A3%D9%8E%D9%82%D9%90%D9%85%D9%8F%D9%88%D8%A7?location=2%3A43%3A1', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByText('MAQAM · glos bentuk dasar (Inggris)', { exact: true }).first()).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText('establish', { exact: true }).first()).toBeVisible();
+    await page.getByRole('button', { name: 'MAQAM · glos bentuk dasar (Inggris)' }).first().click();
+    const sources = page.getByRole('dialog').filter({ has: page.getByText('Sumber data', { exact: true }) });
+    await expect(sources.getByText('MAQAM — glos leksikal Inggris')).toBeVisible();
+    await expect(sources.getByText('Tanzil Project — teks sumber yang dirujuk MAQAM')).toBeVisible();
+  });
+
+  test('English word study labels MAQAM fallback by its source', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('qurabic_language', 'en'));
+    await page.route('**/api/word-glosses**', async (route) => {
+      const url = new URL(route.request().url());
+      const locations = (url.searchParams.get('locations') || '').split(',').filter(Boolean);
+      await route.fulfill({
+        status: 200,
+        json: {
+          meanings: Object.fromEntries(locations.map((location) => [location, 'establish'])),
+          sources: Object.fromEntries(locations.map((location) => [location, 'maqam-english-gloss'])),
+          language: 'en',
+        },
+      });
+    });
+
+    await page.goto('/kata/%D9%88%D9%8E%D8%A3%D9%8E%D9%82%D9%90%D9%85%D9%8F%D9%88%D8%A7?location=2%3A43%3A1', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByText('MAQAM · English stem gloss', { exact: true }).first()).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText('MAQAM · glos bentuk dasar (Inggris)', { exact: true })).toHaveCount(0);
+  });
+
+  test('offline word study reads the cached MAQAM gloss pack', async ({ page }) => {
+    await page.goto('/baca?surah=2', { waitUntil: 'domcontentloaded' });
+    await page.evaluate(async () => {
+      await navigator.serviceWorker.ready;
+    });
+    await expect.poll(() => page.evaluate(async () => {
+      const cache = await caches.open('qurabic-reader-shell-v2');
+      return Boolean(await cache.match(new URL('/data/maqam-glosses.json', location.origin)));
+    }), { timeout: 20000 }).toBe(true);
+
+    let interruptedApiRequest = false;
+    await page.route('**/api/word-glosses**', async (route) => {
+      if (!interruptedApiRequest) {
+        interruptedApiRequest = true;
+        await page.context().setOffline(true);
+      }
+      await route.abort();
+    });
+    await page.goto('/kata/%D9%84%D9%8E%D8%A7?location=2%3A2%3A3', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByText('MAQAM · glos bentuk dasar (Inggris)', { exact: true }).first()).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText('no · not · non-', { exact: true }).first()).toBeVisible();
+    await page.context().setOffline(false);
   });
 
   test('Arramooz forms load only when the supplemental section is opened', async ({ page }) => {
@@ -97,7 +166,71 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     await expect(supplementalSection.locator('ul')).toContainText('صَبَرَ');
   });
 
-  test('root page shows its sourced gloss and links a Quranic lemma directly to Qabas', async ({ page }) => {
+  test('word family pages expose every QAC form and load glosses for the active page only', async ({ page }) => {
+    const requestedBatchSizes: number[] = [];
+    await page.route('**/api/word-glosses**', async (route) => {
+      const url = new URL(route.request().url());
+      const locations = (url.searchParams.get('locations') || '').split(',').filter(Boolean);
+      requestedBatchSizes.push(locations.length);
+      await route.fulfill({
+        status: locations.length > 48 ? 400 : 200,
+        json: {
+          meanings: Object.fromEntries(locations.map((location) => [location, `Gloss ${location}`])),
+          language: 'id',
+          source: 'Quran.com Word-by-Word · API v4',
+        },
+      });
+    });
+
+    await page.goto('/kata/%D9%88%D9%8E%D8%A3%D9%8E%D9%82%D9%90%D9%8A%D9%85%D9%8F%D9%88%D8%A7?location=2%3A43%3A1', { waitUntil: 'domcontentloaded' });
+    const family = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Keluarga Kata dalam Al-Qur’an' }) });
+    const familyPages = family.getByRole('navigation', { name: 'Halaman keluarga kata' });
+
+    await expect(familyPages.getByText('1–12 dari 38 bentuk')).toBeVisible({ timeout: 20000 });
+    await expect.poll(() => requestedBatchSizes.length, { timeout: 10000 }).toBeGreaterThan(0);
+    expect(requestedBatchSizes.every((size) => size > 0 && size <= 48)).toBe(true);
+    expect(requestedBatchSizes.reduce((total, size) => total + size, 0)).toBeLessThanOrEqual(13);
+    const formLinks = family.locator('div.grid a[href^="/kata/"]');
+    const firstPage = await formLinks.evaluateAll((links) => links.map((link) => link.getAttribute('href')));
+    const firstPageRequests = requestedBatchSizes.length;
+    await familyPages.getByRole('button', { name: 'Berikutnya' }).click();
+    await expect(familyPages.getByText('13–24 dari 38 bentuk')).toBeVisible();
+    await expect.poll(() => requestedBatchSizes.length, { timeout: 10000 }).toBeGreaterThan(firstPageRequests);
+    const secondPage = await formLinks.evaluateAll((links) => links.map((link) => link.getAttribute('href')));
+    expect(secondPage).toHaveLength(12);
+    expect(secondPage).not.toEqual(firstPage);
+  });
+
+  test('word study uses the local MAQAM glosses when the gloss API fails', async ({ page }) => {
+    let requests = 0;
+    await page.route('**/api/word-glosses**', async (route) => {
+      requests += 1;
+      const url = new URL(route.request().url());
+      const locations = (url.searchParams.get('locations') || '').split(',').filter(Boolean);
+      if (requests <= 2) {
+        await route.fulfill({ status: 503, json: { error: 'temporarily unavailable' } });
+        return;
+      }
+      await route.fulfill({
+        status: 200,
+        json: {
+          meanings: Object.fromEntries(locations.map((location) => [location, `Gloss ${location}`])),
+          language: 'id',
+          source: 'Quran.com Word-by-Word · API v4',
+        },
+      });
+    });
+
+    await page.goto('/kata/%D9%88%D9%8E%D8%A3%D9%8E%D9%82%D9%90%D9%85%D9%8F%D9%88%D8%A7?location=2%3A43%3A1', { waitUntil: 'domcontentloaded' });
+    const family = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Keluarga Kata dalam Al-Qur’an' }) });
+    const familyError = family.getByRole('status').filter({ hasText: 'Sebagian makna keluarga kata gagal dimuat.' });
+    await expect(family.getByText('MAQAM · glos bentuk dasar (Inggris)').first()).toBeVisible({ timeout: 15000 });
+    await expect(familyError).toHaveCount(0);
+    expect(requests).toBeGreaterThanOrEqual(2);
+  });
+
+  test('root page labels the QBQ summary and links a Quranic lemma directly to Qabas', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('qurabic_language', 'en'));
     const supplementalRequests: string[] = [];
     page.on('request', request => {
       if (request.url().includes('/api/root-detail?')) supplementalRequests.push(request.url());
@@ -109,15 +242,18 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     const meaningSection = page.locator('section[aria-labelledby="root-meaning-heading"]');
     expect(renderedHtml).not.toContain('Memuat data akar dan kamus');
     expect(supplementalRequests).toHaveLength(0);
-    await expect(meaningSection).toContainText('Ringkasan Inggris · Quran bil-Quran · makna akar dikreditkan ke Lane; tanpa rujukan halaman per akar');
-    await expect(meaningSection).toContainText('The root رَأَى primarily means');
-    await expect(meaningSection.getByRole('link', { name: 'Lihat lema terkait di Qabas · Birzeit' })).toHaveAttribute('href', 'https://sina.birzeit.edu/qabas/lemma/202001196');
+    await expect(meaningSection).toContainText('Original English dictionary entry · Lane, 1863');
+    const datasetSummary = meaningSection.locator('details').filter({ has: page.getByText('Open dataset summary · authorship is undocumented', { exact: true }) });
+    await expect(datasetSummary).toBeVisible();
+    await datasetSummary.locator('summary').click();
+    await expect(datasetSummary.locator('p[lang="en"]')).toContainText('The root رَأَى primarily means');
+    await expect(meaningSection.getByRole('link', { name: 'Open a related Qur’anic lemma in Qabas · Birzeit' })).toHaveAttribute('href', 'https://sina.birzeit.edu/qabas/lemma/202001196');
   });
 
   test('root page loads sourced Arabic forms outside the Quran only when requested', async ({ page }) => {
     const requests: string[] = [];
     page.on('request', (request) => {
-      if (request.url().includes('/api/arramooz?')) requests.push(request.url());
+      if (request.url().includes('/api/arramooz/search?')) requests.push(request.url());
     });
     await page.goto('/akar/S-b-r', { waitUntil: 'domcontentloaded' });
     const section = page.locator('section[aria-labelledby="other-root-forms-heading"]');
@@ -165,52 +301,66 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     await expect(meaningSection.getByRole('link', { name: /Lihat lema لُؤْلُؤَةٌ/ })).toHaveAttribute('href', 'https://www.laneslexicon.com/word/لؤلؤة');
   });
 
-  test('root page leads with its readable source gloss and preserves the cited Lane entry', async ({ page }) => {
+  test('root page discloses QBQ authorship limits and preserves the cited Lane entry', async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem('qurabic_language', 'id'));
     await page.goto('/akar/d-y-n', { waitUntil: 'domcontentloaded' });
 
     const meaningSection = page.locator('section[aria-labelledby="root-meaning-heading"]');
-    await expect(meaningSection).toContainText('Ringkasan Inggris · Quran bil-Quran · makna akar dikreditkan ke Lane; tanpa rujukan halaman per akar');
-    await expect(meaningSection.locator('p[lang="en"]').first()).toContainText('The root "dyn" primarily means to be obedient');
-    await expect(meaningSection.getByText('Kutipan asli Lane · bahasa Inggris', { exact: true })).toBeVisible();
-    await expect(meaningSection.locator('details').filter({ hasText: 'Kutipan asli Lane · bahasa Inggris' })).toContainText('Part 3, p. 943');
+    const datasetSummary = meaningSection.locator('details').filter({ has: page.getByText('Buka ringkasan dataset · proses penulisan tidak terdokumentasi', { exact: true }) });
+    await expect(datasetSummary).toBeVisible();
+    await expect(meaningSection.locator('p[lang="en"]').first()).toContainText('He was, or became, obedient');
+    await datasetSummary.locator('summary').click();
+    await expect(datasetSummary.locator('p[lang="en"]')).toContainText('The root "dyn" primarily means to be obedient');
+    await expect(meaningSection.locator('p').filter({ hasText: 'Kutipan asli Lane · bahasa Inggris' })).toBeVisible();
+    await expect(meaningSection).toContainText('Buku I, Bagian 3, hlm. 943');
   });
 
-  test('root page leads with the readable sourced gloss and keeps noisy Lane text available on demand', async ({ page }) => {
+  test('root page labels the QBQ summary and keeps the Lane excerpt available on demand', async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem('qurabic_language', 'en'));
     await page.goto('/akar/S-b-r', { waitUntil: 'domcontentloaded' });
 
     const meaningSection = page.locator('section[aria-labelledby="root-meaning-heading"]');
-    await expect(meaningSection).toContainText('English summary · Quran bil-Quran · root meanings credited to Lane; no page citation per root');
-    await expect(meaningSection.locator('p[lang="en"]').first()).toContainText('The root "Sbr" primarily means to confine or restrain');
-    await expect(meaningSection.getByText(/Original Lane entry/)).toBeVisible();
+    const datasetSummary = meaningSection.locator('details').filter({ has: page.getByText('Open dataset summary · authorship is undocumented', { exact: true }) });
+    await expect(datasetSummary).toBeVisible();
+    await expect(meaningSection.locator('p[lang="en"]').first()).toContainText('He confined him; held him in custody');
+    await datasetSummary.locator('summary').click();
+    await expect(datasetSummary.locator('p[lang="en"]')).toContainText('The root "Sbr" primarily means to confine or restrain');
+    await expect(meaningSection.getByText('Read the full Lane excerpt · English', { exact: true })).toBeVisible();
   });
 
-  test('sourced root gloss stays readable in both language modes with Lane available on demand', async ({ page }) => {
+  test('QBQ root summary stays readable in both language modes with Lane available on demand', async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem('qurabic_language', 'id'));
     await page.goto('/akar/m-l-k', { waitUntil: 'domcontentloaded' });
     const indonesianMeaning = page.locator('section[aria-labelledby="root-meaning-heading"]');
-    await expect(indonesianMeaning).toContainText('Ringkasan Inggris · Quran bil-Quran · makna akar dikreditkan ke Lane; tanpa rujukan halaman per akar');
-    await expect(indonesianMeaning.locator('p[lang="en"]').first()).toContainText('The root ملك (mlk) primarily means to possess or own');
+    const indonesianSummary = indonesianMeaning.locator('details').filter({ has: page.getByText('Buka ringkasan dataset · proses penulisan tidak terdokumentasi', { exact: true }) });
+    await expect(indonesianSummary).toBeVisible();
+    await indonesianSummary.locator('summary').click();
+    await expect(indonesianSummary.locator('p[lang="en"]')).toContainText('The root ملك (mlk) primarily means to possess or own');
 
     await page.addInitScript(() => localStorage.setItem('qurabic_language', 'en'));
     await page.reload({ waitUntil: 'domcontentloaded' });
     const englishMeaning = page.locator('section[aria-labelledby="root-meaning-heading"]');
-    await expect(englishMeaning).toContainText('English summary · Quran bil-Quran · root meanings credited to Lane; no page citation per root');
-    await expect(englishMeaning.locator('p[lang="en"]').first()).toContainText('The root ملك (mlk) primarily means to possess or own');
-    await expect(englishMeaning.getByText('Original Lane entry · English', { exact: true })).toBeVisible();
+    const englishSummary = englishMeaning.locator('details').filter({ has: page.getByText('Open dataset summary · authorship is undocumented', { exact: true }) });
+    await expect(englishSummary).toBeVisible();
+    await englishSummary.locator('summary').click();
+    await expect(englishSummary.locator('p[lang="en"]')).toContainText('The root ملك (mlk) primarily means to possess or own');
+    await expect(englishMeaning.getByText('Read the full Lane excerpt · English', { exact: true })).toBeVisible();
   });
 
   test('English root entry labels the indexed Lane text accurately', async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem('qurabic_language', 'en'));
     await page.goto('/akar/r-H-m', { waitUntil: 'domcontentloaded' });
 
-    await expect(page.getByText('English summary · Quran bil-Quran · root meanings credited to Lane; no page citation per root')).toBeVisible();
+    await expect(page.getByText('Original English dictionary entry · Lane, 1863', { exact: true })).toBeVisible();
+    await expect(page.getByText('Open dataset summary · authorship is undocumented', { exact: true })).toBeVisible();
     await expect(page.getByText('Original English source excerpt · Lane, 1863')).toHaveCount(0);
-    const laneExcerpt = page.locator('section[aria-labelledby="root-meaning-heading"] details').filter({ hasText: 'Original Lane entry · English' });
-    await expect(laneExcerpt.getByText('Original Lane entry · English')).toBeVisible();
+    const laneExcerpt = page.locator('section[aria-labelledby="root-meaning-heading"] details').filter({ hasText: 'Read the full Lane excerpt · English' });
+    await expect(laneExcerpt.locator('summary')).toHaveText('Read the full Lane excerpt · English');
     await laneExcerpt.locator('summary').click();
     await expect(laneExcerpt).toContainText('Edward William Lane, An Arabic-English Lexicon');
+    const firstOccurrence = page.locator('#concordance a').first();
+    await expect(firstOccurrence).toContainText('Qur’an');
+    await expect(firstOccurrence).not.toContainText('QS.');
   });
 
   test('rare roots show concise Quranic Arabic Corpus glosses with source links', async ({ page }) => {
@@ -249,38 +399,38 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     await page.goto('/kata/%D8%A7%D9%84%D8%B1%D9%91%D9%8E%D8%AD%D9%90%D9%8A%D9%85%D9%90?location=1%3A1%3A4', { waitUntil: 'networkidle' });
 
     await expect(page.getByText('Each form is translated in its sample verse. Words sharing a root can have different meanings.')).toHaveCount(0);
-    await page.getByRole('button', { name: 'Baca definisi asli Lane · English' }).click();
+    await page.getByRole('link', { name: /Lihat definisi asli Lane · English/ }).click();
     const laneSection = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Definisi klasik · Lane’s Lexicon (English)' }) });
-    const secondSense = laneSection.locator('details').filter({ hasText: 'Sense #2' });
+    await expect(laneSection).toBeVisible();
+    await laneSection.getByRole('button', { name: /Baca 2 definisi Lane · English/ }).click();
+    const secondSense = laneSection.locator('details').filter({ hasText: /Makna #2|Sense #2/ });
+    await expect(secondSense).toBeVisible();
     await secondSense.locator('summary').click();
     await expect(secondSense).toContainText('Sometimes it is syn. with');
     await expect(page.getByRole('link', { name: /Qabas · Birzeit/ })).toHaveAttribute('href', 'https://sina.birzeit.edu/qabas/lemma/202003981');
   });
 
-  test('halaman نَسْتَعِينُ menampilkan bento akar, filosofi semantik, dan keluarga kata', async ({ page }) => {
+  test('halaman نَسْتَعِينُ menampilkan akar, frekuensi, dan keluarga kata', async ({ page }) => {
     await page.goto('/kata/%D9%86%D9%8E%D8%B3%D9%91%D8%AA%D9%8E%D8%B9%D9%90%D9%8A%D9%86%D9%8F', { waitUntil: 'networkidle' });
 
     // Cek judul kata & transliterasi
     await expect(page.locator('text=نَسْتَعِينُ').first()).toBeVisible();
 
-    // Cek bento akar kata ع و ن
+    // Akar and corpus count remain visible in the current reader layout.
     await expect(page.locator('text=Akar Kata').first()).toBeVisible();
-    await expect(page.locator('text=11× di Al-Qur\'an')).toBeVisible();
-
-    // Cek filosofi & intisari makna akar (mengisi ruang yang sebelumnya bolong)
-    await expect(page.locator('text=Filosofi & Intisari Makna Akar')).toBeVisible();
-    await expect(page.locator('text=Pertolongan, saling membantu')).toBeVisible();
+    await expect(page.getByText(/11× di Al-Qur.an/)).toBeVisible();
 
     // Cek keluarga kata
-    await expect(page.locator('text=Keluarga Kata dalam Al-Qur\'an')).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Keluarga Kata dalam Al-Qur.an/ })).toBeVisible();
     await expect(page.locator('text=7 Bentuk')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Buka Kamus Akar' })).toHaveAttribute('href', '/akar/E-w-n');
   });
 
   test('halaman بَشَرٌ menampilkan data leksikal dan akar kata ب ش ر', async ({ page }) => {
     await page.goto('/kata/%D8%A8%D9%8E%D8%B4%D9%8E%D8%B1%D9%8C', { waitUntil: 'networkidle' });
 
     await expect(page.locator('text=بَشَرٌ').first()).toBeVisible();
-    await expect(page.locator('text=123× di Al-Qur\'an')).toBeVisible();
+    await expect(page.getByText(/123× di Al-Qur.an/)).toBeVisible();
     await expect(page.locator('text=Akar Kata').first()).toBeVisible();
   });
 });

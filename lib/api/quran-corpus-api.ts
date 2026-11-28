@@ -263,7 +263,7 @@ export async function fetchVerseWords(verseKey: string): Promise<WordSegment[]> 
           posTagCode: posCode,
           posTag: grammar.posCategory,
           rootArabic: matchedRoot?.rootArabic,
-          meaningIndo: meaningIndo || 'Kata Al-Qur\'an',
+          meaningIndo,
           wordLocation: w.location || `${verseKey}:${idx + 1}`
         };
       });

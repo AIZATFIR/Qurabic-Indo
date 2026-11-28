@@ -20,9 +20,7 @@ const ThemeContext = createContext<ThemeContextValue>({
 });
 
 const STORAGE_KEY = 'qurabic_theme_preference';
-// Start everyone on the restored classic interface once. The previous key may
-// contain `minimal` from the interim redesign and would otherwise keep the
-// restored interface hidden after deployment.
+const LAYOUT_STORAGE_KEY = 'qurabic_layout_preference_v3';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeType>('blend');
@@ -34,10 +32,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const saved = localStorage.getItem(STORAGE_KEY);
       const normalized = saved ? normalizeTheme(saved) : null;
       if (normalized) setThemeState(normalized);
-      // The restored bookpaper interface has one shared visual language.
-      // Clear the interim layout preference so an older "minimal" choice
-      // cannot leave isolated square panels in an otherwise classic reader.
-      localStorage.removeItem('qurabic_layout_preference_v2');
+      const savedLayout = localStorage.getItem(LAYOUT_STORAGE_KEY);
+      if (savedLayout === 'minimal' || savedLayout === 'classic') setLayoutModeState(savedLayout);
     } catch (e) {
       console.warn('LocalStorage theme access not permitted', e);
     }
@@ -53,19 +49,26 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const root = document.documentElement;
     root.setAttribute('data-theme', theme);
     root.classList.remove('dark');
+    const themeColor = getComputedStyle(root).getPropertyValue('--bg-page').trim();
+    if (/^#[\da-f]{6}$/i.test(themeColor)) {
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor);
+    }
   }, [theme, mounted]);
 
   useEffect(() => {
     if (!mounted) return;
-    document.documentElement.setAttribute('data-layout', 'classic');
-  }, [mounted]);
+    document.documentElement.setAttribute('data-layout', layoutMode);
+    try {
+      localStorage.setItem(LAYOUT_STORAGE_KEY, layoutMode);
+    } catch {}
+  }, [layoutMode, mounted]);
 
   const setTheme = (nextTheme: ThemeType) => {
     setThemeState(nextTheme);
   };
 
-  const setLayoutMode = () => {
-    setLayoutModeState('classic');
+  const setLayoutMode = (mode: 'classic' | 'minimal') => {
+    setLayoutModeState(mode);
   };
 
   return (

@@ -234,6 +234,8 @@ export function getLaneLemmaRecord(
 export function getLaneRootRecord(rootBw: string, quranOnly = false): LaneRootLexicon | null {
   if (!rootBw) return null;
   const candidates = getRootKeyVariants(rootBw);
+  const requestedRootArabic = buckwalterToArabic(candidates[0]);
+  const normalizedRequestedRootArabic = normalizeArabicKey(requestedRootArabic);
 
   for (const cand of candidates) {
     const chunkFilename =
@@ -246,14 +248,14 @@ export function getLaneRootRecord(rootBw: string, quranOnly = false): LaneRootLe
       if (chunk) {
         const rootEntries = chunk.filter(e =>
           e.rootBw === cand ||
-          candidates.includes(e.rootBw) ||
-          (e.rootArabic && (e.rootArabic === cand || normalizeArabicKey(e.rootArabic) === normalizeArabicKey(cand)))
+          candidates.includes(e.rootBw)
         );
         if (rootEntries.length > 0) {
           const first = rootEntries[0];
+          const matchingRootBw = rootEntries.find(e => candidates.includes(e.rootBw))?.rootBw;
           return {
             rootArabic: first.rootArabic || buckwalterToArabic(rootBw),
-            rootBw: first.rootBw || rootBw,
+            rootBw: matchingRootBw || rootBw,
             volume: first.volume,
             page: first.page,
             entries: rootEntries,
@@ -261,6 +263,27 @@ export function getLaneRootRecord(rootBw: string, quranOnly = false): LaneRootLe
           };
         }
       }
+    }
+  }
+
+  const arabicChunkFilename =
+    getManifestChunk(`root_ar:${requestedRootArabic}`, quranOnly) ||
+    getManifestChunk(`root_norm:${normalizedRequestedRootArabic}`, quranOnly);
+  if (arabicChunkFilename) {
+    const chunk = loadChunk(arabicChunkFilename);
+    const rootEntries = chunk?.filter(e =>
+      e.rootArabic && normalizeArabicKey(e.rootArabic) === normalizedRequestedRootArabic
+    ) || [];
+    if (rootEntries.length > 0) {
+      const first = rootEntries[0];
+      return {
+        rootArabic: first.rootArabic,
+        rootBw: rootEntries.find(e => candidates.includes(e.rootBw))?.rootBw || rootBw,
+        volume: first.volume,
+        page: first.page,
+        entries: rootEntries,
+        sourceCitation: `Edward William Lane, An Arabic-English Lexicon · Book I, Part ${first.volume}, p. ${first.page}`
+      };
     }
   }
 

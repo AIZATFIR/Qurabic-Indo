@@ -7,8 +7,10 @@ import VideoCard from '@/components/VideoCard';
 import VideoTheaterModal from '@/components/VideoTheaterModal';
 import KalaamShowcaseFrame from '@/components/KalaamShowcaseFrame';
 import Link from 'next/link';
+import { useLanguage } from '@/lib/context/LanguageContext';
 
 export default function RekomendasiPage() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'videos' | 'apps'>('videos');
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -35,11 +37,11 @@ export default function RekomendasiPage() {
           className="inline-flex items-center space-x-2 text-sm text-ink-mute hover:text-primary transition-colors font-medium font-sans"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Kembali ke Beranda</span>
+          <span>{t('Kembali ke Beranda', 'Back to home')}</span>
         </Link>
 
         <span className="text-xs text-primary font-medium font-sans px-3 py-1 bg-primary-subdued rounded-full">
-          Rujukan Tambahan
+          {t('Rujukan Tambahan', 'Further resources')}
         </span>
       </div>
 
@@ -47,16 +49,16 @@ export default function RekomendasiPage() {
       <div className="text-center max-w-3xl mx-auto space-y-3">
         <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-primary-subdued text-primary text-xs font-medium">
           <Compass className="w-3.5 h-3.5" />
-          <span>Kurasi Sumber Belajar</span>
+          <span>{t('Sumber belajar', 'Study resources')}</span>
         </div>
 
         <h1 className="text-3xl sm:text-4xl font-light text-ink-primary tracking-tight font-sans">
-          Rekomendasi Kajian &amp; <br />
-          <span className="font-semibold text-primary">Aplikasi Belajar Al-Qur&apos;an</span>
+          {t('Kajian pilihan &', 'Selected talks &')} <br />
+          <span className="font-semibold text-primary">{t('aplikasi belajar Al-Qur’an', 'Quran learning apps')}</span>
         </h1>
 
         <p className="text-sm sm:text-base text-ink-secondary leading-relaxed font-sans max-w-2xl mx-auto">
-          Kurasi video pilihan yang membedah keajaiban kata, ayat, dan surat, serta rujukan sarana belajar harian untuk memperkaya pemahaman.
+          {t('Video pilihan tentang kata dan ayat Al-Qur’an, beserta rujukan untuk belajar lebih lanjut.', 'Selected videos on Quranic words and verses, with resources for further study.')}
         </p>
       </div>
 
@@ -72,7 +74,7 @@ export default function RekomendasiPage() {
             }`}
           >
             <Video className="w-4 h-4" />
-            <span>Kajian Video Pilihan</span>
+            <span>{t('Video pilihan', 'Selected videos')}</span>
             <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary-subdued text-primary font-bold">
               {CURATED_VIDEOS.length}
             </span>
@@ -87,7 +89,7 @@ export default function RekomendasiPage() {
             }`}
           >
             <Smartphone className="w-4 h-4" />
-            <span>Aplikasi Belajar Harian (Kalaam)</span>
+            <span>{t('Aplikasi belajar (Kalaam)', 'Study app (Kalaam)')}</span>
           </button>
         </div>
       </div>
@@ -95,7 +97,8 @@ export default function RekomendasiPage() {
       {/* TAB 1: CURATED VIDEOS */}
       {activeTab === 'videos' && (
         <section aria-labelledby="videos-heading" className="space-y-8 animate-in fade-in duration-200">
-          <h2 id="videos-heading" className="sr-only">Daftar Kajian Video Pilihan</h2>
+          <h2 id="videos-heading" className="sr-only">{t('Daftar video pilihan', 'Selected videos')}</h2>
+          <p className="text-xs text-ink-mute">{t('Judul dan ringkasan mengikuti bahasa asli video.', 'Video titles and summaries are shown in their original language.')}</p>
           
           {/* Filter Bar & Search */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-canvas-surface p-4 rounded-2xl border border-hairline shadow-subtle">
@@ -112,7 +115,7 @@ export default function RekomendasiPage() {
                       : 'bg-canvas-soft text-ink-mute hover:text-ink-primary hover:bg-canvas-surface border border-hairline/60'
                   }`}
                 >
-                  {cat}
+                  {cat === 'Semua' ? t('Semua', 'All') : cat === 'Bedah Kata' ? t('Bedah Kata', 'Word study') : cat === 'Tadabbur Ayat' ? t('Tadabbur Ayat', 'Verse reflection') : cat === 'Rahasia Balaghah' ? t('Balaghah', 'Rhetoric') : t('Kaidah Morfologi', 'Morphology')}
                 </button>
               ))}
             </div>
@@ -124,7 +127,7 @@ export default function RekomendasiPage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari video, ustadz, tema..."
+                placeholder={t('Cari video, pengajar, tema', 'Search videos, speakers, topics')}
                 className="w-full pl-9 pr-4 py-2 rounded-xl bg-canvas-soft border border-hairline text-xs sm:text-sm text-ink-primary placeholder:text-ink-mute focus:outline-none focus:ring-2 focus:ring-primary/20 font-sans"
               />
             </div>
@@ -134,7 +137,7 @@ export default function RekomendasiPage() {
           {filteredVideos.length === 0 ? (
             <div className="p-12 text-center bg-canvas-surface border border-hairline rounded-3xl space-y-2 text-ink-mute font-sans shadow-subtle">
               <Video className="w-10 h-10 mx-auto text-ink-mute opacity-40" />
-              <p className="text-sm font-medium">Tidak ada video yang cocok dengan pencarian Anda.</p>
+              <p className="text-sm font-medium">{t('Tidak ada video yang cocok dengan pencarian.', 'No videos match your search.')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
@@ -160,7 +163,7 @@ export default function RekomendasiPage() {
       {/* TAB 2: RECOMMENDED APPS (KALAAM APP SHOWCASE) */}
       {activeTab === 'apps' && (
         <section aria-labelledby="apps-heading" className="animate-in fade-in duration-200 pt-4">
-          <h2 id="apps-heading" className="sr-only">Rekomendasi Aplikasi Belajar Al-Qur&apos;an</h2>
+          <h2 id="apps-heading" className="sr-only">{t('Aplikasi belajar Al-Qur’an', 'Quran learning apps')}</h2>
           <KalaamShowcaseFrame />
         </section>
       )}

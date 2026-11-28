@@ -3,8 +3,6 @@ import { ROOT_DATABASE } from '@/lib/data/roots';
 import { getQACRecordsByRoot } from '@/lib/morphology/qac-parser';
 import { getCanonicalRootDetail } from '@/lib/morphology/canonical-service';
 import { buckwalterToArabic } from '@/lib/morphology/buckwalter';
-import wbwIndonesian from '@/lib/data/wbw-indonesian-glosses.json';
-import wbwEnglish from '@/lib/data/wbw-english-glosses.json';
 import { getQabasLemmaId } from '@/lib/lexicon/qabas-lemma-lookup';
 
 export const revalidate = 86_400;
@@ -21,8 +19,6 @@ export async function GET(request: NextRequest) {
   const root = getCanonicalRootDetail(matchedRoot.id, { includeOccurrences: false });
   if (!root) return NextResponse.json({ error: 'Root data is not available.' }, { status: 404 });
 
-  const meaningsIndo = wbwIndonesian.meanings as Record<string, string>;
-  const meaningsEnglish = wbwEnglish.meanings as Record<string, string>;
   const records = getQACRecordsByRoot(matchedRoot.id.replace(/-/g, ''));
   const lemmaSamples: Record<string, {
     coordinate: string;
@@ -42,8 +38,6 @@ export async function GET(request: NextRequest) {
       coordinate: record.wordLocationKey,
       formArabic: record.formArabic || buckwalterToArabic(record.lemma),
       ...(record.verbForm ? { verbForm: record.verbForm } : {}),
-      ...(meaningsIndo[record.wordLocationKey] ? { meaningIndo: meaningsIndo[record.wordLocationKey] } : {}),
-      ...(meaningsEnglish[record.wordLocationKey] ? { meaningEnglish: meaningsEnglish[record.wordLocationKey] } : {}),
       ...(qabasLemmaId ? { qabasLemmaId } : {}),
     };
   }

@@ -120,6 +120,7 @@ async function fixture(surah, language, page) {
   await page.locator('#ayah-1 [role="button"]').first().click();
   const dialog = page.getByRole('dialog'); await dialog.waitFor();
   await dialog.getByText('All Praise', { exact: false }).first().waitFor({ timeout: 60000 });
+  await dialog.getByText('Quran.com · English', { exact: true }).waitFor({ timeout: 60000 });
   assert.ok(!/Filosofi Dasar Makna|Matriks Tasrif|mengubah potensi/.test(await dialog.innerText()));
   await page.screenshot({ path: path.join(out, 'entry-english.png'), fullPage: true });
   await page.keyboard.press('Escape');
@@ -145,7 +146,8 @@ async function fixture(surah, language, page) {
   assert.equal((await context.request.get(`${base}/api/audio-translation?text=test`)).status(), 410);
   log('no synthesized audio, including removed endpoint');
   const detail = await (await context.request.get(`${base}/api/word-detail?location=9:1:1`)).json();
-  assert.ok(detail.data.study.primaryMeaning.textEnglish);
+  assert.equal(detail.data.study.primaryMeaning.textEnglish, undefined, 'Static word-study responses do not claim an English gloss before the locale-aware Quran.com request');
+  assert.equal(detail.data.study.primaryMeaning.sourceIdEnglish, undefined);
   assert.ok(!detail.data.study.linguisticExplanation && !detail.data.study.grammarDerivation);
   for (const [word, english] of [['وَ', 'and'], ['فِي', 'in'], ['كَلَّا', 'nay']]) {
     const data = await (await context.request.get(`${base}/api/word-detail?word=${encodeURIComponent(word)}`)).json();

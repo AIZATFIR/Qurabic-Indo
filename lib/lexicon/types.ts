@@ -1,10 +1,9 @@
 /**
- * Types and Contracts for Qurabic Lexical Ingestion & Word Study Layer
- * Sourced strictly from authoritative classical lexicons and Quranic Arabic Corpus v0.4.
+ * Types and Contracts for Qurabic Lexical Ingestion & Word Study Layer.
  * Invariants:
- * 1. Zero AI-generated definitions or fabricated dictionary citations.
- * 2. Strict provenance tracking: every lexical summary requires valid basisSenseIds.
- * 3. Clear distinction between exact lemma definitions vs root fallbacks (Root ≠ Definition).
+ * 1. Never label an AI/editorial draft as a verified lexical definition.
+ * 2. Keep source and review status explicit; a citation does not certify a claim.
+ * 3. Distinguish exact lemma definitions from root matches (Root ≠ Definition).
  */
 
 import { VerseOccurrence } from '../types/morphology';

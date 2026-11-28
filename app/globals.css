@@ -21,6 +21,8 @@
   --color-border: #E5DACB;
   --radius-surface: 1.5rem;
   --radius-control: 0.875rem;
+  --qurabic-safe-area-top: max(env(safe-area-inset-top, 0px), var(--safe-area-inset-top, 0px));
+  --qurabic-safe-area-bottom: max(env(safe-area-inset-bottom, 0px), var(--safe-area-inset-bottom, 0px));
 }
 
 [data-theme="bookpaper"] {

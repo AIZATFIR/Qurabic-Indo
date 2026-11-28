@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { mockQuranFoundationAudio } from './helpers/mock-qf-audio';
 
 function silentWav(durationSeconds = 10): Buffer {
   const sampleRate = 8000;
@@ -36,7 +37,27 @@ async function waitForReader(page: import('@playwright/test').Page) {
   await expect(page.locator('#ayah-1')).toBeVisible();
 }
 
+test('tafsir load failure offers a retry and recovers without reopening the verse', async ({ page }) => {
+  await mockQuranFoundationAudio(page);
+  let requests = 0;
+  await page.route('**/api/tafsir*', route => {
+    requests += 1;
+    return requests === 1
+      ? route.fulfill({ status: 503, json: { error: 'Tafsir unavailable' } })
+      : route.fulfill({ status: 200, json: { data: { text: 'Tafsir text from the configured source.', sourceTitle: 'Pinned archive' } } });
+  });
+  await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
+  await waitForReader(page);
+  await page.getByRole('button', { name: 'Tafsir', exact: true }).first().click();
+
+  await expect(page.getByRole('alert').getByText('Tafsir gagal dimuat. Periksa koneksi lalu coba lagi.')).toBeVisible();
+  await page.getByRole('button', { name: 'Coba lagi', exact: true }).click();
+  await expect(page.getByText('Tafsir text from the configured source.')).toBeVisible();
+  expect(requests).toBe(2);
+});
+
 test('word meanings can be hidden and restored from reading settings', async ({ page }) => {
+  await mockQuranFoundationAudio(page);
   await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
   await waitForReader(page);
   await page.getByRole('button', { name: 'Pengaturan Tampilan' }).click();
@@ -51,6 +72,7 @@ test('word meanings can be hidden and restored from reading settings', async ({ 
 });
 
 test('focus mode leaves the reader and a compact header visible', async ({ page }) => {
+  await mockQuranFoundationAudio(page);
   await mockVerseAudio(page, 1);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
@@ -69,6 +91,7 @@ test('focus mode leaves the reader and a compact header visible', async ({ page 
 });
 
 test('audio player can shrink to a small control and hide without stopping', async ({ page }) => {
+  await mockQuranFoundationAudio(page);
   await mockVerseAudio(page, 1);
   await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
   await waitForReader(page);
@@ -76,7 +99,9 @@ test('audio player can shrink to a small control and hide without stopping', asy
   const player = page.getByLabel('Pemutar audio Al-Qur’an');
   await page.getByRole('button', { name: 'Ringkas pemutar' }).click();
   await expect(player).toHaveAttribute('data-player-mode', 'compact');
-  expect(await player.evaluate(element => element.getBoundingClientRect().width)).toBeLessThanOrEqual(260);
+  expect(await player.evaluate(element => element.getBoundingClientRect().width)).toBeLessThanOrEqual(280);
+  await expect(page.getByRole('button', { name: 'Ayat sebelumnya' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Ayat selanjutnya' })).toBeVisible();
 
   await page.getByRole('button', { name: 'Sembunyikan pemutar' }).click();
   await expect(player).toHaveAttribute('data-player-mode', 'hidden');
@@ -85,7 +110,60 @@ test('audio player can shrink to a small control and hide without stopping', asy
   await expect(page.getByRole('button', { name: 'Jeda', exact: true })).toBeVisible();
 });
 
+test('ayah repeat offers a chosen total play count', async ({ page }) => {
+  await mockQuranFoundationAudio(page);
+  await mockVerseAudio(page, 1);
+  await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
+  await waitForReader(page);
+  await page.getByRole('button', { name: 'Putar Tilawah Ayat 1', exact: true }).click();
+  const repeatMode = page.getByRole('combobox', { name: 'Ulangi' });
+  await repeatMode.selectOption('ayah');
+  const repeatCount = page.getByRole('combobox', { name: 'Jumlah pengulangan ayat' });
+  await expect(repeatCount).toBeVisible();
+  await repeatCount.selectOption('5');
+  await expect(repeatCount).toHaveValue('5');
+});
+
+test('ayah repeat plays the selected verse twice before advancing', async ({ page }) => {
+  await mockQuranFoundationAudio(page);
+  await page.route('**/verses.quran.com/Alafasy/mp3/018001.mp3', route => route.fulfill({
+    status: 200,
+    headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'audio/wav' },
+    body: silentWav(4),
+  }));
+  await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
+  await waitForReader(page);
+  await page.evaluate(() => {
+    const audioWindow = window as typeof window & { __audioPlaySources?: string[] };
+    audioWindow.__audioPlaySources = [];
+    const originalPlay = HTMLMediaElement.prototype.play;
+    HTMLMediaElement.prototype.play = function () {
+      if (this instanceof HTMLAudioElement) audioWindow.__audioPlaySources?.push(this.currentSrc || this.src);
+      return originalPlay.call(this);
+    };
+  });
+  await page.getByRole('button', { name: 'Putar Tilawah Ayat 1', exact: true }).click();
+  const player = page.getByLabel('Pemutar audio Al-Qur’an');
+  const pause = player.getByRole('button', { name: 'Jeda', exact: true });
+  await expect(pause).toBeVisible();
+  await pause.click();
+  const resume = player.getByRole('button', { name: 'Putar', exact: true });
+  await expect(resume).toBeVisible();
+  await player.getByRole('combobox', { name: 'Ulangi' }).selectOption('ayah');
+  await player.getByRole('combobox', { name: 'Jumlah pengulangan ayat' }).selectOption('2');
+
+  const previousSources = await page.evaluate(() => (window as typeof window & { __audioPlaySources?: string[] }).__audioPlaySources || []);
+  const verseSource = previousSources.at(-1);
+  expect(verseSource).toBeTruthy();
+  await resume.click();
+  await expect.poll(async () => page.evaluate(({ source, previousLength }) => {
+    const played = (window as typeof window & { __audioPlaySources?: string[] }).__audioPlaySources || [];
+    return played.slice(previousLength).filter(item => item === source).length;
+  }, { source: verseSource, previousLength: previousSources.length }), { timeout: 10000 }).toBeGreaterThanOrEqual(2);
+});
+
 test('audio jumps align the beginning of the verse below the sticky header', async ({ page }) => {
+  await mockQuranFoundationAudio(page);
   await mockVerseAudio(page, 2);
   await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
   await waitForReader(page);
@@ -109,6 +187,7 @@ test('audio jumps align the beginning of the verse below the sticky header', asy
 });
 
 test('verse audio can be saved to persistent app storage', async ({ page }) => {
+  await mockQuranFoundationAudio(page);
   await page.setViewportSize({ width: 390, height: 844 });
   await mockVerseAudio(page, 1);
   await page.goto('/baca?surah=18', { waitUntil: 'domcontentloaded' });
@@ -135,6 +214,7 @@ test('verse audio can be saved to persistent app storage', async ({ page }) => {
 });
 
 test('short surahs can be saved one verse at a time before playback', async ({ page }) => {
+  await mockQuranFoundationAudio(page);
   await page.route('**/verses.quran.com/Alafasy/mp3/112*.mp3', route => route.fulfill({
     status: 200,
     headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'audio/wav' },
@@ -145,7 +225,7 @@ test('short surahs can be saved one verse at a time before playback', async ({ p
   await page.getByRole('button', { name: 'Putar Tilawah Ayat 1', exact: true }).click();
   const player = page.getByLabel('Pemutar audio Al-Qur’an');
   await player.getByRole('button', { name: 'Pengaturan audio' }).click();
-  await player.getByRole('button', { name: 'Simpan semua 4 ayat offline' }).click();
+  await player.getByRole('button', { name: 'Simpan seluruh surah · 4 ayat' }).click();
   await expect(player.getByRole('status')).toContainText('tersimpan');
   const count = await page.evaluate(async () => {
     const cache = await caches.open('qurabic-audio-cache-v1');

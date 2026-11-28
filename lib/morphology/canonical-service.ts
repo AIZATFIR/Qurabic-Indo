@@ -425,6 +425,13 @@ export function getCanonicalWordDetail(
     meanings = [primaryMeaning];
   }
 
+  const translationSourceCitation = particleInfo
+    ? 'Qurabic AI-assisted particle note · not scholar-reviewed'
+    : detailedExplanation?.sourceCitation
+      || (context?.meaningIndo
+        ? 'Context-provided gloss · source and review history not recorded'
+        : 'Qurabic legacy word gloss · per-entry source and review history not recorded');
+
   // Occurrences
   const occurrences = matchedRoot
     ? (matchedRoot.occurrences && matchedRoot.occurrences.length > 0
@@ -543,7 +550,9 @@ export function getCanonicalWordDetail(
       root: isParticle ? undefined : rootBw,
       rootArabic: isParticle ? undefined : (matchedRoot?.rootArabic || (rootBw ? buckwalterToArabic(rootBw).split('').join(' ') : undefined)),
       rootSlug: isParticle ? undefined : matchedRoot?.id,
-      coreMeaning: isParticle ? undefined : (curatedDict?.rootExplanation || semanticProfile?.coreMeaning || (matchedRoot?.coreMeaning && !matchedRoot.coreMeaning.includes('memiliki peranan penting dalam kosakata Al-Qur\'an') ? matchedRoot.coreMeaning : undefined))
+      // A root match does not source a semantic explanation. Only expose a
+      // lexical summary when the source-backed profile provides one.
+      coreMeaning: isParticle ? undefined : (semanticProfile?.coreMeaning || undefined)
     },
     morphology: {
       ...morphInfo,
@@ -556,7 +565,7 @@ export function getCanonicalWordDetail(
     translation: {
       primaryMeaning: primaryMeaning || '',
       meanings,
-      sourceCitation: 'The Quranic Arabic Corpus v0.4 (University of Leeds) & Mushaf Kemenag RI'
+      sourceCitation: translationSourceCitation
     },
     lexicon: lexiconResult,
     context: context ? {

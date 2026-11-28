@@ -1,20 +1,10 @@
 'use client';
 
-
-import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, BookMarked, Search, BookOpen } from 'lucide-react';
+import { ArrowRight, BookMarked, Search } from 'lucide-react';
 import { useTheme } from '@/lib/context/ThemeContext';
 import { useLanguage } from '@/lib/context/LanguageContext';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { SlowMo } from 'gsap/EasePack';
-
-// Register GSAP plugins safely
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger, SlowMo);
-}
 
 interface IlluminatedQuranHeroProps {
   onOpenSearch: () => void;
@@ -25,287 +15,61 @@ export default function ClassicIlluminatedQuranHero({ onOpenSearch, lastSearch }
   const { theme } = useTheme();
   const { t } = useLanguage();
   const legacyTheme: string = theme === 'blend' ? 'bookpaper' : theme === 'modern' ? 'green' : 'light';
-  const heroContainerRef = useRef<HTMLDivElement | null>(null);
-  const imageWrapperRef = useRef<HTMLDivElement | null>(null);
-  const lightBeamRef = useRef<HTMLDivElement | null>(null);
-  const headingRef = useRef<HTMLHeadingElement | null>(null);
-  const descriptionRef = useRef<HTMLParagraphElement | null>(null);
-  const actionsRef = useRef<HTMLDivElement | null>(null);
-  const lastSearchRef = useRef<HTMLDivElement | null>(null);
-  const particlesCanvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  // 1. GSAP CINEMATIC ENTRANCE & PARALLAX
-  useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (prefersReducedMotion) {
-      // Instantly set final state without animating
-      if (imageWrapperRef.current) gsap.set(imageWrapperRef.current, { scale: 1, opacity: 1 });
-      if (headingRef.current) gsap.set(headingRef.current, { opacity: 1, y: 0 });
-      return;
-    }
-
-    const ctx = gsap.context(() => {
-      // 1. Master Entrance Timeline
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-
-      // Subtle slow scale-in on the Qur'an image (from 1.06 to 1.0)
-      if (imageWrapperRef.current) {
-        tl.fromTo(
-          imageWrapperRef.current,
-          { scale: 1.06, opacity: 0.7 },
-          { scale: 1.0, opacity: 1.0, duration: 2.4, ease: 'power2.out' }
-        );
-      }
-
-      // Subtle pulse on the illumination light beam
-      if (lightBeamRef.current) {
-        tl.fromTo(
-          lightBeamRef.current,
-          { opacity: 0, scale: 0.95 },
-          { opacity: 1, scale: 1.0, duration: 2.0, ease: 'sine.out' },
-          '-=2.0'
-        );
-
-        // Continuous slow, spiritual breathing light motion
-        gsap.to(lightBeamRef.current, {
-          opacity: 0.85,
-          scale: 1.03,
-          duration: 5.5,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-        });
-      }
-
-      // Sequential text reveal
-      const textElements = [
-        headingRef.current,
-        descriptionRef.current,
-        actionsRef.current,
-        lastSearchRef.current,
-      ].filter(Boolean);
-
-      tl.fromTo(
-        textElements,
-        { opacity: 0, y: 24 },
-        { opacity: 1, y: 0, duration: 1.2, stagger: 0.16, ease: 'power3.out' },
-        '-=1.8'
-      );
-
-      // 2. ScrollTrigger Parallax (Depth & Weight)
-      if (imageWrapperRef.current && heroContainerRef.current) {
-        gsap.to(imageWrapperRef.current, {
-          yPercent: 14,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: heroContainerRef.current,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 1.2,
-          },
-        });
-      }
-    }, heroContainerRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  // 2. SUBTLE FLOATING AMBIENT LIGHT PARTICLES (DUST IN LIGHT BEAM)
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const canvas = particlesCanvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let animId: number;
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-
-    const resize = () => {
-      canvas.width = canvas.clientWidth * dpr;
-      canvas.height = canvas.clientHeight * dpr;
-    };
-    resize();
-    window.addEventListener('resize', resize);
-
-    // Light particle objects
-    const particleCount = 28;
-    const particles = Array.from({ length: particleCount }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      radius: (Math.random() * 1.5 + 0.6) * dpr,
-      alpha: Math.random() * 0.45 + 0.15,
-      speedX: (Math.random() - 0.5) * 0.25 * dpr,
-      speedY: -(Math.random() * 0.35 + 0.15) * dpr,
-    }));
-
-    const render = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      particles.forEach((p) => {
-        p.x += p.speedX;
-        p.y += p.speedY;
-
-        // Wrap around
-        if (p.y < 0) p.y = canvas.height;
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-
-        ctx.fillStyle = `rgba(218, 165, 82, ${p.alpha})`; // Warm golden dust
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      animId = requestAnimationFrame(render);
-    };
-
-    render();
-
-    return () => {
-      window.removeEventListener('resize', resize);
-      cancelAnimationFrame(animId);
-    };
-  }, []);
+  const imageTone = legacyTheme === 'green'
+    ? 'brightness-[0.94] contrast-[1.06]'
+    : 'brightness-[0.98] contrast-[1.04]';
 
   return (
-    <header
-      ref={heroContainerRef}
-      className="relative min-h-[640px] sm:min-h-[740px] lg:min-h-[820px] w-full flex items-center justify-center overflow-hidden border-b border-hairline transition-colors"
-    >
-      {/* 1. PHOTOGRAPHIC ILLUMINATED QUR'AN ENVIRONMENT */}
-      <div
-        ref={imageWrapperRef}
-        className="absolute -inset-x-0 -top-12 bottom-0 w-full h-[calc(100%+60px)] pointer-events-none select-none z-0"
-      >
-        <Image
-          src="/images/quran.jpg"
-          alt="Al-Qur'anul Karim Illuminated in Darkness"
-          fill
-          sizes="100vw"
-          priority
-          className={`object-cover object-[50%_24%] sm:object-[50%_22%] filter ${
-            legacyTheme === 'dark'
-              ? 'brightness-[0.72] contrast-[1.24] saturate-[0.95]'
-              : legacyTheme === 'green'
-              ? 'brightness-[0.88] contrast-[1.12] saturate-[1.05]'
-              : legacyTheme === 'bookpaper'
-              ? 'brightness-[0.92] contrast-[1.12] sepia-[0.14]'
-              : 'brightness-[0.94] contrast-[1.08]'
-          }`}
-        />
-      </div>
-
-      {/* 2. DIRECTIONAL WARM LIGHT ILLUMINATION BEAM */}
-      <div
-        ref={lightBeamRef}
-        className="absolute inset-0 pointer-events-none z-[1]"
-        style={{
-          background:
-            legacyTheme === 'dark'
-              ? 'radial-gradient(ellipse 70% 60% at 50% 32%, rgba(212, 160, 80, 0.16) 0%, rgba(180, 130, 60, 0.05) 50%, transparent 85%)'
-              : 'radial-gradient(ellipse 70% 60% at 50% 32%, rgba(200, 150, 70, 0.12) 0%, rgba(200, 150, 70, 0.04) 50%, transparent 85%)',
-        }}
-      />
-
-      {/* 3. ATMOSPHERIC PARTICLES (WARM DUST IN LIGHT BEAM) */}
-      <canvas
-        ref={particlesCanvasRef}
-        className="absolute inset-0 w-full h-full pointer-events-none z-[2] opacity-75"
-        aria-hidden="true"
-      />
-
-      {/* 4. HIGH-CONTRAST CONTEMPLATIVE SHADOWS & SCRIM */}
-      <div
-        className="absolute inset-0 pointer-events-none z-[3] transition-all duration-300"
-        style={{
-          background:
-            legacyTheme === 'dark'
-              ? 'radial-gradient(ellipse 95% 85% at 50% 38%, rgba(8, 14, 11, 0.58) 0%, rgba(8, 14, 11, 0.82) 60%, #080e0b 100%)'
-              : legacyTheme === 'green'
-              ? 'radial-gradient(ellipse 95% 85% at 50% 38%, rgba(238, 248, 242, 0.68) 0%, rgba(238, 248, 242, 0.86) 60%, #EEF8F2 100%)'
-              : legacyTheme === 'bookpaper'
-              ? 'radial-gradient(ellipse 95% 85% at 50% 38%, rgba(245, 239, 230, 0.65) 0%, rgba(245, 239, 230, 0.84) 60%, #F5EFE6 100%)'
-              : 'radial-gradient(ellipse 95% 85% at 50% 38%, rgba(250, 252, 250, 0.70) 0%, rgba(250, 252, 250, 0.88) 60%, #FAFCFA 100%)',
-        }}
-      />
-
-      {/* 5. DEEP BOTTOM SEAMLESS TONAL BLEND */}
-      <div
-        className="absolute inset-x-0 bottom-0 h-44 sm:h-60 pointer-events-none z-[4] transition-all duration-300"
-        style={{
-          background:
-            legacyTheme === 'dark'
-              ? 'linear-gradient(to bottom, transparent 0%, rgba(8, 14, 11, 0.65) 50%, #080e0b 100%)'
-              : legacyTheme === 'green'
-              ? 'linear-gradient(to bottom, transparent 0%, rgba(238, 248, 242, 0.7) 50%, #EEF8F2 100%)'
-              : legacyTheme === 'bookpaper'
-              ? 'linear-gradient(to bottom, transparent 0%, rgba(245, 239, 230, 0.7) 50%, #F5EFE6 100%)'
-              : 'linear-gradient(to bottom, transparent 0%, rgba(250, 252, 250, 0.7) 50%, #FAFCFA 100%)',
-        }}
-      />
-
-      {/* 6. CENTRAL HERO CONTENT (HIGH-LEGIBILITY TYPOGRAPHY) */}
-      <div className="max-w-4xl mx-auto px-6 text-center relative z-10 space-y-7 py-20">
-        
-        {/* Majestic Central Title */}
-        <h1
-          ref={headingRef}
-          className="text-4xl sm:text-6xl lg:text-7xl font-light text-ink-primary tracking-tight font-sans leading-[1.12] drop-shadow-sm"
-        >
-          {t('Membedah Kedalaman', 'Explore the depth of')} <br />
-          <span className="font-semibold text-primary">{t("Bahasa Al-Qur'an", 'Quranic Arabic')}</span>
+    <header className="mx-auto grid w-full max-w-7xl items-center gap-8 px-5 py-8 sm:px-8 sm:py-12 lg:grid-cols-[0.92fr_1.08fr] lg:gap-12 lg:px-8 lg:py-14">
+      <div className="max-w-xl">
+        <h1 className="font-sans text-4xl font-normal leading-[1.12] text-ink-primary sm:text-5xl lg:text-[3.5rem]">
+          {t('Dari ayat, telusuri', 'From each verse, trace')}<br />
+          <span className="font-medium text-primary">{t('akar katanya.', 'the words to their roots.')}</span>
         </h1>
 
-        {/* Contemplative Subtitle */}
-        <p
-          ref={descriptionRef}
-          className="text-base sm:text-lg lg:text-xl text-ink-secondary font-normal max-w-2xl mx-auto leading-relaxed font-sans"
-        >
-          {t('Telusuri akar kata, bentuk dalam ayat, dan rujukan leksikon klasik dengan sumber yang jelas.', 'Explore word roots, forms in context, and classical lexicon sources with clear citations.')}
+        <p className="mt-5 max-w-lg font-sans text-base leading-7 text-ink-secondary sm:text-lg">
+          {t('Baca Al-Qur’an, pelajari makna kata dalam konteks, lalu periksa akar dan rujukan kamusnya.', 'Read the Quran, study each word in context, then explore its root and dictionary references.')}
         </p>
 
-        {/* Elegant Action Buttons */}
-        <div
-          ref={actionsRef}
-          className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3"
-        >
+        <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
           <Link
             href="/baca"
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-primary hover:bg-primary-deep text-white font-medium text-sm sm:text-base px-8 py-3.5 rounded-full shadow-subtle hover:shadow-soft transition-all active:scale-95 font-sans"
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--radius-control)] bg-primary px-5 py-3 font-sans text-base font-medium text-white shadow-subtle transition-colors hover:bg-primary-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
-            <BookMarked className="w-4 h-4" />
-            <span>{t("Mulai Membaca Al-Qur’an", "Read the Quran")}</span>
-            <ArrowRight className="w-4 h-4 ml-1" />
+            <BookMarked className="h-4 w-4" aria-hidden="true" />
+            <span>{t('Mulai membaca', 'Start reading')}</span>
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
 
           <button
+            type="button"
             onClick={onOpenSearch}
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-canvas-surface/90 hover:bg-canvas-surface border border-hairline hover:border-primary/40 text-ink-primary font-medium text-sm sm:text-base px-6 py-3.5 rounded-full shadow-subtle transition-all font-sans"
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--radius-control)] border border-hairline bg-canvas-surface px-5 py-3 font-sans text-base font-medium text-ink-primary transition-colors hover:bg-canvas-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
-            <Search className="w-4 h-4 text-primary" />
-            <span>{t('Cari Kata atau Akar (⌘K)', 'Find a word or root (⌘K)')}</span>
+            <Search className="h-4 w-4 text-primary" aria-hidden="true" />
+            <span>{t('Cari kata atau akar', 'Find a word or root')}</span>
           </button>
         </div>
 
-        {/* Quiet Real Last Search Link */}
         {lastSearch && (
-          <div
-            ref={lastSearchRef}
-            className="flex items-center justify-center space-x-2 text-xs text-ink-mute font-sans pt-1"
-          >
-            <span>{t('Pencarian terakhir:', 'Last search:')}</span>
-            <button
-              onClick={onOpenSearch}
-              className="text-primary hover:underline font-medium"
-            >
+          <p className="mt-5 font-sans text-sm text-ink-secondary">
+            {t('Pencarian terakhir:', 'Last search:')}{' '}
+            <button type="button" onClick={onOpenSearch} className="font-medium text-primary underline underline-offset-4 focus-visible:outline-primary">
               {lastSearch}
             </button>
-          </div>
+          </p>
         )}
+      </div>
 
+      <div className="relative aspect-[4/3] min-h-56 overflow-hidden rounded-[var(--radius-surface)] border border-hairline bg-canvas-soft shadow-soft sm:aspect-[16/10] lg:aspect-[1.08/1]">
+        <Image
+          src="/images/quran.jpg"
+          alt={t('Mushaf terbuka di atas rehal', 'An open Quran resting on a wooden stand')}
+          fill
+          sizes="(max-width: 1024px) 100vw, 55vw"
+          priority
+          className={`object-cover object-[50%_62%] ${imageTone}`}
+        />
       </div>
     </header>
   );

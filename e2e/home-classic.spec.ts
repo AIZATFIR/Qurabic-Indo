@@ -3,8 +3,9 @@ import { test, expect } from '@playwright/test';
 test('restored classic layout takes precedence over the interim saved minimal preference', async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('qurabic_layout_preference', 'minimal'));
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: /Membedah Kedalaman|Explore the depth of/i })).toBeVisible();
-  await expect(page.getByRole('heading', { name: /Membedah Kedalaman|Explore the depth of/i })).toHaveCSS('opacity', '1', { timeout: 10000 });
+  const heroHeading = page.getByRole('heading', { name: /Dari ayat, telusuri akar katanya|From each verse, trace the words to their roots/i });
+  await expect(heroHeading).toBeVisible();
+  await expect(heroHeading).toHaveCSS('opacity', '1', { timeout: 10000 });
   await expect(page.getByRole('heading', { name: /Akar kata populer|Popular roots/i })).toBeVisible();
   await expect(page.locator('section[aria-labelledby="root-showcase-heading"]')).toBeVisible();
   await expect(page.locator('[data-ui="root-corpus-preview"]')).toHaveCount(0);

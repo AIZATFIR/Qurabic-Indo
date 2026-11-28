@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Search, X, ArrowUpDown, ShieldCheck } from 'lucide-react';
 import { ROOT_DATABASE } from '@/lib/data/roots';
 import { searchRoots, stripArabicHarakat } from '@/lib/search/root-search';
@@ -70,6 +71,8 @@ export default function MorfologiPage() {
         <p className="text-base text-ink-secondary max-w-2xl leading-relaxed font-sans">
           {t('Telusuri akar, bentuk kata, dan ayat tempatnya digunakan. Rujukan morfologi dan definisi kamus dicantumkan pada entri yang tersedia.', 'Explore roots, word forms, and the verses where they appear. Morphology and dictionary sources are credited on entries where available.')}
         </p>
+
+        <Link href="/kamus" className="inline-flex min-h-11 items-center border-b border-primary text-base font-medium text-primary hover:text-primary-deep focus-visible:outline-primary">{t('Cari kata Arab di kamus Arramooz →', 'Search Arabic words in Arramooz →')}</Link>
 
         {/* Filter & Search Bar */}
         <div className="pt-2 flex flex-col sm:flex-row items-center gap-3 font-sans">

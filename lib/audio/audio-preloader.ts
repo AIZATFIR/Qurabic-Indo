@@ -1,14 +1,17 @@
 /**
  * Qurabic Audio Preloader & Multi-Tier Cache (In-Memory Blob + CacheStorage API)
- * Eliminates audio loading latency between multi-qari Arabic tilawah and Indonesian translation.
+ * Preloads human Arabic recitation and translation audio from selected sources.
  */
 
+import { isNativeAudioStorageAvailable, getNativeStoredAudioUrl, saveNativeAudioFile, deleteNativeStoredAudioFile, listNativeStoredAudioUrls } from './native-audio-storage';
 import {
   getAudioCandidateUrls,
   getNextAudioTrack,
   getTranslationAudioCandidateUrls,
   TranslationVoiceMode,
   TranslationAudioLanguage,
+  normalizeQuranFoundationAudioUrl,
+  isQuranFoundationAudioUrl,
 } from '../api/audio';
 
 const AUDIO_CACHE_NAME = 'qurabic-audio-cache-v1';
@@ -17,23 +20,86 @@ const AUDIO_CACHE_NAME = 'qurabic-audio-cache-v1';
 const blobUrlCache = new Map<string, string>();
 const inFlightFetches = new Map<string, Promise<string>>();
 const inFlightControllers = new Map<string, AbortController>();
+const pendingOfflineSaves = new Map<string, Promise<void>>();
 const MAX_BLOB_CACHE = 80;
 
-/** Persist an audio response for offline playback without retaining its bytes in the JS heap. */
-export async function cacheAudioForOffline(url: string, timeoutMs = 30000): Promise<void> {
-  if (typeof window === 'undefined' || !('caches' in window)) throw new Error('Offline audio storage is unavailable');
-  const cache = await window.caches.open(AUDIO_CACHE_NAME);
-  const existing = await cache.match(url);
-  if (existing?.ok) return;
+/** Remove superseded QF downloads and optionally clear ambiguous pre-upgrade browser cache entries. */
+export async function pruneUntrackedQuranFoundationAudio(activeUrls: ReadonlySet<string>, purgeLegacyWebCache = false): Promise<void> {
+  const storedUrls = isNativeAudioStorageAvailable()
+    ? await listNativeStoredAudioUrls()
+    : typeof window !== 'undefined' && 'caches' in window
+      ? await (async () => {
+          try {
+            const cache = await window.caches.open(AUDIO_CACHE_NAME);
+            return (await cache.keys()).map((request) => request.url);
+          } catch {
+            return [];
+          }
+        })()
+      : [];
+  const purgeAllWebQf = purgeLegacyWebCache && !isNativeAudioStorageAvailable();
+  const staleUrls = new Set(storedUrls
+    .map(normalizeQuranFoundationAudioUrl)
+    .filter((url): url is string => url !== undefined && (purgeAllWebQf || !activeUrls.has(url))));
+  for (const url of staleUrls) await deleteCachedAudioForUrl(url);
+}
 
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
+export async function deleteCachedAudioForUrl(url: string): Promise<void> {
+  if (!isQuranFoundationAudioUrl(url)) {
+    throw new Error('Offline audio removal requires a Quran Foundation audio URL');
+  }
+  inFlightControllers.get(url)?.abort();
+  await pendingOfflineSaves.get(url)?.catch(() => undefined);
+  const blobUrl = blobUrlCache.get(url);
+  if (blobUrl?.startsWith('blob:')) URL.revokeObjectURL(blobUrl);
+  blobUrlCache.delete(url);
+  inFlightFetches.delete(url);
+  inFlightControllers.delete(url);
+  if (isNativeAudioStorageAvailable()) {
+    await deleteNativeStoredAudioFile(url);
+    return;
+  }
+  if (typeof window !== 'undefined' && 'caches' in window) {
+    try {
+      const cache = await window.caches.open(AUDIO_CACHE_NAME);
+      await cache.delete(url);
+    } catch {
+      // CacheStorage may be unavailable in private browsing.
+    }
+  }
+}
+
+export async function cacheAudioForOffline(url: string, timeoutMs = 30000): Promise<void> {
+  if (!isQuranFoundationAudioUrl(url)) {
+    throw new Error('Offline audio downloads require a Quran Foundation audio URL');
+  }
+  if (isNativeAudioStorageAvailable()) {
+    await saveNativeAudioFile(url, timeoutMs);
+    return;
+  }
+  const pending = pendingOfflineSaves.get(url);
+  if (pending) return pending;
+  const save = (async () => {
+    if (typeof window === 'undefined' || !('caches' in window)) throw new Error('Offline audio storage is unavailable');
+    const cache = await window.caches.open(AUDIO_CACHE_NAME);
+    const existing = await cache.match(url);
+    if (existing?.ok) return;
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetch(url, { signal: controller.signal, cache: 'no-store' });
+      if (!response.ok) throw new Error(`Audio download failed (${response.status})`);
+      await cache.put(url, response.clone());
+    } finally {
+      clearTimeout(timer);
+    }
+  })();
+  pendingOfflineSaves.set(url, save);
   try {
-    const response = await fetch(url, { signal: controller.signal, cache: 'no-store' });
-    if (!response.ok) throw new Error(`Audio download failed (${response.status})`);
-    await cache.put(url, response.clone());
+    await save;
   } finally {
-    clearTimeout(timer);
+    if (pendingOfflineSaves.get(url) === save) pendingOfflineSaves.delete(url);
   }
 }
 
@@ -68,7 +134,13 @@ export function getCachedAudioUrl(url: string): string | undefined {
 /** Materialize a disk-cached response only when playback requests it. */
 export async function getStoredAudioUrl(url: string): Promise<string | undefined> {
   const cached = getCachedAudioUrl(url);
-  if (cached || typeof window === 'undefined' || !('caches' in window)) return cached;
+  if (cached) return cached;
+  if (!isQuranFoundationAudioUrl(url)) return undefined;
+  if (isNativeAudioStorageAvailable()) {
+    const nativeUrl = await getNativeStoredAudioUrl(url);
+    if (nativeUrl) return nativeUrl;
+  }
+  if (typeof window === 'undefined' || !('caches' in window)) return undefined;
   try {
     const cache = await window.caches.open(AUDIO_CACHE_NAME);
     const response = await cache.match(url);
@@ -104,7 +176,7 @@ export function cancelAudioPreload(url: string): void {
 }
 
 /**
- * Preloads a single audio URL into an in-memory Blob URL with persistent CacheStorage backing
+ * Preloads a single audio URL into an in-memory Blob URL for smooth playback
  * If fetch fails or times out, safely resolves to original URL as stream fallback
  */
 export async function preloadAudioBlob(url: string, timeoutMs = 5000): Promise<string> {
@@ -126,8 +198,8 @@ export async function preloadAudioBlob(url: string, timeoutMs = 5000): Promise<s
   let fetchPromise!: Promise<string>;
   fetchPromise = (async () => {
     try {
-      // 3. Persistent CacheStorage check
-      if ('caches' in window) {
+      // 3. Read files explicitly saved by the user in an earlier session.
+      if (isQuranFoundationAudioUrl(url) && 'caches' in window) {
         try {
           const cache = await window.caches.open(AUDIO_CACHE_NAME);
           const cachedResponse = await cache.match(url);
@@ -150,20 +222,10 @@ export async function preloadAudioBlob(url: string, timeoutMs = 5000): Promise<s
 
       const res = await fetch(url, {
         signal: controller.signal,
-        cache: 'force-cache',
+        cache: 'no-store',
       });
       if (!res.ok) {
         throw new Error(`HTTP ${res.status}`);
-      }
-
-      // Clone response to persist into CacheStorage before consuming blob
-      if ('caches' in window) {
-        try {
-          const cache = await window.caches.open(AUDIO_CACHE_NAME);
-          cache.put(url, res.clone()).catch(() => {});
-        } catch {
-          // ignore
-        }
       }
 
       const blob = await res.blob();
@@ -216,8 +278,7 @@ export async function preloadTranslationAudio(
     if (cached) return cached;
   }
 
-  // Warm the preferred source only. Fetching a full TTS file in parallel with
-  // the human recording wastes bandwidth and memory when the human file works.
+  // Warm only the selected human recording to save bandwidth and memory.
   return preloadAudioBlob(candidates[0], 4000).catch(() => candidates[0]);
 }
 
@@ -295,18 +356,10 @@ export function getNextAudioPreloadUrls(options: NextAudioPreloadOptions): strin
     : getAudioCandidateUrls(options.surahNumber, nextTrack.ayahNumber, options.qariId);
 }
 
-/** Warm the next track and stage TTS only if the preferred human recording is still slow. */
+/** Warm the next track from the selected human recording sources. */
 export function preloadNextAudioTrack(options: NextAudioPreloadOptions): void {
   if (typeof window === 'undefined') return;
-  const urls = getNextAudioPreloadUrls(options);
-  if (options.translationVoiceMode === 'ai-fallback' && urls.length > 1) {
-    void preloadAudioBlob(urls[0], 4000).catch(() => {});
-    setTimeout(() => {
-      if (!getCachedAudioUrl(urls[0])) void preloadAudioBlob(urls[1], 4000).catch(() => {});
-    }, 400);
-    return;
-  }
-  for (const url of urls) {
+  for (const url of getNextAudioPreloadUrls(options)) {
     void preloadAudioBlob(url, 4000).catch(() => {});
   }
 }

@@ -4,6 +4,7 @@ import React from 'react';
 import { Play, BookOpen, Clock, User } from 'lucide-react';
 import { CuratedVideo } from '@/lib/data/curated-videos';
 import Link from 'next/link';
+import { useLanguage } from '@/lib/context/LanguageContext';
 
 interface VideoCardProps {
   video: CuratedVideo;
@@ -12,6 +13,7 @@ interface VideoCardProps {
 }
 
 export default function VideoCard({ video, onSelectVideo, priority = false }: VideoCardProps) {
+  const { t } = useLanguage();
   const thumbnailUrl = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
 
   return (
@@ -25,14 +27,14 @@ export default function VideoCard({ video, onSelectVideo, priority = false }: Vi
       }}
       tabIndex={0}
       role="button"
-      aria-label={`Buka pemutar video: ${video.title}`}
+      aria-label={`${t('Buka pemutar video', 'Open video player')}: ${video.title}`}
       className="group bg-canvas-surface border border-hairline rounded-3xl overflow-hidden shadow-subtle hover:border-primary/40 hover:shadow-hover transition-all cursor-pointer flex flex-col justify-between font-sans focus:outline-none focus:ring-2 focus:ring-primary/40"
     >
       {/* Thumbnail Container */}
       <div className="relative aspect-video w-full overflow-hidden bg-canvas-soft">
         <img
           src={thumbnailUrl}
-          alt={`Thumbnail video ${video.title}`}
+          alt={`${t('Thumbnail video', 'Video thumbnail')} ${video.title}`}
           width={480}
           height={360}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -85,7 +87,7 @@ export default function VideoCard({ video, onSelectVideo, priority = false }: Vi
         <div className="pt-3 border-t border-hairline flex items-center justify-between gap-2">
           <span className="inline-flex items-center space-x-1.5 text-xs font-semibold text-primary group-hover:underline">
             <Play className="w-3.5 h-3.5 fill-current" />
-            <span>Tonton Video</span>
+            <span>{t('Tonton video', 'Watch video')}</span>
           </span>
 
           {video.relatedRootSlug && (
@@ -93,11 +95,11 @@ export default function VideoCard({ video, onSelectVideo, priority = false }: Vi
               href={`/akar/${video.relatedRootSlug}`}
               onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center space-x-1 text-[11px] font-medium text-ink-secondary hover:text-primary bg-canvas-soft px-2.5 py-1 rounded-full border border-hairline hover:border-primary/40 transition-colors"
-              title={`Buka akar kata ${video.relatedRootSlug}`}
-              aria-label={`Pelajari akar kata ${video.relatedRootArabic} (${video.relatedRootSlug})`}
+              title={`${t('Buka akar kata', 'Open root')} ${video.relatedRootSlug}`}
+              aria-label={`${t('Pelajari akar kata', 'Study root')} ${video.relatedRootArabic} (${video.relatedRootSlug})`}
             >
               <BookOpen className="w-3 h-3 text-primary" />
-              <span>Akar {video.relatedRootArabic}</span>
+              <span>{t('Akar', 'Root')} {video.relatedRootArabic}</span>
             </Link>
           )}
         </div>

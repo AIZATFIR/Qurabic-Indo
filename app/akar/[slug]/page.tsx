@@ -4,8 +4,6 @@ import { getQACRecordsByRoot } from '@/lib/morphology/qac-parser';
 import { fetchLiveRoot } from '@/lib/api/quran-corpus-api';
 import { notFound } from 'next/navigation';
 import RootDetailView, { type RootLemmaSample } from '@/components/RootDetailView';
-import wbwIndonesian from '@/lib/data/wbw-indonesian-glosses.json';
-import wbwEnglish from '@/lib/data/wbw-english-glosses.json';
 import { getQabasLemmaId } from '@/lib/lexicon/qabas-lemma-lookup';
 
 export function generateStaticParams() {
@@ -79,21 +77,20 @@ export default async function RootDetailPage({ params: paramsPromise }: PageProp
 
   const lemmaSamples: Record<string, RootLemmaSample> = {};
   const records = getQACRecordsByRoot(rootModel.id.replace(/-/g, ''));
-  const meaningsIndo = wbwIndonesian.meanings as Record<string, string>;
-  const meaningsEnglish = wbwEnglish.meanings as Record<string, string>;
   for (const record of records) {
     if (!record.lemma) continue;
     const key = `${record.pos}:${record.lemma}`;
-    if (lemmaSamples[key]) continue;
+    const existing = lemmaSamples[key];
+    if (existing?.meaningIndo || existing?.meaningEnglish) continue;
     const qabasLemmaId = getQabasLemmaId(record.wordLocationKey);
-    lemmaSamples[key] = {
+    const resolvedQabasLemmaId = qabasLemmaId || existing?.qabasLemmaId;
+    const sample: RootLemmaSample = {
       coordinate: record.wordLocationKey,
       formArabic: record.formArabic,
       ...(record.verbForm ? { verbForm: record.verbForm } : {}),
-      ...(meaningsIndo[record.wordLocationKey] ? { meaningIndo: meaningsIndo[record.wordLocationKey] } : {}),
-      ...(meaningsEnglish[record.wordLocationKey] ? { meaningEnglish: meaningsEnglish[record.wordLocationKey] } : {}),
-      ...(qabasLemmaId ? { qabasLemmaId } : {}),
+      ...(resolvedQabasLemmaId ? { qabasLemmaId: resolvedQabasLemmaId } : {}),
     };
+    if (!existing) lemmaSamples[key] = sample;
   }
 
   return <RootDetailView root={rootModel} lemmaSamples={lemmaSamples} />;

@@ -1,7 +1,7 @@
 /**
- * Qurabic Authoritative Root & Derivatives Translation Engine
- * Sourced strictly from classical Quranic Arabic morphology & Indonesian Quranic translations.
- * Guarantees zero empty or placeholder definitions across all root families and words.
+ * Legacy Qurabic editorial glosses for roots and derivatives.
+ * These are fallback notes, not independently verified dictionary definitions.
+ * Prefer a coordinate-matched verse gloss or a cited Lane entry in user-facing text.
  */
 
 import { stripArabicHarakat, isQuranicParticle } from '../search/root-search';
@@ -926,9 +926,7 @@ export const ROOT_DICTIONARY: Record<string, RootTranslationProfile> = {
   },
 };
 
-/**
- * Retrieves the authentic root profile with its derivatives dictionary
- */
+/** Retrieves an editorial root profile used by legacy fallback paths. */
 export function getRootTranslationProfile(slugOrArabic?: string): RootTranslationProfile | null {
   if (!slugOrArabic) return null;
 
@@ -952,11 +950,7 @@ export function getRootTranslationProfile(slugOrArabic?: string): RootTranslatio
   return null;
 }
 
-/**
- * Resolves an authentic, non-generic Indonesian meaning for any Quranic word token.
- * Sourced strictly from classical Quranic Arabic morphology (QAC), Lane's Lexicon, and Kemenag WBW.
- * Strictly guarantees ZERO placeholder labels like "Bentuk Kata Terindeks", "Dia bertindak", or "Bentuk Turunan".
- */
+/** Resolves a legacy fallback gloss; callers must keep its editorial status visible. */
 export function getAuthenticWordMeaning(
   rawArabic: string,
   rootSlugOrArabic?: string,
@@ -990,7 +984,8 @@ export function getAuthenticWordMeaning(
     if (prof.derivatives[deSuffixed]) return prof.derivatives[deSuffixed];
   }
 
-  // 2. Authentic Default Meaning from Kemenag (if not generic/fallback)
+  // 2. Preserve a caller-supplied non-generic gloss. This helper has no source
+  // metadata for that value; callers must not attribute it to Kemenag or QAC.
   if (defaultMeaning) {
     const isGeneric = 
       defaultMeaning.startsWith('Bentuk Kata') ||

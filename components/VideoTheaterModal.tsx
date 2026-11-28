@@ -5,6 +5,7 @@ import { X, ExternalLink, BookOpen, User, Compass } from 'lucide-react';
 import { CuratedVideo } from '@/lib/data/curated-videos';
 import Link from 'next/link';
 import { useModalBackHandler } from '@/lib/hooks/useModalBackHandler';
+import { useLanguage } from '@/lib/context/LanguageContext';
 
 interface VideoTheaterModalProps {
   video: CuratedVideo | null;
@@ -12,6 +13,7 @@ interface VideoTheaterModalProps {
 }
 
 export default function VideoTheaterModal({ video, onClose }: VideoTheaterModalProps) {
+  const { t } = useLanguage();
   const isOpen = Boolean(video);
   const { handleClose } = useModalBackHandler(isOpen, onClose, { modalName: 'video_theater' });
 
@@ -62,14 +64,14 @@ export default function VideoTheaterModal({ video, onClose }: VideoTheaterModalP
               target="_blank"
               rel="noreferrer"
               className="p-1.5 rounded-full text-ink-mute hover:text-ink-primary hover:bg-canvas-soft transition-colors"
-              title="Buka di YouTube"
+              title={t('Buka di YouTube', 'Open on YouTube')}
             >
               <ExternalLink className="w-4 h-4" />
             </a>
             <button
               onClick={handleClose}
               className="p-1.5 rounded-full text-ink-mute hover:text-ink-primary hover:bg-canvas-soft transition-colors"
-              title="Tutup (ESC)"
+              title={t('Tutup (ESC)', 'Close (ESC)')}
             >
               <X className="w-5 h-5" />
             </button>
@@ -104,7 +106,7 @@ export default function VideoTheaterModal({ video, onClose }: VideoTheaterModalP
                 className="inline-flex items-center space-x-1.5 text-xs font-semibold text-primary hover:underline bg-primary-subdued px-3 py-1 rounded-full self-start sm:self-auto transition-colors"
               >
                 <BookOpen className="w-3.5 h-3.5" />
-                <span>Bedah Akar Kata {video.relatedRootArabic} ({video.relatedRootSlug})</span>
+                <span>{t('Bedah akar kata', 'Study root')} {video.relatedRootArabic} ({video.relatedRootSlug})</span>
               </Link>
             )}
           </div>
@@ -113,7 +115,7 @@ export default function VideoTheaterModal({ video, onClose }: VideoTheaterModalP
           <div className="p-4 rounded-2xl bg-canvas-soft border border-hairline space-y-1.5">
             <div className="flex items-center space-x-1.5 text-xs font-semibold text-ink-primary uppercase tracking-wider">
               <Compass className="w-3.5 h-3.5 text-primary" />
-              <span>Intisari Pelajaran:</span>
+              <span>{t('Intisari pelajaran', 'Key takeaway')}</span>
             </div>
             <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed font-sans font-normal">
               {video.linguisticTakeaway}

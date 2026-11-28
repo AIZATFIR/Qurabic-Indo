@@ -1,17 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getQurabicDb } from '@/lib/db/client';
 import { getSurahByNumber, SURAH_LIST } from '@/lib/data/surah-list';
-import fs from 'fs';
-import path from 'path';
+import { getQuranVerseWordTokens } from '@/lib/api/quran-word-glosses';
+import { buckwalterToArabic } from '@/lib/morphology/buckwalter';
 
 export const dynamic = 'force-dynamic';
 
-interface WBWJsonItem {
-  location: string;
+interface RandomWordRow {
+  id: number;
+  position: number;
   arabic: string;
   transliteration?: string;
-  meaningIndo?: string;
-  audioUrl?: string;
+  audioUrl: string;
+  charType: 'word';
+  location: string;
+  rootLetters?: string;
+  posTag?: string;
 }
 
 export async function GET(request: NextRequest) {
@@ -59,67 +63,71 @@ export async function GET(request: NextRequest) {
     const surahNameIndo = surahMeta.nameIndo || `Surah Ke-${surahNum}`;
     const surahNameArabic = surahMeta.nameArabic || '';
 
-    // Load WBW words from local JSON chunk
+    // Keep Quran text and morphology from the local corpus; request word meanings by verse.
     const padSurah = String(surahNum).padStart(3, '0');
-    const wbwFilePath = path.join(process.cwd(), `lib/data/wbw/surah_${padSurah}.json`);
     const verseKey = `${surahNum}:${ayahNum}`;
-
-    let words: any[] = [];
-
-    if (fs.existsSync(wbwFilePath)) {
-      try {
-        const fileContent = fs.readFileSync(wbwFilePath, 'utf-8');
-        const surahWbwData = JSON.parse(fileContent);
-        const wbwList: WBWJsonItem[] = surahWbwData[verseKey] || [];
-
-        words = wbwList.map((item, idx) => {
-          const locParts = (item.location || `${verseKey}:${idx + 1}`).split(':');
-          const pos = parseInt(locParts[2] || `${idx + 1}`, 10);
-          const arabic = item.arabic || '';
-          const padAyah = String(ayahNum).padStart(3, '0');
-          const padWord = String(pos).padStart(3, '0');
-          const audioUrl = `https://audio.qurancdn.com/wbw/${padSurah}_${padAyah}_${padWord}.mp3`;
-
-          return {
-            id: idx + 1,
-            position: pos,
-            arabic,
-            transliteration: item.transliteration || '',
-            meaningIndo: item.meaningIndo || '',
-            audioUrl,
-            charType: 'word',
-            location: item.location || `${verseKey}:${pos}`,
-          };
-        });
-      } catch (e) {
-        console.error('Error parsing local WBW JSON:', e);
-      }
+    const wordsRes = await db.execute({
+      sql: 'SELECT id, word_num, arabic FROM words WHERE surah = ? AND ayah = ? ORDER BY word_num ASC',
+      args: [surahNum, ayahNum],
+    });
+    let rawWords: RandomWordRow[] = wordsRes.rows.map((row) => {
+      const wordNum = Number(row.word_num);
+      const sourceWord = String(row.arabic || '');
+      const padAyah = String(ayahNum).padStart(3, '0');
+      const padWord = String(wordNum).padStart(3, '0');
+      return {
+        id: Number(row.id),
+        position: wordNum,
+        arabic: /[\u0600-\u06FF]/.test(sourceWord) ? sourceWord : buckwalterToArabic(sourceWord),
+        transliteration: '',
+        audioUrl: `https://audio.qurancdn.com/wbw/${padSurah}_${padAyah}_${padWord}.mp3`,
+        charType: 'word' as const,
+        location: `${verseKey}:${wordNum}`,
+        rootLetters: row.root ? String(row.root) : undefined,
+        posTag: row.pos ? String(row.pos) : undefined,
+      };
+    });
+    const [tokensIndo, tokensEnglish] = await Promise.all([
+      getQuranVerseWordTokens(verseKey, 'id').catch(() => []),
+      getQuranVerseWordTokens(verseKey, 'en').catch(() => []),
+    ]);
+    const meaningsIndo: Record<string, string> = {};
+    const meaningsEnglish: Record<string, string> = {};
+    const transliterations: Record<string, string> = {};
+    const arabicWords: Record<string, string> = {};
+    const baseTokens = tokensIndo.length ? tokensIndo : tokensEnglish;
+    for (const token of tokensIndo) {
+      meaningsIndo[token.location] = token.meaning;
+      transliterations[token.location] = token.transliteration;
     }
-
-    // Fallback to SQLite words if WBW JSON empty
-    if (words.length === 0) {
-      const wordsRes = await db.execute({
-        sql: 'SELECT * FROM words WHERE surah = ? AND ayah = ? ORDER BY word_num ASC',
-        args: [surahNum, ayahNum],
-      });
-      words = wordsRes.rows.map((row) => {
-        const wordNum = Number(row.word_num);
-        const padAyah = String(ayahNum).padStart(3, '0');
-        const padWord = String(wordNum).padStart(3, '0');
-        return {
-          id: Number(row.id),
-          position: wordNum,
-          arabic: String(row.arabic || ''),
-          transliteration: '',
-          meaningIndo: String(row.translation || ''),
-          audioUrl: `https://audio.qurancdn.com/wbw/${padSurah}_${padAyah}_${padWord}.mp3`,
-          charType: 'word',
-          location: `${verseKey}:${wordNum}`,
-          rootLetters: row.root ? String(row.root) : undefined,
-          posTag: row.pos ? String(row.pos) : undefined,
-        };
-      });
+    for (const token of tokensEnglish) {
+      meaningsEnglish[token.location] = token.meaning;
+      arabicWords[token.location] = token.arabic;
+      if (!transliterations[token.location]) transliterations[token.location] = token.transliteration;
     }
+    for (const token of tokensIndo) arabicWords[token.location] = token.arabic || arabicWords[token.location] || '';
+    if (rawWords.length === 0) {
+      rawWords = baseTokens.map((token, index) => ({
+        id: index + 1,
+        position: Number(token.location.split(':')[2]) || index + 1,
+        arabic: token.arabic,
+        transliteration: token.transliteration,
+        audioUrl: `https://audio.qurancdn.com/wbw/${String(surahNum).padStart(3, '0')}_${String(ayahNum).padStart(3, '0')}_${String(Number(token.location.split(':')[2]) || index + 1).padStart(3, '0')}.mp3`,
+        charType: 'word' as const,
+        location: token.location,
+      }));
+    } else {
+      rawWords = rawWords.map((word) => ({
+        ...word,
+        arabic: arabicWords[word.location] || word.arabic,
+        transliteration: transliterations[word.location] || word.transliteration,
+      }));
+    }
+    const words = rawWords.map((word) => ({
+      ...word,
+      meaningIndo: meaningsIndo[word.location] || '',
+      meaningEnglish: meaningsEnglish[word.location] || '',
+    }));
 
     return NextResponse.json({
       surahNumber: surahNum,

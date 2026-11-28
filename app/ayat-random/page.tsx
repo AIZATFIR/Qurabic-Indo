@@ -1,14 +1,15 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useLanguage } from '@/lib/context/LanguageContext';
 import { RefreshCw, BookOpen, Volume2, Pause, Loader2, Copy, Check, ArrowLeft, ArrowRight, Layers, Type } from 'lucide-react';
 import Link from 'next/link';
 import QuranWordInteractive from '@/components/QuranWordInteractive';
 import { findBestMatchingRoot, extractArabicRootLetters, inferGrammarRole } from '@/lib/search/root-search';
-import { getSurahByNumber, SURAH_LIST } from '@/lib/data/surah-list';
+import { getSurahByNumber } from '@/lib/data/surah-list';
 import { cleanGlossToIndonesian } from '@/lib/search/word-dictionary';
-import { getAuthenticWordMeaning } from '@/lib/morphology/root-dictionary';
 import { getAyahAudioUrl, getAudioCandidateUrls } from '@/lib/api/audio';
+import { registerQuranAudio } from '@/lib/audio/active-audio-registry';
 
 interface RandomAyahWord {
   id: number;
@@ -16,6 +17,7 @@ interface RandomAyahWord {
   arabic: string;
   transliteration: string;
   meaningIndo: string;
+  meaningEnglish?: string;
   audioUrl?: string;
   charType: 'word' | 'end';
   rootLetters?: string;
@@ -36,8 +38,10 @@ interface RandomAyah {
 }
 
 export default function RandomAyahPage() {
+  const { language, t } = useLanguage();
   const [ayah, setAyah] = useState<RandomAyah | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [copied, setCopied] = useState(false);
   const [audioStatus, setAudioStatus] = useState<'idle' | 'loading' | 'playing'>('idle');
   const [activeTab, setActiveTab] = useState<'wbw' | 'mushaf' | 'both'>('wbw');
@@ -45,8 +49,20 @@ export default function RandomAyahPage() {
   const [showTafsir, setShowTafsir] = useState(false);
   const [loadingTafsir, setLoadingTafsir] = useState(false);
   const [tafsirContent, setTafsirContent] = useState<string | null>(null);
+  const tafsirRequestRef = useRef(0);
+  const [tafsirSource, setTafsirSource] = useState('rioastamal/quran-json@73b1d52 · tafsir.id.kemenag');
+  const [englishTranslation, setEnglishTranslation] = useState<{ verseKey: string; status: 'loading' | 'available' | 'unavailable'; text?: string } | null>(null);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const unregisterAudioRef = useRef<(() => void) | null>(null);
+  const currentVerseKey = ayah ? `${ayah.surahNumber}:${ayah.ayahNumber}` : null;
+  const currentEnglishTranslation = englishTranslation?.verseKey === currentVerseKey ? englishTranslation : null;
+  const englishVerseText = currentEnglishTranslation?.status === 'available' ? currentEnglishTranslation.text : undefined;
+  const englishTranslationStatus = currentEnglishTranslation?.status ?? (language === 'en' && ayah ? 'loading' : 'idle');
+  const currentSurahMeta = ayah ? getSurahByNumber(ayah.surahNumber) : undefined;
+  const displayedSurahName = language === 'en'
+    ? currentSurahMeta?.transliteration || ayah?.surahNameIndo || ''
+    : ayah?.surahNameIndo || '';
 
   // Clean up audio on unmount
   useEffect(() => {
@@ -55,8 +71,34 @@ export default function RandomAyahPage() {
         audioRef.current.pause();
         audioRef.current = null;
       }
+      unregisterAudioRef.current?.();
+      unregisterAudioRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    if (language !== 'en' || !currentVerseKey) {
+      setEnglishTranslation(null);
+      return;
+    }
+
+    let active = true;
+    const controller = new AbortController();
+    const [surah, ayahNumber] = currentVerseKey.split(':');
+    setEnglishTranslation({ verseKey: currentVerseKey, status: 'loading' });
+    void fetch(`/api/verse-translation?surah=${surah}&ayah=${ayahNumber}`, { signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw new Error('English translation unavailable');
+        const payload = await response.json();
+        if (typeof payload.translation !== 'string' || !payload.translation.trim()) throw new Error('English translation unavailable');
+        if (active) setEnglishTranslation({ verseKey: currentVerseKey, status: 'available', text: payload.translation.trim() });
+      })
+      .catch(() => {
+        if (active && !controller.signal.aborted) setEnglishTranslation({ verseKey: currentVerseKey, status: 'unavailable' });
+      });
+
+    return () => { active = false; controller.abort(); };
+  }, [language, currentVerseKey]);
 
   async function fetchRandomAyah() {
     // Stop any active audio playback immediately
@@ -64,15 +106,24 @@ export default function RandomAyahPage() {
       audioRef.current.pause();
       audioRef.current = null;
     }
+    unregisterAudioRef.current?.();
+    unregisterAudioRef.current = null;
     setAudioStatus('idle');
+    tafsirRequestRef.current += 1;
+    setLoadingTafsir(false);
     setShowTafsir(false);
     setTafsirContent(null);
+    setTafsirSource('rioastamal/quran-json@73b1d52 · tafsir.id.kemenag');
+    setEnglishTranslation(null);
+    setAyah(null);
+    setLoadError(false);
     setLoading(true);
     setCopied(false);
 
     try {
       // Zero-latency internal DB fetch via SQLite + local WBW chunks
       const res = await fetch('/api/ayah-random');
+      if (!res.ok) throw new Error('Random ayah unavailable');
 
       if (res.ok) {
         const data = await res.json();
@@ -85,8 +136,12 @@ export default function RandomAyahPage() {
           const rawMeaning = w.meaningIndo || '';
           const matchedRoot = findBestMatchingRoot(arabic);
           const grammar = inferGrammarRole(arabic);
-          const fallbackMeaning = getAuthenticWordMeaning(arabic, matchedRoot?.id);
-          const meaningIndo = cleanGlossToIndonesian(rawMeaning, fallbackMeaning);
+          const meaningIndo = rawMeaning
+            ? cleanGlossToIndonesian(rawMeaning)
+            : t('Makna kata belum tersedia dari sumber kata-per-kata.', 'Word gloss unavailable from the word-by-word source.');
+          const meaningEnglish = typeof w.meaningEnglish === 'string' && w.meaningEnglish.trim()
+            ? w.meaningEnglish
+            : t('Makna kata belum tersedia dari sumber kata-per-kata.', 'Word gloss unavailable from the word-by-word source.');
 
           return {
             id: w.id || w.position,
@@ -94,6 +149,7 @@ export default function RandomAyahPage() {
             arabic,
             transliteration,
             meaningIndo,
+            meaningEnglish,
             audioUrl: w.audioUrl,
             charType: (w.charType === 'end' ? 'end' : 'word') as 'word' | 'end',
             rootLetters: matchedRoot ? matchedRoot.rootArabic : extractArabicRootLetters(arabic),
@@ -116,6 +172,7 @@ export default function RandomAyahPage() {
       }
     } catch (err) {
       console.error('Error fetching random ayah:', err);
+      setLoadError(true);
     } finally {
       setLoading(false);
     }
@@ -127,7 +184,12 @@ export default function RandomAyahPage() {
 
   const handleCopy = () => {
     if (!ayah) return;
-    const textToCopy = `${ayah.verseArabic}\n\n"${ayah.verseIndo}"\n\n(Q.S. ${ayah.surahNameIndo} [${ayah.surahNumber}]: ${ayah.ayahNumber})`;
+    const translation = language === 'en' ? englishVerseText : ayah.verseIndo;
+    const quote = translation ? `\n\n"${translation}"` : '';
+    const reference = language === 'en'
+      ? `(Qur'an ${displayedSurahName} ${ayah.ayahNumber})`
+      : `(Q.S. ${ayah.surahNameIndo} ${ayah.surahNumber}:${ayah.ayahNumber})`;
+    const textToCopy = `${ayah.verseArabic}${quote}\n\n${reference}`;
     navigator.clipboard.writeText(textToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -153,11 +215,48 @@ export default function RandomAyahPage() {
     }
 
     const candidates = getAudioCandidateUrls(ayah.surahNumber, ayah.ayahNumber);
-    let candidateIndex = 0;
+    if (candidates.length === 0) {
+      setAudioStatus('idle');
+      return;
+    }
 
-    const audio = new Audio(candidates[0]);
+    let candidateIndex = 0;
+    const failedCandidates = new Set<number>();
+    const audio = new Audio();
     audioRef.current = audio;
+    unregisterAudioRef.current = registerQuranAudio(audio);
     setAudioStatus('loading');
+
+    const releaseAudio = () => {
+      if (audioRef.current !== audio) return;
+      audioRef.current = null;
+      unregisterAudioRef.current?.();
+      unregisterAudioRef.current = null;
+    };
+
+    const startCandidate = (index: number) => {
+      candidateIndex = index;
+      audio.src = candidates[index];
+      audio.load();
+      audio.play().catch((error: DOMException) => {
+        if (error.name === 'NotAllowedError') {
+          setAudioStatus('idle');
+          return;
+        }
+        failCandidate(index);
+      });
+    };
+    const failCandidate = (index: number) => {
+      if (failedCandidates.has(index) || audioRef.current !== audio) return;
+      failedCandidates.add(index);
+      const nextIndex = index + 1;
+      if (nextIndex < candidates.length) {
+        startCandidate(nextIndex);
+      } else {
+        setAudioStatus('idle');
+        releaseAudio();
+      }
+    };
 
     audio.onplaying = () => setAudioStatus('playing');
     audio.onpause = () => {
@@ -167,30 +266,10 @@ export default function RandomAyahPage() {
     };
     audio.onended = () => {
       setAudioStatus('idle');
-      audioRef.current = null;
+      releaseAudio();
     };
-    audio.onerror = () => {
-      candidateIndex++;
-      if (candidateIndex < candidates.length) {
-        audio.src = candidates[candidateIndex];
-        audio.play().catch(() => setAudioStatus('idle'));
-      } else {
-        setAudioStatus('idle');
-        audioRef.current = null;
-      }
-    };
-
-    audio.play().catch((err) => {
-      console.warn('Audio play error:', err);
-      candidateIndex++;
-      if (candidateIndex < candidates.length) {
-        audio.src = candidates[candidateIndex];
-        audio.play().catch(() => setAudioStatus('idle'));
-      } else {
-        setAudioStatus('idle');
-        audioRef.current = null;
-      }
-    });
+    audio.onerror = () => failCandidate(candidateIndex);
+    startCandidate(0);
   };
 
   const handleToggleTafsir = async () => {
@@ -201,19 +280,21 @@ export default function RandomAyahPage() {
     }
     setShowTafsir(true);
     if (!tafsirContent) {
+      const requestId = ++tafsirRequestRef.current;
       setLoadingTafsir(true);
       try {
         const res = await fetch(`/api/tafsir?surah=${ayah.surahNumber}&ayah=${ayah.ayahNumber}`);
         if (res.ok) {
           const json = await res.json();
-          if (json?.data?.text) {
+          if (requestId === tafsirRequestRef.current && json?.data?.text) {
             setTafsirContent(json.data.text);
+            setTafsirSource(json.data.sourceTitle || 'rioastamal/quran-json@73b1d52 · tafsir.id.kemenag');
           }
         }
       } catch (err) {
         console.warn('Failed to load random ayah tafsir:', err);
       } finally {
-        setLoadingTafsir(false);
+        if (requestId === tafsirRequestRef.current) setLoadingTafsir(false);
       }
     }
   };
@@ -234,17 +315,17 @@ export default function RandomAyahPage() {
         className="inline-flex items-center space-x-1.5 text-xs text-ink-mute hover:text-primary transition-colors font-sans"
       >
         <ArrowLeft className="w-3.5 h-3.5" />
-        <span>Kembali ke Beranda</span>
+        <span>{t('Kembali ke Beranda', 'Back to home')}</span>
       </Link>
 
       {/* Header Banner - Compact & Clean */}
       <div className="p-4 sm:p-6 rounded-2xl bg-canvas-surface border border-hairline shadow-subtle text-center space-y-2">
         <h1 className="text-xl sm:text-2xl font-light text-ink-primary tracking-tight font-sans">
-          Inspirasi Ayat <span className="font-semibold text-primary">Al-Qur&apos;an</span>
+          {t('Inspirasi Ayat', 'Verse reflection')} <span className="font-semibold text-primary">Al-Qur&apos;an</span>
         </h1>
 
         <p className="text-xs sm:text-sm text-ink-secondary max-w-md mx-auto leading-relaxed font-sans">
-          Pilihan ayat Al-Qur&apos;an acak untuk tadabbur harian dengan terjemahan resmi Kemenag RI, audio tilawah, dan bedah kata per kata.
+          {t('Pilihan ayat Al-Qur’an acak untuk tadabbur harian dengan terjemahan Indonesia Kemenag RI, audio tilawah, dan bedah kata per kata.', 'A random Quran verse for reflection, with translations, recitation, and word-by-word study.')}
         </p>
 
         {/* Action Controls */}
@@ -255,7 +336,7 @@ export default function RandomAyahPage() {
             className="inline-flex items-center space-x-2 bg-primary hover:bg-primary-deep text-white px-4 py-2 rounded-full font-semibold text-xs shadow-subtle transition-all disabled:opacity-50 font-sans"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-            <span>{loading ? 'Memilih...' : 'Pilih Ayat Acak Lain'}</span>
+            <span>{loading ? t('Memilih…', 'Choosing…') : t('Pilih Ayat Acak Lain', 'Choose another random verse')}</span>
           </button>
 
           {ayah && (
@@ -264,7 +345,7 @@ export default function RandomAyahPage() {
               className="inline-flex items-center space-x-1.5 bg-canvas-soft hover:bg-primary-subdued border border-hairline hover:border-primary/40 text-ink-primary hover:text-primary px-4 py-2 rounded-full font-semibold text-xs transition-all font-sans"
             >
               <BookOpen className="w-3.5 h-3.5 text-primary" />
-              <span>Buka di Mushaf ({ayah.surahNumber}:{ayah.ayahNumber})</span>
+              <span>{t('Buka di Mushaf', 'Open in reader')} ({ayah.surahNumber}:{ayah.ayahNumber})</span>
             </Link>
           )}
         </div>
@@ -274,7 +355,12 @@ export default function RandomAyahPage() {
       {loading ? (
         <div className="p-12 text-center bg-canvas-surface border border-hairline rounded-2xl space-y-3 shadow-subtle">
           <div className="w-7 h-7 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-xs text-ink-mute font-sans">Memuat ayat pilihan...</p>
+          <p role="status" className="text-sm text-ink-secondary font-sans">{t('Memuat ayat pilihan…', 'Loading a verse…')}</p>
+        </div>
+      ) : loadError ? (
+        <div role="alert" className="space-y-3 border-y border-hairline py-8 text-center">
+          <p className="text-base text-ink-secondary">{t('Ayat tidak dapat dimuat. Periksa koneksi lalu coba lagi.', 'The verse could not be loaded. Check your connection and try again.')}</p>
+          <button type="button" onClick={fetchRandomAyah} className="min-h-11 px-4 font-medium text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">{t('Coba lagi', 'Try again')}</button>
         </div>
       ) : ayah ? (
         <div className="p-4 sm:p-6 bg-canvas-surface border border-hairline rounded-2xl shadow-subtle space-y-4">
@@ -287,10 +373,10 @@ export default function RandomAyahPage() {
               </span>
               <div>
                 <h2 className="font-bold text-ink-primary text-sm sm:text-base font-sans">
-                  Surah {ayah.surahNameIndo} {ayah.surahNameArabic && `(${ayah.surahNameArabic})`}
+                  Surah {displayedSurahName} {ayah.surahNameArabic && `(${ayah.surahNameArabic})`}
                 </h2>
                 <span className="text-[11px] text-ink-mute font-sans">
-                  Ayat Ke-{ayah.ayahNumber} • Q.S. [{ayah.surahNumber}:{ayah.ayahNumber}]
+                  {language === 'en' ? `Verse ${ayah.ayahNumber} · Quran ${ayah.surahNumber}:${ayah.ayahNumber}` : `Ayat ${ayah.ayahNumber} · Q.S. ${ayah.surahNumber}:${ayah.ayahNumber}`}
                 </span>
               </div>
             </div>
@@ -300,10 +386,10 @@ export default function RandomAyahPage() {
               <Link
                 href={`/baca?surah=${ayah.surahNumber}&ayah=${ayah.ayahNumber}`}
                 className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary hover:bg-primary-deep text-white shadow-subtle transition-all font-sans"
-                title="Buka Ayat Ini Langsung di Mushaf"
+                title={t('Buka ayat ini langsung di mushaf', 'Open this verse in the reader')}
               >
                 <BookOpen className="w-3 h-3" />
-                <span className="hidden sm:inline">Buka di Mushaf</span>
+                <span className="hidden sm:inline">{t('Buka di Mushaf', 'Open in reader')}</span>
               </Link>
 
               <button
@@ -313,7 +399,7 @@ export default function RandomAyahPage() {
                     ? 'bg-primary text-white shadow-subtle'
                     : 'bg-canvas-soft text-ink-secondary hover:bg-primary-subdued'
                 }`}
-                title={audioStatus === 'playing' ? 'Jeda Tilawah' : 'Dengarkan Audio Tilawah'}
+                title={audioStatus === 'playing' ? t('Jeda tilawah', 'Pause recitation') : t('Dengarkan tilawah', 'Play recitation')}
               >
                 {audioStatus === 'loading' ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
@@ -322,7 +408,7 @@ export default function RandomAyahPage() {
                 ) : (
                   <Volume2 className="w-3.5 h-3.5" />
                 )}
-                <span>{audioStatus === 'loading' ? 'Memuat...' : audioStatus === 'playing' ? 'Jeda' : 'Audio'}</span>
+                <span>{audioStatus === 'loading' ? t('Memuat…', 'Loading…') : audioStatus === 'playing' ? t('Jeda', 'Pause') : t('Putar', 'Play')}</span>
               </button>
 
               <button
@@ -332,19 +418,19 @@ export default function RandomAyahPage() {
                     ? 'bg-primary text-white border-primary shadow-subtle'
                     : 'bg-canvas-soft border-hairline text-ink-secondary hover:bg-primary-subdued'
                 }`}
-                title="Lihat Tafsir Ringkas Kemenag RI"
+                title={t('Buka tafsir Indonesia · label Kemenag pada arsip', 'Open Indonesian tafsir · Kemenag archive label')}
               >
                 <BookOpen className="w-3.5 h-3.5" />
-                <span>Tafsir</span>
+                <span>{t('Tafsir', 'Tafsir · ID')}</span>
               </button>
 
               <button
                 onClick={handleCopy}
                 className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-canvas-soft text-ink-secondary hover:bg-primary-subdued transition-all font-sans"
-                title="Salin Ayat & Terjemahan"
+                title={t('Salin ayat dan terjemahan', 'Copy verse and translation')}
               >
                 {copied ? <Check className="w-3 h-3 text-primary" /> : <Copy className="w-3 h-3 text-ink-mute" />}
-                <span>{copied ? 'Tersalin' : 'Salin'}</span>
+                <span>{copied ? t('Tersalin', 'Copied') : t('Salin', 'Copy')}</span>
               </button>
             </div>
           </div>
@@ -361,7 +447,7 @@ export default function RandomAyahPage() {
                     : 'text-ink-secondary hover:text-ink-primary'
                 }`}
               >
-                Kata per Kata (WBW)
+                {t('Kata per Kata (WBW)', 'Word by word')}
               </button>
               <button
                 onClick={() => setActiveTab('mushaf')}
@@ -371,7 +457,7 @@ export default function RandomAyahPage() {
                     : 'text-ink-secondary hover:text-ink-primary'
                 }`}
               >
-                Teks Mushaf
+                {t('Teks Mushaf', 'Mushaf text')}
               </button>
               <button
                 onClick={() => setActiveTab('both')}
@@ -381,7 +467,7 @@ export default function RandomAyahPage() {
                     : 'text-ink-secondary hover:text-ink-primary'
                 }`}
               >
-                Keduanya
+                {t('Keduanya', 'Both')}
               </button>
             </div>
 
@@ -389,7 +475,7 @@ export default function RandomAyahPage() {
             <div className="flex items-center space-x-1.5">
               <span className="text-[11px] font-semibold text-ink-mute uppercase tracking-wider flex items-center space-x-1 font-sans">
                 <Type className="w-3 h-3 text-primary" />
-                <span className="hidden sm:inline">Ukuran:</span>
+                <span className="hidden sm:inline">{t('Ukuran:', 'Text size:')}</span>
               </span>
               <div className="flex items-center p-0.5 bg-canvas-soft rounded-lg border border-hairline text-xs">
                 {(['sm', 'md', 'lg'] as const).map((sz) => (
@@ -436,18 +522,18 @@ export default function RandomAyahPage() {
                       fontSize={fontSize}
                       wordArabic={w.arabic}
                       transliteration={w.transliteration}
-                      meaningIndo={w.meaningIndo}
+                      meaningIndo={language === 'en' ? w.meaningEnglish : w.meaningIndo}
                       posTag={w.posTag}
                       posDetail={w.posDetail}
                       matchedRootSlug={w.rootSlug}
                       rootLetters={w.rootLetters}
                       audioUrl={w.audioUrl}
                       ayahArabic={ayah.verseArabic}
-                      ayahIndo={ayah.verseIndo}
+                      ayahIndo={language === 'en' ? englishVerseText : ayah.verseIndo}
                       surahNumber={ayah.surahNumber}
                       ayahNumber={ayah.ayahNumber}
                       wordIndex={w.position || (idx + 1)}
-                      surahNameIndo={ayah.surahNameIndo}
+                      surahNameIndo={displayedSurahName}
                     />
                   );
                 })}
@@ -461,10 +547,10 @@ export default function RandomAyahPage() {
               <div className="flex items-center justify-between border-b border-hairline pb-1.5">
                 <span className="text-xs font-semibold text-ink-primary uppercase tracking-wider flex items-center space-x-1.5 font-sans">
                   <Layers className="w-3.5 h-3.5 text-primary" />
-                  <span>Bedah Kata per Kata:</span>
+                  <span>{t('Bedah Kata per Kata:', 'Word-by-word study')}</span>
                 </span>
                 <span className="text-[11px] text-ink-mute font-sans">
-                  Klik tiap kartu untuk Bedah Leksikal
+                  {t('Pilih kata untuk melihat sumber dan maknanya.', 'Select a word to view its sources and meanings.')}
                 </span>
               </div>
 
@@ -477,66 +563,82 @@ export default function RandomAyahPage() {
                     showInlineMeaning={true}
                     wordArabic={w.arabic}
                     transliteration={w.transliteration}
-                    meaningIndo={w.meaningIndo}
+                    meaningIndo={language === 'en' ? w.meaningEnglish : w.meaningIndo}
                     posTag={w.posTag}
                     posDetail={w.posDetail}
                     matchedRootSlug={w.rootSlug}
                     rootLetters={w.rootLetters}
                     audioUrl={w.audioUrl}
                     ayahArabic={ayah.verseArabic}
-                    ayahIndo={ayah.verseIndo}
+                    ayahIndo={language === 'en' ? englishVerseText : ayah.verseIndo}
                     surahNumber={ayah.surahNumber}
                     ayahNumber={ayah.ayahNumber}
                     wordIndex={w.position || (idx + 1)}
-                    surahNameIndo={ayah.surahNameIndo}
+                    surahNameIndo={displayedSurahName}
                   />
                 ))}
               </div>
             </div>
           )}
 
-          {/* Indonesian Kemenag Translation - Compact & Clean */}
-          <div className="p-4 sm:p-4.5 bg-canvas-soft border border-hairline rounded-xl space-y-1">
-            <span className="text-[11px] font-semibold text-ink-mute uppercase tracking-wider block font-sans">
-              Terjemahan Resmi Kemenag RI:
+          {language === 'en' && (
+            <div className="space-y-2 border-y border-hairline py-4">
+              <p className="text-sm font-medium text-ink-secondary">Saheeh International · Quran.com</p>
+              {englishTranslationStatus === 'loading' ? (
+                <p role="status" className="text-base text-ink-secondary">{t('Memuat terjemahan Inggris…', 'Loading English translation…')}</p>
+              ) : englishVerseText ? (
+                <p lang="en" className="text-base leading-relaxed text-ink-primary">“{englishVerseText}”</p>
+              ) : (
+                <p role="note" className="text-sm text-ink-secondary">{t('Terjemahan Inggris belum tersedia. Teks Arab tetap dapat dibaca.', 'English translation is unavailable right now. The Arabic verse remains available.')}</p>
+              )}
+            </div>
+          )}
+
+          {/* Indonesian verse translation is kept labeled in both interface languages. */}
+          <div className="space-y-1 border-y border-hairline py-4">
+            <span className="text-xs font-medium text-ink-mute block font-sans">
+              {t('Terjemahan Indonesia · Kemenag RI (resource 33):', 'Indonesian translation · Kemenag RI (resource 33):')}
             </span>
             <p className="text-xs sm:text-sm translation-kemenag text-ink-secondary leading-relaxed font-sans">
               &ldquo;{ayah.verseIndo}&rdquo;
             </p>
           </div>
 
-          {/* Expandable Tafsir Kemenag RI */}
+          {/* Indonesian tafsir from the attributed archive; content stays in its source language. */}
           {showTafsir && (
             <div className="p-5 rounded-2xl bg-canvas-soft border border-primary/20 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
               <div className="flex items-center justify-between border-b border-hairline pb-2">
                 <div className="flex items-center space-x-2">
                   <BookOpen className="w-4 h-4 text-primary" />
-                  <span className="text-xs font-bold font-sans text-ink-primary uppercase tracking-wider">
-                    Tafsir Ringkas Kemenag RI — QS. {ayah.surahNameIndo}: {ayah.ayahNumber}
+                  <span className="text-sm font-medium font-sans text-ink-primary">
+                    {language === 'en' ? `Indonesian tafsir · ${displayedSurahName} ${ayah.ayahNumber}` : `Tafsir Indonesia · ${ayah.surahNameIndo} ${ayah.ayahNumber}`}
                   </span>
                 </div>
                 <button
                   onClick={() => setShowTafsir(false)}
                   className="text-xs text-ink-mute hover:text-ink-primary font-medium"
                 >
-                  Tutup
+                  {t('Tutup', 'Close')}
                 </button>
               </div>
 
               {loadingTafsir ? (
                 <div className="py-6 flex items-center justify-center space-x-2 text-ink-mute text-xs">
                   <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                  <span>Memuat penjelasan tafsir...</span>
+                  <span>{t('Memuat tafsir Indonesia…', 'Loading Indonesian tafsir…')}</span>
                 </div>
               ) : tafsirContent ? (
                 <div className="text-xs sm:text-sm font-sans leading-relaxed text-ink-secondary space-y-2 select-text">
                   <p className="whitespace-pre-line">{tafsirContent}</p>
                   <p className="text-[11px] text-ink-mute pt-2 border-t border-hairline">
-                    Sumber: Kemenag RI (Kementerian Agama Republik Indonesia)
+                    {t('Arsip sumber:', 'Archive source:')} {tafsirSource}
+                  </p>
+                  <p className="text-sm leading-relaxed text-ink-secondary">
+                    {t('Arsip ini memberi label “Kemenag” pada teks tafsir; asal-usul teks di salinan ini belum diverifikasi secara independen.', 'The archive labels this as “Kemenag” tafsir; the provenance of the text in this mirror has not been independently verified.')}
                   </p>
                 </div>
               ) : (
-                <p className="text-xs text-ink-mute italic">Tafsir untuk ayat ini belum tersedia.</p>
+                <p className="text-sm text-ink-secondary">{t('Tafsir Indonesia belum tersedia untuk ayat ini.', 'Indonesian tafsir is unavailable for this verse.')}</p>
               )}
             </div>
           )}
@@ -546,10 +648,10 @@ export default function RandomAyahPage() {
             <div className="space-y-0.5 text-center sm:text-left">
               <span className="text-xs sm:text-sm font-bold text-ink-primary flex items-center justify-center sm:justify-start space-x-1.5">
                 <BookOpen className="w-3.5 h-3.5 text-primary" />
-                <span>Baca dalam Konteks Mushaf Lengkap</span>
+                <span>{t('Baca dalam Konteks Mushaf', 'Read in the Quran reader')}</span>
               </span>
               <span className="text-[11px] text-ink-mute block">
-                Buka Surah {ayah.surahNameIndo} langsung pada posisi Ayat {ayah.ayahNumber}.
+                {t(`Buka Surah ${ayah.surahNameIndo} pada ayat ${ayah.ayahNumber}.`, `Open Surah ${displayedSurahName} at verse ${ayah.ayahNumber}.`)}
               </span>
             </div>
 
@@ -557,7 +659,7 @@ export default function RandomAyahPage() {
               href={`/baca?surah=${ayah.surahNumber}&ayah=${ayah.ayahNumber}`}
               className="w-full sm:w-auto px-4 py-2 rounded-xl bg-primary hover:bg-primary-deep text-white text-xs font-semibold shadow-subtle transition-all inline-flex items-center justify-center space-x-1.5 shrink-0 group"
             >
-              <span>Buka di Halaman Baca</span>
+              <span>{t('Buka di Halaman Baca', 'Open in reader')}</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { AVAILABLE_QARIS, DEFAULT_TRANSLATION_VOICE_MODE, TRANSLATION_VOICE_OPTIONS, AUDIO_STARTUP_TIMEOUT_MS, getAudioCandidateUrls, getAyahAudioUrl, getTranslationAudioCandidateUrls, getNextAudioTrack, getFirstAudioTrack, isHumanTranslationAvailable, isTranslationAudioAvailable } from './audio';
+import { AVAILABLE_QARIS, DEFAULT_TRANSLATION_VOICE_MODE, TRANSLATION_VOICE_OPTIONS, AUDIO_STARTUP_TIMEOUT_MS, getAudioCandidateUrls, getAyahAudioUrl, getTranslationAudioCandidateUrls, getNextAudioTrack, getFirstAudioTrack, isHumanTranslationAvailable, isTranslationAudioAvailable, shouldRepeatVerse } from './audio';
 
 test('recitation URLs identify the requested verse and real reciter', () => {
   assert.match(getAyahAudioUrl(18, 10), /018010\.mp3$/);
@@ -8,25 +8,19 @@ test('recitation URLs identify the requested verse and real reciter', () => {
   assert.ok(AVAILABLE_QARIS.some(qari => qari.id === 'yasser_dossary'));
 });
 
-test('human recordings stay first, with an explicitly selected AI fallback and legacy safety', () => {
-  assert.equal(DEFAULT_TRANSLATION_VOICE_MODE, 'ai-fallback');
-  assert.equal(getTranslationAudioCandidateUrls(3, 1, undefined, DEFAULT_TRANSLATION_VOICE_MODE, 'id').length, 1);
+test('translation audio only uses human recordings and never falls back to generated speech', () => {
+  assert.equal(DEFAULT_TRANSLATION_VOICE_MODE, 'human');
+  assert.deepEqual(TRANSLATION_VOICE_OPTIONS.map(option => option.id), ['human', 'off']);
   assert.equal(getTranslationAudioCandidateUrls(1, 1, undefined, DEFAULT_TRANSLATION_VOICE_MODE, 'id')[0].startsWith('https://archive.org/'), true);
-  assert.match(getTranslationAudioCandidateUrls(3, 1, undefined, DEFAULT_TRANSLATION_VOICE_MODE, 'id')[0], /audio_m4a\/003\/003001\.m4a/);
-  assert.deepEqual(TRANSLATION_VOICE_OPTIONS.map(option => option.id), ['human', 'ai-fallback', 'off']);
+  assert.deepEqual(getTranslationAudioCandidateUrls(3, 1, undefined, DEFAULT_TRANSLATION_VOICE_MODE, 'id'), []);
   assert.deepEqual(getTranslationAudioCandidateUrls(18, 1, undefined, 'human'), []);
-  const aiOnly = getTranslationAudioCandidateUrls(18, 1, undefined, 'ai-fallback', 'id');
-  assert.equal(aiOnly.length, 1);
-  assert.match(aiOnly[0], /huggingface\.co\/datasets\/insanalamin\/quran-terjemahan-indonesia-audio-by-ayah\/resolve\/main\/audio_m4a\/018\/018001\.m4a/);
-  const humanThenAi = getTranslationAudioCandidateUrls(1, 1, undefined, 'ai-fallback', 'id');
-  assert.ok(humanThenAi[0].startsWith('https://archive.org/'));
-  assert.match(humanThenAi[1], /audio_m4a\/001\/001001\.m4a/);
+  assert.deepEqual(getTranslationAudioCandidateUrls(18, 1, undefined, 'human', 'id'), []);
   assert.equal(isHumanTranslationAvailable(41, 'id', 1), false, 'known missing archive file should not delay handsfree playback');
-  assert.equal(getTranslationAudioCandidateUrls(41, 1, undefined, 'ai-fallback', 'id').length, 1);
-  assert.equal(isTranslationAudioAvailable(18, 'id', 'ai-fallback'), true);
+  assert.deepEqual(getTranslationAudioCandidateUrls(41, 1, undefined, 'human', 'id'), []);
+  assert.equal(isTranslationAudioAvailable(18, 'id', 'human'), false);
   assert.deepEqual(getTranslationAudioCandidateUrls(1, 1, undefined, 'off'), []);
   assert.equal(isTranslationAudioAvailable(1, 'id', 'off'), false);
-  assert.deepEqual(getTranslationAudioCandidateUrls(18, 1, undefined, 'ai-fallback', 'en').length, 1);
+  assert.equal(getTranslationAudioCandidateUrls(18, 1, undefined, 'human', 'en').length, 1);
   const legacyCandidates = getTranslationAudioCandidateUrls(1, 1, 'Dengan nama Allah', 'tts' as any);
   assert.ok(legacyCandidates.every(url => url.startsWith('https://archive.org/')));
   assert.ok(getTranslationAudioCandidateUrls(1, 1).every(url => !url.includes('/api/')));
@@ -44,11 +38,11 @@ test('handsfree translation follows the selected interface language', () => {
 test('reverse handsfree starts Arabic on Al-Kahf when Indonesian recording is missing', () => {
   assert.deepEqual(getFirstAudioTrack(18, 5, 'reverse'), { ayahNumber: 5, phase: 'arabic' });
   assert.deepEqual(getFirstAudioTrack(18, 5, 'reverse', 'id', 'off'), { ayahNumber: 5, phase: 'arabic' });
-  assert.deepEqual(getFirstAudioTrack(18, 5, 'reverse', 'id', 'ai-fallback'), { ayahNumber: 5, phase: 'translation' });
+  assert.deepEqual(getFirstAudioTrack(18, 5, 'reverse', 'id', 'human'), { ayahNumber: 5, phase: 'arabic' });
   assert.deepEqual(getFirstAudioTrack(69, 38, 'reverse'), { ayahNumber: 38, phase: 'arabic' });
   assert.deepEqual(getTranslationAudioCandidateUrls(69, 38), []);
-  assert.equal(AUDIO_STARTUP_TIMEOUT_MS.translation, 4000, 'Failed translation audio advances after four seconds');
-  assert.equal(AUDIO_STARTUP_TIMEOUT_MS.translationFallback, 800, 'A slow human Indonesian recording switches to TTS promptly');
+  assert.equal(AUDIO_STARTUP_TIMEOUT_MS.translation, 10000, 'Slow human translation audio gets time to start before handsfree advances');
+  assert.equal('translationFallback' in AUDIO_STARTUP_TIMEOUT_MS, false, 'There is no generated-voice fallback timeout');
   assert.deepEqual(getNextAudioTrack({ surahNumber: 18, ayahNumber: 5, phase: 'arabic', totalAyahs: 110, handsfreeMode: 'reverse', repeatMode: 'off', autoNext: true }), { ayahNumber: 6, phase: 'arabic' });
 });
 
@@ -57,7 +51,7 @@ test('normal handsfree plays translation then advances; reverse plays same-verse
   assert.deepEqual(getNextAudioTrack({ ...base, phase: 'arabic' }), { ayahNumber: 2, phase: 'translation' });
   assert.deepEqual(getNextAudioTrack({ ...base, phase: 'translation' }), { ayahNumber: 3, phase: 'arabic' });
   assert.deepEqual(getNextAudioTrack({ ...base, phase: 'translation', handsfreeMode: 'reverse' }), { ayahNumber: 2, phase: 'arabic' });
-  assert.deepEqual(getNextAudioTrack({ ...base, surahNumber: 18, ayahNumber: 5, totalAyahs: 110, phase: 'arabic', translationVoiceMode: 'ai-fallback' }), { ayahNumber: 5, phase: 'translation' });
+  assert.deepEqual(getNextAudioTrack({ ...base, surahNumber: 18, ayahNumber: 5, totalAyahs: 110, phase: 'arabic', translationVoiceMode: 'human' }), { ayahNumber: 6, phase: 'arabic' });
 });
 test('auto-next off finishes current verse including translation and then stops', () => {
   assert.deepEqual(getNextAudioTrack({ ...base, phase: 'arabic', autoNext: false }), { ayahNumber: 2, phase: 'translation' });
@@ -68,4 +62,11 @@ test('repeat completes both phases and respects surah boundaries', () => {
   assert.deepEqual(getNextAudioTrack({ ...base, phase: 'translation', repeatMode: 'ayah' }), { ayahNumber: 2, phase: 'arabic' });
   assert.deepEqual(getNextAudioTrack({ ...base, ayahNumber: 7, phase: 'translation', repeatMode: 'surah' }), { ayahNumber: 1, phase: 'arabic' });
   assert.equal(getNextAudioTrack({ ...base, ayahNumber: 7, phase: 'translation' }), null);
+});
+test('verse repeat count represents total plays and supports repeat-until-stopped', () => {
+  assert.equal(shouldRepeatVerse(1, 3), true);
+  assert.equal(shouldRepeatVerse(2, 3), true);
+  assert.equal(shouldRepeatVerse(3, 3), false);
+  assert.equal(shouldRepeatVerse(1, 1), false);
+  assert.equal(shouldRepeatVerse(30, 0), true);
 });

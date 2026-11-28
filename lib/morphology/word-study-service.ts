@@ -8,7 +8,7 @@
  * 1. QAC remains the authoritative source for morphology, roots, lemmas, and occurrences.
  * 2. Lexical definitions are sourced from Lane's Arabic-English Lexicon with explicit volume/page citations.
  * 3. Root ≠ Definition: Exact lemma entries are distinguished from root fallbacks.
- * 4. Zero LLM-per-entry hallucination: All claims trace to valid entries in SourceRegistry.
+ * 4. No generated lexical definitions: AI-assisted particle notes stay labeled and separate from sourced lexicon entries.
  */
 
 import { WordStudyViewModel, WordFamilyItem, SyntaxAnalysis, LexicalStatus } from '../lexicon/types';
@@ -20,13 +20,70 @@ import { stripArabicHarakat } from '../search/root-search';
 import { transliterateArabic, isRawBuckwalterRoot } from './transliteration';
 import { getRootOccurrencesFromChunk } from './morphology-service';
 import { getQuranicParticleEnglishMeaning, getQuranicParticleInfo } from './particles-dictionary';
-import wbwIndonesianGlosses from '../data/wbw-indonesian-glosses.json';
-import wbwEnglishGlosses from '../data/wbw-english-glosses.json';
 import { getQabasLemmaId } from '../lexicon/qabas-lemma-lookup';
 
-const WBW_ID = wbwIndonesianGlosses.meanings as Record<string, string>;
-const WBW_EN = wbwEnglishGlosses.meanings as Record<string, string>;
-const wordLocation = (coordinate?: string) => coordinate?.split(':').slice(0, 3).join(':') || '';
+const GENERIC_LEXICAL_LABEL = /^(?:kata (?:dalam|al-qur|kerja|benda)|bentuk kata|konsep & turunan|kosakata al-qur|nomina(?:\s|\()|verba(?:\s|\()|fi['’]il(?:\s|\()|isim(?:\s|\()|harf(?:\s|\())/i;
+
+function makeParticleMeaningNote(category: string | undefined, meaningId: string, meaningEn: string | undefined) {
+  const notes: Record<string, { id: string; en: string }> = {
+    'Harf Jarr': {
+      id: 'Menghubungkan nomina dengan bagian lain kalimat; hubungan tepatnya mengikuti konteks.',
+      en: 'A preposition links a following noun to the rest of the sentence; the exact relation depends on context.',
+    },
+    'Harf Athaf': {
+      id: 'Menghubungkan kata atau klausa; hubungan seperti penyertaan atau urutan ditentukan konteks.',
+      en: 'A conjunction joins words or clauses; relations such as addition or sequence depend on context.',
+    },
+    'Harf Taukid': {
+      id: 'Memberi penegasan pada pernyataan; kekuatan penegasannya mengikuti pemakaian.',
+      en: 'Adds emphasis to a statement; the strength of that emphasis depends on its use.',
+    },
+    'Harf Nafi': {
+      id: 'Meniadakan makna tertentu; unsur yang dinegasikan bergantung pada susunan kalimat.',
+      en: 'Negates part of a statement; what is negated depends on the sentence structure.',
+    },
+    'Harf Nahyi': {
+      id: 'Menyatakan larangan dalam susunan tertentu; kata kerja dan sasarannya menentukan cakupannya.',
+      en: 'Marks a prohibition in particular constructions; the verb and its subject determine its scope.',
+    },
+    'Harf Syarat': {
+      id: 'Memperkenalkan syarat; jawaban atau akibat syarat dapat muncul pada bagian lain kalimat.',
+      en: 'Introduces a condition; its consequence may appear elsewhere in the sentence.',
+    },
+    'Harf Istitsna': {
+      id: 'Mengecualikan sesuatu dari pernyataan sebelumnya; batas pengecualian mengikuti konteks.',
+      en: 'Marks an exception to an earlier statement; the scope of the exception depends on context.',
+    },
+    'Harf Istifham': {
+      id: 'Membentuk pertanyaan; dalam konteks tertentu pertanyaan dapat berfungsi retoris.',
+      en: 'Forms a question; in some contexts the question may be rhetorical.',
+    },
+    'Harf Nida': {
+      id: 'Mengawali seruan kepada pihak yang dipanggil.',
+      en: 'Introduces a direct address to the person or group being called.',
+    },
+    'Harf Jawaban': {
+      id: 'Menandai jawaban atau tanggapan; maknanya bergantung pada ujaran sebelumnya.',
+      en: 'Marks a reply or response; its meaning depends on the preceding statement.',
+    },
+    "Harf Rad'in": {
+      id: 'Menolak atau membantah pernyataan sebelumnya dengan penegasan.',
+      en: 'Rejects or rebukes a preceding statement emphatically.',
+    },
+    'Harf Mashdariyyah': {
+      id: 'Menghubungkan klausa yang dapat dipahami sebagai suatu tindakan atau keadaan.',
+      en: 'Introduces a clause that can function as an action or state in the sentence.',
+    },
+    'Harf Tanfis': {
+      id: 'Menandai waktu mendatang pada kata kerja yang mengikutinya.',
+      en: 'Marks future time on the verb that follows it.',
+    },
+  };
+  return notes[category || ''] || {
+    id: `Padanan ringkas: ${meaningId}. Fungsi tepatnya mengikuti susunan ayat.`,
+    en: `Common gloss: ${meaningEn || 'Quranic particle'}. Its precise function depends on the verse structure.`,
+  };
+}
 
 /**
  * Maps raw QAC morphological features string to detailed Indonesian syntactic breakdown
@@ -232,20 +289,14 @@ export function getWordStudy(
     }
 
     const sortedItems = Array.from(grouped.values())
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 12);
+      .sort((a, b) => b.count - a.count);
 
     for (const item of sortedItems) {
-      const meaning = WBW_ID[wordLocation(item.sampleLoc)] ||
-        'Makna belum tersedia';
-
       wordFamily.push({
         arabic: item.arabic,
         buckwalter: item.bw,
         lemmaArabic: item.lemmaAr,
         pos: item.pos,
-        meaningIndo: meaning,
-        meaningEnglish: WBW_EN[wordLocation(item.sampleLoc)],
         count: item.count,
         sampleCoordinate: item.sampleLoc
       });
@@ -255,7 +306,7 @@ export function getWordStudy(
 
   // 3. Determine Lexical Status
   let lexicalStatus: LexicalStatus = 'not_found';
-  const lex = particleEntry ? undefined : detail.lexicon;
+  const lex = detail.lexicon;
   if (lex?.hasLexicalData && lex.senses && lex.senses.length > 0) {
     lexicalStatus = 'verified';
   } else if (lex?.hasLexicalData) {
@@ -266,22 +317,32 @@ export function getWordStudy(
     lexicalStatus = 'not_indexed';
   }
 
-  // Only bundled, location-matched translations carry word-meaning provenance.
-  // Caller-supplied display text and root commentary are not lexical evidence.
-  const location = wordLocation(detail.identity.coordinate);
-  const primaryText = particleEntry?.id || WBW_ID[location] || particleInfo?.primaryMeaning || (detail.morphology.isParticle ? detail.translation.primaryMeaning : '') || 'Makna kata belum tersedia';
-  const primaryEnglish = particleEntry?.en || WBW_EN[location] || getQuranicParticleEnglishMeaning(detail.identity.cleanArabic || standalone, detail.morphology.rawTag);
-  const isEditorialParticleGloss = Boolean(particleEntry || (particleInfo && !WBW_ID[location]));
-  const hasIndonesianWordGloss = Boolean(WBW_ID[location] || particleEntry || isEditorialParticleGloss);
-  const hasEnglishWordGloss = Boolean(WBW_EN[location] || particleEntry || isEditorialParticleGloss);
-  const meaningSource = isEditorialParticleGloss ? SOURCES_REGISTRY.particleGloss : SOURCES_REGISTRY.wordTranslation;
+  // Runtime Quran.com word glosses are loaded by the view for the active locale.
+  const legacyGloss = detail.translation.primaryMeaning?.trim() || '';
+  const hasUnrecordedLegacyGloss = !detail.morphology.isParticle
+    && Boolean(legacyGloss)
+    && !GENERIC_LEXICAL_LABEL.test(legacyGloss)
+    && detail.translation.sourceCitation.startsWith('Qurabic ');
+  const primaryText = particleEntry?.id
+    || particleInfo?.primaryMeaning
+    || (detail.morphology.isParticle ? detail.translation.primaryMeaning : '')
+    || (hasUnrecordedLegacyGloss ? legacyGloss : '')
+    || 'Makna kata belum tersedia';
+  const primaryEnglish = particleEntry?.en || getQuranicParticleEnglishMeaning(detail.identity.cleanArabic || standalone, detail.morphology.rawTag);
+  const particleMeaningNote = particleInfo?.meaningNote || (particleInfo && detail.morphology.isParticle
+    ? makeParticleMeaningNote(particleInfo?.particleCategory, primaryText, primaryEnglish)
+    : undefined);
+  const isEditorialParticleGlossId = Boolean(particleEntry || particleInfo);
+  const isEditorialParticleGlossEn = Boolean(particleEntry || particleInfo);
+  const hasEditorialParticleGloss = isEditorialParticleGlossId || isEditorialParticleGlossEn;
+  const hasUnverifiedEditorialWordGloss = hasUnrecordedLegacyGloss && primaryText === legacyGloss;
 
   // 6. Build Syntactic Breakdown
   const syntax = parseSyntacticFeatures(detail.morphology.rawTag, detail.morphology.rawFeatures);
 
-  const provenance = [SOURCES_REGISTRY.quranText, SOURCES_REGISTRY.morphology,
-    SOURCES_REGISTRY.translation, SOURCES_REGISTRY.wordTranslation];
-  if (isEditorialParticleGloss) provenance.push(SOURCES_REGISTRY.particleGloss);
+  const provenance = [SOURCES_REGISTRY.quranText, SOURCES_REGISTRY.morphology, SOURCES_REGISTRY.translation];
+  if (hasEditorialParticleGloss) provenance.push(SOURCES_REGISTRY.particleGloss);
+  if (hasUnverifiedEditorialWordGloss) provenance.push(SOURCES_REGISTRY.editorialWordGloss);
   if (lex?.hasLexicalData) provenance.push(SOURCES_REGISTRY.laneLexicon);
 
   const effectiveOccItems = detail.relatedOccurrences.length > 0
@@ -314,14 +375,14 @@ export function getWordStudy(
     },
     primaryMeaning: {
       text: primaryText,
-      source: isEditorialParticleGloss ? meaningSource.name : hasIndonesianWordGloss ? SOURCES_REGISTRY.wordTranslation.name : 'Sumber terjemahan per kata belum tersedia',
-      sourceBadge: isEditorialParticleGloss ? 'Qurabic · gloss editorial' : hasIndonesianWordGloss ? 'Quran.com · Indonesia' : 'Sumber belum tersedia',
-      sourceId: isEditorialParticleGloss ? SOURCES_REGISTRY.particleGloss.id : hasIndonesianWordGloss ? 'quran-com-wbw' : undefined,
+      source: isEditorialParticleGlossId ? SOURCES_REGISTRY.particleGloss.name : hasUnverifiedEditorialWordGloss ? SOURCES_REGISTRY.editorialWordGloss.name : 'Sumber terjemahan per kata belum tersedia',
+      sourceBadge: isEditorialParticleGlossId ? 'Catatan berbantuan AI · belum ditelaah' : hasUnverifiedEditorialWordGloss ? 'Qurabic · sumber/telaah tidak tercatat' : 'Sumber belum tersedia',
+      sourceId: isEditorialParticleGlossId ? SOURCES_REGISTRY.particleGloss.id : hasUnverifiedEditorialWordGloss ? SOURCES_REGISTRY.editorialWordGloss.id : undefined,
       textEnglish: primaryEnglish,
-      sourceEnglish: isEditorialParticleGloss ? meaningSource.name : hasEnglishWordGloss ? SOURCES_REGISTRY.wordTranslation.name : 'Word-by-word source unavailable',
-      sourceBadgeEnglish: isEditorialParticleGloss ? 'Qurabic · editorial gloss' : hasEnglishWordGloss ? 'Quran.com · English' : 'Source unavailable',
-      sourceIdEnglish: isEditorialParticleGloss ? SOURCES_REGISTRY.particleGloss.id : hasEnglishWordGloss ? 'quran-com-wbw' : undefined,
-      isEditorialSummary: isEditorialParticleGloss
+      sourceEnglish: isEditorialParticleGlossEn ? SOURCES_REGISTRY.particleGloss.nameEnglish : hasUnverifiedEditorialWordGloss && primaryEnglish ? SOURCES_REGISTRY.editorialWordGloss.nameEnglish : 'Word-by-word source unavailable',
+      sourceBadgeEnglish: isEditorialParticleGlossEn ? 'AI-assisted · unreviewed' : hasUnverifiedEditorialWordGloss && primaryEnglish ? 'Qurabic · provenance unrecorded' : hasUnverifiedEditorialWordGloss ? 'English meaning unavailable' : 'Source unavailable',
+      sourceIdEnglish: isEditorialParticleGlossEn ? SOURCES_REGISTRY.particleGloss.id : hasUnverifiedEditorialWordGloss && primaryEnglish ? SOURCES_REGISTRY.editorialWordGloss.id : undefined,
+      isEditorialSummary: isEditorialParticleGlossId || isEditorialParticleGlossEn || hasUnverifiedEditorialWordGloss
     },
     morphology: {
       pos: detail.morphology.pos,
@@ -352,7 +413,7 @@ export function getWordStudy(
       volume: lex?.volume,
       page: lex?.page,
       meanings: [primaryText],
-      particleMeaning: particleInfo?.meaningNote,
+      particleMeaning: particleMeaningNote,
     },
     wordFamily,
     occurrences: {

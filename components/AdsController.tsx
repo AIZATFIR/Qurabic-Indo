@@ -2,15 +2,16 @@
 
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { initializeAds, hideBanner, isAdFreePath, isNativeApp } from '@/lib/ads/admob';
+import { hideBanner, isAdFreePath, isNativeApp, requestAdConsent } from '@/lib/ads/admob';
 
 export default function AdsController() {
   const pathname = usePathname();
 
-  // Inisialisasi AdMob saat aplikasi dibuka di native Android
+  // AdMob initializes at request time; this controller only hides banners on protected routes.
+
   useEffect(() => {
     if (!isNativeApp()) return;
-    initializeAds().catch(() => {});
+    void requestAdConsent(true);
   }, []);
 
   // Proteksi rute otomatis: sembunyikan banner seketika saat masuk ke rute suci / membaca

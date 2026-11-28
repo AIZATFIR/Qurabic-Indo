@@ -1,13 +1,15 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { VerseOccurrence, WordSegment } from '@/lib/types/morphology';
+import { useLanguage } from '@/lib/context/LanguageContext';
+import { getSurahByNumber } from '@/lib/data/surah-list';
 import { fetchVerseWords } from '@/lib/api/quran-corpus-api';
 import { stripArabicHarakat } from '@/lib/search/root-search';
 import WordByWordViewer from './WordByWordViewer';
 import WordEtymologyModal from './WordEtymologyModal';
-import { Copy, Check, BookOpen, ChevronDown, ChevronUp, ExternalLink, ArrowDown, ShieldCheck, Filter } from 'lucide-react';
+import { Copy, Check, Play, ChevronDown, ChevronUp, ExternalLink, ArrowDown, ShieldCheck, Filter } from 'lucide-react';
 
 interface AyahConcordanceProps {
   occurrences: VerseOccurrence[];
@@ -24,6 +26,7 @@ export default function AyahConcordance({
   rootLatin,
   isExampleSection = false,
 }: AyahConcordanceProps) {
+  const { language, t } = useLanguage();
   const [openInterlinearId, setOpenInterlinearId] = useState<string | null>(null);
   const [expandedCorpusIds, setExpandedCorpusIds] = useState<Record<string, boolean>>({});
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
@@ -31,6 +34,15 @@ export default function AyahConcordance({
   const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({});
   const [visibleCount, setVisibleCount] = useState<number>(isExampleSection ? 3 : INITIAL_VISIBLE_COUNT);
   const [selectedSurahFilter, setSelectedSurahFilter] = useState<number | 'all'>('all');
+  const [englishTranslations, setEnglishTranslations] = useState<Record<string, string>>({});
+  const [englishUnavailable, setEnglishUnavailable] = useState<Set<string>>(() => new Set());
+  const [englishFailed, setEnglishFailed] = useState<Set<string>>(() => new Set());
+  const [englishLoading, setEnglishLoading] = useState(false);
+  const [retryEnglish, setRetryEnglish] = useState(0);
+  const englishAttempted = useRef(new Set<string>());
+  const englishPending = useRef(new Set<string>());
+  const englishControllers = useRef(new Set<AbortController>());
+  const isMounted = useRef(false);
   
   // Word Detail Modal state
   const [selectedWordForModal, setSelectedWordForModal] = useState<{
@@ -65,16 +77,68 @@ export default function AyahConcordance({
     return occurrences.filter(o => o.surahNumber === selectedSurahFilter);
   }, [occurrences, selectedSurahFilter]);
 
+  const displayedOccurrences = filteredOccurrences.slice(0, visibleCount);
+  const hasMore = !isExampleSection && visibleCount < filteredOccurrences.length;
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+      for (const controller of englishControllers.current) controller.abort();
+      englishControllers.current.clear();
+      englishPending.current.clear();
+      englishAttempted.current.clear();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (language !== 'en') return;
+    const keys = [...new Set(displayedOccurrences.map((item) => `${item.surahNumber}:${item.ayahNumber}`))]
+      .filter((key) => !englishAttempted.current.has(key));
+    if (!keys.length) return;
+    for (const key of keys) {
+      englishAttempted.current.add(key);
+      englishPending.current.add(key);
+    }
+    setEnglishLoading(true);
+    const batches: string[][] = [];
+    for (let index = 0; index < keys.length; index += 20) batches.push(keys.slice(index, index + 20));
+    void (async () => {
+      for (const verseKeys of batches) {
+        if (!isMounted.current) break;
+        const controller = new AbortController();
+        englishControllers.current.add(controller);
+        try {
+          const response = await fetch('/api/verse-translation', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ verseKeys }), signal: controller.signal,
+          });
+          if (!response.ok) throw new Error('Translation request failed.');
+          const result = await response.json() as { translations?: Record<string, string>; unavailable?: string[]; failed?: string[] };
+          if (!isMounted.current) continue;
+          setEnglishTranslations((current) => ({ ...current, ...(result.translations || {}) }));
+          setEnglishUnavailable((current) => new Set([...current, ...(result.unavailable || [])]));
+          setEnglishFailed((current) => new Set([...current, ...(result.failed || [])]));
+        } catch (error) {
+          if (isMounted.current && (error as { name?: string })?.name !== 'AbortError') {
+            setEnglishFailed((current) => new Set([...current, ...verseKeys]));
+          }
+        } finally {
+          englishControllers.current.delete(controller);
+          for (const key of verseKeys) englishPending.current.delete(key);
+        }
+      }
+      if (isMounted.current) setEnglishLoading(englishPending.current.size > 0);
+    })();
+  }, [language, displayedOccurrences, retryEnglish]);
+
   if (!occurrences || occurrences.length === 0) {
     return (
       <div className="p-8 text-center bg-canvas-surface border border-hairline rounded-2xl text-ink-mute font-sans shadow-subtle">
-        Belum ada contoh kemunculan ayat yang terdaftar untuk akar kata ini.
+        {t('Belum ada contoh kemunculan ayat yang terdaftar untuk akar kata ini.', 'No verse occurrences are indexed for this root yet.')}
       </div>
     );
   }
-
-  const displayedOccurrences = filteredOccurrences.slice(0, visibleCount);
-  const hasMore = !isExampleSection && visibleCount < filteredOccurrences.length;
 
   const toggleInterlinear = async (item: VerseOccurrence, key: string) => {
     if (openInterlinearId === key) {
@@ -111,7 +175,10 @@ export default function AyahConcordance({
   };
 
   const handleCopyVerse = (item: VerseOccurrence, key: string) => {
-    const textToCopy = `${item.verseArabic}\n\n"${item.verseIndo}"\n\n(Q.S. ${item.surahNameIndo} [${item.surahNumber}]: ${item.ayahNumber})`;
+    const translation = language === 'en' ? englishTranslations[`${item.surahNumber}:${item.ayahNumber}`] || '' : item.verseIndo;
+    const surahName = language === 'en' ? getSurahByNumber(item.surahNumber)?.transliteration : item.surahNameIndo;
+    const reference = language === 'en' ? `(${surahName} ${item.surahNumber}:${item.ayahNumber})` : `(QS. ${surahName} ${item.surahNumber}:${item.ayahNumber})`;
+    const textToCopy = `${item.verseArabic}\n\n"${translation}"\n\n${reference}`;
     navigator.clipboard.writeText(textToCopy);
     setCopiedKey(key);
     setTimeout(() => setCopiedKey(null), 2500);
@@ -167,7 +234,7 @@ export default function AyahConcordance({
         <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-canvas-surface border border-hairline rounded-2xl shadow-subtle text-xs font-sans">
           <div className="flex items-center space-x-2 text-ink-secondary">
             <Filter aria-hidden="true" className="w-3.5 h-3.5 text-primary" />
-            <span className="font-semibold text-ink-primary">Filter Berdasarkan Surah:</span>
+            <span className="font-semibold text-ink-primary">{t('Filter berdasarkan surah:', 'Filter by surah:')}</span>
           </div>
 
           <div className="flex items-center space-x-2">
@@ -180,16 +247,23 @@ export default function AyahConcordance({
               }}
               className="px-3 py-1.5 rounded-xl bg-canvas-soft border border-hairline text-ink-primary text-xs font-medium focus:outline-none focus:ring-1 focus:ring-primary"
             >
-              <option value="all">Semua Surah ({occurrences.length} Ayat)</option>
+              <option value="all">{t('Semua surah', 'All surahs')} ({occurrences.length} {t('ayat', 'verses')})</option>
               {availableSurahs.map((s) => (
                 <option key={s.number} value={s.number}>
-                  Q.S. {s.nameIndo} [{s.number}] — {s.count} ayat
+                  Q.S. {language === 'en' ? getSurahByNumber(s.number)?.transliteration : s.nameIndo} [{s.number}] — {s.count} {t('ayat', 'verses')}
                 </option>
               ))}
             </select>
           </div>
         </div>
       )}
+
+      {language === 'en' && englishLoading && <p role="status" className="text-base text-ink-secondary">{t('Memuat terjemahan Inggris…', 'Loading English translations…')}</p>}
+      {language === 'en' && englishFailed.size > 0 && <button type="button" onClick={() => {
+        for (const key of englishFailed) englishAttempted.current.delete(key);
+        setEnglishFailed(new Set());
+        setRetryEnglish((attempt) => attempt + 1);
+      }} className="inline-flex min-h-11 items-center rounded-sm text-base text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">{t('Coba lagi', 'Retry failed translations')}</button>}
 
       {/* Occurrences List */}
       <div className="space-y-4">
@@ -210,11 +284,11 @@ export default function AyahConcordance({
               <div className="flex items-center justify-between border-b border-hairline pb-3.5 font-sans">
                 <div className="flex items-center space-x-2.5">
                   <span className="px-3 py-1 rounded-full bg-primary-subdued text-primary font-semibold text-xs">
-                    Q.S. {item.surahNameIndo} [{item.surahNumber}]:{item.ayahNumber}
+                    Q.S. {language === 'en' ? getSurahByNumber(item.surahNumber)?.transliteration : item.surahNameIndo} [{item.surahNumber}]:{item.ayahNumber}
                   </span>
                   {item.matchedWordArabic && (
                     <span className="text-xs text-ink-mute hidden sm:inline-flex items-center space-x-1">
-                      <span>Bentuk:</span>
+                      <span>{t('Bentuk:', 'Form:')}</span>
                       <strong className="font-arabic text-sm text-primary" dir="rtl">{item.matchedWordArabic}</strong>
                     </span>
                   )}
@@ -223,22 +297,29 @@ export default function AyahConcordance({
                 <div className="flex items-center space-x-1 sm:space-x-2">
                   <button
                     onClick={() => handleCopyVerse(item, itemKey)}
-                    className="p-2 rounded-xl bg-canvas-soft hover:bg-canvas-page text-ink-secondary hover:text-ink-primary transition-colors text-xs"
-                    title="Salin Ayat &amp; Terjemahan"
+                    className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl bg-canvas-soft text-ink-secondary transition-colors hover:bg-canvas-page hover:text-ink-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+                    title={t('Salin ayat dan terjemahan', 'Copy verse and translation')}
                   >
                     {isCopied ? <Check aria-hidden="true" className="w-3.5 h-3.5 text-success" /> : <Copy aria-hidden="true" className="w-3.5 h-3.5" />}
                   </button>
 
                   <Link
                     href={`/baca?surah=${item.surahNumber}&ayah=${item.ayahNumber}`}
-                    className="px-3 py-1.5 rounded-full bg-canvas-soft hover:bg-canvas-page border border-hairline text-ink-secondary hover:text-primary text-xs font-semibold transition-all inline-flex items-center space-x-1"
-                    title="Buka dalam Mushaf Lengkap"
+                    className="inline-flex min-h-11 items-center space-x-1 rounded-full border border-hairline bg-canvas-soft px-3 text-xs font-semibold text-ink-secondary transition-all hover:bg-canvas-page hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+                    title={t('Buka dalam mode baca', 'Open in reader')}
                   >
-                    <span>Baca di Mushaf</span>
+                    <span>{t('Baca', 'Read')}</span>
                     <ExternalLink aria-hidden="true" className="w-3 h-3" />
                   </Link>
 
-                  <button
+                  <Link
+                    href={`/baca?surah=${item.surahNumber}&ayah=${item.ayahNumber}&play=1`}
+                    aria-label={t(`Putar surah ${item.surahNumber} ayat ${item.ayahNumber}`, `Play surah ${item.surahNumber} verse ${item.ayahNumber}`)}
+                    title={t('Putar ayat di mode baca', 'Play verse in reader')}
+                    className="inline-flex min-h-11 items-center space-x-1 rounded-full bg-primary-subdued px-3 text-xs font-semibold text-primary transition-all hover:bg-primary-subdued focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+                  ><Play aria-hidden="true" className="w-3 h-3" /><span>{t('Putar', 'Play')}</span></Link>
+
+                  {language === 'id' && <button
                     onClick={() => toggleInterlinear(item, itemKey)}
                     className={`px-3 py-1.5 rounded-full border text-xs font-semibold transition-all inline-flex items-center space-x-1 ${
                       isInterlinearOpen
@@ -246,9 +327,9 @@ export default function AyahConcordance({
                         : 'bg-canvas-soft hover:bg-canvas-page border-hairline text-ink-secondary hover:text-primary'
                     }`}
                   >
-                    <span>{isInterlinearOpen ? 'Tutup Per Kata' : 'Per Kata'}</span>
+                    <span>{isInterlinearOpen ? t('Tutup per kata', 'Close word-by-word') : t('Per kata', 'Word by word')}</span>
                     {isInterlinearOpen ? <ChevronUp aria-hidden="true" className="w-3 h-3" /> : <ChevronDown aria-hidden="true" className="w-3 h-3" />}
-                  </button>
+                  </button>}
                 </div>
               </div>
 
@@ -257,21 +338,29 @@ export default function AyahConcordance({
                 {renderHighlightedVerse(item.verseArabic, item.matchedWordArabic)}
               </div>
 
-              {/* Indonesian Translation */}
               <div className="bg-canvas-soft border border-hairline rounded-2xl p-4 sm:p-5 text-sm sm:text-base text-ink-secondary leading-relaxed font-sans space-y-1">
                 <span className="font-semibold text-ink-primary block text-[11px] uppercase tracking-wider font-sans">
-                  Terjemahan Resmi Kemenag RI:
+                  {language === 'id' ? t('Terjemahan Kemenag RI', 'Kemenag RI translation') : 'Saheeh International · Quran.com'}
                 </span>
-                <p className="font-normal text-ink-primary leading-relaxed">&ldquo;{item.verseIndo}&rdquo;</p>
+                {language === 'id'
+                  ? <p lang="id" className="font-normal text-ink-primary leading-relaxed">&ldquo;{item.verseIndo}&rdquo;</p>
+                  : englishTranslations[`${item.surahNumber}:${item.ayahNumber}`]
+                    ? <p lang="en" className="font-normal text-ink-primary leading-relaxed">&ldquo;{englishTranslations[`${item.surahNumber}:${item.ayahNumber}`]}&rdquo;</p>
+                    : <p className="font-normal text-ink-secondary leading-relaxed">{englishUnavailable.has(`${item.surahNumber}:${item.ayahNumber}`)
+                      ? t('Terjemahan Inggris tidak tersedia.', 'English translation unavailable.')
+                      : englishFailed.has(`${item.surahNumber}:${item.ayahNumber}`)
+                        ? t('Terjemahan gagal dimuat.', 'Translation could not be loaded.')
+                        : t('Menunggu terjemahan…', 'Loading translation…')}</p>}
               </div>
 
+
               {/* Interlinear Accordion */}
-              {isInterlinearOpen && (
+              {language === 'id' && isInterlinearOpen && (
                 <div className="pt-2 border-t border-hairline">
                   {isLoadingSegments ? (
                     <div className="p-6 text-center text-xs text-ink-mute font-sans flex items-center justify-center space-x-2">
                       <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                      <span>Memuat analisis morfologi perkata...</span>
+                      <span>{t('Memuat analisis morfologi per kata…', 'Loading word morphology…')}</span>
                     </div>
                   ) : activeSegments && activeSegments.length > 0 ? (
                     <WordByWordViewer
@@ -284,7 +373,7 @@ export default function AyahConcordance({
                     />
                   ) : (
                     <div className="p-4 text-center text-xs text-ink-mute font-sans">
-                      Data morfologi perkata tersedia melalui tampilan Mushaf.
+                      {t('Data morfologi per kata tersedia melalui tampilan mushaf.', 'Word morphology is available in the reader.')}
                     </div>
                   )}
                 </div>
@@ -297,7 +386,7 @@ export default function AyahConcordance({
                   className="inline-flex items-center space-x-1 hover:text-ink-primary transition-colors font-medium"
                 >
                   <ShieldCheck aria-hidden="true" className="w-3.5 h-3.5 text-primary" />
-                  <span>Detail Corpus ({item.wordLocation || `${item.surahNumber}:${item.ayahNumber}`})</span>
+                  <span>{t('Detail korpus', 'Corpus details')} ({item.wordLocation || `${item.surahNumber}:${item.ayahNumber}`})</span>
                   {isCorpusExpanded ? <ChevronUp aria-hidden="true" className="w-3 h-3" /> : <ChevronDown aria-hidden="true" className="w-3 h-3" />}
                 </button>
 
@@ -311,15 +400,15 @@ export default function AyahConcordance({
               {isCorpusExpanded && (
                 <div className="p-3.5 bg-canvas-soft rounded-2xl border border-hairline text-xs font-mono text-ink-secondary space-y-1 animate-in fade-in duration-150">
                   <div className="flex justify-between">
-                    <span className="text-ink-mute">Koordinat QAC:</span>
+                    <span className="text-ink-mute">{t('Koordinat QAC:', 'QAC coordinate:')}</span>
                     <span className="text-ink-primary font-semibold">{item.wordLocation || `${item.surahNumber}:${item.ayahNumber}`}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-ink-mute">Akar Otoritatif:</span>
+                    <span className="text-ink-mute">{t('Akar:', 'Root:')}</span>
                     <span className="text-ink-primary font-arabic font-semibold" dir="rtl">{rootArabic}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-ink-mute">Kata Sasaran:</span>
+                    <span className="text-ink-mute">{t('Kata sasaran:', 'Matched form:')}</span>
                     <span className="text-ink-primary font-arabic" dir="rtl">{item.matchedWordArabic}</span>
                   </div>
                 </div>
@@ -337,13 +426,13 @@ export default function AyahConcordance({
             className="w-full sm:w-auto px-6 py-3 rounded-full bg-canvas-surface hover:bg-canvas-soft border border-hairline text-ink-primary text-xs sm:text-sm font-semibold shadow-subtle transition-all flex items-center justify-center space-x-2"
           >
             <ArrowDown aria-hidden="true" className="w-4 h-4 text-primary" />
-            <span>Tampilkan 10 Ayat Lagi</span>
+            <span>{t('Tampilkan 10 ayat lagi', 'Show 10 more verses')}</span>
           </button>
           <button
             onClick={handleShowAll}
             className="w-full sm:w-auto px-6 py-3 rounded-full bg-primary hover:bg-primary-deep text-white text-xs sm:text-sm font-semibold shadow-subtle transition-all"
           >
-            Tampilkan Seluruh ({filteredOccurrences.length}) Ayat
+            {t('Tampilkan semua', 'Show all')} ({filteredOccurrences.length}) {t('ayat', 'verses')}
           </button>
         </div>
       )}

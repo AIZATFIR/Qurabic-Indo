@@ -50,8 +50,9 @@ export interface RootSemanticProfile {
 }
 
 /**
- * Curated Semantic Profiles for Key Quranic Roots (Lexicographical Reference)
- * Sourced from classical Arabic lexicons (Lisan al-'Arab, Al-Mufradat fi Gharib Al-Qur'an, Hans Wehr).
+ * Legacy semantic profiles for selected roots. Provenance and review status
+ * vary by entry; use explicit source metadata before presenting a profile as
+ * a dictionary definition. Root membership alone is not lexical evidence.
  */
 export const CURATED_ROOT_SEMANTICS: Record<string, RootSemanticProfile> = {
   // 1. q-w-l (ق و ل) - Dominant Quranic Speech Root
