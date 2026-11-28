@@ -23,6 +23,11 @@ Status ini mencatat bukti dari repository pada 28 November 2026. Ia bukan pernya
 - API pembaca dan API rincian kata kini berjalan di server sehingga tabel QAC besar tidak masuk ke bundle JavaScript halaman baca. Manifest production build lokal mencatat 653.611 byte JavaScript untuk `/baca/page`; bundle halaman morfologi masih 3.698.581 byte. 10/10 tes Playwright `reader-focus.spec.ts` dan `tsc --noEmit` lulus pada revisi tersebut. Ini membuktikan jalur web baca, bukan instalasi native atau semua jalur aplikasi.
 - AAB di `android/app/build/outputs/bundle/release/app-release.aab` bertanggal 28 November 2026, sebelum commit ini; pemeriksaan `jarsigner` menyatakan AAB tidak ditandatangani. Variabel signing dan version code tidak tersedia, dan tidak ada perangkat Android yang tersambung. Jangan unggah artefak tersebut ke Play Console.
 
+## Revalidasi disclosure privasi dan build (29 November 2026)
+
+- Kebijakan privasi Indonesia dan English kini menjelaskan permintaan data saat membuka surah, serta fallback terjemahan ke eQuran.id, Quran API milik Gading, dan AlQuran Cloud. Draf Data safety diperbarui untuk mencatat alur itu. `tsc --noEmit`, pemeriksaan `lib/data/legal-routes.test.ts`, dan pemeriksaan browser Playwright pada `/privacy` untuk kedua bahasa lulus. Ini belum menggantikan pemeriksaan traffic APK dan server.
+- Production build lokal Next.js 15.5.29 lulus dan membuat 22 halaman; `/baca` melaporkan First Load JS 191 kB, `/ayat-random` 1.87 MB. Peringatan lint React Hook dan elemen gambar lama masih ada. Tidak ada tes Playwright baru untuk perubahan ini selain pemeriksaan browser dua bahasa.
+
 ## Sudah disiapkan di repository
 
 - Android `targetSdkVersion` memakai API 36. Per 28 November 2026, Google Play meminta API 36 atau lebih tinggi untuk app baru dan pembaruan reguler sejak 31 Agustus 2026. Lihat [persyaratan target API Google Play](https://developer.android.com/google/play/requirements/target-sdk).
