@@ -2,6 +2,10 @@
 
 Draft for localized English (United States) and Indonesian listings. Google Play currently allows 30 characters for the title, 80 for the short description, and 4,000 for the full description. Keep separate screenshots for each language when the images contain text. See Google's [listing setup](https://support.google.com/googleplay/android-developer/answer/9859152) and [localization guidance](https://support.google.com/googleplay/android-developer/answer/9844778).
 
+## Submission status: hold
+
+Checked 29 November 2026: production `GET /api/qf/recitations?language=en` returns `503 EDGE_RATE_LIMIT_REQUIRED`. The offline reader also says sync is not enabled; the production sync route is gated by the same missing edge-rate-limit configuration. The audio and offline claims below describe intended behavior after release gates pass. Do not submit this listing until the Quran Foundation catalog and content sync work in production and audio/offline behavior is verified in a signed Android build.
+
 ## English (United States)
 
 **Title**
