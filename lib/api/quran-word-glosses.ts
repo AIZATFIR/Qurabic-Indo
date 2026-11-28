@@ -2,6 +2,7 @@ import { getSurahByNumber } from '@/lib/data/surah-list';
 import { fetchJsonWithTimeout } from './request';
 import { getMaqamWordGlosses } from '@/lib/lexicon/maqam';
 import { formatMaqamGloss } from '@/lib/lexicon/maqam-gloss-format';
+import { normalizeIndonesianWbwGloss } from './indonesian-wbw-normalizer';
 
 export type QuranWordGlossLanguage = 'id' | 'en';
 const VERSE_GLOSS_CONCURRENCY = 8;
@@ -65,7 +66,8 @@ export async function getQuranVerseWordTokens(
     if (word.char_type_name === 'end' || typeof word.location !== 'string') continue;
     const parsed = parseLocation(word.location);
     if (!parsed || parsed.verseKey !== verseKey) continue;
-    const gloss = typeof word.translation?.text === 'string' ? cleanGloss(word.translation.text) : '';
+    const rawGloss = typeof word.translation?.text === 'string' ? cleanGloss(word.translation.text) : '';
+    const gloss = language === 'id' ? normalizeIndonesianWbwGloss(rawGloss) : rawGloss;
     tokens.push({
       location: word.location,
       arabic: word.text_uthmani || '',

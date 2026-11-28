@@ -3,6 +3,7 @@ import { stripArabicHarakat, findBestMatchingRoot, extractArabicRootLetters, inf
 import { getQuranicParticleInfo } from '../morphology/particles-dictionary';
 import { getAuthenticWordMeaning } from '../morphology/root-dictionary';
 import { getRootSemanticProfile } from '../data/root-semantics';
+import { normalizeIndonesianWbwGloss } from '../api/indonesian-wbw-normalizer';
 
 export interface WordDetailedInfo {
   wordArabic: string;
@@ -235,16 +236,16 @@ export function cleanGlossToIndonesian(rawGloss?: string, fallbackMeaning?: stri
 
   // 1. Direct dictionary match
   if (ENGLISH_TO_INDO_GLOSS[lowerStripped]) {
-    return ENGLISH_TO_INDO_GLOSS[lowerStripped];
+    return normalizeIndonesianWbwGloss(ENGLISH_TO_INDO_GLOSS[lowerStripped]);
   }
   if (ENGLISH_TO_INDO_GLOSS[lowerRaw]) {
-    return ENGLISH_TO_INDO_GLOSS[lowerRaw];
+    return normalizeIndonesianWbwGloss(ENGLISH_TO_INDO_GLOSS[lowerRaw]);
   }
 
   // 2. Multi-word phrase cleaning (e.g. "(are) hosts" -> "hosts", "not (do)" -> "not")
   const normalizedPhrase = lowerRaw.replace(/[\(\)\[\]\{\}]/g, ' ').replace(/\s+/g, ' ').trim();
   if (ENGLISH_TO_INDO_GLOSS[normalizedPhrase]) {
-    return ENGLISH_TO_INDO_GLOSS[normalizedPhrase];
+    return normalizeIndonesianWbwGloss(ENGLISH_TO_INDO_GLOSS[normalizedPhrase]);
   }
 
   // 3. Fallback meaning if available and input is clearly English
@@ -253,11 +254,11 @@ export function cleanGlossToIndonesian(rawGloss?: string, fallbackMeaning?: stri
 
   if (isActuallyEnglish && !hasIndonesianIndicators) {
     if (fallbackMeaning && !/\b(the|and|or|of|to|in|on|from|with|by|for|not|he|they)\b/i.test(fallbackMeaning)) {
-      return fallbackMeaning;
+      return normalizeIndonesianWbwGloss(fallbackMeaning);
     }
   }
 
-  return trimmed;
+  return normalizeIndonesianWbwGloss(trimmed);
 }
 
 // Curated Word Definitions (100% Indonesian, Honest Attribution)

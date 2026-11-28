@@ -108,6 +108,25 @@ test.describe('Word Study (Qurabic Indo) Polish & Visual Regression', () => {
     await expect(sources.getByText('Tanzil Project — teks sumber yang dirujuk MAQAM')).toBeVisible();
   });
 
+  test('Indonesian Quran.com word glosses separate fused locative prepositions', async ({ page }) => {
+    await page.route('**/api/word-glosses**', async (route) => {
+      const locations = new URL(route.request().url()).searchParams.get('locations')?.split(',').filter(Boolean) || [];
+      await route.fulfill({
+        status: 200,
+        json: {
+          meanings: Object.fromEntries(locations.map((location) => [location, 'di dalamnya'])),
+          sources: Object.fromEntries(locations.map((location) => [location, 'quran-com-wbw'])),
+          language: 'id',
+        },
+      });
+    });
+
+    await page.goto('/kata/%D9%81%D9%90%D9%8A%D9%87%D9%90?location=18%3A3%3A2', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByText('di dalamnya', { exact: true }).first()).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText('Quran.com · Indonesia', { exact: true }).first()).toBeVisible();
+    await expect(page.getByText('didalamnya', { exact: true })).toHaveCount(0);
+  });
+
   test('English word study labels MAQAM fallback by its source', async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem('qurabic_language', 'en'));
     await page.route('**/api/word-glosses**', async (route) => {

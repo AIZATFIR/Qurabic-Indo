@@ -49,6 +49,7 @@ Arabic Roots and Derivatives by Ahmed Khorsi adds a separate Tāj al-ʿArūs for
 ## Translation provenance
 
 - Indonesian and English word-by-word glosses are requested at runtime from Quran.com API v4 by verse and word coordinate. The API response does not give a translator for every word; do not label these glosses as Kemenag.
+- Indonesian Quran.com gloss formatting inserts a space in common fused locative phrases such as `didalamnya` → `di dalamnya`; this is a display-only spelling correction and preserves the API source attribution.
 - When Quran.com has no gloss for a requested word or cannot be reached, the local MAQAM CC BY 4.0 lexical-gloss index fills available coordinates with a visibly attributed English gloss. This fallback is never labeled as Indonesian translation; Quran.com remains preferred when it supplies a coordinate gloss.
 - A read-only coordinate audit matched all 77,429 positions in the 114 WBW files to non-empty Indonesian and English glosses (77,429 each, with no missing or extra positions). This verifies coverage, not the accuracy or translator identity of each gloss. Both exports are from Quran.com API v4.
 - That audit describes the retired local exports, not a guarantee of live API availability. Runtime calls are limited to the selected verse coordinates; word glosses are currently online-only and have not yet been rechecked by Playwright in this implementation pass.
