@@ -16,8 +16,8 @@ export async function GET(request: NextRequest) {
     const response = NextResponse.json({ meanings, sources, language });
     const complete = Object.keys(meanings).length === new Set(locations).size;
     response.headers.set('Cache-Control', complete
-      ? 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=43200'
-      : 'public, max-age=60, s-maxage=300, stale-while-revalidate=120');
+      ? 'public, max-age=0, s-maxage=300, stale-while-revalidate=60'
+      : 'no-store');
     return response;
   } catch {
     return NextResponse.json({ error: 'Word meanings are temporarily unavailable.' }, { status: 502 });
